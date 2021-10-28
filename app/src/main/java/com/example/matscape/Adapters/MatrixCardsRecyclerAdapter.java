@@ -1,6 +1,8 @@
 package com.example.matscape.Adapters;
 
 import android.content.Context;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +18,20 @@ import java.util.List;
 
 public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCardsRecyclerAdapter.ViewHolder> {
 
-    Context mContext;
-    List<MatrixCards> list;
+    private static final String TAG = "MatrixCardsAdapter";
 
-    public MatrixCardsRecyclerAdapter(Context context){
+    public static float ONE_DP;
+    Context mContext;
+    List<MatrixCards> matrixCardsList;
+
+    public MatrixCardsRecyclerAdapter(Context context,List<MatrixCards> list){
         mContext=context;
+        this.matrixCardsList=list;
+
+        ONE_DP = mContext.getResources().getDisplayMetrics().density;
     }
+
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -33,11 +43,19 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
+        RecyclerView.LayoutParams matrixCardsParams=new RecyclerView.LayoutParams(
+                (int) (ONE_DP*150),
+                matrixCardsList.get(position).getHeight()- (int) (ONE_DP*20)
+        );
+
+        matrixCardsParams.setMargins( (int) ONE_DP*12, (int) ONE_DP*12, (int) ONE_DP*12, (int) ONE_DP*12);
+        holder.cardView.setLayoutParams(matrixCardsParams);
+
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return matrixCardsList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

@@ -8,16 +8,15 @@ public class MatrixCards {
     List<List<String>> matrix;
     int matrixRows,matrixColumns;
     double textSize;
-    int height,width;
+    int height;
 
-    public MatrixCards(String matrixName, List<List<String>> matrix, int matrixRows, int matrixColumns, double textSize, int height, int width) {
+    public MatrixCards(String matrixName, List<List<String>> matrix, int matrixRows, int matrixColumns, double textSize, int height) {
         this.matrixName = matrixName;
         this.matrix = matrix;
         this.matrixRows = matrixRows;
         this.matrixColumns = matrixColumns;
         this.textSize = textSize;
         this.height = height;
-        this.width = width;
     }
 
     public String getMatrixName() {
@@ -44,7 +43,4 @@ public class MatrixCards {
         return height;
     }
 
-    public int getWidth() {
-        return width;
-    }
 }
