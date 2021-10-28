@@ -1,6 +1,18 @@
 <resources>
-    <string name="app_name">Matscape</string>
-    
-    <string name="open">Open</string>
-    <string name="close">Close</string>
+    <string name="app_name" translatable="false">Matscape</string>
+
+    //for homepage navigation drawer
+    <string name="open" translatable="false">Open</string>
+    <string name="close" translatable="false">Close</string>
+
+    //for navigation menu items
+    <string name="settings">Settings</string>
+    <string name="htu">How to Use</string>
+    <string name="feedback">Feedback</string>
+    <string name="about">About</string>
+
+    //home page imageViews content descriptions
+    <string name="addMatrix" translatable="false">Add Matrix</string>
+
+
 </resources>
