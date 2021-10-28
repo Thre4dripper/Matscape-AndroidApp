@@ -95,30 +95,35 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         matrixCardsRecyclerView.setAdapter(cardsRecyclerAdapter);
     }
 
-    /**================================================== ADDING MATRIX CARDS ====================================================**/
     @Override
     public void onClick(View view) {
         //when Add Matrix button is clicked
-        if (AddMatrixCardsButton.equals(view)) {
-
-            //matrices should be less than 26
-            if (counter < 26) {
-
-                matrixCardsList.add(new MatrixCards(null,
-                        null,
-                        0,
-                        0,
-                        0.0,
-                        matrixCardsRecyclerView.getHeight()
-                ));
-
-                cardsRecyclerAdapter.notifyItemInserted(counter);
-                matrixCardsRecyclerView.scrollToPosition(counter);
-
-                counter++;
-            }
-            else Toast.makeText(this, "Matrix Limit Reached", Toast.LENGTH_SHORT).show();
-
+        if (AddMatrixCardsButton.equals(view))
+        {
+            AddMatrixCards();
         }
+
     }
+
+    /**================================================== ADDING MATRIX CARDS ====================================================**/
+    public void AddMatrixCards(){
+        //matrices should be less than 26
+        if (counter < 26) {
+
+            matrixCardsList.add(new MatrixCards(null,
+                    null,
+                    0,
+                    0,
+                    0.0,
+                    matrixCardsRecyclerView.getHeight()
+            ));
+
+            cardsRecyclerAdapter.notifyItemInserted(counter);
+            matrixCardsRecyclerView.scrollToPosition(counter);
+
+            counter++;
+        }
+        else Toast.makeText(this, "Matrix Limit Reached", Toast.LENGTH_SHORT).show();
+    }
+
 }

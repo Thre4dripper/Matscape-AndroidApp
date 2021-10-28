@@ -21,12 +21,12 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
     private static final String TAG = "MatrixCardsAdapter";
 
     public static float ONE_DP;
-    Context mContext;
-    List<MatrixCards> matrixCardsList;
+    public Context mContext;
+    public static List<MatrixCards> matrixCardsList;
 
     public MatrixCardsRecyclerAdapter(Context context,List<MatrixCards> list){
         mContext=context;
-        this.matrixCardsList=list;
+        matrixCardsList=list;
 
         ONE_DP = mContext.getResources().getDisplayMetrics().density;
     }
