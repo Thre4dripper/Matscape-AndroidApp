@@ -41,7 +41,7 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         RecyclerView.LayoutParams matrixCardsParams=new RecyclerView.LayoutParams(
-                (int) (ONE_DP*150),
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 matrixCardsList.get(position).getHeight()- (int) (ONE_DP*20)
         );
 

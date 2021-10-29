@@ -14,7 +14,9 @@
     //home page imageViews content descriptions
     <string name="desc_addMatrix" translatable="false">Add Matrix</string>
 
-    //matrix cards imageViews content descriptions
+    //for matrix cards
+    <string name="matrix_name_placeholder">A</string>
+    <string name="matrix_text_placeholder">0</string>
     <string name="desc_delete">Delete matrix</string>
     <string name="desc_copy">Copy matrix</string>
     <string name="desc_edit">Edit matrix</string>
