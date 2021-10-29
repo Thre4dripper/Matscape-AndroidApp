@@ -107,7 +107,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         //when Add Matrix button is clicked
-        if (addMatrixCardsButton.equals(view)) addMatrixCards();
+        if (addMatrixCardsButton.equals(view)) addMatrixCards(counter,null);
 
     }
 
@@ -122,6 +122,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void copyMatrix(int position) {
+
+        List<List<String>> originalMatrix=matrixCardsList.get(position).getMatrix();
+        addMatrixCards(position+1,originalMatrix);
 
     }
 
@@ -167,21 +170,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * ================================================== ADDING MATRIX CARDS ====================================================
      **/
-    public void addMatrixCards() {
+    public void addMatrixCards(int position,List<List<String>> receivedMatrix) {
         //matrices should be less than 26
-        if (counter < 26) {
-            List<List<String>> matrix=new ArrayList<>();
+        if (position < 26) {
 
-            for(int i=0;i<5;i++){
-                matrix.add(new ArrayList<>());
-                for(int j=0;j<5;j++)
-                    matrix.get(i).add("0");
+            if(receivedMatrix==null)
+            {
+                receivedMatrix=new ArrayList<>();
+                for(int i=0;i<5;i++){
+                    receivedMatrix.add(new ArrayList<>());
+                    for(int j=0;j<5;j++)
+                        receivedMatrix.get(i).add("0");
+                }
             }
+
 
             Collections.sort(matrixNamesList);
 
-            matrixCardsList.add(new MatrixCards(matrixNamesList.get(0),
-                    matrix,
+            matrixCardsList.add(position,new MatrixCards(matrixNamesList.get(0),
+                    receivedMatrix,
                     5,
                     5,
                     14,
@@ -190,8 +197,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             matrixNamesList.remove(0);
 
-            cardsRecyclerAdapter.notifyItemInserted(counter);
-            matrixCardsRecyclerView.scrollToPosition(counter);
+            cardsRecyclerAdapter.notifyItemInserted(position);
+            matrixCardsRecyclerView.scrollToPosition(position);
 
             counter++;
         } else Toast.makeText(this, "Matrix Limit Reached", Toast.LENGTH_SHORT).show();
