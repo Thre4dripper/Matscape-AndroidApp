@@ -50,7 +50,7 @@
         android:id="@+id/HomeNavigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:menu="@menu/home_navigation_drawer_menu"
+        app:menu="@menu/menu_home_navigation_drawer"
         app:headerLayout="@layout/header_navigation_drawer"
         android:layout_gravity="start"/>
 

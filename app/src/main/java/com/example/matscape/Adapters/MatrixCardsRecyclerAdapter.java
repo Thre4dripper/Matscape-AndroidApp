@@ -1,8 +1,6 @@
 package com.example.matscape.Adapters;
 
 import android.content.Context;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +30,9 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
     }
 
 
-    @NonNull
-    @Override
+    @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(mContext).inflate(R.layout.matrix_cards_layout,parent,false);
+        View view= LayoutInflater.from(mContext).inflate(R.layout.item_matrix_cards,parent,false);
 
         return new ViewHolder(view);
     }
