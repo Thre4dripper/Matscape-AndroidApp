@@ -6,13 +6,19 @@
     <string name="close" translatable="false">Close</string>
 
     //for navigation menu items
-    <string name="settings">Settings</string>
-    <string name="htu">How to Use</string>
-    <string name="feedback">Feedback</string>
-    <string name="about">About</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_htu">How to Use</string>
+    <string name="action_feedback">Feedback</string>
+    <string name="action_about">About</string>
 
     //home page imageViews content descriptions
-    <string name="addMatrix" translatable="false">Add Matrix</string>
+    <string name="desc_addMatrix" translatable="false">Add Matrix</string>
+
+    //matrix cards imageViews content descriptions
+    <string name="desc_delete">Delete matrix</string>
+    <string name="desc_copy">Copy matrix</string>
+    <string name="desc_edit">Edit matrix</string>
+    <string name="desc_sub_matrix">Create Sub matrix</string>
 
 
 </resources>

@@ -27,9 +27,9 @@
             android:layout_margin="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:contentDescription="@string/addMatrix"
+            android:contentDescription="@string/desc_addMatrix"
             android:focusable="true"
-            android:src="@drawable/ic_add_matrix"
+            android:src="@drawable/ic_home_add_matrix"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="TouchTargetSizeCheck" />

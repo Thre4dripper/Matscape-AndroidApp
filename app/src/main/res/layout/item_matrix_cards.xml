@@ -1,14 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="200dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="150dp"
     android:layout_height="200dp"
     app:cardElevation="5dp"
     app:cardCornerRadius="5dp"
     android:layout_margin="16dp"
-    android:id="@+id/card"
-    android:foreground="?attr/selectableItemBackgroundBorderless"
-    android:clickable="true"
-    android:focusable="true">
+    android:id="@+id/card">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:minWidth="150dp">
+
+        <ImageView
+            android:id="@+id/DeleteMatrixButton"
+            style="@style/MatrixCardsIcons"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@string/desc_delete"
+            android:src="@drawable/ic_mat_card_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/CopyMatrixButton"
+            style="@style/MatrixCardsIcons"
+            android:contentDescription="@string/desc_copy"
+            android:src="@drawable/ic_mat_card_copy"
+            app:layout_constraintBottom_toTopOf="@+id/SubMatrixButton"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/SubMatrixButton"
+            style="@style/MatrixCardsIcons"
+            android:contentDescription="@string/desc_edit"
+            android:src="@drawable/ic_mat_card_sub_matrix"
+            app:layout_constraintBottom_toTopOf="@+id/EditMatrixButton"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/EditMatrixButton"
+            style="@style/MatrixCardsIcons"
+            android:contentDescription="@string/desc_edit"
+            android:src="@drawable/ic_mat_card_edit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

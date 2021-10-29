@@ -66,7 +66,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mNavigationView.setNavigationItemSelectedListener(item -> {
             int navMenuItemId = item.getItemId();
             if (navMenuItemId == R.id.action_settings) {
-                Toast.makeText(HomeActivity.this, "settings Clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, "action_settings Clicked", Toast.LENGTH_SHORT).show();
 
             } else if (navMenuItemId == R.id.action_htu) {
                 Toast.makeText(HomeActivity.this, "HTU Clicked", Toast.LENGTH_SHORT).show();
@@ -75,7 +75,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(HomeActivity.this, "feedback Clicked", Toast.LENGTH_SHORT).show();
 
             } else if (navMenuItemId == R.id.action_about) {
-                Toast.makeText(HomeActivity.this, "about Clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, "action_about Clicked", Toast.LENGTH_SHORT).show();
 
             }
 

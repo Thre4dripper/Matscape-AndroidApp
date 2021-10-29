@@ -2,18 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/action_settings"
-        android:title="@string/settings"
-        android:icon="@drawable/ic_settings"/>
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_nav_settings"/>
 
     <item android:id="@+id/action_htu"
-        android:title="@string/htu"
-        android:icon="@drawable/ic_htu"/>
+        android:title="@string/action_htu"
+        android:icon="@drawable/ic_nav_htu"/>
 
     <item android:id="@+id/action_feedback"
-        android:title="@string/feedback"
-        android:icon="@drawable/ic_feedback"/>
+        android:title="@string/action_feedback"
+        android:icon="@drawable/ic_nav_feedback"/>
 
     <item android:id="@+id/action_about"
-        android:title="@string/about"
-        android:icon="@drawable/ic_about"/>
+        android:title="@string/action_about"
+        android:icon="@drawable/ic_nav_about"/>
 </menu>
