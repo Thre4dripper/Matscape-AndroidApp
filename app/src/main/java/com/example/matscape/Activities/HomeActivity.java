@@ -6,11 +6,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -91,10 +93,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     public void InitMatrixCardsRecyclerView() {
         matrixCardsRecyclerView = findViewById(R.id.MatrixCardsRecyclerView);
-        cardsRecyclerAdapter = new MatrixCardsRecyclerAdapter(this, matrixCardsList,this);
-
         matrixCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        ItemTouchHelper matrixCardsTouchHelper=new ItemTouchHelper(this.matrixCardsTouchHelperCallback);
+
+        cardsRecyclerAdapter = new MatrixCardsRecyclerAdapter(this, matrixCardsList,matrixCardsTouchHelper,this);
         matrixCardsRecyclerView.setAdapter(cardsRecyclerAdapter);
+
+        matrixCardsTouchHelper.attachToRecyclerView(matrixCardsRecyclerView);
+
     }
 
     @Override
@@ -127,6 +134,35 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void editMatrix(int position) {
 
     }
+
+    /**===================================== CALLBACK FOR DRAGGING MATRIX CARDS ===========================================**/
+    ItemTouchHelper.SimpleCallback matrixCardsTouchHelperCallback =new ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
+            0) {
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return false;
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+
+            int fromPosition=viewHolder.getAdapterPosition();
+            int toPosition=target.getAdapterPosition();
+
+            Collections.swap(matrixCardsList,fromPosition,toPosition);
+            cardsRecyclerAdapter.notifyItemMoved(fromPosition,toPosition);
+
+            return true;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+        }
+    };
+
 
     /**
      * ================================================== ADDING MATRIX CARDS ====================================================

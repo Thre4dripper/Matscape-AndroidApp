@@ -1,5 +1,6 @@
 package com.example.matscape.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.R;
@@ -21,14 +23,18 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
     private static final String TAG = "MatrixCardsAdapter";
 
     public static float ONE_DP;
-    public static List<MatrixCards> matrixCardsList;
+
+    public static ItemTouchHelper matrixCardsTouchHelper;
     public static MatrixCardsInterface matrixCardsInterface;
     public Context mContext;
+    public List<MatrixCards> matrixCardsList;
 
-    public MatrixCardsRecyclerAdapter(Context context, List<MatrixCards> list, MatrixCardsInterface matrixCardsInterface) {
+
+    public MatrixCardsRecyclerAdapter(Context context, List<MatrixCards> list, ItemTouchHelper itemTouchHelper, MatrixCardsInterface matrixCardsInterface) {
         mContext = context;
         matrixCardsList = list;
-        this.matrixCardsInterface = matrixCardsInterface;
+        MatrixCardsRecyclerAdapter.matrixCardsTouchHelper=itemTouchHelper;
+        MatrixCardsRecyclerAdapter.matrixCardsInterface = matrixCardsInterface;
 
         ONE_DP = mContext.getResources().getDisplayMetrics().density;
     }
@@ -41,6 +47,7 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
         return new ViewHolder(view);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
@@ -53,6 +60,11 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
         holder.mCardView.setLayoutParams(matrixCardsParams);
 
         holder.mMatrixName.setText(matrixCardsList.get(position).getMatrixName());
+
+        holder.mDragButton.setOnTouchListener((view, motionEvent) -> {
+            matrixCardsTouchHelper.startDrag(holder);
+            return true;
+        });
 
     }
 
@@ -78,6 +90,7 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
         TextView[][] mMatrixTextViews = new TextView[5][5];
 
         ImageView mDeleteButton, mCopyButton, mSubMatrixButton, mEditButton;
+        ImageView mDragButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -120,6 +133,8 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
             mCopyButton.setOnClickListener(this);
             mSubMatrixButton.setOnClickListener(this);
             mEditButton.setOnClickListener(this);
+
+            mDragButton=itemView.findViewById(R.id.MatrixCardDragButton);
 
         }
 

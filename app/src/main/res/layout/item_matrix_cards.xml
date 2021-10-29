@@ -16,14 +16,25 @@
         android:layout_height="match_parent"
         android:minWidth="150dp">
 
+        <ImageView
+            android:id="@+id/MatrixCardDragButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_matrix_card_drag"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@null" />
+
         <TextView
             android:id="@+id/MatrixName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/matrix_name_placeholder"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toStartOf="@+id/DeleteMatrixButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/DeleteMatrixButton" />
+            app:layout_constraintTop_toBottomOf="@+id/MatrixCardDragButton" />
 
         <LinearLayout
             android:id="@+id/linearLayout1"
