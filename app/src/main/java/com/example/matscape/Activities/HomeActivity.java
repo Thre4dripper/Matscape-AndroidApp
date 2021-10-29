@@ -20,9 +20,10 @@ import com.example.matscape.dataModels.MatrixCards;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener, MatrixCardsRecyclerAdapter.MatrixCardsInterface {
 
     private static final String TAG = "HomeActivity";
     //for navigation drawer
@@ -38,6 +39,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ImageView addMatrixCardsButton;
     List<MatrixCards> matrixCardsList = new ArrayList<>();
     int counter = 0;
+    List<String> matrixNamesList=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         InitNavigationDrawer();
         InitMatrixCardsRecyclerView();
+
+        setMatrixNamesList();
     }
 
     /**
@@ -87,7 +91,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     public void InitMatrixCardsRecyclerView() {
         matrixCardsRecyclerView = findViewById(R.id.MatrixCardsRecyclerView);
-        cardsRecyclerAdapter = new MatrixCardsRecyclerAdapter(this, matrixCardsList);
+        cardsRecyclerAdapter = new MatrixCardsRecyclerAdapter(this, matrixCardsList,this);
 
         matrixCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         matrixCardsRecyclerView.setAdapter(cardsRecyclerAdapter);
@@ -100,19 +104,55 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public void deleteMatrix(int position,String deletedName) {
+        matrixCardsList.remove(position);
+        matrixNamesList.add(deletedName);
+        counter--;
+
+        cardsRecyclerAdapter.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void copyMatrix(int position) {
+
+    }
+
+    @Override
+    public void subMatrix(int position) {
+
+    }
+
+    @Override
+    public void editMatrix(int position) {
+
+    }
+
     /**
      * ================================================== ADDING MATRIX CARDS ====================================================
      **/
     public void addMatrixCards() {
         //matrices should be less than 26
         if (counter < 26) {
-            matrixCardsList.add(new MatrixCards(null,
-                    null,
-                    0,
-                    0,
-                    0.0,
+            List<List<String>> matrix=new ArrayList<>();
+
+            for(int i=0;i<5;i++){
+                matrix.add(new ArrayList<>());
+                for(int j=0;j<5;j++)
+                    matrix.get(i).add("0");
+            }
+
+            Collections.sort(matrixNamesList);
+
+            matrixCardsList.add(new MatrixCards(matrixNamesList.get(0),
+                    matrix,
+                    5,
+                    5,
+                    14,
                     matrixCardsRecyclerView.getHeight()
             ));
+
+            matrixNamesList.remove(0);
 
             cardsRecyclerAdapter.notifyItemInserted(counter);
             matrixCardsRecyclerView.scrollToPosition(counter);
@@ -121,4 +161,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         } else Toast.makeText(this, "Matrix Limit Reached", Toast.LENGTH_SHORT).show();
     }
 
+
+    public void setMatrixNamesList() {
+        for(int i=0;i<26;i++)
+            matrixNamesList.add(String.valueOf((char)(i+65)));
+    }
 }
