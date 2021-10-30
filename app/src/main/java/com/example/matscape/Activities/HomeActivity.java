@@ -13,11 +13,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Adapters.MatrixCardsRecyclerAdapter;
+import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
 import com.example.matscape.R;
 import com.example.matscape.dataModels.MatrixCards;
 import com.google.android.material.navigation.NavigationView;
@@ -36,13 +38,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ActionBarDrawerToggle mToggle;
 
     //for matrix cards recycler view
-    RecyclerView matrixCardsRecyclerView;
-    MatrixCardsRecyclerAdapter cardsRecyclerAdapter;
+    RecyclerView mMatrixCardsRecyclerView;
+    MatrixCardsRecyclerAdapter mMatrixCardsRecyclerAdapter;
 
     ImageView addMatrixCardsButton;
     List<MatrixCards> matrixCardsList = new ArrayList<>();
     int matrixCardCounter = 0;
     List<String> matrixNamesList = new ArrayList<>();
+
+    //for result cards recycler view
+    RecyclerView mResultCardsRecyclerView;
+    ResultCardsRecyclerAdapter mResultCardsRecyclerAdapter;
+
+
     /**
      * ===================================== CALLBACK FOR DRAGGING MATRIX CARDS ===========================================
      **/
@@ -62,7 +70,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             int toPosition = target.getAdapterPosition();
 
             Collections.swap(matrixCardsList, fromPosition, toPosition);
-            cardsRecyclerAdapter.notifyItemMoved(fromPosition, toPosition);
+            mMatrixCardsRecyclerAdapter.notifyItemMoved(fromPosition, toPosition);
 
             return true;
         }
@@ -83,9 +91,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         addMatrixCardsButton.setOnClickListener(this);
 
         InitNavigationDrawer();
-        InitMatrixCardsRecyclerView();
 
-        setMatrixNamesList();
+        InitMatrixCardsRecyclerView();
+        InitResultCardsRecyclerView();
     }
 
     /**
@@ -121,18 +129,35 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     * ===================================== METHOD FOR INITIALISING MATRIX CARDS RECYCLER VIEW ==============================
+     **/
     public void InitMatrixCardsRecyclerView() {
-        matrixCardsRecyclerView = findViewById(R.id.MatrixCardsRecyclerView);
-        matrixCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mMatrixCardsRecyclerView = findViewById(R.id.MatrixCardsRecyclerView);
+        mMatrixCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         ItemTouchHelper matrixCardsTouchHelper = new ItemTouchHelper(this.matrixCardsTouchHelperCallback);
 
-        cardsRecyclerAdapter = new MatrixCardsRecyclerAdapter(this, matrixCardsList, matrixCardsTouchHelper, this);
-        matrixCardsRecyclerView.setAdapter(cardsRecyclerAdapter);
+        mMatrixCardsRecyclerAdapter = new MatrixCardsRecyclerAdapter(this, matrixCardsList, matrixCardsTouchHelper, this);
+        mMatrixCardsRecyclerView.setAdapter(mMatrixCardsRecyclerAdapter);
 
-        matrixCardsTouchHelper.attachToRecyclerView(matrixCardsRecyclerView);
+        matrixCardsTouchHelper.attachToRecyclerView(mMatrixCardsRecyclerView);
 
+        setMatrixNamesList();
     }
+
+    /**
+     * ===================================== METHOD FOR INITIALISING RESULT CARDS RECYCLER VIEW ==============================
+     **/
+    public void InitResultCardsRecyclerView() {
+        mResultCardsRecyclerView = findViewById(R.id.ResultCardsRecyclerView);
+        mResultCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mResultCardsRecyclerAdapter = new ResultCardsRecyclerAdapter(this);
+        mResultCardsRecyclerView.setAdapter(mResultCardsRecyclerAdapter);
+        mResultCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -147,10 +172,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
       /*  new MaterialAlertDialogBuilder(this)
                 .setMessage("Do you want to Delete this Matrix")
                 .setPositiveButton("Yes", (dialogInterface, i) -> {*/
+
+        //BUG
         matrixCardsList.remove(position);
         matrixNamesList.add(deletedName);
         matrixCardCounter--;
-        cardsRecyclerAdapter.notifyItemRemoved(position);
+        mMatrixCardsRecyclerAdapter.notifyItemRemoved(position);
           /*      })
                 .setNegativeButton("No", (dialogInterface, i) -> {
                     dialogInterface.dismiss();
@@ -185,7 +212,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         //matrices should be less than 26
         if (matrixCardCounter < 26) {
 
-            boolean copiedMatrix=receivedMatrix != null;
+            boolean copiedMatrix = receivedMatrix != null;
 
             //null matrix received means New matrix is adding
             if (!copiedMatrix) {
@@ -206,21 +233,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     5,
                     5,
                     14,
-                    matrixCardsRecyclerView.getHeight()
+                    mMatrixCardsRecyclerView.getHeight()
             ));
 
             matrixNamesList.remove(0);
 
-            cardsRecyclerAdapter.notifyItemInserted(position);
+            mMatrixCardsRecyclerAdapter.notifyItemInserted(position);
 
             //controlling matrix add behaviour
-            if(!copiedMatrix)
-            matrixCardsRecyclerView.scrollToPosition(position);
+            if (!copiedMatrix)
+                mMatrixCardsRecyclerView.scrollToPosition(position);
 
             matrixCardCounter++;
 
             Log.d(TAG, position + "");
         } else Toast.makeText(this, "Matrix Limit Reached", Toast.LENGTH_SHORT).show();
+
     }
 
 
