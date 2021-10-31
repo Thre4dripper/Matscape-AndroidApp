@@ -29,6 +29,8 @@
     <string name="desc_drag_result">Result Card Drag Handle</string>
     <string name="desc_delete_result">Delete this result</string>
     <string name="placeholder_result_msg">Message</string>
+    <string name="desc_copy_result">Copy Result Card</string>
+    <string name="desc_add_result_matrix">Add result card as new Matrix</string>
 
 
 </resources>

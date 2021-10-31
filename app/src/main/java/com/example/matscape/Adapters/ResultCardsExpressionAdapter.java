@@ -37,7 +37,7 @@ public class ResultCardsExpressionAdapter extends RecyclerView.Adapter<ResultCar
 
     @Override
     public int getItemCount() {
-        return 10;
+        return 20;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

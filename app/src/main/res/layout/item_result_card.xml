@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="60dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:minHeight="60dp">
 
 
     <ImageView
@@ -13,31 +13,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:contentDescription="@string/desc_drag_result"
         android:src="@drawable/ic_result_card_drag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/desc_drag_result" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ExpressionRecyclerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/resultCardDragButton"
-        app:layout_constraintEnd_toStartOf="@+id/DeleteResultButton"
+        app:layout_constraintEnd_toStartOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/resultCardDragButton"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <TextView
         android:id="@+id/ResultCardMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:text="@string/placeholder_result_msg"
         android:textColor="#F44336"
+        android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/ExpressionRecyclerView"
         app:layout_constraintTop_toBottomOf="@+id/ExpressionRecyclerView" />
@@ -46,7 +47,8 @@
         android:id="@+id/DeleteResultButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/desc_delete_result"
@@ -57,18 +59,17 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        app:cardElevation="5dp"
-        app:cardCornerRadius="5dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:layout_marginEnd="16dp"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ExpressionRecyclerView">
+        app:layout_constraintTop_toBottomOf="@+id/DeleteResultButton">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -261,5 +262,34 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_mat_card_copy"
+        app:layout_constraintBottom_toBottomOf="@+id/DeleteResultButton"
+        app:layout_constraintEnd_toStartOf="@+id/DeleteResultButton"
+        app:layout_constraintTop_toTopOf="@+id/DeleteResultButton"
+        android:contentDescription="@string/desc_copy_result" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+
+        android:src="@drawable/ic_add_result_matrix"
+        app:layout_constraintBottom_toBottomOf="@+id/DeleteResultButton"
+        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/DeleteResultButton"
+        android:contentDescription="@string/desc_add_result_matrix" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
