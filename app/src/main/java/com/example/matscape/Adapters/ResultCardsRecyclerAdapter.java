@@ -13,14 +13,27 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.R;
+import com.example.matscape.dataModels.ResultCards;
+
+import java.util.List;
 
 public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCardsRecyclerAdapter.ViewHolder> {
 
+    private static final String TAG = "ResultCardsRecyclerAdapter";
 
-    ItemTouchHelper resultCardsTouchHelper;
-    public ResultCardsRecyclerAdapter(Context context,ItemTouchHelper itemTouchHelper){
+    public static float ONE_DP;
 
+    public  static ItemTouchHelper resultCardsTouchHelper;
+    public  static ResultCardsInterface resultCardsInterface;
+    public  static List<ResultCards> resultCardsList;
+
+    public ResultCardsRecyclerAdapter(Context context,List<ResultCards> list,ItemTouchHelper itemTouchHelper,ResultCardsInterface resultCardsInterface){
+
+        resultCardsList=list;
         resultCardsTouchHelper=itemTouchHelper;
+        ResultCardsRecyclerAdapter.resultCardsInterface=resultCardsInterface;
+
+        ONE_DP = context.getResources().getDisplayMetrics().density;
     }
 
     @NonNull @Override
@@ -50,16 +63,32 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
     @Override
     public int getItemCount() {
-        return 10;
+        return resultCardsList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public interface ResultCardsInterface {
+        void deleteResult(int position);
+        void copyResult(int position, ResultCards resultCard);
+    }
 
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        ImageView mDeleteButton, mCopyButton;
         ImageView mDragButton;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            mDeleteButton=itemView.findViewById(R.id.DeleteResultButton);
+
+            mDeleteButton.setOnClickListener(this);
+
             mDragButton=itemView.findViewById(R.id.resultCardDragButton);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if(view==mDeleteButton)
+                resultCardsInterface.deleteResult(getAdapterPosition());
         }
     }
 }

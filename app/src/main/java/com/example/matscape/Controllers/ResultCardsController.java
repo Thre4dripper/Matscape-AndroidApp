@@ -1,14 +1,23 @@
 package com.example.matscape.Controllers;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
+import com.example.matscape.dataModels.ResultCards;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResultCardsController {
 
     public static ResultCardsRecyclerAdapter mResultCardsRecyclerAdapter;
+    public static List<ResultCards> resultCardsList=new ArrayList<>();
+    public static int resultCardCounter=0;
 
     /**
      * ===================================== CALLBACK FOR DRAGGING RESULT CARDS ===========================================
@@ -37,5 +46,23 @@ public class ResultCardsController {
 
         }
     };
+
+    public static void addResultCards(Context context,int position, ResultCards receivedCard, RecyclerView resultCardsRecyclerView){
+
+        resultCardsList.add(new ResultCards(null,
+                null,
+                null,
+                0,
+                0,
+                14
+        ));
+
+        mResultCardsRecyclerAdapter.notifyItemInserted(position);
+
+        resultCardsRecyclerView.scrollToPosition(position);
+
+        resultCardCounter++;
+
+    }
 
 }

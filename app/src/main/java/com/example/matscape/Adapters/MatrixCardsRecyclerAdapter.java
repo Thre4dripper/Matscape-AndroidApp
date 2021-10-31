@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,12 +26,12 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
 
     public static ItemTouchHelper matrixCardsTouchHelper;
     public static MatrixCardsInterface matrixCardsInterface;
-    public List<MatrixCards> matrixCardsList;
+    public static List<MatrixCards> matrixCardsList;
 
 
     public MatrixCardsRecyclerAdapter(Context context, List<MatrixCards> list, ItemTouchHelper itemTouchHelper, MatrixCardsInterface matrixCardsInterface) {
         matrixCardsList = list;
-        MatrixCardsRecyclerAdapter.matrixCardsTouchHelper=itemTouchHelper;
+        matrixCardsTouchHelper = itemTouchHelper;
         MatrixCardsRecyclerAdapter.matrixCardsInterface = matrixCardsInterface;
 
         ONE_DP = context.getResources().getDisplayMetrics().density;
@@ -42,7 +41,7 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        Context context=parent.getContext();
+        Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.item_matrix_card, parent, false);
 
         return new ViewHolder(view);
@@ -74,8 +73,8 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
         return matrixCardsList.size();
     }
 
-    public static interface MatrixCardsInterface {
-        void deleteMatrix(int position,String deletedName);
+    public interface MatrixCardsInterface {
+        void deleteMatrix(int position, String deletedName);
 
         void copyMatrix(int position);
 
@@ -135,14 +134,14 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
             mSubMatrixButton.setOnClickListener(this);
             mEditButton.setOnClickListener(this);
 
-            mDragButton=itemView.findViewById(R.id.MatrixCardDragButton);
+            mDragButton = itemView.findViewById(R.id.MatrixCardDragButton);
 
         }
 
         @Override
         public void onClick(View view) {
             if (view == mDeleteButton) {
-                matrixCardsInterface.deleteMatrix(getAdapterPosition(),mMatrixName.getText().toString());
+                matrixCardsInterface.deleteMatrix(getAdapterPosition(), mMatrixName.getText().toString());
 
             } else if (view == mCopyButton) {
                 matrixCardsInterface.copyMatrix(getAdapterPosition());

@@ -1,12 +1,9 @@
 package com.example.matscape.Activities;
 
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -22,13 +19,17 @@ import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
 import com.example.matscape.Controllers.MatrixCardsController;
 import com.example.matscape.Controllers.ResultCardsController;
 import com.example.matscape.R;
+import com.example.matscape.dataModels.ResultCards;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener, MatrixCardsRecyclerAdapter.MatrixCardsInterface {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
+        MatrixCardsRecyclerAdapter.MatrixCardsInterface,
+        ResultCardsRecyclerAdapter.ResultCardsInterface {
 
     private static final String TAG = "HomeActivity";
+
     //for navigation drawer
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
@@ -39,9 +40,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public  static RecyclerView mMatrixCardsRecyclerView;
     ImageView addMatrixCardsButton;
 
-
     //for result cards recycler view
     public static RecyclerView mResultCardsRecyclerView;
+    ImageView addResultCardsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +50,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         mToolbar = findViewById(R.id.Toolbar);
-        addMatrixCardsButton = findViewById(R.id.AddMatrixCardsButton);
+        addMatrixCardsButton = findViewById(R.id.addMatrixCardButton);
+        addResultCardsButton = findViewById(R.id.addResultCardButton);
+
         addMatrixCardsButton.setOnClickListener(this);
+        addResultCardsButton.setOnClickListener(this);
 
         InitNavigationDrawer();
 
@@ -121,7 +125,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         ItemTouchHelper resultCardsTouchHelper = new ItemTouchHelper(ResultCardsController.callbackResultCards);
 
-        ResultCardsController.mResultCardsRecyclerAdapter = new ResultCardsRecyclerAdapter(this, resultCardsTouchHelper);
+        ResultCardsController.mResultCardsRecyclerAdapter = new ResultCardsRecyclerAdapter(getApplicationContext(),
+                ResultCardsController.resultCardsList,
+                resultCardsTouchHelper,
+                this
+                );
+
         mResultCardsRecyclerView.setAdapter(ResultCardsController.mResultCardsRecyclerAdapter);
         mResultCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
@@ -132,10 +141,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         //when Add Matrix button is clicked
-        if (addMatrixCardsButton.equals(view))
-            MatrixCardsController.addMatrixCards(this, MatrixCardsController.matrixCardCounter, null,
-                mMatrixCardsRecyclerView
-        );
+        if (addMatrixCardsButton.equals(view)) {
+            MatrixCardsController.addMatrixCards(this,
+                    MatrixCardsController.matrixCardCounter,
+                    null,
+                    mMatrixCardsRecyclerView
+            );
+        } else if(addResultCardsButton.equals(view)){
+            ResultCardsController.addResultCards(this,
+                    ResultCardsController.resultCardCounter,
+                    null,
+                    mResultCardsRecyclerView);
+        }
+
 
     }
 
@@ -164,10 +182,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void copyMatrix(int position) {
 
         List<List<String>> originalMatrix = MatrixCardsController.matrixCardsList.get(position).getMatrix();
-        MatrixCardsController.addMatrixCards(this, position + 1, originalMatrix,
-                mMatrixCardsRecyclerView
-        );
-
+        MatrixCardsController.addMatrixCards(this, position + 1, originalMatrix, mMatrixCardsRecyclerView);
     }
 
     @Override
@@ -181,4 +196,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    /**======================================== OVERRIDE METHODS FOR RESULT CARDS ================================================**/
+
+    @Override
+    public void deleteResult(int position) {
+            ResultCardsController.resultCardsList.remove(position);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRemoved(position);
+            ResultCardsController.resultCardCounter--;
+    }
+
+    @Override
+    public void copyResult(int position, ResultCards resultCard) {
+
+    }
 }

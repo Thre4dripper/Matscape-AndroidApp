@@ -1,6 +1,7 @@
 package com.example.matscape.Controllers;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ public class MatrixCardsController {
 
 
     public static MatrixCardsRecyclerAdapter mMatrixCardsRecyclerAdapter;
+
     public static List<MatrixCards> matrixCardsList = new ArrayList<>();
     public static int matrixCardCounter = 0;
     public static List<String> matrixNamesList = new ArrayList<>();
@@ -56,8 +58,7 @@ public class MatrixCardsController {
     /**
      * ================================================== ADDING MATRIX CARDS ====================================================
      **/
-    public static void addMatrixCards(Context context, int position, List<List<String>> receivedMatrix,
-                                      RecyclerView mMatrixCardsRecyclerView) {
+    public static void addMatrixCards(Context context, int position, List<List<String>> receivedMatrix, RecyclerView matrixCardsRecyclerView) {
 
         //matrices should be less than 26
         if (matrixCardCounter < 26) {
@@ -80,15 +81,14 @@ public class MatrixCardsController {
                     5,
                     5,
                     14,
-                    mMatrixCardsRecyclerView.getHeight()
+                    matrixCardsRecyclerView.getHeight()
             ));
 
             matrixNamesList.remove(0);
             mMatrixCardsRecyclerAdapter.notifyItemInserted(position);
 
-            //controlling matrix add behaviour
-            if (!copiedMatrix)
-                mMatrixCardsRecyclerView.scrollToPosition(position);
+                matrixCardsRecyclerView.scrollToPosition(position);
+
             matrixCardCounter++;
         } else Toast.makeText(context, "Matrix Limit Reached", Toast.LENGTH_SHORT).show();
     }
