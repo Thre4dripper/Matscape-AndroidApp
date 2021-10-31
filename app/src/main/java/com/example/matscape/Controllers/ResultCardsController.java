@@ -10,6 +10,7 @@ import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
 import com.example.matscape.dataModels.ResultCards;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ResultCardsController {
@@ -35,6 +36,7 @@ public class ResultCardsController {
             int fromPosition=viewHolder.getAdapterPosition();
             int toPosition=target.getAdapterPosition();
 
+            Collections.swap(resultCardsList,fromPosition,toPosition);
             mResultCardsRecyclerAdapter.notifyItemMoved(fromPosition,toPosition);
 
             return true;

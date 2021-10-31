@@ -1,5 +1,6 @@
 package com.example.matscape.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,6 +30,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ResultCardsRecyclerAdapter.ResultCardsInterface {
 
     private static final String TAG = "HomeActivity";
+    public static final String NAVIGATION_FRAGMENT_KEY="navigationFragmentKey";
 
     //for navigation drawer
     DrawerLayout mDrawerLayout;
@@ -76,16 +78,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mNavigationView.setNavigationItemSelectedListener(item -> {
             int navMenuItemId = item.getItemId();
             if (navMenuItemId == R.id.action_settings) {
-                Toast.makeText(HomeActivity.this, "action_settings Clicked", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(this,NavigationActivity.class);
+                intent.putExtra(NAVIGATION_FRAGMENT_KEY,1);
+                startActivity(intent);
 
             } else if (navMenuItemId == R.id.action_htu) {
-                Toast.makeText(HomeActivity.this, "HTU Clicked", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(this,NavigationActivity.class);
+                intent.putExtra(NAVIGATION_FRAGMENT_KEY,2);
+                startActivity(intent);
 
             } else if (navMenuItemId == R.id.action_feedback) {
-                Toast.makeText(HomeActivity.this, "feedback Clicked", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(this,NavigationActivity.class);
+                intent.putExtra(NAVIGATION_FRAGMENT_KEY,3);
+                startActivity(intent);
 
             } else if (navMenuItemId == R.id.action_about) {
-                Toast.makeText(HomeActivity.this, "action_about Clicked", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(this,NavigationActivity.class);
+                intent.putExtra(NAVIGATION_FRAGMENT_KEY,4);
+                startActivity(intent);
 
             }
 
