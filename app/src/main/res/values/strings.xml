@@ -12,15 +12,23 @@
     <string name="action_about">About</string>
 
     //home page imageViews content descriptions
-    <string name="desc_addMatrix" translatable="false">Add Matrix</string>
+    <string name="desc_add_matrix">Add Matrix</string>
+    <string name="desc_add_result">Add Result Card</string>
+    <string name="desc_settings_result">Result Cards Settings</string>
+
 
     //for matrix cards
-    <string name="matrix_name_placeholder">A</string>
-    <string name="matrix_text_placeholder">0</string>
-    <string name="desc_delete">Delete matrix</string>
-    <string name="desc_copy">Copy matrix</string>
-    <string name="desc_edit">Edit matrix</string>
+    <string name="placeholder_matrix_name">A</string>
+    <string name="placeholder_matrix_text">0</string>
+    <string name="desc_delete_matrix">Delete matrix</string>
+    <string name="desc_copy_matrix">Copy matrix</string>
+    <string name="desc_edit_matrix">Edit matrix</string>
     <string name="desc_sub_matrix">Create Sub matrix</string>
+
+    //for result cards
+    <string name="desc_drag_result">Result Card Drag Handle</string>
+    <string name="desc_delete_result">Delete this result</string>
+    <string name="placeholder_result_msg">Message</string>
 
 
 </resources>

@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/drawable/ic_home_add_result.xml" value="0.22763157894736843" />
         <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/drawable/list_grad.xml" value="0.22763157894736843" />
         <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/layout/activity_main.xml" value="0.21125541125541125" />
         <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/layout/header_navigation_drawer.xml" value="0.21403508771929824" />
+        <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/layout/item_matrix_card.xml" value="0.536" />
         <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/layout/item_matrix_cards.xml" value="0.6" />
         <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/layout/item_result_card.xml" value="0.4" />
         <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/layout/matrix_cards_layout.xml" value="0.4" />

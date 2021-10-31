@@ -54,7 +54,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * ===================================== CALLBACK FOR DRAGGING MATRIX CARDS ===========================================
      **/
-    ItemTouchHelper.SimpleCallback matrixCardsTouchHelperCallback = new ItemTouchHelper.SimpleCallback(
+    ItemTouchHelper.SimpleCallback callbackMatrixCards = new ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
             0) {
 
@@ -80,6 +80,36 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
+
+    /**
+     * ===================================== CALLBACK FOR DRAGGING RESULT CARDS ===========================================
+     **/
+    ItemTouchHelper.SimpleCallback callbackResultCards = new ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+            0) {
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return false;
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            int fromPosition=viewHolder.getAdapterPosition();
+            int toPosition=target.getAdapterPosition();
+
+            mResultCardsRecyclerAdapter.notifyItemMoved(fromPosition,toPosition);
+
+            return true;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+        }
+    };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +166,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mMatrixCardsRecyclerView = findViewById(R.id.MatrixCardsRecyclerView);
         mMatrixCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        ItemTouchHelper matrixCardsTouchHelper = new ItemTouchHelper(this.matrixCardsTouchHelperCallback);
+        ItemTouchHelper matrixCardsTouchHelper = new ItemTouchHelper(this.callbackMatrixCards);
 
         mMatrixCardsRecyclerAdapter = new MatrixCardsRecyclerAdapter(this, matrixCardsList, matrixCardsTouchHelper, this);
         mMatrixCardsRecyclerView.setAdapter(mMatrixCardsRecyclerAdapter);
@@ -153,9 +183,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mResultCardsRecyclerView = findViewById(R.id.ResultCardsRecyclerView);
         mResultCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mResultCardsRecyclerAdapter = new ResultCardsRecyclerAdapter(this);
+        ItemTouchHelper resultCardsTouchHelper = new ItemTouchHelper(callbackResultCards);
+
+        mResultCardsRecyclerAdapter = new ResultCardsRecyclerAdapter(this, resultCardsTouchHelper);
         mResultCardsRecyclerView.setAdapter(mResultCardsRecyclerAdapter);
         mResultCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        resultCardsTouchHelper.attachToRecyclerView(mResultCardsRecyclerView);
     }
 
 

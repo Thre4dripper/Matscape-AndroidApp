@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/matrix_name_placeholder"
+            android:text="@string/placeholder_matrix_name"
             app:layout_constraintEnd_toStartOf="@+id/DeleteMatrixButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/MatrixCardDragButton" />
@@ -200,7 +200,7 @@
         <ImageView
             android:id="@+id/DeleteMatrixButton"
             style="@style/MatrixCardsIcons"
-            android:contentDescription="@string/desc_delete"
+            android:contentDescription="@string/desc_delete_matrix"
             android:src="@drawable/ic_mat_card_delete"
             app:layout_constraintBottom_toTopOf="@+id/CopyMatrixButton"
             app:layout_constraintEnd_toEndOf="parent"
@@ -210,7 +210,7 @@
         <ImageView
             android:id="@+id/CopyMatrixButton"
             style="@style/MatrixCardsIcons"
-            android:contentDescription="@string/desc_copy"
+            android:contentDescription="@string/desc_copy_matrix"
             android:src="@drawable/ic_mat_card_copy"
             app:layout_constraintBottom_toTopOf="@+id/SubMatrixButton"
             app:layout_constraintEnd_toEndOf="parent"
@@ -230,7 +230,7 @@
         <ImageView
             android:id="@+id/EditMatrixButton"
             style="@style/MatrixCardsIcons"
-            android:contentDescription="@string/desc_edit"
+            android:contentDescription="@string/desc_edit_matrix"
             android:src="@drawable/ic_mat_card_edit"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
