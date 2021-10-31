@@ -2,7 +2,6 @@ package com.example.matscape.Activities;
 
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -20,12 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Adapters.MatrixCardsRecyclerAdapter;
 import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
+import com.example.matscape.Controllers.MatrixCardsController;
+import com.example.matscape.Controllers.ResultCardsController;
 import com.example.matscape.R;
-import com.example.matscape.dataModels.MatrixCards;
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener, MatrixCardsRecyclerAdapter.MatrixCardsInterface {
@@ -38,78 +36,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ActionBarDrawerToggle mToggle;
 
     //for matrix cards recycler view
-    RecyclerView mMatrixCardsRecyclerView;
-    MatrixCardsRecyclerAdapter mMatrixCardsRecyclerAdapter;
-
+    public  static RecyclerView mMatrixCardsRecyclerView;
     ImageView addMatrixCardsButton;
-    List<MatrixCards> matrixCardsList = new ArrayList<>();
-    int matrixCardCounter = 0;
-    List<String> matrixNamesList = new ArrayList<>();
+
 
     //for result cards recycler view
-    RecyclerView mResultCardsRecyclerView;
-    ResultCardsRecyclerAdapter mResultCardsRecyclerAdapter;
-
-
-    /**
-     * ===================================== CALLBACK FOR DRAGGING MATRIX CARDS ===========================================
-     **/
-    ItemTouchHelper.SimpleCallback callbackMatrixCards = new ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
-            0) {
-
-        @Override
-        public boolean isLongPressDragEnabled() {
-            return false;
-        }
-
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-
-            int fromPosition = viewHolder.getAdapterPosition();
-            int toPosition = target.getAdapterPosition();
-
-            Collections.swap(matrixCardsList, fromPosition, toPosition);
-            mMatrixCardsRecyclerAdapter.notifyItemMoved(fromPosition, toPosition);
-
-            return true;
-        }
-
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
-        }
-    };
-
-    /**
-     * ===================================== CALLBACK FOR DRAGGING RESULT CARDS ===========================================
-     **/
-    ItemTouchHelper.SimpleCallback callbackResultCards = new ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP | ItemTouchHelper.DOWN,
-            0) {
-
-        @Override
-        public boolean isLongPressDragEnabled() {
-            return false;
-        }
-
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-            int fromPosition=viewHolder.getAdapterPosition();
-            int toPosition=target.getAdapterPosition();
-
-            mResultCardsRecyclerAdapter.notifyItemMoved(fromPosition,toPosition);
-
-            return true;
-        }
-
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
-        }
-    };
-
-
+    public static RecyclerView mResultCardsRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,14 +98,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mMatrixCardsRecyclerView = findViewById(R.id.MatrixCardsRecyclerView);
         mMatrixCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        ItemTouchHelper matrixCardsTouchHelper = new ItemTouchHelper(this.callbackMatrixCards);
+        ItemTouchHelper matrixCardsTouchHelper = new ItemTouchHelper(MatrixCardsController.callbackMatrixCards);
 
-        mMatrixCardsRecyclerAdapter = new MatrixCardsRecyclerAdapter(this, matrixCardsList, matrixCardsTouchHelper, this);
-        mMatrixCardsRecyclerView.setAdapter(mMatrixCardsRecyclerAdapter);
+        MatrixCardsController.mMatrixCardsRecyclerAdapter = new MatrixCardsRecyclerAdapter(getApplicationContext(),
+                MatrixCardsController.matrixCardsList,
+                matrixCardsTouchHelper,
+                this
+        );
 
+        mMatrixCardsRecyclerView.setAdapter(MatrixCardsController.mMatrixCardsRecyclerAdapter);
         matrixCardsTouchHelper.attachToRecyclerView(mMatrixCardsRecyclerView);
 
-        setMatrixNamesList();
+        MatrixCardsController.setMatrixNamesList();
     }
 
     /**
@@ -183,10 +119,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mResultCardsRecyclerView = findViewById(R.id.ResultCardsRecyclerView);
         mResultCardsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ItemTouchHelper resultCardsTouchHelper = new ItemTouchHelper(callbackResultCards);
+        ItemTouchHelper resultCardsTouchHelper = new ItemTouchHelper(ResultCardsController.callbackResultCards);
 
-        mResultCardsRecyclerAdapter = new ResultCardsRecyclerAdapter(this, resultCardsTouchHelper);
-        mResultCardsRecyclerView.setAdapter(mResultCardsRecyclerAdapter);
+        ResultCardsController.mResultCardsRecyclerAdapter = new ResultCardsRecyclerAdapter(this, resultCardsTouchHelper);
+        mResultCardsRecyclerView.setAdapter(ResultCardsController.mResultCardsRecyclerAdapter);
         mResultCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         resultCardsTouchHelper.attachToRecyclerView(mResultCardsRecyclerView);
@@ -196,22 +132,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         //when Add Matrix button is clicked
-        if (addMatrixCardsButton.equals(view)) addMatrixCards(matrixCardCounter, null);
+        if (addMatrixCardsButton.equals(view))
+            MatrixCardsController.addMatrixCards(this, MatrixCardsController.matrixCardCounter, null,
+                mMatrixCardsRecyclerView
+        );
 
     }
 
+    /**======================================== OVERRIDE METHODS FOR MATRIX CARDS ================================================**/
     @Override
     public void deleteMatrix(int position, String deletedName) {
-
       /*  new MaterialAlertDialogBuilder(this)
                 .setMessage("Do you want to Delete this Matrix")
                 .setPositiveButton("Yes", (dialogInterface, i) -> {*/
 
         //BUG
-        matrixCardsList.remove(position);
-        matrixNamesList.add(deletedName);
-        matrixCardCounter--;
-        mMatrixCardsRecyclerAdapter.notifyItemRemoved(position);
+        MatrixCardsController.matrixCardsList.remove(position);
+        MatrixCardsController.matrixNamesList.add(deletedName);
+        MatrixCardsController.matrixCardCounter--;
+        MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemRemoved(position);
           /*      })
                 .setNegativeButton("No", (dialogInterface, i) -> {
                     dialogInterface.dismiss();
@@ -224,8 +163,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void copyMatrix(int position) {
 
-        List<List<String>> originalMatrix = matrixCardsList.get(position).getMatrix();
-        addMatrixCards(position + 1, originalMatrix);
+        List<List<String>> originalMatrix = MatrixCardsController.matrixCardsList.get(position).getMatrix();
+        MatrixCardsController.addMatrixCards(this, position + 1, originalMatrix,
+                mMatrixCardsRecyclerView
+        );
 
     }
 
@@ -239,55 +180,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    /**
-     * ================================================== ADDING MATRIX CARDS ====================================================
-     **/
-    public void addMatrixCards(int position, List<List<String>> receivedMatrix) {
-        //matrices should be less than 26
-        if (matrixCardCounter < 26) {
 
-            boolean copiedMatrix = receivedMatrix != null;
-
-            //null matrix received means New matrix is adding
-            if (!copiedMatrix) {
-
-                receivedMatrix = new ArrayList<>();
-                for (int i = 0; i < 5; i++) {
-                    receivedMatrix.add(new ArrayList<>());
-                    for (int j = 0; j < 5; j++)
-                        receivedMatrix.get(i).add("0");
-                }
-            }
-
-
-            Collections.sort(matrixNamesList);
-
-            matrixCardsList.add(position, new MatrixCards(matrixNamesList.get(0),
-                    receivedMatrix,
-                    5,
-                    5,
-                    14,
-                    mMatrixCardsRecyclerView.getHeight()
-            ));
-
-            matrixNamesList.remove(0);
-
-            mMatrixCardsRecyclerAdapter.notifyItemInserted(position);
-
-            //controlling matrix add behaviour
-            if (!copiedMatrix)
-                mMatrixCardsRecyclerView.scrollToPosition(position);
-
-            matrixCardCounter++;
-
-            Log.d(TAG, position + "");
-        } else Toast.makeText(this, "Matrix Limit Reached", Toast.LENGTH_SHORT).show();
-
-    }
-
-
-    public void setMatrixNamesList() {
-        for (int i = 0; i < 26; i++)
-            matrixNamesList.add(String.valueOf((char) (i + 65)));
-    }
 }

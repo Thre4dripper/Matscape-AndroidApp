@@ -16,16 +16,18 @@ import com.example.matscape.R;
 
 public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCardsRecyclerAdapter.ViewHolder> {
 
-    Context mContext;
+
     ItemTouchHelper resultCardsTouchHelper;
     public ResultCardsRecyclerAdapter(Context context,ItemTouchHelper itemTouchHelper){
-        mContext=context;
+
         resultCardsTouchHelper=itemTouchHelper;
     }
 
     @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(mContext).inflate(R.layout.item_result_card,parent,false);
+
+        Context context=parent.getContext();
+        View view= LayoutInflater.from(context).inflate(R.layout.item_result_card,parent,false);
 
         return new ViewHolder(view);
     }

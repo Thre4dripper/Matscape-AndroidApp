@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,23 +27,23 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
 
     public static ItemTouchHelper matrixCardsTouchHelper;
     public static MatrixCardsInterface matrixCardsInterface;
-    public Context mContext;
     public List<MatrixCards> matrixCardsList;
 
 
     public MatrixCardsRecyclerAdapter(Context context, List<MatrixCards> list, ItemTouchHelper itemTouchHelper, MatrixCardsInterface matrixCardsInterface) {
-        mContext = context;
         matrixCardsList = list;
         MatrixCardsRecyclerAdapter.matrixCardsTouchHelper=itemTouchHelper;
         MatrixCardsRecyclerAdapter.matrixCardsInterface = matrixCardsInterface;
 
-        ONE_DP = mContext.getResources().getDisplayMetrics().density;
+        ONE_DP = context.getResources().getDisplayMetrics().density;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_matrix_card, parent, false);
+
+        Context context=parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.item_matrix_card, parent, false);
 
         return new ViewHolder(view);
     }
@@ -73,7 +74,7 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
         return matrixCardsList.size();
     }
 
-    public interface MatrixCardsInterface {
+    public static interface MatrixCardsInterface {
         void deleteMatrix(int position,String deletedName);
 
         void copyMatrix(int position);
