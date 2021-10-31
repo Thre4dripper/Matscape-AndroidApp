@@ -27,7 +27,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/resultCardDragButton"
-        app:layout_constraintEnd_toStartOf="@+id/imageView"
+        app:layout_constraintEnd_toStartOf="@+id/AddResultMatrixButton"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/resultCardDragButton"
         app:layout_constraintTop_toTopOf="parent" />
@@ -90,43 +90,9 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@+id/guideline3"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
-
-                <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
-
-                <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
-
-                <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
-
-                <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/linearLayout7"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/linearLayout6"
+                app:layout_constraintStart_toStartOf="@+id/guideline3"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -160,7 +126,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/linearLayout8"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/linearLayout"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout6"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -226,9 +192,43 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/guideline4"
+                app:layout_constraintEnd_toStartOf="@+id/linearLayout10"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/linearLayout8"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/guideline4"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout9"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -264,7 +264,7 @@
     </androidx.cardview.widget.CardView>
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/CopyResultButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
@@ -278,7 +278,7 @@
         android:contentDescription="@string/desc_copy_result" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/AddResultMatrixButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
@@ -288,7 +288,7 @@
 
         android:src="@drawable/ic_add_result_matrix"
         app:layout_constraintBottom_toBottomOf="@+id/DeleteResultButton"
-        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintEnd_toStartOf="@+id/CopyResultButton"
         app:layout_constraintTop_toTopOf="@+id/DeleteResultButton"
         android:contentDescription="@string/desc_add_result_matrix" />
 

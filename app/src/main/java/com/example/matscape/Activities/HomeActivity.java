@@ -206,7 +206,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void copyResult(int position, ResultCards resultCard) {
-
+    public void copyResult(int position) {
+            ResultCards resultCard=ResultCardsController.resultCardsList.get(position);
+            ResultCardsController.addResultCards(this,position+1,resultCard,mResultCardsRecyclerView);
     }
 }

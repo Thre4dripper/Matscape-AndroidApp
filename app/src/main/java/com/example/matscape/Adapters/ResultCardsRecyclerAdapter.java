@@ -69,7 +69,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
     public interface ResultCardsInterface {
         void deleteResult(int position);
-        void copyResult(int position, ResultCards resultCard);
+        void copyResult(int position);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -86,6 +86,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
             expressionRecyclerView=itemView.findViewById(R.id.ExpressionRecyclerView);
             mDeleteButton=itemView.findViewById(R.id.DeleteResultButton);
+            mCopyButton=itemView.findViewById(R.id.CopyResultButton);
             mDragButton=itemView.findViewById(R.id.resultCardDragButton);
             mMessageView=itemView.findViewById(R.id.ResultCardMessage);
 
@@ -95,12 +96,15 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             ));
 
             mDeleteButton.setOnClickListener(this);
+            mCopyButton.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             if(view==mDeleteButton)
                 resultCardsInterface.deleteResult(getAdapterPosition());
+            else if(view==mCopyButton)
+                resultCardsInterface.copyResult(getAdapterPosition());
         }
     }
 }
