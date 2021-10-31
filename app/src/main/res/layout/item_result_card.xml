@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
+    android:minHeight="60dp"
     android:background="@color/white">
 
 
@@ -18,33 +19,28 @@
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/desc_drag_result" />
 
-    <com.google.android.material.textfield.TextInputLayout
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ExpressionRecyclerView"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        android:hint="hello"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:layout_constraintBottom_toTopOf="@+id/resultCardDragButton"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/resultCardDragButton"
         app:layout_constraintEnd_toStartOf="@+id/DeleteResultButton"
         app:layout_constraintStart_toEndOf="@+id/resultCardDragButton"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/ResultCardMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/placeholder_result_msg"
+        android:textColor="#F44336"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/ExpressionRecyclerView"
+        app:layout_constraintTop_toBottomOf="@+id/ExpressionRecyclerView" />
 
     <ImageView
         android:id="@+id/DeleteResultButton"
@@ -59,4 +55,211 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="5dp"
+        android:layout_marginBottom="16dp"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ExpressionRecyclerView">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="4dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="5dp" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/linearLayout"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/linearLayout7"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout6"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/linearLayout8"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/linearLayout9"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout7"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/guideline4"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout8"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+                <TextView
+                    style="@style/MatrixCardsMatrixText"
+                    android:text="@string/placeholder_matrix_text" />
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="5dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

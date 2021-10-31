@@ -3,7 +3,6 @@ package com.example.matscape.Controllers;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,9 +46,9 @@ public class ResultCardsController {
         }
     };
 
-    public static void addResultCards(Context context,int position, ResultCards receivedCard, RecyclerView resultCardsRecyclerView){
+    public static void addResultCards(Context context, int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView){
 
-        resultCardsList.add(new ResultCards(null,
+        resultCardsList.add(new ResultCards(new ArrayList<>(),
                 null,
                 null,
                 0,

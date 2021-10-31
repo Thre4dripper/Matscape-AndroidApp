@@ -1,7 +1,6 @@
 package com.example.matscape.Controllers;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;

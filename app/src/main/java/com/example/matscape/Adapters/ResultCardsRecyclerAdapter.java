@@ -3,13 +3,14 @@ package com.example.matscape.Adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.R;
@@ -27,6 +28,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
     public  static ResultCardsInterface resultCardsInterface;
     public  static List<ResultCards> resultCardsList;
 
+    //Constructor
     public ResultCardsRecyclerAdapter(Context context,List<ResultCards> list,ItemTouchHelper itemTouchHelper,ResultCardsInterface resultCardsInterface){
 
         resultCardsList=list;
@@ -49,15 +51,14 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.mDragButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                resultCardsTouchHelper.startDrag(holder);
-                return true;
-
-            }
+        holder.mDragButton.setOnTouchListener((view, motionEvent) -> {
+            resultCardsTouchHelper.startDrag(holder);
+            return true;
         });
+
+        List<String> expression = resultCardsList.get(position).getExpression();
+        ResultCardsExpressionAdapter expressionAdapter=new ResultCardsExpressionAdapter(expression);
+        holder.expressionRecyclerView.setAdapter(expressionAdapter);
 
     }
 
@@ -75,14 +76,25 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
         ImageView mDeleteButton, mCopyButton;
         ImageView mDragButton;
+
+        RecyclerView expressionRecyclerView;
+
+        TextView mMessageView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            expressionRecyclerView=itemView.findViewById(R.id.ExpressionRecyclerView);
             mDeleteButton=itemView.findViewById(R.id.DeleteResultButton);
+            mDragButton=itemView.findViewById(R.id.resultCardDragButton);
+            mMessageView=itemView.findViewById(R.id.ResultCardMessage);
+
+            expressionRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(),
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+            ));
 
             mDeleteButton.setOnClickListener(this);
-
-            mDragButton=itemView.findViewById(R.id.resultCardDragButton);
         }
 
         @Override

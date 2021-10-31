@@ -53,11 +53,11 @@
             android:contentDescription="@string/desc_settings_result"
             android:elevation="12dp"
             android:focusable="true"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_home_add_result"
             app:layout_constraintBottom_toBottomOf="@+id/cardView"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/MatrixCardsRecyclerView"
             tools:ignore="UnusedAttribute" />
 
