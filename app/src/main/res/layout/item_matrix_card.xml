@@ -35,19 +35,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/placeholder_matrix_name"
-            app:layout_constraintEnd_toStartOf="@+id/DeleteMatrixButton"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toBottomOf="@+id/MatrixCardDragButton" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="12dp" />
 
         <LinearLayout
             android:id="@+id/linearLayout1"
             style="@style/MatrixCardsLinearLayouts"
-            android:layout_marginStart="12dp"
-            app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/linearLayout2">
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/MatrixName"
+            app:layout_constraintVertical_bias="0.3">
 
             <TextView
                 android:id="@+id/MatrixCardTextView11"
@@ -74,11 +81,12 @@
         <LinearLayout
             android:id="@+id/linearLayout2"
             style="@style/MatrixCardsLinearLayouts"
-            app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/linearLayout1"
-            app:layout_constraintTop_toTopOf="@+id/linearLayout3">
+            app:layout_constraintTop_toBottomOf="@+id/MatrixName"
+            app:layout_constraintVertical_bias="0.3">
 
             <TextView
                 android:id="@+id/MatrixCardTextView12"
@@ -105,11 +113,12 @@
         <LinearLayout
             android:id="@+id/linearLayout3"
             style="@style/MatrixCardsLinearLayouts"
-            app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/linearLayout4"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/linearLayout2"
-            app:layout_constraintTop_toTopOf="@+id/linearLayout4">
+            app:layout_constraintTop_toBottomOf="@+id/MatrixName"
+            app:layout_constraintVertical_bias="0.3">
 
             <TextView
                 android:id="@+id/MatrixCardTextView13"
@@ -136,11 +145,12 @@
         <LinearLayout
             android:id="@+id/linearLayout4"
             style="@style/MatrixCardsLinearLayouts"
-            app:layout_constraintBottom_toBottomOf="@+id/linearLayout5"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/linearLayout5"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/linearLayout3"
-            app:layout_constraintTop_toTopOf="@+id/linearLayout5">
+            app:layout_constraintTop_toBottomOf="@+id/MatrixName"
+            app:layout_constraintVertical_bias="0.3">
 
             <TextView
                 android:id="@+id/MatrixCardTextView14"
@@ -167,9 +177,8 @@
         <LinearLayout
             android:id="@+id/linearLayout5"
             style="@style/MatrixCardsLinearLayouts"
-            android:layout_marginEnd="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/DeleteMatrixButton"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/linearLayout4"
             app:layout_constraintTop_toBottomOf="@+id/MatrixName"
@@ -196,6 +205,14 @@
                 style="@style/MatrixCardsMatrixText" />
 
         </LinearLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="36dp" />
+
 
         <ImageView
             android:id="@+id/DeleteMatrixButton"
