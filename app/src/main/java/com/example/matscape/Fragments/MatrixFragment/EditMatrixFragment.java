@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +95,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                 if(view==matrixFields[i][j]) {
                     if(b)
                         matrixFieldLayouts[i][j].setHint((i+1)+""+(j+1));
-                    else
+                    else if(TextUtils.isEmpty(matrixFields[i][j].getText()))
                         matrixFieldLayouts[i][j].setHint("0");
                 }
         }
