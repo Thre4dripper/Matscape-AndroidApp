@@ -1,4 +1,4 @@
-package com.example.matscape.Fragments;
+package com.example.matscape.Fragments.NavigationFragments;
 
 import android.os.Bundle;
 
@@ -17,7 +17,7 @@ public class HTUFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_h_t_u, container, false);
+        View view=inflater.inflate(R.layout.fragment_nav_htu, container, false);
         return view;
     }
 }

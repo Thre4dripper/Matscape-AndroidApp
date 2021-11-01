@@ -22,6 +22,8 @@ public class MatrixCardsController {
 
     public static List<MatrixCards> matrixCardsList = new ArrayList<>();
     public static int matrixCardCounter = 0;
+
+    //TODO this list will accessed by edit matrix name spinner
     public static List<String> matrixNamesList = new ArrayList<>();
 
     /**

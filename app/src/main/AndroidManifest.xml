@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Matscape">
         <activity
+            android:name=".Activities.ChangeMatrixActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.NavigationActivity"
             android:exported="false" />
         <activity

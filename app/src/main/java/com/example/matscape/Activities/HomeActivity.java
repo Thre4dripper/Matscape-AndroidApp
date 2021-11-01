@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -30,7 +30,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ResultCardsRecyclerAdapter.ResultCardsInterface {
 
     private static final String TAG = "HomeActivity";
+
     public static final String NAVIGATION_FRAGMENT_KEY="navigationFragmentKey";
+    public static final String CHANGE_MATRIX_ACTIVITY_KEY="changeMatrixActivityKey";
 
     //for navigation drawer
     DrawerLayout mDrawerLayout;
@@ -49,7 +51,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home);
 
         mToolbar = findViewById(R.id.Toolbar);
         addMatrixCardsButton = findViewById(R.id.addMatrixCardButton);
@@ -202,7 +204,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void editMatrix(int position) {
-
+        Intent intent=new Intent(this,ChangeMatrixActivity.class);
+        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY,1);
+        startActivity(intent);
     }
 
 

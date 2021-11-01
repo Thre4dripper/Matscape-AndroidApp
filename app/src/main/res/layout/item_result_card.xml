@@ -286,7 +286,7 @@
         android:clickable="true"
         android:focusable="true"
 
-        android:src="@drawable/ic_add_result_matrix"
+        android:src="@drawable/ic_result_add_matrix"
         app:layout_constraintBottom_toBottomOf="@+id/DeleteResultButton"
         app:layout_constraintEnd_toStartOf="@+id/CopyResultButton"
         app:layout_constraintTop_toTopOf="@+id/DeleteResultButton"

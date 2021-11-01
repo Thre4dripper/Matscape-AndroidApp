@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
+    //for matrix card icons
     <style name="MatrixCardsIcons">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -10,6 +11,7 @@
         <item name="android:focusable">true</item>
     </style>
 
+    //for matrix card LL(s)
     <style name="MatrixCardsLinearLayouts">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -17,6 +19,7 @@
         <item name="android:gravity">center</item>
     </style>
 
+    //for matrix card text
     <style name="MatrixCardsMatrixText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -24,5 +27,21 @@
         <item name="android:layout_marginStart">4dp</item>
         <item name="android:layout_marginEnd">4dp</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+    //for ChangeMatrix linear layouts
+    <style name="ChangeMatrixLinearLayouts">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    //for ChangeMatrix text input layouts
+    <style name="ChangeMatrixMaterialFields">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:inputType">numberSigned</item>
     </style>
 </resources>
