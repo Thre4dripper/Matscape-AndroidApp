@@ -23,6 +23,10 @@ public class MatrixCards {
         return matrixName;
     }
 
+    public void setMatrixName(String matrixName) {
+        this.matrixName = matrixName;
+    }
+
     public List<List<String>> getMatrix() {
         return matrix;
     }

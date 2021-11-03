@@ -5,6 +5,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,20 +17,24 @@ import com.example.matscape.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Collections;
 import java.util.List;
 
-public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener {
+public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener{
 
     private static final String TAG = "EditMatrixFragment";
     //boolean for checking changed information before returning back
-    public static boolean isBackSafe = false;
+    //TODO back check to be handled
+    public static boolean isBackSafe = true;
     TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
     TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
+    AutoCompleteTextView mNamesSpinner;
     /*
     Only position is req for getting all the information from matrix cards
      */
     int matrixCardIndex;
 
+    String currentMatrixName;
 
     //CONSTRUCTOR
     public EditMatrixFragment(int matrixCardIndex) {
@@ -40,10 +47,12 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_matrix_edit, container, false);
-
+        mNamesSpinner =view.findViewById(R.id.MatrixNamesSpinner);
         BindMatrixFields(view);
 
         setMatrixElements(matrixCardIndex);
+        setMatrixName(matrixCardIndex);
+
         return view;
     }
 
@@ -144,6 +153,42 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                     matrixFields[i][j].setText(matrixElementsList.get(i).get(j));
             }
         }
+    }
+
+    public void setMatrixName(int position){
+
+        currentMatrixName = MatrixCardsController.matrixCardsList.get(position).getMatrixName();
+        mNamesSpinner.setText(currentMatrixName);
+
+        ArrayAdapter<String> namesAdapter=new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1,MatrixCardsController.matrixNamesList);
+        mNamesSpinner.setAdapter(namesAdapter);
+
+        //Item Selected Listener
+        mNamesSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                /*
+                 * All Operations are working directly on Original Names List in MatrixCardsController
+                 *
+                 * 1 - Removed selected name from Names List
+                 * 2 - Added previously selected name in Names List
+                 * 3 - Sorted List Alphabetically
+                 * 4 - Updated currentName Variable
+                 * 5 - Updated Matrix Name in CardsList Too
+                 * 6 - Notified Matrix Cards RecyclerAdapter to reflect back changes in the Recycler View
+                 */
+
+                MatrixCardsController.matrixNamesList.remove(i);
+                MatrixCardsController.matrixNamesList.add(currentMatrixName);
+                Collections.sort(MatrixCardsController.matrixNamesList);
+
+                currentMatrixName=mNamesSpinner.getText().toString();
+
+                MatrixCardsController.matrixCardsList.get(position).setMatrixName(currentMatrixName);
+                MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(position);
+
+            }
+        });
 
     }
 }

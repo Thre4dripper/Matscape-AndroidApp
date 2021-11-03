@@ -23,6 +23,7 @@ import com.example.matscape.R;
 import com.example.matscape.dataModels.ResultCards;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.Collections;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
@@ -182,6 +183,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         MatrixCardsController.matrixNamesList.add(deletedName);
         MatrixCardsController.matrixCardCounter--;
         MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemRemoved(position);
+
+        //sorting Names List after adding 'deletedName' name from Matrix Cards
+        Collections.sort(MatrixCardsController.matrixNamesList);
           /*      })
                 .setNegativeButton("No", (dialogInterface, i) -> {
                     dialogInterface.dismiss();
