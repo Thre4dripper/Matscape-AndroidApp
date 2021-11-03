@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,22 +16,22 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
 
-public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener, View.OnClickListener {
+public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener {
 
     private static final String TAG = "EditMatrixFragment";
-
-    ImageView mBackButton, mSaveButton;
-    EditMatrixFragmentBackInterface mBackInterface;
+    //boolean for checking changed information before returning back
+    public static boolean isBackSafe = false;
     TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
     TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
-
-    //Only position is req for getting all the information from matrix cards
+    /*
+    Only position is req for getting all the information from matrix cards
+     */
     int matrixCardIndex;
 
+
     //CONSTRUCTOR
-    public EditMatrixFragment(int matrixCardIndex, EditMatrixFragmentBackInterface backPressed) {
+    public EditMatrixFragment(int matrixCardIndex) {
         this.matrixCardIndex = matrixCardIndex;
-        this.mBackInterface = backPressed;
     }
 
 
@@ -41,12 +40,6 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_matrix_edit, container, false);
-
-        mBackButton = view.findViewById(R.id.ChangeMatrixActivityBack);
-        mSaveButton = view.findViewById(R.id.ChangeMatrixActivitySave);
-
-        mBackButton.setOnClickListener(this);
-        mSaveButton.setOnClickListener(this);
 
         BindMatrixFields(view);
 
@@ -73,16 +66,6 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         }
     }
 
-
-    /**
-     * ======================================= FOR HANDLING ALL THE ONCLICK EVENTS ======================================
-     **/
-    @Override
-    public void onClick(View view) {
-        if (view == mBackButton) {
-            mBackInterface.backPressed();
-        }
-    }
 
     /**
      * =================================== METHOD FOR INITIALISING TEXT FIELDS AND LAYOUTS ====================================
@@ -157,14 +140,10 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         //Omitting zeroes
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                if(!matrixElementsList.get(i).get(j).equals("0"))
-                matrixFields[i][j].setText(matrixElementsList.get(i).get(j));
+                if (!matrixElementsList.get(i).get(j).equals("0"))
+                    matrixFields[i][j].setText(matrixElementsList.get(i).get(j));
             }
         }
 
-    }
-
-    public interface EditMatrixFragmentBackInterface {
-        void backPressed();
     }
 }
