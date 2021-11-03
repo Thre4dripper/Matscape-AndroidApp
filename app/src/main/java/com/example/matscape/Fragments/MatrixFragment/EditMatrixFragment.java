@@ -1,31 +1,82 @@
 package com.example.matscape.Fragments.MatrixFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.matscape.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener, View.OnClickListener {
 
     private static final String TAG = "EditMatrixFragment";
 
+    ImageView backButton,saveButton;
+    EditMatrixFragmentBackInterface backInterface;
+
     TextInputLayout[][] matrixFieldLayouts=new TextInputLayout[5][5];
     TextInputEditText[][] matrixFields=new TextInputEditText[5][5];
+    List<List<String>> matrixElements=new ArrayList<>();
 
+    //initialised interface for back pressing
+    public EditMatrixFragment(EditMatrixFragmentBackInterface backPressed){
+        this.backInterface =backPressed;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_matrix_edit, container, false);
+
+        backButton=view.findViewById(R.id.ChangeMatrixActivityBack);
+        saveButton=view.findViewById(R.id.ChangeMatrixActivitySave);
+
+        backButton.setOnClickListener(this);
+        saveButton.setOnClickListener(this);
+
+        BindMatrixFields(view);
+
+        return view;
+    }
+
+    /**======================================= FOR TRIGGERING MATRIX FIELDS WHEN CLICKED ======================================**/
+    @Override
+    public void onFocusChange(View view, boolean b) {
+
+        for(int i=0;i<5;i++){
+            for(int j=0;j<5;j++)
+                if(view==matrixFields[i][j]) {
+                    if(b)
+                        matrixFieldLayouts[i][j].setHint((i+1)+""+(j+1));
+                    else if(TextUtils.isEmpty(matrixFields[i][j].getText()))
+                        matrixFieldLayouts[i][j].setHint("0");
+                    break;
+                }
+        }
+    }
+
+    /**======================================= FOR HANDLING ALL THE ONCLICK EVENTS ======================================**/
+    @Override
+    public void onClick(View view) {
+        if(view==backButton){
+            backInterface.backPressed();
+        }
+    }
+
+    public void BindMatrixFields(@NonNull View view){
 
         matrixFieldLayouts[0][0]=view.findViewById(R.id.ChangeMatrixLayout11);
         matrixFieldLayouts[0][1]=view.findViewById(R.id.ChangeMatrixLayout12);
@@ -82,22 +133,14 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
 
         for(int i=0;i<5;i++)
             for(int j=0;j<5;j++)
-                    matrixFields[i][j].setOnFocusChangeListener(this);
-
-        return view;
+                matrixFields[i][j].setOnFocusChangeListener(this);
     }
 
-    @Override
-    public void onFocusChange(View view, boolean b) {
+    public void setMatrixElements(){
 
-        for(int i=0;i<5;i++){
-            for(int j=0;j<5;j++)
-                if(view==matrixFields[i][j]) {
-                    if(b)
-                        matrixFieldLayouts[i][j].setHint((i+1)+""+(j+1));
-                    else if(TextUtils.isEmpty(matrixFields[i][j].getText()))
-                        matrixFieldLayouts[i][j].setHint("0");
-                }
-        }
+    }
+
+    public interface EditMatrixFragmentBackInterface {
+        void backPressed();
     }
 }

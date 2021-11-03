@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.example.matscape.Fragments.MatrixFragment.EditMatrixFragment;
 import com.example.matscape.R;
 
-public class ChangeMatrixActivity extends AppCompatActivity {
+public class ChangeMatrixActivity extends AppCompatActivity implements EditMatrixFragment.EditMatrixFragmentBackInterface {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,7 @@ public class ChangeMatrixActivity extends AppCompatActivity {
         Fragment fragment = null;
         switch (fragmentId){
             case 1:
-                fragment=new EditMatrixFragment();
+                fragment=new EditMatrixFragment(this);
                 break;
 
             case 2:
@@ -31,6 +31,13 @@ public class ChangeMatrixActivity extends AppCompatActivity {
                 break;
         }
 
+        assert fragment != null;
         getSupportFragmentManager().beginTransaction().replace(R.id.ChangeMatrixActivityFrameLayout,fragment).commit();
+    }
+
+/**========================================== BACK PRESSING FROM THE ALL FRAGMENTS =============================================**/
+    @Override
+    public void backPressed() {
+        super.onBackPressed();
     }
 }
