@@ -29,20 +29,29 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    //for ChangeMatrix linear layouts
-    <style name="ChangeMatrixLinearLayouts">
+    //for EditMatrixFragment linear layouts
+    <style name="EditMatrixFragmentLinearLayouts">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
         <item name="android:gravity">center</item>
     </style>
 
-    //for ChangeMatrix text input layouts
-    <style name="ChangeMatrixMaterialFields">
+    //for EditMatrixFragment text input layouts
+    <style name="EditMatrixFragmentMaterialFields">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">2dp</item>
         <item name="android:inputType">numberSigned</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    //for EditMatrixFragment material buttons
+    <style name="EditMatrixFragmentMaterialButtons">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">10dp</item>
     </style>
 </resources>

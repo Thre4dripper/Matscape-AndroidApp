@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,7 +21,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.Collections;
 import java.util.List;
 
-public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener{
+public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener,
+        AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = "EditMatrixFragment";
     //boolean for checking changed information before returning back
@@ -29,6 +31,9 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
     TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
     AutoCompleteTextView mNamesSpinner;
+
+    SeekBar mRowsSeekbar, mColumnsSeekbar;
+    int rows, columns;
     /*
     Only position is req for getting all the information from matrix cards
      */
@@ -47,18 +52,20 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_matrix_edit, container, false);
-        mNamesSpinner =view.findViewById(R.id.MatrixNamesSpinner);
+        mNamesSpinner = view.findViewById(R.id.MatrixNamesSpinner);
+        mRowsSeekbar = view.findViewById(R.id.EditMatrixRowsSeekbar);
+        mColumnsSeekbar = view.findViewById(R.id.EditMatrixColumnsSeekBar);
+
         BindMatrixFields(view);
 
         setMatrixElements(matrixCardIndex);
-        setMatrixName(matrixCardIndex);
 
         return view;
     }
 
 
     /**
-     * ======================================= FOR TRIGGERING MATRIX FIELDS WHEN CLICKED ======================================
+     * ======================================= OVERRIDE METHOD FOR MATERIAL FIELDS ======================================
      **/
     @Override
     public void onFocusChange(View view, boolean b) {
@@ -73,6 +80,55 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                     break;
                 }
         }
+    }
+
+
+    /**
+     * ============================================ OVERRIDE METHOD FOR SPINNER  =============================================
+     **/
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        /*
+         * All Operations are working directly on Original Names List in MatrixCardsController
+         *
+         * 1 - Removed selected name from Names List
+         * 2 - Added previously selected name in Names List
+         * 3 - Sorted List Alphabetically
+         * 4 - Updated currentName Variable
+         * 5 - Updated Matrix Name in CardsList Too
+         * 6 - Notified Matrix Cards RecyclerAdapter to reflect back changes in the Recycler View
+         */
+        MatrixCardsController.matrixNamesList.remove(i);
+        MatrixCardsController.matrixNamesList.add(currentMatrixName);
+
+        Collections.sort(MatrixCardsController.matrixNamesList);
+
+        currentMatrixName = mNamesSpinner.getText().toString();
+
+        MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixName(currentMatrixName);
+        MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
+    }
+
+    /**
+     * ============================================ OVERRIDE METHOD FOR SEEKBARS =================================================
+     **/
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+        if (seekBar == mRowsSeekbar) rows = mRowsSeekbar.getProgress() + 1;
+        else if (seekBar == mColumnsSeekbar) columns = mColumnsSeekbar.getProgress() + 1;
+
+        changeMatrixSize();
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 
 
@@ -135,8 +191,10 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         matrixFields[4][4] = view.findViewById(R.id.ChangeMatrixField55);
 
         for (int i = 0; i < 5; i++)
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 5; j++) {
                 matrixFields[i][j].setOnFocusChangeListener(this);
+                matrixFields[i][j].setShowSoftInputOnFocus(false);
+            }
     }
 
     /**
@@ -153,42 +211,59 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                     matrixFields[i][j].setText(matrixElementsList.get(i).get(j));
             }
         }
+
+        setMatrixName(matrixPosition);
     }
 
-    public void setMatrixName(int position){
+    /**
+     * ==================================== METHOD FOR SETTING MATRIX NAMES TO SPINNER ========================================
+     **/
+    public void setMatrixName(int matrixPosition) {
 
-        currentMatrixName = MatrixCardsController.matrixCardsList.get(position).getMatrixName();
+        currentMatrixName = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixName();
         mNamesSpinner.setText(currentMatrixName);
 
-        ArrayAdapter<String> namesAdapter=new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1,MatrixCardsController.matrixNamesList);
+        ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, MatrixCardsController.matrixNamesList);
         mNamesSpinner.setAdapter(namesAdapter);
+        mNamesSpinner.setOnItemClickListener(this);
 
-        //Item Selected Listener
-        mNamesSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                /*
-                 * All Operations are working directly on Original Names List in MatrixCardsController
-                 *
-                 * 1 - Removed selected name from Names List
-                 * 2 - Added previously selected name in Names List
-                 * 3 - Sorted List Alphabetically
-                 * 4 - Updated currentName Variable
-                 * 5 - Updated Matrix Name in CardsList Too
-                 * 6 - Notified Matrix Cards RecyclerAdapter to reflect back changes in the Recycler View
-                 */
+        setSeekBars(matrixPosition);
+    }
 
-                MatrixCardsController.matrixNamesList.remove(i);
-                MatrixCardsController.matrixNamesList.add(currentMatrixName);
-                Collections.sort(MatrixCardsController.matrixNamesList);
+    /**
+     * =================================================== METHOD FOR SETTING SEEKBARS  ============================================
+     **/
+    public void setSeekBars(int matrixPosition) {
+        rows = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixRows();
+        columns = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixColumns();
 
-                currentMatrixName=mNamesSpinner.getText().toString();
+        mRowsSeekbar.setProgress(rows - 1);
+        mColumnsSeekbar.setProgress(columns - 1);
 
-                MatrixCardsController.matrixCardsList.get(position).setMatrixName(currentMatrixName);
-                MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(position);
+        changeMatrixSize();
 
+        mRowsSeekbar.setOnSeekBarChangeListener(this);
+        mColumnsSeekbar.setOnSeekBarChangeListener(this);
+    }
+
+    /**
+     * ================================================ METHOD FOR CHANGING MATRIX SIZE  ===========================================
+     **/
+    public void changeMatrixSize() {
+
+        //resetting visibility
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                matrixFieldLayouts[i][j].setVisibility(View.GONE);
+                matrixFields[i][j].setVisibility(View.GONE);
             }
-        });
+        }
 
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                matrixFieldLayouts[i][j].setVisibility(View.VISIBLE);
+                matrixFields[i][j].setVisibility(View.VISIBLE);
+            }
+        }
     }
 }

@@ -35,7 +35,14 @@
     //for ChangeMatrix Activity
     <string name="desc_back">Go Back</string>
     <string name="desc_save">Save Changes</string>
+
+    //for EditMatrixFragment
     <string name="hint_textInputLayout">0</string>
+    <string name="hint_spinner">Name</string>
+    <string name="text_plus">+</string>
+    <string name="text_minus">-</string>
+    <string name="text_rows">Rows</string>
+    <string name="text_columns">Columns</string>
 
 
 </resources>
