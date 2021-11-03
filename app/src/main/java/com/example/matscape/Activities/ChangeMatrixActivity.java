@@ -17,13 +17,15 @@ public class ChangeMatrixActivity extends AppCompatActivity implements EditMatri
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_matrix);
 
-        Intent intent=getIntent();
+        Intent receivedIntent=getIntent();
 
-        int fragmentId=intent.getIntExtra(HomeActivity.CHANGE_MATRIX_ACTIVITY_KEY,-1);
+        int fragmentId=receivedIntent.getIntExtra(HomeActivity.CHANGE_MATRIX_ACTIVITY_KEY,-1);
+        int matrixCardIndex=receivedIntent.getIntExtra(HomeActivity.MATRIX_CARD_POSITION_KEY, -1);
+
         Fragment fragment = null;
         switch (fragmentId){
             case 1:
-                fragment=new EditMatrixFragment(this);
+                fragment=new EditMatrixFragment(matrixCardIndex,this);
                 break;
 
             case 2:

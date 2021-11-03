@@ -33,6 +33,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     public static final String NAVIGATION_FRAGMENT_KEY="navigationFragmentKey";
     public static final String CHANGE_MATRIX_ACTIVITY_KEY="changeMatrixActivityKey";
+    public static final String MATRIX_CARD_POSITION_KEY ="matrixElementsSendingKey";
 
     //for navigation drawer
     DrawerLayout mDrawerLayout;
@@ -206,6 +207,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void editMatrix(int position) {
         Intent intent=new Intent(this,ChangeMatrixActivity.class);
         intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY,1);
+        Bundle bundle=new Bundle();
+        intent.putExtra(MATRIX_CARD_POSITION_KEY, position);
         startActivity(intent);
     }
 
