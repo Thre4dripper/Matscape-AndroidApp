@@ -18,6 +18,7 @@ import com.example.matscape.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,24 +29,39 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     //boolean for checking changed information before returning back
     //TODO back check to be handled
     public static boolean isBackSafe = true;
-    TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
-    TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
-    AutoCompleteTextView mNamesSpinner;
-
-    SeekBar mRowsSeekbar, mColumnsSeekbar;
-    int rows, columns;
+    public static int rows, columns;
     /*
     Only position is req for getting all the information from matrix cards
      */
-    int matrixCardIndex;
-
-    String currentMatrixName;
+    public static int matrixCardIndex;
+    public static String currentMatrixName;
+    TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
+    TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
+    AutoCompleteTextView mNamesSpinner;
+    SeekBar mRowsSeekbar, mColumnsSeekbar;
 
     //CONSTRUCTOR
     public EditMatrixFragment(int matrixCardIndex) {
-        this.matrixCardIndex = matrixCardIndex;
+        EditMatrixFragment.matrixCardIndex = matrixCardIndex;
     }
 
+    public static void SaveMatrix() {
+        List<List<String>> matrix = new ArrayList<>();
+
+        for (int i = 0; i < rows; i++) {
+            matrix.add(new ArrayList<>());
+            for (int j = 0; j < columns; j++) {
+                matrix.get(i).add("0");
+            }
+        }
+
+        MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixName(currentMatrixName);
+        MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixRows(rows);
+        MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixColumns(columns);
+        MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrix(matrix);
+
+        MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,11 +74,12 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
 
         BindMatrixFields(view);
 
+        setSeekBars(matrixCardIndex);
         setMatrixElements(matrixCardIndex);
+        setMatrixName(matrixCardIndex);
 
         return view;
     }
-
 
     /**
      * ======================================= OVERRIDE METHOD FOR MATERIAL FIELDS ======================================
@@ -81,7 +98,6 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                 }
         }
     }
-
 
     /**
      * ============================================ OVERRIDE METHOD FOR SPINNER  =============================================
@@ -105,6 +121,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
 
         currentMatrixName = mNamesSpinner.getText().toString();
 
+        //TODO fix this bug
         MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixName(currentMatrixName);
         MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
     }
@@ -113,10 +130,10 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      * ============================================ OVERRIDE METHOD FOR SEEKBARS =================================================
      **/
     @Override
-    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
 
-        if (seekBar == mRowsSeekbar) rows = mRowsSeekbar.getProgress() + 1;
-        else if (seekBar == mColumnsSeekbar) columns = mColumnsSeekbar.getProgress() + 1;
+        if (seekBar == mRowsSeekbar) rows = progress + 1;
+        else if (seekBar == mColumnsSeekbar) columns = progress + 1;
 
         changeMatrixSize();
     }
@@ -130,7 +147,6 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
-
 
     /**
      * =================================== METHOD FOR INITIALISING TEXT FIELDS AND LAYOUTS ====================================
@@ -205,14 +221,13 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         List<List<String>> matrixElementsList = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrix();
 
         //Omitting zeroes
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
                 if (!matrixElementsList.get(i).get(j).equals("0"))
                     matrixFields[i][j].setText(matrixElementsList.get(i).get(j));
             }
         }
 
-        setMatrixName(matrixPosition);
     }
 
     /**
@@ -226,8 +241,6 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, MatrixCardsController.matrixNamesList);
         mNamesSpinner.setAdapter(namesAdapter);
         mNamesSpinner.setOnItemClickListener(this);
-
-        setSeekBars(matrixPosition);
     }
 
     /**

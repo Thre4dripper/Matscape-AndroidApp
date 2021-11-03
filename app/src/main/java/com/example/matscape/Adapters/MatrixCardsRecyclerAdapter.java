@@ -59,12 +59,33 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
         matrixCardsParams.setMargins((int) ONE_DP * 12, (int) ONE_DP * 12, (int) ONE_DP * 12, (int) ONE_DP * 12);
         holder.mCardView.setLayoutParams(matrixCardsParams);
 
-        holder.mMatrixName.setText(matrixCardsList.get(position).getMatrixName());
-
         holder.mDragButton.setOnTouchListener((view, motionEvent) -> {
             matrixCardsTouchHelper.startDrag(holder);
             return true;
         });
+
+        //matrix name
+        String matrixName=matrixCardsList.get(position).getMatrixName();
+        holder.mMatrixName.setText(matrixName);
+
+        //matrix dimensions
+        int rows=matrixCardsList.get(position).getMatrixRows();
+        int columns=matrixCardsList.get(position).getMatrixColumns();
+
+        //matrix elements
+        List<List<String>> matrix=matrixCardsList.get(position).getMatrix();
+
+        //resetting visibility of all text fields
+        for(int i=0;i<5;i++)
+            for(int j=0;j<5;j++)
+                holder.mMatrixTextViews[i][j].setVisibility(View.GONE);
+
+        //setting visibility and matrix elements to text fields
+        for(int i=0;i<rows;i++)
+            for(int j=0;j<columns;j++) {
+                holder.mMatrixTextViews[i][j].setVisibility(View.VISIBLE);
+                holder.mMatrixTextViews[i][j].setText(matrix.get(i).get(j));
+            }
 
     }
 

@@ -31,12 +31,24 @@ public class MatrixCards {
         return matrix;
     }
 
+    public void setMatrix(List<List<String>> matrix) {
+        this.matrix = matrix;
+    }
+
     public int getMatrixRows() {
         return matrixRows;
     }
 
+    public void setMatrixRows(int matrixRows) {
+        this.matrixRows = matrixRows;
+    }
+
     public int getMatrixColumns() {
         return matrixColumns;
+    }
+
+    public void setMatrixColumns(int matrixColumns) {
+        this.matrixColumns = matrixColumns;
     }
 
     public double getTextSize() {
