@@ -23,6 +23,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener,
         AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
@@ -42,6 +43,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     private AutoCompleteTextView mNamesSpinner;
     private SeekBar mRowsSeekbar, mColumnsSeekbar;
 
+    //Local variables for manipulating edit matrix UI
     private int currentRow, currentColumn;
 
     //CONSTRUCTOR
@@ -163,15 +165,71 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
 
     }
 
+    /**
+     * =========================================== OVERRIDE METHOD FOR NUMPAD BUTTONS ===========================================
+     **/
     @Override
     public void onClick(View view) {
 
-        if (view == numpadUp) currentRow--;
-        else if (view == numpadDown) currentRow++;
-        else if (view == numpadLeft) currentColumn--;
-        else if (view == numpadRight) currentColumn++;
+        if (view == numpadUp) {
+            currentRow--;
+            moveFocus();
+        } else if (view == numpadDown) {
+            currentRow++;
+            moveFocus();
+        } else if (view == numpadLeft) {
+            currentColumn--;
+            moveFocus();
+        } else if (view == numpadRight) {
+            currentColumn++;
+            moveFocus();
+        } else {
+            int cursorPosition = matrixFields[currentRow][currentColumn].getSelectionStart();
+            String currentText = Objects.requireNonNull(matrixFields[currentRow][currentColumn].getText()).toString();
 
-        moveFocus();
+            //'.' button Onclick
+            if (view == numpadMaterialButtons[9]) {
+
+                matrixFields[currentRow][currentColumn].setText(String.format("%s0%s",
+                        currentText.substring(0, cursorPosition),
+                        currentText.substring(cursorPosition)));
+
+                matrixFields[currentRow][currentColumn].setSelection(cursorPosition + 1);
+            }
+            //'0' button Onclick
+            else if (view == numpadMaterialButtons[10] &&
+                    !Objects.requireNonNull(matrixFields[currentRow][currentColumn].getText()).toString().contains(".")) {
+
+                matrixFields[currentRow][currentColumn].setText(String.format("%s.%s",
+                        currentText.substring(0, cursorPosition),
+                        currentText.substring(cursorPosition)));
+
+                matrixFields[currentRow][currentColumn].setSelection(cursorPosition + 1);
+            }
+            //'-' button Onclick
+            else if (view == numpadMaterialButtons[11]
+                    && (TextUtils.isEmpty(matrixFields[currentRow][currentColumn].getText()) || cursorPosition == 0)) {
+
+                matrixFields[currentRow][currentColumn].setText(String.format("%s-%s",
+                        currentText.substring(0, cursorPosition),
+                        currentText.substring(cursorPosition)));
+
+                matrixFields[currentRow][currentColumn].setSelection(cursorPosition + 1);
+            }
+            //'1-9' buttons Onclick
+            else for (int i = 0; i < 9; i++) {
+                    if (view == numpadMaterialButtons[i]) {
+
+                        matrixFields[currentRow][currentColumn].setText(String.format("%s%s%s",
+                                currentText.substring(0, cursorPosition), i + 1,
+                                currentText.substring(cursorPosition)));
+
+                        matrixFields[currentRow][currentColumn].setSelection(cursorPosition + 1);
+                    }
+                }
+
+
+        }
 
     }
 
@@ -285,8 +343,11 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         //Omitting zeroes
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                if (!matrixElementsList.get(i).get(j).equals("0"))
+                if (!matrixElementsList.get(i).get(j).equals("0")) {
                     matrixFields[i][j].setText(matrixElementsList.get(i).get(j));
+                    matrixFieldLayouts[i][j].setHint((i + 1) + "" + (j + 1));
+                }
+
             }
         }
 
@@ -348,6 +409,9 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         }
     }
 
+    /**
+     * ================================================ METHOD FOR MOVING FOCUS  ===========================================
+     **/
     public void moveFocus() {
         if (currentColumn > columns - 1) {
 
