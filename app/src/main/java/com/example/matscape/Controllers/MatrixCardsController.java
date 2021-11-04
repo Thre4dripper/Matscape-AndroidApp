@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Adapters.MatrixCardsRecyclerAdapter;
 import com.example.matscape.dataModels.MatrixCards;
+import com.example.matscape.dataModels.ResultCards;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,28 +61,36 @@ public class MatrixCardsController {
     /**
      * ================================================== ADDING MATRIX CARDS ====================================================
      **/
-    public static void addMatrixCards(Context context, int position, List<List<String>> receivedMatrix, RecyclerView matrixCardsRecyclerView) {
+    public static void addMatrixCards(Context context, int position, MatrixCards matrixCard, RecyclerView matrixCardsRecyclerView) {
 
         //matrices should be less than 26
         if (matrixCardCounter < 26) {
+            List<List<String>> matrix;
+            int rows=5,columns=5;
 
-            boolean copiedMatrix = receivedMatrix != null;
-            //null matrix received means New matrix is adding
-            if (!copiedMatrix) {
-                receivedMatrix = new ArrayList<>();
+            boolean copiedCard = matrixCard != null;
 
+            //initialises variables when copied card is received
+            if (copiedCard) {
+                matrix=matrixCard.getMatrix();
+                rows=matrixCard.getMatrixRows();
+                columns=matrixCard.getMatrixColumns();
+            }
+            else {
+                //null matrixCard received means New matrix is adding
+                matrix=new ArrayList<>();
                 for (int i = 0; i < 5; i++) {
-                    receivedMatrix.add(new ArrayList<>());
+                    matrix.add(new ArrayList<>());
                     for (int j = 0; j < 5; j++)
-                        receivedMatrix.get(i).add("0");
+                        matrix.get(i).add("0");
                 }
             }
 
             Collections.sort(matrixNamesList);
             matrixCardsList.add(position, new MatrixCards(matrixNamesList.get(0),
-                    receivedMatrix,
-                    5,
-                    5,
+                    matrix,
+                    rows,
+                    columns,
                     14,
                     matrixCardsRecyclerView.getHeight()
             ));

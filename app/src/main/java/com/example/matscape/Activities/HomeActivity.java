@@ -20,6 +20,7 @@ import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
 import com.example.matscape.Controllers.MatrixCardsController;
 import com.example.matscape.Controllers.ResultCardsController;
 import com.example.matscape.R;
+import com.example.matscape.dataModels.MatrixCards;
 import com.example.matscape.dataModels.ResultCards;
 import com.google.android.material.navigation.NavigationView;
 
@@ -198,8 +199,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void copyMatrix(int position) {
 
-        List<List<String>> originalMatrix = MatrixCardsController.matrixCardsList.get(position).getMatrix();
-        MatrixCardsController.addMatrixCards(this, position + 1, originalMatrix, mMatrixCardsRecyclerView);
+        MatrixCards copiedCard = MatrixCardsController.matrixCardsList.get(position);
+        MatrixCardsController.addMatrixCards(this, position + 1, copiedCard, mMatrixCardsRecyclerView);
     }
 
     @Override
