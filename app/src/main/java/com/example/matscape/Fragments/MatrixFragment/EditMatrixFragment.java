@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.matscape.Controllers.MatrixCardsController;
 import com.example.matscape.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -23,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener,
-        AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener {
+        AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
     private static final String TAG = "EditMatrixFragment";
     //boolean for checking changed information before returning back
@@ -35,8 +37,12 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
 
     static TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
     static TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
+    static MaterialButton[] numpadMaterialButtons = new MaterialButton[12];
+    private ImageView numpadUp, numpadDown, numpadLeft, numpadRight, numpadBackSpace;
     private AutoCompleteTextView mNamesSpinner;
     private SeekBar mRowsSeekbar, mColumnsSeekbar;
+
+    private int currentRow, currentColumn;
 
     //CONSTRUCTOR
     public EditMatrixFragment(int matrixCardIndex) {
@@ -80,10 +86,10 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         mColumnsSeekbar = view.findViewById(R.id.EditMatrixColumnsSeekBar);
 
         BindMatrixFields(view);
+        BindNumpadButtons(view);
 
         setSeekBars(matrixCardIndex);
         setMatrixElements(matrixCardIndex);
-        setMatrixName(matrixCardIndex);
 
         return view;
     }
@@ -97,9 +103,11 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++)
                 if (view == matrixFields[i][j]) {
-                    if (b)
+                    if (b) {
                         matrixFieldLayouts[i][j].setHint((i + 1) + "" + (j + 1));
-                    else if (TextUtils.isEmpty(matrixFields[i][j].getText()))
+                        currentRow = i;
+                        currentColumn = j;
+                    } else if (TextUtils.isEmpty(matrixFields[i][j].getText()))
                         matrixFieldLayouts[i][j].setHint("0");
                     break;
                 }
@@ -152,6 +160,18 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        if (view == numpadUp) currentRow--;
+        else if (view == numpadDown) currentRow++;
+        else if (view == numpadLeft) currentColumn--;
+        else if (view == numpadRight) currentColumn++;
+
+        moveFocus();
 
     }
 
@@ -221,6 +241,41 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     }
 
     /**
+     * ======================================== METHOD FOR INITIALISING NUMPAD BUTTONS =========================================
+     **/
+    public void BindNumpadButtons(@NonNull View view) {
+
+        numpadMaterialButtons[0] = view.findViewById(R.id.EditNumpad1);
+        numpadMaterialButtons[1] = view.findViewById(R.id.EditNumpad2);
+        numpadMaterialButtons[2] = view.findViewById(R.id.EditNumpad3);
+        numpadMaterialButtons[3] = view.findViewById(R.id.EditNumpad4);
+        numpadMaterialButtons[4] = view.findViewById(R.id.EditNumpad5);
+        numpadMaterialButtons[5] = view.findViewById(R.id.EditNumpad6);
+        numpadMaterialButtons[6] = view.findViewById(R.id.EditNumpad7);
+        numpadMaterialButtons[7] = view.findViewById(R.id.EditNumpad8);
+        numpadMaterialButtons[8] = view.findViewById(R.id.EditNumpad9);
+        numpadMaterialButtons[9] = view.findViewById(R.id.EditNumpad0);
+        numpadMaterialButtons[10] = view.findViewById(R.id.EditNumpadDot);
+        numpadMaterialButtons[11] = view.findViewById(R.id.EditNumpadMinus);
+
+        numpadUp = view.findViewById(R.id.EditNumpadUp);
+        numpadLeft = view.findViewById(R.id.EditNumpadLeft);
+        numpadRight = view.findViewById(R.id.EditNumpadRight);
+        numpadDown = view.findViewById(R.id.EditNumpadDown);
+        numpadBackSpace = view.findViewById(R.id.EditNumpadBackSpace);
+
+        for (int i = 0; i < 12; i++)
+            numpadMaterialButtons[i].setOnClickListener(this);
+
+        numpadUp.setOnClickListener(this);
+        numpadLeft.setOnClickListener(this);
+        numpadRight.setOnClickListener(this);
+        numpadDown.setOnClickListener(this);
+        numpadBackSpace.setOnClickListener(this);
+
+    }
+
+    /**
      * ===================================== METHOD FOR SETTING MATRIX ELEMENTS TO FIELDS =====================================
      **/
     public void setMatrixElements(int matrixPosition) {
@@ -235,12 +290,14 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
             }
         }
 
+        setMatrixNameSpinner(matrixPosition);
+
     }
 
     /**
      * ==================================== METHOD FOR SETTING MATRIX NAMES TO SPINNER ========================================
      **/
-    public void setMatrixName(int matrixPosition) {
+    public void setMatrixNameSpinner(int matrixPosition) {
 
         currentMatrixName = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixName();
         mNamesSpinner.setText(currentMatrixName);
@@ -269,6 +326,10 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     /**
      * ================================================ METHOD FOR CHANGING MATRIX SIZE  ===========================================
      **/
+
+    /*
+     * ============================================= CONTROL OF EDIT MATRIX UI STARTS HERE ==========================================
+     */
     public void changeMatrixSize() {
 
         //resetting visibility
@@ -285,5 +346,38 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                 matrixFields[i][j].setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    public void moveFocus() {
+        if (currentColumn > columns - 1) {
+
+            currentColumn = 0;
+            currentRow++;
+
+            if (currentRow > rows - 1)
+                currentRow = 0;
+        } else if (currentColumn < 0) {
+
+            currentRow--;
+            currentColumn = columns - 1;
+
+            if (currentRow < 0)
+                currentRow = rows - 1;
+        } else if (currentRow > rows - 1) {
+
+            currentColumn++;
+            currentRow = 0;
+
+            if (currentColumn > columns - 1)
+                currentColumn = 0;
+        } else if (currentRow < 0) {
+
+            currentColumn--;
+            currentRow = rows - 1;
+
+            if (currentColumn < 0)
+                currentColumn = columns - 1;
+        }
+        matrixFieldLayouts[currentRow][currentColumn].requestFocus();
     }
 }
