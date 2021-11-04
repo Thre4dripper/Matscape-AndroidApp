@@ -65,6 +65,8 @@ public class MatrixCardsController {
 
         //matrices should be less than 26
         if (matrixCardCounter < 26) {
+
+            //TODO needed to change matrix dimens and type through database when settings is implemented
             List<List<String>> matrix;
             int rows=5,columns=5;
 

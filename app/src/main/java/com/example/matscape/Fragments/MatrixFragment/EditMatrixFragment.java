@@ -21,6 +21,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener,
         AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener {
@@ -35,8 +36,8 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      */
     public static int matrixCardIndex;
     public static String currentMatrixName;
-    TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
-    TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
+    static  TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
+    static  TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
     AutoCompleteTextView mNamesSpinner;
     SeekBar mRowsSeekbar, mColumnsSeekbar;
 
@@ -48,10 +49,15 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     public static void SaveMatrix() {
         List<List<String>> matrix = new ArrayList<>();
 
+        //getting matrix elements from textFields
         for (int i = 0; i < rows; i++) {
             matrix.add(new ArrayList<>());
             for (int j = 0; j < columns; j++) {
-                matrix.get(i).add("0");
+
+                if(!TextUtils.isEmpty(matrixFields[i][j].getText()))
+                    matrix.get(i).add(String.valueOf(matrixFields[i][j].getText()));
+                else
+                    matrix.get(i).add("0");
             }
         }
 
@@ -121,7 +127,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
 
         currentMatrixName = mNamesSpinner.getText().toString();
 
-        //TODO fix this bug
+        //TODO fix this bug of changing name even when back
         MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixName(currentMatrixName);
         MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
     }
