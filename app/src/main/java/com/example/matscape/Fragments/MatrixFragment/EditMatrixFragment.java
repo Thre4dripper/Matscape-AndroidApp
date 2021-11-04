@@ -21,7 +21,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener,
         AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener {
@@ -30,22 +29,23 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     //boolean for checking changed information before returning back
     //TODO back check to be handled
     public static boolean isBackSafe = true;
-    public static int rows, columns;
-    /*
-    Only position is req for getting all the information from matrix cards
-     */
-    public static int matrixCardIndex;
-    public static String currentMatrixName;
-    static  TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
-    static  TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
-    AutoCompleteTextView mNamesSpinner;
-    SeekBar mRowsSeekbar, mColumnsSeekbar;
+    protected static int rows, columns;
+    protected static int matrixCardIndex;
+    protected static String currentMatrixName;
+
+    static TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
+    static TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
+    private AutoCompleteTextView mNamesSpinner;
+    private SeekBar mRowsSeekbar, mColumnsSeekbar;
 
     //CONSTRUCTOR
     public EditMatrixFragment(int matrixCardIndex) {
         EditMatrixFragment.matrixCardIndex = matrixCardIndex;
     }
 
+    /**
+     * =============================================== METHOD FOR SAVE CHANGES ==================================================
+     **/
     public static void SaveMatrix() {
         List<List<String>> matrix = new ArrayList<>();
 
@@ -54,7 +54,8 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
             matrix.add(new ArrayList<>());
             for (int j = 0; j < columns; j++) {
 
-                if(!TextUtils.isEmpty(matrixFields[i][j].getText()))
+                //0 will be added i case of empty fields
+                if (!TextUtils.isEmpty(matrixFields[i][j].getText()))
                     matrix.get(i).add(String.valueOf(matrixFields[i][j].getText()));
                 else
                     matrix.get(i).add("0");

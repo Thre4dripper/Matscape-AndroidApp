@@ -46,12 +46,30 @@
         <item name="android:gravity">center</item>
     </style>
 
-    //for EditMatrixFragment material buttons
-    <style name="EditMatrixFragmentMaterialButtons">
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">60dp</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="cornerRadius">10dp</item>
+    //for EditMatrixFragment Keypad Material buttons
+    <style name="EditMatrixFragMaterialButtons">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginEnd">2dp</item>
+        <item name="android:backgroundTint">@color/black</item>
     </style>
+
+    //for EditMatrixFragment Keypad Arrow CardViews
+    <style name="EditMatrixFragNumpadCardViews">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="cardCornerRadius">4dp</item>
+    </style>
+
+    //for EditMatrixFragment Keypad Arrow ImageViews
+    <style name="EditMatrixFragNumpadImageBtns">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@android:color/holo_blue_dark</item>
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
 </resources>

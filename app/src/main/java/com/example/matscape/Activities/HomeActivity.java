@@ -179,7 +179,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 .setMessage("Do you want to Delete this Matrix")
                 .setPositiveButton("Yes", (dialogInterface, i) -> {*/
 
-        //TODO bug here
+        //TODO bug here on multiple rapid touches
         MatrixCardsController.matrixCardsList.remove(position);
         MatrixCardsController.matrixNamesList.add(deletedName);
         MatrixCardsController.matrixCardCounter--;

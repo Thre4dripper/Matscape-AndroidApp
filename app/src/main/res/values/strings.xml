@@ -44,5 +44,24 @@
     <string name="text_rows">Rows</string>
     <string name="text_columns">Columns</string>
 
+    <string name="edit_numpad1">1</string>
+    <string name="edit_numpad2">2</string>
+    <string name="edit_numpad3">3</string>
+    <string name="edit_numpad4">4</string>
+    <string name="edit_numpad5">5</string>
+    <string name="edit_numpad6">6</string>
+    <string name="edit_numpad7">7</string>
+    <string name="edit_numpad8">8</string>
+    <string name="edit_numpad9">9</string>
+    <string name="edit_numpad0">0</string>
+    <string name="edit_numpadDot">.</string>
+    <string name="edit_numpadMinus">_</string>
+
+    <string name="desc_focus_up">Move Focus UP</string>
+    <string name="desc_focus_down">Move Focus DOWN</string>
+    <string name="desc_focus_right">Move Focus RIGHT</string>
+    <string name="desc_focus_left">Move Focus LEFT</string>
+    <string name="desc_numpad_backspace">BackSpace</string>
+
 
 </resources>
