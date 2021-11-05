@@ -2,6 +2,7 @@ package com.example.matscape.Fragments.MatrixFragment;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     private CardView editNumpadCardView;
 
     //Local variables for manipulating edit matrix UI
-    private int currentRow, currentColumn;
+    private int currentRow=-1, currentColumn=-1;
 
     //CONSTRUCTOR
     public EditMatrixFragment(int matrixCardIndex) {
@@ -182,8 +183,6 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      **/
     @Override
     public void onClick(View view) {
-        //matrix elements changed
-        isBackSafe = false;
 
         if (view == numpadUp) {
             currentRow--;
@@ -198,6 +197,9 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
             currentColumn++;
             moveFocus();
         } else {
+            //matrix elements changed
+            isBackSafe = false;
+
             int cursorPosition = matrixFields[currentRow][currentColumn].getSelectionStart();
             String currentText = Objects.requireNonNull(matrixFields[currentRow][currentColumn].getText()).toString();
 
@@ -442,6 +444,15 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      * ================================================ METHOD FOR MOVING FOCUS  ===========================================
      **/
     public void moveFocus() {
+
+        Log.d(TAG, "moveFocus: "+currentRow+" "+currentColumn);
+        //when nothing is selected , first field should be selected for right and down key
+        if((currentRow==-1 && currentColumn==0) || (currentRow==0 && currentColumn==-1))
+            matrixFieldLayouts[0][0].requestFocus();
+
+        //these conditions will also take care of the collision of above condition
+        //when user is at 1st field, last field gets selected on left and up key, though above condition is also true for that
+        //eg. current col = -1 and current row  = 0 when left is pressed
         if (currentColumn > columns - 1) {
 
             currentColumn = 0;
