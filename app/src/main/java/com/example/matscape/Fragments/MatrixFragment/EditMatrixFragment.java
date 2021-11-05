@@ -2,7 +2,6 @@ package com.example.matscape.Fragments.MatrixFragment;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -33,7 +31,6 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
 
     private static final String TAG = "EditMatrixFragment";
     //boolean for checking changed information before returning back
-    //TODO back check to be handled
     public static boolean isBackSafe = true;
     protected static int rows, columns;
     protected static int matrixCardIndex;
@@ -54,6 +51,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     //CONSTRUCTOR
     public EditMatrixFragment(int matrixCardIndex) {
         EditMatrixFragment.matrixCardIndex = matrixCardIndex;
+        EditMatrixFragment.isBackSafe = true;
     }
 
     /**
@@ -91,11 +89,11 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         mNamesSpinner = fragmentView.findViewById(R.id.MatrixNamesSpinner);
         mRowsSeekbar = fragmentView.findViewById(R.id.EditMatrixRowsSeekbar);
         mColumnsSeekbar = fragmentView.findViewById(R.id.EditMatrixColumnsSeekBar);
-        editNumpadCardView=fragmentView.findViewById(R.id.EditNumpadCardView);
+        editNumpadCardView = fragmentView.findViewById(R.id.EditNumpadCardView);
         BindMatrixFields(fragmentView);
 
         //inflating numpad explicitly in the parent cardView and passing that numpad view to bind its children
-        View editNumpadView=inflater.inflate(R.layout.numpad_edit_matrix,editNumpadCardView,true);
+        View editNumpadView = inflater.inflate(R.layout.numpad_edit_matrix, editNumpadCardView, true);
         BindNumpadButtons(editNumpadView);
 
         setSeekBars(matrixCardIndex);
@@ -149,6 +147,9 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         //TODO fix this bug of changing name even when back
         MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixName(currentMatrixName);
         MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
+
+        //matrix name is changed
+        isBackSafe = false;
     }
 
     /**
@@ -156,6 +157,9 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      **/
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+
+        //matrix size changed
+        isBackSafe = false;
 
         if (seekBar == mRowsSeekbar) rows = progress + 1;
         else if (seekBar == mColumnsSeekbar) columns = progress + 1;
@@ -178,6 +182,8 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      **/
     @Override
     public void onClick(View view) {
+        //matrix elements changed
+        isBackSafe = false;
 
         if (view == numpadUp) {
             currentRow--;
@@ -225,15 +231,14 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                 matrixFields[currentRow][currentColumn].setSelection(cursorPosition + 1);
             }
             //BackSpace Onclick
-            else if(view==numpadBackSpace){
-                if(cursorPosition>0){
+            else if (view == numpadBackSpace) {
+                if (cursorPosition > 0) {
                     matrixFields[currentRow][currentColumn].setText(String.format("%s%s",
-                            currentText.substring(0, cursorPosition-1),
+                            currentText.substring(0, cursorPosition - 1),
                             currentText.substring(cursorPosition)));
 
                     matrixFields[currentRow][currentColumn].setSelection(cursorPosition - 1);
-                }
-                else {
+                } else {
                     currentColumn--;
                     moveFocus();
                 }
