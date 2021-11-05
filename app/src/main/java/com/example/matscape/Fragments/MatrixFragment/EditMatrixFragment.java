@@ -2,6 +2,7 @@ package com.example.matscape.Fragments.MatrixFragment;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -221,6 +223,21 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                         currentText.substring(cursorPosition)));
 
                 matrixFields[currentRow][currentColumn].setSelection(cursorPosition + 1);
+            }
+            //BackSpace Onclick
+            else if(view==numpadBackSpace){
+                if(cursorPosition>0){
+                    matrixFields[currentRow][currentColumn].setText(String.format("%s%s",
+                            currentText.substring(0, cursorPosition-1),
+                            currentText.substring(cursorPosition)));
+
+                    matrixFields[currentRow][currentColumn].setSelection(cursorPosition - 1);
+                }
+                else {
+                    currentColumn--;
+                    moveFocus();
+                }
+
             }
             //'1-9' buttons Onclick
             else for (int i = 0; i < 9; i++) {
