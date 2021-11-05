@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.example.matscape.Controllers.MatrixCardsController;
@@ -42,6 +43,8 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     private ImageView numpadUp, numpadDown, numpadLeft, numpadRight, numpadBackSpace;
     private AutoCompleteTextView mNamesSpinner;
     private SeekBar mRowsSeekbar, mColumnsSeekbar;
+    //TODO numpad visibility will be controlled by this
+    private CardView editNumpadCardView;
 
     //Local variables for manipulating edit matrix UI
     private int currentRow, currentColumn;
@@ -82,18 +85,21 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_matrix_edit, container, false);
-        mNamesSpinner = view.findViewById(R.id.MatrixNamesSpinner);
-        mRowsSeekbar = view.findViewById(R.id.EditMatrixRowsSeekbar);
-        mColumnsSeekbar = view.findViewById(R.id.EditMatrixColumnsSeekBar);
+        View fragmentView = inflater.inflate(R.layout.fragment_matrix_edit, container, false);
+        mNamesSpinner = fragmentView.findViewById(R.id.MatrixNamesSpinner);
+        mRowsSeekbar = fragmentView.findViewById(R.id.EditMatrixRowsSeekbar);
+        mColumnsSeekbar = fragmentView.findViewById(R.id.EditMatrixColumnsSeekBar);
+        editNumpadCardView=fragmentView.findViewById(R.id.EditNumpadCardView);
+        BindMatrixFields(fragmentView);
 
-        BindMatrixFields(view);
-        BindNumpadButtons(view);
+        //inflating numpad explicitly in the parent cardView and passing that numpad view to bind its children
+        View editNumpadView=inflater.inflate(R.layout.numpad_edit_matrix,editNumpadCardView,true);
+        BindNumpadButtons(editNumpadView);
 
         setSeekBars(matrixCardIndex);
         setMatrixElements(matrixCardIndex);
 
-        return view;
+        return fragmentView;
     }
 
     /**
@@ -345,6 +351,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
             for (int j = 0; j < columns; j++) {
                 if (!matrixElementsList.get(i).get(j).equals("0")) {
                     matrixFields[i][j].setText(matrixElementsList.get(i).get(j));
+                    //hint should be displayed over non-zero values
                     matrixFieldLayouts[i][j].setHint((i + 1) + "" + (j + 1));
                 }
 
