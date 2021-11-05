@@ -25,30 +25,25 @@ import com.example.matscape.dataModels.ResultCards;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Collections;
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
         MatrixCardsRecyclerAdapter.MatrixCardsInterface,
         ResultCardsRecyclerAdapter.ResultCardsInterface {
 
+    public static final String NAVIGATION_FRAGMENT_KEY = "navigationFragmentKey";
+    public static final String CHANGE_MATRIX_ACTIVITY_KEY = "changeMatrixActivityKey";
+    public static final String MATRIX_CARD_POSITION_KEY = "matrixElementsSendingKey";
     private static final String TAG = "HomeActivity";
-
-    public static final String NAVIGATION_FRAGMENT_KEY="navigationFragmentKey";
-    public static final String CHANGE_MATRIX_ACTIVITY_KEY="changeMatrixActivityKey";
-    public static final String MATRIX_CARD_POSITION_KEY ="matrixElementsSendingKey";
-
+    //for matrix cards recycler view
+    public static RecyclerView mMatrixCardsRecyclerView;
+    //for result cards recycler view
+    public static RecyclerView mResultCardsRecyclerView;
     //for navigation drawer
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     Toolbar mToolbar;
     ActionBarDrawerToggle mToggle;
-
-    //for matrix cards recycler view
-    public  static RecyclerView mMatrixCardsRecyclerView;
     ImageView addMatrixCardsButton;
-
-    //for result cards recycler view
-    public static RecyclerView mResultCardsRecyclerView;
     ImageView addResultCardsButton;
 
     @Override
@@ -83,23 +78,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mNavigationView.setNavigationItemSelectedListener(item -> {
             int navMenuItemId = item.getItemId();
             if (navMenuItemId == R.id.action_settings) {
-                Intent intent=new Intent(this,NavigationActivity.class);
-                intent.putExtra(NAVIGATION_FRAGMENT_KEY,1);
+                Intent intent = new Intent(this, NavigationActivity.class);
+                intent.putExtra(NAVIGATION_FRAGMENT_KEY, 1);
                 startActivity(intent);
 
             } else if (navMenuItemId == R.id.action_htu) {
-                Intent intent=new Intent(this,NavigationActivity.class);
-                intent.putExtra(NAVIGATION_FRAGMENT_KEY,2);
+                Intent intent = new Intent(this, NavigationActivity.class);
+                intent.putExtra(NAVIGATION_FRAGMENT_KEY, 2);
                 startActivity(intent);
 
             } else if (navMenuItemId == R.id.action_feedback) {
-                Intent intent=new Intent(this,NavigationActivity.class);
-                intent.putExtra(NAVIGATION_FRAGMENT_KEY,3);
+                Intent intent = new Intent(this, NavigationActivity.class);
+                intent.putExtra(NAVIGATION_FRAGMENT_KEY, 3);
                 startActivity(intent);
 
             } else if (navMenuItemId == R.id.action_about) {
-                Intent intent=new Intent(this,NavigationActivity.class);
-                intent.putExtra(NAVIGATION_FRAGMENT_KEY,4);
+                Intent intent = new Intent(this, NavigationActivity.class);
+                intent.putExtra(NAVIGATION_FRAGMENT_KEY, 4);
                 startActivity(intent);
 
             }
@@ -144,7 +139,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 ResultCardsController.resultCardsList,
                 resultCardsTouchHelper,
                 this
-                );
+        );
 
         mResultCardsRecyclerView.setAdapter(ResultCardsController.mResultCardsRecyclerAdapter);
         mResultCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -162,7 +157,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     null,
                     mMatrixCardsRecyclerView
             );
-        } else if(addResultCardsButton.equals(view)){
+        } else if (addResultCardsButton.equals(view)) {
             ResultCardsController.addResultCards(this,
                     ResultCardsController.resultCardCounter,
                     null,
@@ -172,7 +167,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    /**======================================== OVERRIDE METHODS FOR MATRIX CARDS ================================================**/
+    /**
+     * ======================================== OVERRIDE METHODS FOR MATRIX CARDS ================================================
+     **/
     @Override
     public void deleteMatrix(int position, String deletedName) {
       /*  new MaterialAlertDialogBuilder(this)
@@ -205,31 +202,35 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void subMatrix(int position) {
-
+        Intent intent = new Intent(this, ChangeMatrixActivity.class);
+        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY, 2);
+        intent.putExtra(MATRIX_CARD_POSITION_KEY, position);
+        startActivity(intent);
     }
 
     @Override
     public void editMatrix(int position) {
-        Intent intent=new Intent(this,ChangeMatrixActivity.class);
-        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY,1);
-        Bundle bundle=new Bundle();
+        Intent intent = new Intent(this, ChangeMatrixActivity.class);
+        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY, 1);
         intent.putExtra(MATRIX_CARD_POSITION_KEY, position);
         startActivity(intent);
     }
 
 
-    /**======================================== OVERRIDE METHODS FOR RESULT CARDS ================================================**/
+    /**
+     * ======================================== OVERRIDE METHODS FOR RESULT CARDS ================================================
+     **/
 
     @Override
     public void deleteResult(int position) {
-            ResultCardsController.resultCardsList.remove(position);
-            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRemoved(position);
-            ResultCardsController.resultCardCounter--;
+        ResultCardsController.resultCardsList.remove(position);
+        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRemoved(position);
+        ResultCardsController.resultCardCounter--;
     }
 
     @Override
     public void copyResult(int position) {
-            ResultCards resultCard=ResultCardsController.resultCardsList.get(position);
-            ResultCardsController.addResultCards(this,position+1,resultCard,mResultCardsRecyclerView);
+        ResultCards resultCard = ResultCardsController.resultCardsList.get(position);
+        ResultCardsController.addResultCards(this, position + 1, resultCard, mResultCardsRecyclerView);
     }
 }

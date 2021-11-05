@@ -4,12 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.matscape.Fragments.MatrixFragment.EditMatrixFragment;
+import com.example.matscape.Fragments.MatrixFragment.SubMatrixFragment;
 import com.example.matscape.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -47,7 +47,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
                 break;
 
             case 2:
-                Toast.makeText(this, "Sub Matrix Fragment", Toast.LENGTH_SHORT).show();
+                fragment = new SubMatrixFragment(matrixCardIndex);
                 break;
         }
 
@@ -61,8 +61,11 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View view) {
         if (view == mBackButton) {
-            if (EditMatrixFragment.isBackSafe) {
-                super.onBackPressed();
+            if (EditMatrixFragment.isEditMatrixBackSafe && SubMatrixFragment.isSubMatrixBackSafe) {
+                if (EditMatrixFragment.editNumpadCardView.getVisibility() == View.VISIBLE)
+                    EditMatrixFragment.editNumpadCardView.setVisibility(View.GONE);
+                else
+                    super.onBackPressed();
             }
             //dialog box when something is changes to prevent accidental back
             else new MaterialAlertDialogBuilder(this)
@@ -72,7 +75,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
                     .show();
 
         } else if (view == mSaveButton) {
-            if (EditMatrixFragment.isBackSafe) {
+            if (EditMatrixFragment.isEditMatrixBackSafe && SubMatrixFragment.isSubMatrixBackSafe) {
                 EditMatrixFragment.SaveMatrix();
                 super.onBackPressed();
             }
@@ -85,8 +88,12 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
                     })
                     .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
                     .show();
-
-
         }
+    }
+
+    //handled phone's back button
+    @Override
+    public void onBackPressed() {
+        onClick(mBackButton);
     }
 }

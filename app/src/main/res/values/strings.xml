@@ -62,6 +62,8 @@
     <string name="desc_focus_right">Move Focus RIGHT</string>
     <string name="desc_focus_left">Move Focus LEFT</string>
     <string name="desc_numpad_backspace">BackSpace</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

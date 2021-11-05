@@ -32,11 +32,12 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
 
     private static final String TAG = "EditMatrixFragment";
     //boolean for checking changed information before returning back
-    public static boolean isBackSafe = true;
+    public static boolean isEditMatrixBackSafe = true;
     protected static int rows, columns;
     protected static int matrixCardIndex;
     protected static String currentMatrixName;
 
+    //UI Elements
     static TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
     static TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
     static MaterialButton[] numpadMaterialButtons = new MaterialButton[12];
@@ -44,7 +45,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     private AutoCompleteTextView mNamesSpinner;
     private SeekBar mRowsSeekbar, mColumnsSeekbar;
     //TODO numpad visibility will be controlled by this
-    private CardView editNumpadCardView;
+    public static CardView editNumpadCardView;
 
     //Local variables for manipulating edit matrix UI
     private int currentRow=-1, currentColumn=-1;
@@ -52,7 +53,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     //CONSTRUCTOR
     public EditMatrixFragment(int matrixCardIndex) {
         EditMatrixFragment.matrixCardIndex = matrixCardIndex;
-        EditMatrixFragment.isBackSafe = true;
+        EditMatrixFragment.isEditMatrixBackSafe = true;
     }
 
     /**
@@ -150,7 +151,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
 
         //matrix name is changed
-        isBackSafe = false;
+        isEditMatrixBackSafe = false;
     }
 
     /**
@@ -160,7 +161,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
 
         //matrix size changed
-        isBackSafe = false;
+        isEditMatrixBackSafe = false;
 
         if (seekBar == mRowsSeekbar) rows = progress + 1;
         else if (seekBar == mColumnsSeekbar) columns = progress + 1;
@@ -198,7 +199,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
             moveFocus();
         } else {
             //matrix elements changed
-            isBackSafe = false;
+            isEditMatrixBackSafe = false;
 
             int cursorPosition = matrixFields[currentRow][currentColumn].getSelectionStart();
             String currentText = Objects.requireNonNull(matrixFields[currentRow][currentColumn].getText()).toString();
