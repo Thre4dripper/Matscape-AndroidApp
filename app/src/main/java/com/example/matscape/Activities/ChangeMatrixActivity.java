@@ -16,6 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 public class ChangeMatrixActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageView mBackButton, mSaveButton;
+    int fragmentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
      **/
     public void setupFragments(Intent receivedIntent) {
 
-        int fragmentId = receivedIntent.getIntExtra(HomeActivity.CHANGE_MATRIX_ACTIVITY_KEY, -1);
+        fragmentId = receivedIntent.getIntExtra(HomeActivity.CHANGE_MATRIX_ACTIVITY_KEY, -1);
         int matrixCardIndex = receivedIntent.getIntExtra(HomeActivity.MATRIX_CARD_POSITION_KEY, -1);
 
         Fragment fragment = null;
@@ -61,39 +62,89 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View view) {
         if (view == mBackButton) {
-            if (EditMatrixFragment.isEditMatrixBackSafe && SubMatrixFragment.isSubMatrixBackSafe) {
-                if (EditMatrixFragment.editNumpadCardView.getVisibility() == View.VISIBLE)
-                    EditMatrixFragment.editNumpadCardView.setVisibility(View.GONE);
-                else
-                    super.onBackPressed();
-            }
-            //dialog box when something is changes to prevent accidental back
-            else new MaterialAlertDialogBuilder(this)
-                    .setMessage("Discard Changes")
-                    .setPositiveButton("Yes", (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
-                    .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
-                    .show();
-
+            //branching back button for both fragments
+            if (fragmentId == HomeActivity.EDIT_MATRIX_FRAGMENT_ID) EditMatrixBack();
+            else if (fragmentId == HomeActivity.SUB_MATRIX_FRAGMENT_ID) SubMatrixBack();
         } else if (view == mSaveButton) {
-            if (EditMatrixFragment.isEditMatrixBackSafe && SubMatrixFragment.isSubMatrixBackSafe) {
-                EditMatrixFragment.SaveMatrix();
-                super.onBackPressed();
-            }
-            //dialog box when something is changes to confirm changes
-            else new MaterialAlertDialogBuilder(this)
-                    .setMessage("Save Changes")
-                    .setPositiveButton("Yes", (dialogInterface, i) -> {
-                        ChangeMatrixActivity.super.onBackPressed();
-                        EditMatrixFragment.SaveMatrix();
-                    })
-                    .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
-                    .show();
+            //branching save button for both fragments
+            if (fragmentId == HomeActivity.EDIT_MATRIX_FRAGMENT_ID) EditMatrixSave();
+            else if (fragmentId == HomeActivity.SUB_MATRIX_FRAGMENT_ID) SubMatrixSave();
         }
+
     }
 
     //handled phone's back button
     @Override
     public void onBackPressed() {
         onClick(mBackButton);
+    }
+
+    /**
+     * ======================================= METHOD FOR HANDLING EDIT MATRIX BACK =======================================
+     **/
+    public void EditMatrixBack() {
+        if (EditMatrixFragment.isEditMatrixBackSafe) {
+            if (EditMatrixFragment.editNumpadCardView.getVisibility() == View.VISIBLE)
+                EditMatrixFragment.editNumpadCardView.setVisibility(View.GONE);
+            else
+                super.onBackPressed();
+        }
+        //dialog box when something is changes to prevent accidental back
+        else new MaterialAlertDialogBuilder(this)
+                .setMessage("Discard Changes")
+                .setPositiveButton("Yes", (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
+                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
+    }
+
+    /**
+     * ======================================= METHOD FOR HANDLING EDIT MATRIX SAVE =======================================
+     **/
+    public void EditMatrixSave() {
+        if (EditMatrixFragment.isEditMatrixBackSafe) {
+            EditMatrixFragment.SaveMatrix();
+            super.onBackPressed();
+        }
+        //dialog box when something is changes to confirm changes
+        else new MaterialAlertDialogBuilder(this)
+                .setMessage("Save Changes")
+                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                    ChangeMatrixActivity.super.onBackPressed();
+                    EditMatrixFragment.SaveMatrix();
+                })
+                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
+    }
+
+    /**
+     * ======================================= METHOD FOR HANDLING SUB MATRIX BACK =======================================
+     **/
+    public void SubMatrixBack() {
+        if (SubMatrixFragment.isSubMatrixBackSafe) {
+            super.onBackPressed();
+        }
+        //dialog box when something is changes to prevent accidental back
+        else new MaterialAlertDialogBuilder(this)
+                .setMessage("Discard Changes")
+                .setPositiveButton("Yes", (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
+                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
+    }
+
+    /**
+     * ======================================= METHOD FOR HANDLING SUB MATRIX SAVE =======================================
+     **/
+    public void SubMatrixSave() {
+        if (SubMatrixFragment.isSubMatrixBackSafe) {
+            super.onBackPressed();
+        }
+        //dialog box when something is changes to confirm changes
+        else new MaterialAlertDialogBuilder(this)
+                .setMessage("Save Changes")
+                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                    ChangeMatrixActivity.super.onBackPressed();
+                })
+                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
     }
 }

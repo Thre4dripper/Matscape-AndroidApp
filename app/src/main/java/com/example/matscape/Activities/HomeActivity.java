@@ -33,6 +33,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String NAVIGATION_FRAGMENT_KEY = "navigationFragmentKey";
     public static final String CHANGE_MATRIX_ACTIVITY_KEY = "changeMatrixActivityKey";
     public static final String MATRIX_CARD_POSITION_KEY = "matrixElementsSendingKey";
+
+    public static final int EDIT_MATRIX_FRAGMENT_ID=1;
+    public static final int SUB_MATRIX_FRAGMENT_ID=2;
     private static final String TAG = "HomeActivity";
     //for matrix cards recycler view
     public static RecyclerView mMatrixCardsRecyclerView;
@@ -203,7 +206,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void subMatrix(int position) {
         Intent intent = new Intent(this, ChangeMatrixActivity.class);
-        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY, 2);
+        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY, SUB_MATRIX_FRAGMENT_ID);
         intent.putExtra(MATRIX_CARD_POSITION_KEY, position);
         startActivity(intent);
     }
@@ -211,7 +214,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void editMatrix(int position) {
         Intent intent = new Intent(this, ChangeMatrixActivity.class);
-        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY, 1);
+        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY, EDIT_MATRIX_FRAGMENT_ID);
         intent.putExtra(MATRIX_CARD_POSITION_KEY, position);
         startActivity(intent);
     }
