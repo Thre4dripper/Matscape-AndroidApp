@@ -11,7 +11,7 @@
         <item name="android:focusable">true</item>
     </style>
 
-    //for matrix card LL(s)
+    //for matrix card LinearLayouts
     <style name="MatrixCardsLinearLayouts">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -29,16 +29,16 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    //for EditMatrixFragment linear layouts
-    <style name="EditMatrixFragmentLinearLayouts">
+    //for ChangeMatrix Matrix Fields linear layouts
+    <style name="ChangeMatrixLinearLayouts">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
         <item name="android:gravity">center</item>
     </style>
 
-    //for EditMatrixFragment text input layouts
-    <style name="EditMatrixFragmentMaterialFields">
+    //for ChangeMatrix Matrix Fields
+    <style name="ChangeMatrixMaterialFields">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">2dp</item>
@@ -70,6 +70,14 @@
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
+    </style>
+
+    //for Sub Matrix Checkboxes
+    <style name="SubMatrixCheckBoxes">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:checked">true</item>
+        <item name="android:gravity">center</item>
     </style>
 
 </resources>

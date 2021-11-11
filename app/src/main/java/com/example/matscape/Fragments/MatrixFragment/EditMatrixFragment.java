@@ -83,6 +83,9 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
     }
 
+    /**
+     * =============================================== ON CREATE VIEW ==================================================
+     **/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

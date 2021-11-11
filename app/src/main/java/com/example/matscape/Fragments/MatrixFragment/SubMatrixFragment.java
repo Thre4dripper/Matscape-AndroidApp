@@ -1,6 +1,7 @@
 package com.example.matscape.Fragments.MatrixFragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +10,18 @@ import android.widget.CheckBox;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.matscape.Controllers.MatrixCardsController;
 import com.example.matscape.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.List;
 
 public class SubMatrixFragment extends Fragment {
 
     private static final String TAG = "SubMatrixFragment";
     //boolean for checking changed information before returning back
-    public static boolean isSubMatrixBackSafe=true;
+    public static boolean isSubMatrixBackSafe = true;
     protected static int rows, columns;
     protected static int matrixCardIndex;
 
@@ -25,23 +29,24 @@ public class SubMatrixFragment extends Fragment {
     static TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
     static TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
 
-    static CheckBox[] mRowCheckBoxes=new CheckBox[5];
-    static CheckBox[] mColumnCheckBoxes=new CheckBox[5];
+    static CheckBox[] mRowCheckBoxes = new CheckBox[5];
+    static CheckBox[] mColumnCheckBoxes = new CheckBox[5];
 
     public SubMatrixFragment(int matrixCardIndex) {
-        SubMatrixFragment.matrixCardIndex=matrixCardIndex;
-        SubMatrixFragment.isSubMatrixBackSafe=true;
+        SubMatrixFragment.matrixCardIndex = matrixCardIndex;
+        SubMatrixFragment.isSubMatrixBackSafe = true;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View fragmentView=inflater.inflate(R.layout.fragment_sub_matrix, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_sub_matrix, container, false);
 
         BindMatrixFields(fragmentView);
         BindCheckBoxes(fragmentView);
 
+        setMatrixElements(matrixCardIndex);
         return fragmentView;
     }
 
@@ -112,17 +117,78 @@ public class SubMatrixFragment extends Fragment {
     /**
      * ============================================ METHOD FOR INITIALISING CHECKBOXES ===========================================
      **/
-    public void BindCheckBoxes(View view){
-        mRowCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckR1);
-        mRowCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckR2);
-        mRowCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckR3);
-        mRowCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckR4);
-        mRowCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckR5);
+    public void BindCheckBoxes(@NonNull View view) {
+        mRowCheckBoxes[0] = view.findViewById(R.id.SubMatrixCheckR1);
+        mRowCheckBoxes[1] = view.findViewById(R.id.SubMatrixCheckR2);
+        mRowCheckBoxes[2] = view.findViewById(R.id.SubMatrixCheckR3);
+        mRowCheckBoxes[3] = view.findViewById(R.id.SubMatrixCheckR4);
+        mRowCheckBoxes[4] = view.findViewById(R.id.SubMatrixCheckR5);
 
-        mColumnCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckC1);
-        mColumnCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckC2);
-        mColumnCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckC3);
-        mColumnCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckC4);
-        mColumnCheckBoxes[0]=view.findViewById(R.id.SubMatrixCheckC5);
+        mColumnCheckBoxes[0] = view.findViewById(R.id.SubMatrixCheckC1);
+        mColumnCheckBoxes[1] = view.findViewById(R.id.SubMatrixCheckC2);
+        mColumnCheckBoxes[2] = view.findViewById(R.id.SubMatrixCheckC3);
+        mColumnCheckBoxes[3] = view.findViewById(R.id.SubMatrixCheckC4);
+        mColumnCheckBoxes[4] = view.findViewById(R.id.SubMatrixCheckC5);
+    }
+
+    /**
+     * ===================================== METHOD FOR SETTING MATRIX ELEMENTS TO FIELDS =====================================
+     **/
+    public void setMatrixElements(int matrixPosition) {
+
+        rows = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixRows();
+        columns = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixColumns();
+
+        Log.d(TAG, "setMatrixElements: ");
+        List<List<String>> matrixElementsList = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrix();
+
+        //Omitting zeroes
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (!matrixElementsList.get(i).get(j).equals("0")) {
+                    matrixFields[i][j].setText(matrixElementsList.get(i).get(j));
+                    //hint should be displayed over non-zero values
+                    matrixFieldLayouts[i][j].setHint((i + 1) + "" + (j + 1));
+                }
+
+            }
+        }
+
+        changeMatrixSize();
+
+    }
+
+    /**
+     * ================================================ METHOD FOR CHANGING MATRIX SIZE  ===========================================
+     **/
+
+    /*
+     * ============================================= CONTROL OF EDIT MATRIX UI STARTS HERE ==========================================
+     */
+    public void changeMatrixSize() {
+
+        //resetting visibility of matrix elements fields
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                matrixFieldLayouts[i][j].setVisibility(View.GONE);
+                matrixFields[i][j].setVisibility(View.GONE);
+
+                mRowCheckBoxes[i].setVisibility(View.GONE);
+                mColumnCheckBoxes[j].setVisibility(View.GONE);
+
+            }
+        }
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                matrixFieldLayouts[i][j].setVisibility(View.VISIBLE);
+                matrixFields[i][j].setVisibility(View.VISIBLE);
+
+                mRowCheckBoxes[i].setVisibility(View.VISIBLE);
+                mColumnCheckBoxes[j].setVisibility(View.VISIBLE);
+
+            }
+        }
+
     }
 }

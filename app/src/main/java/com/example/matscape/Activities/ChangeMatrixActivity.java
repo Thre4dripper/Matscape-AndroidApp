@@ -141,9 +141,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         //dialog box when something is changes to confirm changes
         else new MaterialAlertDialogBuilder(this)
                 .setMessage("Save Changes")
-                .setPositiveButton("Yes", (dialogInterface, i) -> {
-                    ChangeMatrixActivity.super.onBackPressed();
-                })
+                .setPositiveButton("Yes", (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
                 .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
