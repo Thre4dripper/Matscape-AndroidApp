@@ -47,7 +47,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     //TODO numpad visibility will be controlled by this
     public static CardView editNumpadCardView;
 
-    //Local variables for manipulating edit matrix UI
+    //Local variables for manipulating matrix element Focus
     private int currentRow=-1, currentColumn=-1;
 
     //CONSTRUCTOR
