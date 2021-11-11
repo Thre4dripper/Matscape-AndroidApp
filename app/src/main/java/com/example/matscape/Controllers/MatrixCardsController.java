@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Adapters.MatrixCardsRecyclerAdapter;
 import com.example.matscape.dataModels.MatrixCards;
-import com.example.matscape.dataModels.ResultCards;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,19 +67,18 @@ public class MatrixCardsController {
 
             //TODO needed to change matrix dimens and type through database when settings is implemented
             List<List<String>> matrix;
-            int rows=5,columns=5;
+            int rows = 5, columns = 5;
 
             boolean copiedCard = matrixCard != null;
 
             //initialises variables when copied card is received
             if (copiedCard) {
-                matrix=matrixCard.getMatrix();
-                rows=matrixCard.getMatrixRows();
-                columns=matrixCard.getMatrixColumns();
-            }
-            else {
+                matrix = matrixCard.getMatrix();
+                rows = matrixCard.getMatrixRows();
+                columns = matrixCard.getMatrixColumns();
+            } else {
                 //null matrixCard received means New matrix is adding
-                matrix=new ArrayList<>();
+                matrix = new ArrayList<>();
                 for (int i = 0; i < 5; i++) {
                     matrix.add(new ArrayList<>());
                     for (int j = 0; j < 5; j++)
@@ -100,7 +98,7 @@ public class MatrixCardsController {
             matrixNamesList.remove(0);
             mMatrixCardsRecyclerAdapter.notifyItemInserted(position);
 
-                matrixCardsRecyclerView.scrollToPosition(position);
+            matrixCardsRecyclerView.scrollToPosition(position);
 
             matrixCardCounter++;
         } else Toast.makeText(context, "Matrix Limit Reached", Toast.LENGTH_SHORT).show();
