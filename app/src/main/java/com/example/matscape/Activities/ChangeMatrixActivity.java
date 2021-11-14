@@ -1,5 +1,6 @@
 package com.example.matscape.Activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -48,7 +49,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
                 break;
 
             case 2:
-                fragment = new SubMatrixFragment(matrixCardIndex);
+                fragment = new SubMatrixFragment(matrixCardIndex,mSaveButton);
                 break;
         }
 
@@ -109,8 +110,8 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         else new MaterialAlertDialogBuilder(this)
                 .setMessage("Save Changes")
                 .setPositiveButton("Yes", (dialogInterface, i) -> {
-                    ChangeMatrixActivity.super.onBackPressed();
                     EditMatrixFragment.SaveMatrix();
+                    ChangeMatrixActivity.super.onBackPressed();
                 })
                 .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
@@ -136,12 +137,16 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
      **/
     public void SubMatrixSave() {
         if (SubMatrixFragment.isSubMatrixBackSafe) {
+            SubMatrixFragment.SaveMatrix();
             super.onBackPressed();
         }
         //dialog box when something is changes to confirm changes
         else new MaterialAlertDialogBuilder(this)
                 .setMessage("Save Changes")
-                .setPositiveButton("Yes", (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
+                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                    SubMatrixFragment.SaveMatrix();
+                    ChangeMatrixActivity.super.onBackPressed();
+                })
                 .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }

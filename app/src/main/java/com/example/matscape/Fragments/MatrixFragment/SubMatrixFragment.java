@@ -1,11 +1,12 @@
 package com.example.matscape.Fragments.MatrixFragment;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,27 +22,61 @@ import java.util.List;
 public class SubMatrixFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "SubMatrixFragment";
+    //local variables for controlling active matrix elements
+    private static final List<Integer> activeRows = new ArrayList<>();
+    private static final List<Integer> activeColumns = new ArrayList<>();
     //boolean for checking changed information before returning back
     public static boolean isSubMatrixBackSafe = true;
+
+    //variable for save button reference from ChangeMatrixActivity to prevent Null matrix saving
+    public final ImageView saveButton;
     protected static int rows, columns;
     protected static int matrixCardIndex;
-
     //UI Elements
     static TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
     static TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
-
     static CheckBox[] mRowCheckBoxes = new CheckBox[5];
     static CheckBox[] mColumnCheckBoxes = new CheckBox[5];
-
-    //local variables for controlling active matrix elements
-    private final List<Integer> activeRows = new ArrayList<>();
-    private final List<Integer> activeColumns = new ArrayList<>();
-    //Local variables for manipulating matrix elements visibility for sub matrix
+    //Local variables for manipulating active matrix elements for sub matrix
     private int clickedRow = -1, clickedColumn = -1;
 
-    public SubMatrixFragment(int matrixCardIndex) {
+    public SubMatrixFragment(int matrixCardIndex,ImageView saveButton) {
+        //initialised save button from ChangeMatrixActivity
+        this.saveButton=saveButton;
         SubMatrixFragment.matrixCardIndex = matrixCardIndex;
         SubMatrixFragment.isSubMatrixBackSafe = true;
+        activeRows.clear();
+        activeColumns.clear();
+
+    }
+
+    public static void SaveMatrix() {
+        List<List<String>> matrix = new ArrayList<>();
+
+        //getting matrix elements from textFields
+        int itr = 0;
+        for (int i = 0; i < rows; i++) {
+            if (activeRows.get(i) == 0)
+                continue;
+
+            matrix.add(new ArrayList<>());
+            for (int j = 0; j < columns; j++) {
+                if (activeColumns.get(j) == 1) {
+                    if (!TextUtils.isEmpty(matrixFields[i][j].getText()))
+                        matrix.get(itr).add(String.valueOf(matrixFields[i][j].getText()));
+                    else
+                        matrix.get(itr).add("0");
+                }
+            }
+            itr++;
+
+        }
+
+        MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixRows(matrix.size());
+        MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixColumns(matrix.get(0).size());
+        MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrix(matrix);
+
+        MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
     }
 
     @Override
@@ -62,6 +97,10 @@ public class SubMatrixFragment extends Fragment implements View.OnClickListener 
      **/
     @Override
     public void onClick(View view) {
+
+        //back or save is not safe if checkboxes are clicked
+        isSubMatrixBackSafe=false;
+
         for (int i = 0; i < 5; i++) {
             if (view == mRowCheckBoxes[i]) {
                 clickedRow = i;
@@ -83,6 +122,9 @@ public class SubMatrixFragment extends Fragment implements View.OnClickListener 
                 createSubMatrix(clickedRow, clickedColumn, null, mColumnCheckBoxes[i].isChecked(), 1);
             }
         }
+
+        //at least one checkbox from rows and from columns must be checked before saving matrix
+        saveButton.setEnabled(activeRows.contains(1) && activeColumns.contains(1));
 
     }
 
@@ -181,7 +223,6 @@ public class SubMatrixFragment extends Fragment implements View.OnClickListener 
         rows = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixRows();
         columns = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixColumns();
 
-        Log.d(TAG, "setMatrixElements: ");
         List<List<String>> matrixElementsList = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrix();
 
         //Omitting zeroes
