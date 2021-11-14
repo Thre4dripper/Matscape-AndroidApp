@@ -1,6 +1,5 @@
 package com.example.matscape.Activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -49,7 +48,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
                 break;
 
             case 2:
-                fragment = new SubMatrixFragment(matrixCardIndex,mSaveButton);
+                fragment = new SubMatrixFragment(matrixCardIndex, mSaveButton);
                 break;
         }
 

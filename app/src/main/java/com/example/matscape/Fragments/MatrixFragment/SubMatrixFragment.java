@@ -27,9 +27,6 @@ public class SubMatrixFragment extends Fragment implements View.OnClickListener 
     private static final List<Integer> activeColumns = new ArrayList<>();
     //boolean for checking changed information before returning back
     public static boolean isSubMatrixBackSafe = true;
-
-    //variable for save button reference from ChangeMatrixActivity to prevent Null matrix saving
-    public final ImageView saveButton;
     protected static int rows, columns;
     protected static int matrixCardIndex;
     //UI Elements
@@ -37,12 +34,14 @@ public class SubMatrixFragment extends Fragment implements View.OnClickListener 
     static TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
     static CheckBox[] mRowCheckBoxes = new CheckBox[5];
     static CheckBox[] mColumnCheckBoxes = new CheckBox[5];
+    //variable for save button reference from ChangeMatrixActivity to prevent Null matrix saving
+    public final ImageView saveButton;
     //Local variables for manipulating active matrix elements for sub matrix
     private int clickedRow = -1, clickedColumn = -1;
 
-    public SubMatrixFragment(int matrixCardIndex,ImageView saveButton) {
+    public SubMatrixFragment(int matrixCardIndex, ImageView saveButton) {
         //initialised save button from ChangeMatrixActivity
-        this.saveButton=saveButton;
+        this.saveButton = saveButton;
         SubMatrixFragment.matrixCardIndex = matrixCardIndex;
         SubMatrixFragment.isSubMatrixBackSafe = true;
         activeRows.clear();
@@ -99,7 +98,7 @@ public class SubMatrixFragment extends Fragment implements View.OnClickListener 
     public void onClick(View view) {
 
         //back or save is not safe if checkboxes are clicked
-        isSubMatrixBackSafe=false;
+        isSubMatrixBackSafe = false;
 
         for (int i = 0; i < 5; i++) {
             if (view == mRowCheckBoxes[i]) {
