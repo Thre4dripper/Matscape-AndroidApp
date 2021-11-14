@@ -15,9 +15,10 @@ import com.example.matscape.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class SubMatrixFragment extends Fragment {
+public class SubMatrixFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "SubMatrixFragment";
     //boolean for checking changed information before returning back
@@ -31,6 +32,12 @@ public class SubMatrixFragment extends Fragment {
 
     static CheckBox[] mRowCheckBoxes = new CheckBox[5];
     static CheckBox[] mColumnCheckBoxes = new CheckBox[5];
+
+    //local variables for controlling active matrix elements
+    private final List<Integer> activeRows = new ArrayList<>();
+    private final List<Integer> activeColumns = new ArrayList<>();
+    //Local variables for manipulating matrix elements visibility for sub matrix
+    private int clickedRow = -1, clickedColumn = -1;
 
     public SubMatrixFragment(int matrixCardIndex) {
         SubMatrixFragment.matrixCardIndex = matrixCardIndex;
@@ -48,6 +55,35 @@ public class SubMatrixFragment extends Fragment {
 
         setMatrixElements(matrixCardIndex);
         return fragmentView;
+    }
+
+    /**
+     * ========================================== OVERRIDE METHOD FOR CHECKBOX CLICKS ===========================================
+     **/
+    @Override
+    public void onClick(View view) {
+        for (int i = 0; i < 5; i++) {
+            if (view == mRowCheckBoxes[i]) {
+                clickedRow = i;
+
+                //setting active rows based on its checkbox status
+                if (mRowCheckBoxes[i].isChecked())
+                    activeRows.set(i, 1);
+                else activeRows.set(i, 0);
+
+                createSubMatrix(clickedRow, clickedColumn, mRowCheckBoxes[i].isChecked(), null, 0);
+            } else if (view == mColumnCheckBoxes[i]) {
+                clickedColumn = i;
+
+                //setting active columns based on its checkbox status
+                if (mColumnCheckBoxes[i].isChecked())
+                    activeColumns.set(i, 1);
+                else activeColumns.set(i, 0);
+
+                createSubMatrix(clickedRow, clickedColumn, null, mColumnCheckBoxes[i].isChecked(), 1);
+            }
+        }
+
     }
 
     /**
@@ -129,6 +165,12 @@ public class SubMatrixFragment extends Fragment {
         mColumnCheckBoxes[2] = view.findViewById(R.id.SubMatrixCheckC3);
         mColumnCheckBoxes[3] = view.findViewById(R.id.SubMatrixCheckC4);
         mColumnCheckBoxes[4] = view.findViewById(R.id.SubMatrixCheckC5);
+
+        //settings on click
+        for (int i = 0; i < 5; i++) {
+            mRowCheckBoxes[i].setOnClickListener(this);
+            mColumnCheckBoxes[i].setOnClickListener(this);
+        }
     }
 
     /**
@@ -154,17 +196,24 @@ public class SubMatrixFragment extends Fragment {
             }
         }
 
+        //initially all rows and columns are active
+        for (int i = 0; i < rows; i++)
+            activeRows.add(1);
+        for (int i = 0; i < columns; i++)
+            activeColumns.add(1);
+
         changeMatrixSize();
 
     }
 
-    /**
-     * ================================================ METHOD FOR CHANGING MATRIX SIZE  ===========================================
-     **/
 
     /*
      * ============================================= CONTROL OF EDIT MATRIX UI STARTS HERE ==========================================
      */
+
+    /**
+     * ================================================ METHOD FOR CHANGING MATRIX SIZE  ===========================================
+     **/
     public void changeMatrixSize() {
 
         //resetting visibility of matrix elements fields
@@ -189,6 +238,31 @@ public class SubMatrixFragment extends Fragment {
 
             }
         }
+
+    }
+
+    /**
+     * ================================================ METHOD FOR CREATING SUB MATRIX  ===========================================
+     **/
+    public void createSubMatrix(int clickedRow, int clickedColumn, Boolean isRowChecked, Boolean isColumnChecked, int type) {
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                //when rows is unchecked then only all rows gets disabled
+                //OR check for each columns if it is active or not
+                if (clickedRow == i && type == 0 && (activeColumns.get(j).equals(1) || !isRowChecked)) {
+                    matrixFields[i][j].setEnabled(isRowChecked);
+                    matrixFieldLayouts[i][j].setEnabled(isRowChecked);
+                }
+                //when columns is unchecked then only all columns gets disabled
+                //OR check for each rows if it is active or not
+                else if (clickedColumn == j && type == 1 && (activeRows.get(i).equals(1) || !isColumnChecked)) {
+                    matrixFields[i][j].setEnabled(isColumnChecked);
+                    matrixFieldLayouts[i][j].setEnabled(isColumnChecked);
+                }
+            }
+        }
+
 
     }
 }
