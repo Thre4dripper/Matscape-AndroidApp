@@ -2,12 +2,14 @@ package com.example.matscape.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -48,6 +50,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ActionBarDrawerToggle mToggle;
     ImageView addMatrixCardsButton;
     ImageView addResultCardsButton;
+    CardView homeNumpadCardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mToolbar = findViewById(R.id.Toolbar);
         addMatrixCardsButton = findViewById(R.id.addMatrixCardButton);
         addResultCardsButton = findViewById(R.id.addResultCardButton);
+        homeNumpadCardView=findViewById(R.id.HomeNumpadCardView);
 
         addMatrixCardsButton.setOnClickListener(this);
         addResultCardsButton.setOnClickListener(this);
@@ -65,6 +69,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         InitMatrixCardsRecyclerView();
         InitResultCardsRecyclerView();
+
+        InitHomeNumpad();
     }
 
     /**
@@ -148,6 +154,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mResultCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         resultCardsTouchHelper.attachToRecyclerView(mResultCardsRecyclerView);
+    }
+
+    public void InitHomeNumpad(){
+        View view= LayoutInflater.from(this).inflate(R.layout.numpad_home,homeNumpadCardView,true);
+
     }
 
 
