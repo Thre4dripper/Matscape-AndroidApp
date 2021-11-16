@@ -262,13 +262,21 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpadDot"
+                android:layout_weight="1.5"
                 style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpadDot" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad0"
+                android:layout_weight="1"
                 style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/HomeNumpadDivide"
+                style="@style/HomeKBNumpadButtons"
+                android:layout_weight="1.5"
+                android:text="@string/home_numpad_divide" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -295,12 +303,12 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/HomeNumpadBracketStart"
+                android:id="@+id/HomeNumpadBracketOpen"
                 style="@style/HomeKBNumpadButtons"
                 android:text="@string/home_keyboard_bracket_open" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/HomeNumpadBracketEnd"
+                android:id="@+id/HomeNumpadBracketClose"
                 style="@style/HomeKBNumpadButtons"
                 android:text="@string/home_keyboard_bracket_close" />
 
@@ -314,7 +322,9 @@
             app:layout_constraintBottom_toTopOf="@+id/HomeKeyboardBackspaceLL"
             app:layout_constraintTop_toBottomOf="@+id/HomeKeyboardBracketsLL">
 
-            <androidx.cardview.widget.CardView style="@style/HomeKBCardButtons">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/MoveCursorLeft"
+                style="@style/HomeKBCardButtons">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -326,7 +336,9 @@
 
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView style="@style/HomeKBCardButtons">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/MoveCursorRight"
+                style="@style/HomeKBCardButtons">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -346,7 +358,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/HomeKeyboardCursorMoveLL">
 
-            <androidx.cardview.widget.CardView style="@style/HomeKBCardButtons">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/HomeBackspaceButton"
+                style="@style/HomeKBCardButtons">
 
                 <ImageView
                     android:layout_width="wrap_content"

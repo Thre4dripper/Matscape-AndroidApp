@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,6 +25,7 @@ import com.example.matscape.Controllers.ResultCardsController;
 import com.example.matscape.R;
 import com.example.matscape.dataModels.MatrixCards;
 import com.example.matscape.dataModels.ResultCards;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Collections;
@@ -36,21 +38,26 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String CHANGE_MATRIX_ACTIVITY_KEY = "changeMatrixActivityKey";
     public static final String MATRIX_CARD_POSITION_KEY = "matrixElementsSendingKey";
 
-    public static final int EDIT_MATRIX_FRAGMENT_ID=1;
-    public static final int SUB_MATRIX_FRAGMENT_ID=2;
+    public static final int EDIT_MATRIX_FRAGMENT_ID = 1;
+    public static final int SUB_MATRIX_FRAGMENT_ID = 2;
     private static final String TAG = "HomeActivity";
     //for matrix cards recycler view
     public static RecyclerView mMatrixCardsRecyclerView;
     //for result cards recycler view
     public static RecyclerView mResultCardsRecyclerView;
+    //for HomeScreen Keyboard
+    public static MaterialButton[] numpadButtons = new MaterialButton[10];
+    public static MaterialButton plusButton, minusButton, multiplyButton, divideButton;
+    public static MaterialButton dotButton, bracketOpen, bracketClose;
+    public static CardView[] matOperationButtons = new CardView[10];
+    public static CardView moveCursorLeft, moveCursorRight, backSpaceButton;
+    String name;
     //for navigation drawer
-    DrawerLayout mDrawerLayout;
-    NavigationView mNavigationView;
-    Toolbar mToolbar;
-    ActionBarDrawerToggle mToggle;
-    ImageView addMatrixCardsButton;
-    ImageView addResultCardsButton;
-    CardView homeNumpadCardView;
+    private DrawerLayout mDrawerLayout;
+    private Toolbar mToolbar;
+    private ImageView addMatrixCardsButton;
+    private ImageView addResultCardsButton;
+    private CardView homeNumpadCardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +67,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mToolbar = findViewById(R.id.Toolbar);
         addMatrixCardsButton = findViewById(R.id.addMatrixCardButton);
         addResultCardsButton = findViewById(R.id.addResultCardButton);
-        homeNumpadCardView=findViewById(R.id.HomeNumpadCardView);
+        homeNumpadCardView = findViewById(R.id.HomeNumpadCardView);
 
         addMatrixCardsButton.setOnClickListener(this);
         addResultCardsButton.setOnClickListener(this);
@@ -70,7 +77,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         InitMatrixCardsRecyclerView();
         InitResultCardsRecyclerView();
 
-        InitHomeNumpad();
+        InitHomeKeyboard();
     }
 
     /**
@@ -78,9 +85,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      **/
     public void InitNavigationDrawer() {
         mDrawerLayout = findViewById(R.id.DrawerLayout);
-        mNavigationView = findViewById(R.id.HomeNavigationView);
+        NavigationView mNavigationView = findViewById(R.id.HomeNavigationView);
 
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open, R.string.close);
+        ActionBarDrawerToggle mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
 
@@ -154,13 +161,74 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mResultCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         resultCardsTouchHelper.attachToRecyclerView(mResultCardsRecyclerView);
+        mResultCardsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCREEN_STATE_ON)
+                    homeNumpadCardView.setVisibility(View.GONE);
+                else
+                    homeNumpadCardView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
-    public void InitHomeNumpad(){
-        View view= LayoutInflater.from(this).inflate(R.layout.numpad_home,homeNumpadCardView,true);
+    public void InitHomeKeyboard() {
+        View view = LayoutInflater.from(this).inflate(R.layout.numpad_home, homeNumpadCardView, true);
 
+        numpadButtons[0] = view.findViewById(R.id.HomeNumpad0);
+        numpadButtons[1] = view.findViewById(R.id.HomeNumpad1);
+        numpadButtons[2] = view.findViewById(R.id.HomeNumpad2);
+        numpadButtons[3] = view.findViewById(R.id.HomeNumpad3);
+        numpadButtons[4] = view.findViewById(R.id.HomeNumpad4);
+        numpadButtons[5] = view.findViewById(R.id.HomeNumpad5);
+        numpadButtons[6] = view.findViewById(R.id.HomeNumpad6);
+        numpadButtons[7] = view.findViewById(R.id.HomeNumpad7);
+        numpadButtons[8] = view.findViewById(R.id.HomeNumpad8);
+        numpadButtons[9] = view.findViewById(R.id.HomeNumpad9);
+
+        for (int i = 0; i < 10; i++)
+            numpadButtons[i].setOnClickListener(this);
+
+        plusButton = view.findViewById(R.id.HomeNumpadAdd);
+        minusButton = view.findViewById(R.id.HomeNumpadMinus);
+        multiplyButton = view.findViewById(R.id.HomeNumpadX);
+        divideButton = view.findViewById(R.id.HomeNumpadDivide);
+
+        plusButton.setOnClickListener(this);
+        minusButton.setOnClickListener(this);
+        multiplyButton.setOnClickListener(this);
+        divideButton.setOnClickListener(this);
+
+        dotButton = view.findViewById(R.id.HomeNumpadDot);
+        bracketOpen = view.findViewById(R.id.HomeNumpadBracketOpen);
+        bracketClose = view.findViewById(R.id.HomeNumpadBracketClose);
+
+        dotButton.setOnClickListener(this);
+        bracketOpen.setOnClickListener(this);
+        bracketClose.setOnClickListener(this);
+
+        matOperationButtons[0] = view.findViewById(R.id.detButton);
+        matOperationButtons[1] = view.findViewById(R.id.transButton);
+        matOperationButtons[2] = view.findViewById(R.id.squareButton);
+        matOperationButtons[3] = view.findViewById(R.id.cubeButton);
+        matOperationButtons[4] = view.findViewById(R.id.nthButton);
+        matOperationButtons[5] = view.findViewById(R.id.inverseButton);
+        matOperationButtons[6] = view.findViewById(R.id.traceButton);
+        matOperationButtons[7] = view.findViewById(R.id.adjButton);
+        matOperationButtons[8] = view.findViewById(R.id.minorsButton);
+        matOperationButtons[9] = view.findViewById(R.id.cofButton);
+
+        for (int i = 0; i < 10; i++)
+            matOperationButtons[i].setOnClickListener(this);
+
+        moveCursorLeft = view.findViewById(R.id.MoveCursorLeft);
+        moveCursorRight = view.findViewById(R.id.MoveCursorRight);
+        backSpaceButton = view.findViewById(R.id.HomeBackspaceButton);
+
+        moveCursorLeft.setOnClickListener(this);
+        moveCursorRight.setOnClickListener(this);
+        backSpaceButton.setOnClickListener(this);
     }
-
 
     @Override
     public void onClick(View view) {
@@ -178,7 +246,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mResultCardsRecyclerView);
         }
 
-
+        //sending OnClicks to ResultCardsController for Click Handling
+        ResultCardsController.InitKeyboard(this, view);
     }
 
     /**
