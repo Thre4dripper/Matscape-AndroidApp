@@ -44,24 +44,46 @@
     <string name="text_rows">Rows</string>
     <string name="text_columns">Columns</string>
 
-    <string name="edit_numpad1">1</string>
-    <string name="edit_numpad2">2</string>
-    <string name="edit_numpad3">3</string>
-    <string name="edit_numpad4">4</string>
-    <string name="edit_numpad5">5</string>
-    <string name="edit_numpad6">6</string>
-    <string name="edit_numpad7">7</string>
-    <string name="edit_numpad8">8</string>
-    <string name="edit_numpad9">9</string>
-    <string name="edit_numpad0">0</string>
-    <string name="edit_numpadDot">.</string>
-    <string name="edit_numpadMinus">_</string>
+    //for EditMatrixFragment Numpad
+    <string name="desc_edit_keyboard_focus_up">Move Focus UP</string>
+    <string name="desc_edit_keyboard_focus_down">Move Focus DOWN</string>
+    <string name="desc_edit_keyboard_focus_right">Move Focus RIGHT</string>
+    <string name="desc_edit_keyboard_focus_left">Move Focus LEFT</string>
 
-    <string name="desc_focus_up">Move Focus UP</string>
-    <string name="desc_focus_down">Move Focus DOWN</string>
-    <string name="desc_focus_right">Move Focus RIGHT</string>
-    <string name="desc_focus_left">Move Focus LEFT</string>
-    <string name="desc_numpad_backspace">BackSpace</string>
+    ////for HomePage Keyboard
+    <string name="home_keyboard_determinant">|A|</string>
+    <string name="home_keyboard_transpose">A<sup><small>T</small></sup></string>
+    <string name="home_keyboard_square">A<sup><small>2</small></sup></string>
+    <string name="home_keyboard_cube">A<sup><small>3</small></sup></string>
+    <string name="home_keyboard_nth_power">A<sup><small>n</small></sup></string>
+    <string name="home_keyboard_inverse">A<sup><small>-1</small></sup></string>
+    <string name="home_keyboard_trace">trc</string>
+    <string name="home_keyboard_adjoint">Adj</string>
+    <string name="home_keyboard_minors">minors</string>
+    <string name="home_keyboard_cofactors">Co-fac</string>
 
+    <string name="home_numpad_multiply">X</string>
+    <string name="home_numpad_divide">/</string>
+    <string name="home_numpad_add">+</string>
+    <string name="home_keyboard_bracket_open">(</string>
+    <string name="home_keyboard_bracket_close">)</string>
+
+    <string name="desc_move_cursor_left">Move Cursor Left</string>
+    <string name="desc_move_cursor_right">Move Cursor Right</string>
+
+    //for Both EditMatrixFragment and Home Numpad
+    <string name="numpad1">1</string>
+    <string name="numpad2">2</string>
+    <string name="numpad3">3</string>
+    <string name="numpad4">4</string>
+    <string name="numpad5">5</string>
+    <string name="numpad6">6</string>
+    <string name="numpad7">7</string>
+    <string name="numpad8">8</string>
+    <string name="numpad9">9</string>
+    <string name="numpad0">0</string>
+    <string name="numpadDot">.</string>
+    <string name="numpadMinus">-</string>
+    <string name="desc_keyboard_backspace">BackSpace</string>
 
 </resources>

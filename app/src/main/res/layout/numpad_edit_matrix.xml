@@ -18,22 +18,22 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad1"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad1" />
+            android:text="@string/numpad1" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad4"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad4" />
+            android:text="@string/numpad4" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad7"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad7" />
+            android:text="@string/numpad7" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpadDot"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpadDot" />
+            android:text="@string/numpadDot" />
 
     </LinearLayout>
 
@@ -46,22 +46,22 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad2"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad2" />
+            android:text="@string/numpad2" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad5"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad5" />
+            android:text="@string/numpad5" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad8"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad8" />
+            android:text="@string/numpad8" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad0"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad0" />
+            android:text="@string/numpad0" />
 
     </LinearLayout>
 
@@ -74,22 +74,22 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad3"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad3" />
+            android:text="@string/numpad3" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad6"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad6" />
+            android:text="@string/numpad6" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpad9"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpad9" />
+            android:text="@string/numpad9" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/EditNumpadMinus"
             style="@style/EditMatrixFragMaterialButtons"
-            android:text="@string/edit_numpadMinus" />
+            android:text="@string/numpadMinus" />
 
     </LinearLayout>
 
@@ -110,7 +110,7 @@
             <ImageView
                 android:id="@+id/EditNumpadUp"
                 style="@style/EditMatrixFragNumpadImageBtns"
-                android:contentDescription="@string/desc_focus_up"
+                android:contentDescription="@string/desc_edit_keyboard_focus_up"
                 android:src="@drawable/ic_mat_edit_up" />
         </androidx.cardview.widget.CardView>
 
@@ -133,7 +133,7 @@
                 <ImageView
                     android:id="@+id/EditNumpadLeft"
                     style="@style/EditMatrixFragNumpadImageBtns"
-                    android:contentDescription="@string/desc_focus_left"
+                    android:contentDescription="@string/desc_edit_keyboard_focus_left"
                     android:src="@drawable/ic_mat_edit_left" />
             </androidx.cardview.widget.CardView>
 
@@ -145,7 +145,7 @@
                 <ImageView
                     android:id="@+id/EditNumpadRight"
                     style="@style/EditMatrixFragNumpadImageBtns"
-                    android:contentDescription="@string/desc_focus_right"
+                    android:contentDescription="@string/desc_edit_keyboard_focus_right"
                     android:src="@drawable/ic_mat_edit_right" />
             </androidx.cardview.widget.CardView>
 
@@ -162,7 +162,7 @@
             <ImageView
                 android:id="@+id/EditNumpadDown"
                 style="@style/EditMatrixFragNumpadImageBtns"
-                android:contentDescription="@string/desc_focus_down"
+                android:contentDescription="@string/desc_edit_keyboard_focus_down"
                 android:src="@drawable/ic_mat_edit_down" />
         </androidx.cardview.widget.CardView>
 
@@ -177,7 +177,7 @@
             <ImageView
                 android:id="@+id/EditNumpadBackSpace"
                 style="@style/EditMatrixFragNumpadImageBtns"
-                android:contentDescription="@string/desc_numpad_backspace"
+                android:contentDescription="@string/desc_keyboard_backspace"
                 android:padding="10dp"
                 android:src="@drawable/ic_mat_edit_backspace" />
         </androidx.cardview.widget.CardView>
