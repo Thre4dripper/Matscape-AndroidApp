@@ -83,7 +83,7 @@
     <string name="numpad9">9</string>
     <string name="numpad0">0</string>
     <string name="numpadDot">.</string>
-    <string name="numpadMinus">-</string>
+    <string name="numpadMinus">‒</string>
     <string name="desc_keyboard_backspace">BackSpace</string>
 
 </resources>

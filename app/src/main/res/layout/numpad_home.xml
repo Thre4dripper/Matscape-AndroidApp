@@ -28,94 +28,41 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/detButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_determinant"
-                    android:textSize="16sp">
-
-                </TextView>
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_determinant" />
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/transButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_transpose"
-                    android:textSize="16sp">
-
-                </TextView>
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_transpose" />
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/squareButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_square"
-                    android:textSize="16sp">
-
-                </TextView>
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_square" />
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cubeButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_cube"
-                    android:textSize="16sp">
-
-                </TextView>
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_cube" />
 
             </androidx.cardview.widget.CardView>
         </LinearLayout>
@@ -130,99 +77,42 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/nthButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_nth_power"
-                    android:textSize="16sp">
-
-                </TextView>
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_nth_power" />
 
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/inverseButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_inverse"
-                    android:textSize="16sp">
-
-                </TextView>
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_inverse" />
 
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/traceButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_trace"
-                    android:textSize="16sp">
-
-                </TextView>
-
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_trace" />
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/adjButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_adjoint"
-                    android:textSize="16sp">
-
-                </TextView>
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_adjoint" />
 
             </androidx.cardview.widget.CardView>
 
@@ -238,49 +128,21 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/minorsButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_minors"
-                    android:textSize="16sp">
-
-                </TextView>
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_minors" />
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cofButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+                style="@style/HomeKBCardButtons">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/home_keyboard_cofactors"
-                    android:textSize="16sp">
-
-                </TextView>
+                    style="@style/HomeKBCardTextView"
+                    android:text="@string/home_keyboard_cofactors" />
 
             </androidx.cardview.widget.CardView>
 
@@ -309,108 +171,54 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad1" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad2" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad3" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpadX"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
-                android:text="@string/home_numpad_multiply" />
+                style="@style/HomeKBNumpadButtons"
+                android:text="@string/home_numpad_multiply"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/HomeKeyboardNumpadLL2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/HomeKeyboardNumpadLL3"
             app:layout_constraintTop_toBottomOf="@+id/HomeKeyboardNumpadLL1">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad4" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad5" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad6"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad6" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpadAdd"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
-                android:text="@string/home_numpad_add" />
+                style="@style/HomeKBNumpadButtons"
+                android:text="@string/home_numpad_add"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
@@ -418,57 +226,28 @@
             android:id="@+id/HomeKeyboardNumpadLL3"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/HomeKeyboardNumpadLL4"
             app:layout_constraintTop_toBottomOf="@+id/HomeKeyboardNumpadLL2">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad7"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad7" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad8"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad8" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad9"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad9" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpadMinus"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpadMinus" />
 
         </LinearLayout>
@@ -477,33 +256,18 @@
             android:id="@+id/HomeKeyboardNumpadLL4"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/HomeKeyboardNumpadLL3">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpadDot"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpadDot" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpad0"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/numpad0" />
 
         </LinearLayout>
@@ -513,14 +277,14 @@
         android:id="@+id/HomeKeyboardCL3"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintWidth_percent=".2"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/HomeKeyboardCL2"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent=".2">
 
         <LinearLayout
             android:id="@+id/HomeKeyboardBracketsLL"
@@ -532,26 +296,12 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpadBracketStart"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/home_keyboard_bracket_open" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/HomeNumpadBracketEnd"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-
-                android:padding="0px"
+                style="@style/HomeKBNumpadButtons"
                 android:text="@string/home_keyboard_bracket_close" />
 
         </LinearLayout>
@@ -560,56 +310,30 @@
             android:id="@+id/HomeKeyboardCursorMoveLL"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.2"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/HomeKeyboardBackspaceLL"
             app:layout_constraintTop_toBottomOf="@+id/HomeKeyboardBracketsLL">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
-
-               <ImageView
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:src="@drawable/ic_home_right_arrow"
-                   android:rotation="180"
-                   android:layout_gravity="center"
-                   android:contentDescription="@string/desc_move_cursor_left" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-
-                android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+            <androidx.cardview.widget.CardView style="@style/HomeKBCardButtons">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_home_right_arrow"
                     android:layout_gravity="center"
-                    android:contentDescription="@string/desc_move_cursor_right" />
+                    android:contentDescription="@string/desc_move_cursor_left"
+                    android:rotation="180"
+                    android:src="@drawable/ic_home_right_arrow" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView style="@style/HomeKBCardButtons">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/desc_move_cursor_right"
+                    android:src="@drawable/ic_home_right_arrow" />
 
             </androidx.cardview.widget.CardView>
         </LinearLayout>
@@ -618,31 +342,18 @@
             android:id="@+id/HomeKeyboardBackspaceLL"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.2"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/HomeKeyboardCursorMoveLL">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="0dp"
-                app:cardCornerRadius="5dp">
+            <androidx.cardview.widget.CardView style="@style/HomeKBCardButtons">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_mat_edit_backspace"
                     android:layout_gravity="center"
-                    android:contentDescription="@string/desc_keyboard_backspace" />
+                    android:contentDescription="@string/desc_keyboard_backspace"
+                    android:src="@drawable/ic_mat_edit_backspace" />
 
             </androidx.cardview.widget.CardView>
         </LinearLayout>
