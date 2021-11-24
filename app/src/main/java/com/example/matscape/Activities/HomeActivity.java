@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -160,13 +159,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mResultCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         resultCardsTouchHelper.attachToRecyclerView(mResultCardsRecyclerView);
-        mResultCardsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCREEN_STATE_ON)
-                    homeNumpadCardView.setVisibility(View.GONE);
-            }
-        });
     }
 
     public void InitHomeKeyboard() {
@@ -317,14 +309,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void clickedCard(int clickedCard) {
 
-        //removing color from previous selected card
-        ResultCardsController.resultCardsList.get(ResultCardsController.selectedCard).setHighlightedColor("#FFFFFF");
-        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(ResultCardsController.selectedCard);
+        if (clickedCard != ResultCardsController.selectedCard) {
+            //removing color from previous selected card
+            ResultCardsController.resultCardsList.get(ResultCardsController.selectedCard).setHighlightedColor("#FFFFFF");
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(ResultCardsController.selectedCard);
 
-        //setting color to newly selected card
-        ResultCardsController.resultCardsList.get(clickedCard).setHighlightedColor("#2196F3");
-        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(clickedCard);
+            //setting color to newly selected card
+            ResultCardsController.resultCardsList.get(clickedCard).setHighlightedColor("#2196F3");
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(clickedCard);
 
-        ResultCardsController.selectedCard = clickedCard;
+            ResultCardsController.selectedCard = clickedCard;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        homeNumpadCardView.setVisibility(View.GONE);
     }
 }

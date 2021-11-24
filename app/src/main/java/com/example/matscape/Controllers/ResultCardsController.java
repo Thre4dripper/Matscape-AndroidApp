@@ -62,6 +62,12 @@ public class ResultCardsController {
         List<List<String>> matrix=null;
         int rows=0,columns=0;
 
+        String highlightedColor;
+        if(resultCardCounter==0)
+            highlightedColor="#2196F3";
+        else
+            highlightedColor="#FFFFFF";
+
         if(receivedCard!=null)
         {
             expression=receivedCard.getExpression();
@@ -77,7 +83,7 @@ public class ResultCardsController {
                 rows,
                 columns,
                 14,
-                "#FFFFFF"
+                highlightedColor
         ));
 
         mResultCardsRecyclerAdapter.notifyItemInserted(position);
@@ -90,8 +96,9 @@ public class ResultCardsController {
 
     public static void InitKeyboard(Context context,View view) {
         if(view== HomeActivity.numpadButtons[0]) {
-
-            Toast.makeText(context,"clicked", Toast.LENGTH_SHORT).show();
+            String expression=resultCardsList.get(selectedCard).getExpression();
+            resultCardsList.get(selectedCard).setExpression(expression+"0");
+            mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
     }
 }

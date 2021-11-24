@@ -72,7 +72,8 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         holder.expressionField.setShowSoftInputOnFocus(false);
 
         if (position == ResultCardsController.selectedCard)
-            holder.expressionField.requestFocus();
+            holder.expressionField.setSelection(expression.length());
+
 
     }
 
@@ -128,6 +129,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
                 }
             });
 
+            //always select focused field's card
             expressionField.setOnFocusChangeListener((view, b) -> HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE));
 
             expressionField.setOnClickListener(this);
@@ -146,6 +148,8 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             else if (view == mResultCardCL) {
                 resultCardsInterface.clickedCard(getAdapterPosition());
                 HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE);
+                //always focus selected card's field
+                expressionField.requestFocus();
             }
 
 
