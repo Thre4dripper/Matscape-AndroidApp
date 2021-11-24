@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,13 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.R;
-import com.example.matscape.dataModels.ExpressionItem;
 import com.example.matscape.dataModels.ResultCards;
 
 import java.util.List;
 
-public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCardsRecyclerAdapter.ViewHolder> implements
-        ResultCardsExpressionAdapter.ExpressionItemClickInterface {
+public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCardsRecyclerAdapter.ViewHolder>{
 
     private static final String TAG = "ResultCardsRecyclerAdapter";
 
@@ -32,7 +31,6 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
     public  static ItemTouchHelper resultCardsTouchHelper;
     public  static ResultCardsInterface resultCardsInterface;
     public  static List<ResultCards> resultCardsList;
-    public static ResultCardsExpressionAdapter expressionAdapter;
 
     //Constructor
     public ResultCardsRecyclerAdapter(Context context,List<ResultCards> list,ItemTouchHelper itemTouchHelper,
@@ -64,9 +62,9 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         });
         holder.mDragButton.setBackgroundColor(Color.parseColor(resultCardsList.get(position).getHighlightedColor()));
 
-        List<ExpressionItem> expression = resultCardsList.get(position).getExpression();
-        expressionAdapter=new ResultCardsExpressionAdapter(expression,this);
-        holder.expressionRecyclerView.setAdapter(expressionAdapter);
+        String expression = resultCardsList.get(position).getExpression();
+
+        holder.expressionField.setText(expression);
 
     }
 
@@ -75,11 +73,6 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         return resultCardsList.size();
     }
 
-    @Override
-    public void expressionItemClick(int position) {
-        resultCardsInterface.clickedCard(position);
-        System.out.println(position);
-    }
 
     public interface ResultCardsInterface {
         void deleteResult(int position);
@@ -93,7 +86,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         ImageView mDeleteButton, mCopyButton;
         ImageView mDragButton;
 
-        RecyclerView expressionRecyclerView;
+        EditText expressionField;
 
         TextView mMessageView;
 
@@ -102,19 +95,15 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             super(itemView);
 
             mResultCardCL=itemView.findViewById(R.id.ResultCardCL);
-            expressionRecyclerView=itemView.findViewById(R.id.ExpressionRecyclerView);
+            expressionField=itemView.findViewById(R.id.ExpressionField);
             mDeleteButton=itemView.findViewById(R.id.DeleteResultButton);
             mCopyButton=itemView.findViewById(R.id.CopyResultButton);
             mDragButton=itemView.findViewById(R.id.resultCardDragButton);
             mMessageView=itemView.findViewById(R.id.ResultCardMessage);
 
-            expressionRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(),
-                    LinearLayoutManager.HORIZONTAL,
-                    false
-            ));
+
 
             mResultCardCL.setOnTouchListener(this);
-            expressionRecyclerView.setOnTouchListener(this);
             mDeleteButton.setOnClickListener(this);
             mCopyButton.setOnClickListener(this);
         }
@@ -130,9 +119,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            if(view==expressionRecyclerView)
-                resultCardsInterface.clickedCard(getAdapterPosition());
-            else if(view==mResultCardCL)
+            if(view==mResultCardCL)
                 resultCardsInterface.clickedCard(getAdapterPosition());
             return false;
         }

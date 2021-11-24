@@ -4,14 +4,14 @@ import java.util.List;
 
 public class ResultCards {
 
-    List<ExpressionItem> expression;
+    String expression;
     String message;
     List<List<String>> resultMatrix;
     int matrixRows,matrixColumns;
     double textSize;
     String highlightedColor;
 
-    public ResultCards(List<ExpressionItem> expression, String message, List<List<String>> resultMatrix,
+    public ResultCards(String expression, String message, List<List<String>> resultMatrix,
                        int matrixRows, int matrixColumns, double textSize, String highlightedColor) {
         this.expression = expression;
         this.message = message;
@@ -22,11 +22,11 @@ public class ResultCards {
         this.highlightedColor=highlightedColor;
     }
 
-    public List<ExpressionItem> getExpression() {
+    public String getExpression() {
         return expression;
     }
 
-    public void setExpression(List<ExpressionItem> expression) {
+    public void setExpression(String expression) {
         this.expression = expression;
     }
 

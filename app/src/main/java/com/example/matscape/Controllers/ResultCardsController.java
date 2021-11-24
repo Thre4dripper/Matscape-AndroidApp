@@ -1,8 +1,8 @@
 package com.example.matscape.Controllers;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Activities.HomeActivity;
 import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
-import com.example.matscape.dataModels.ExpressionItem;
 import com.example.matscape.dataModels.ResultCards;
 
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class ResultCardsController {
 
     public static void addResultCards(Context context, int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView) {
 
-        resultCardsList.add(new ResultCards(new ArrayList<>(),
+        resultCardsList.add(new ResultCards("hello",
                 null,
                 null,
                 0,
@@ -75,11 +74,12 @@ public class ResultCardsController {
     public static void InitKeyboard(Context context,View view) {
         if(view== HomeActivity.numpadButtons[0]) {
 
-            List<ExpressionItem> list=resultCardsList.get(selectedCard).getExpression();
-            list.add(new ExpressionItem("0",0,selectedCard));
-            resultCardsList.get(selectedCard).setExpression(list);
-            ResultCardsRecyclerAdapter.expressionAdapter.notifyItemInserted(list.size()-1);
-            mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+            Toast.makeText(context,"clicked", Toast.LENGTH_SHORT).show();
+//            List<ExpressionItem> list=resultCardsList.get(selectedCard).getExpression();
+//            list.add(new ExpressionItem("0",0,selectedCard));
+//            resultCardsList.get(selectedCard).setExpression(list);
+//            ResultCardsRecyclerAdapter.expressionAdapter.notifyItemInserted(list.size()-1);
+//            mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
     }
 }
