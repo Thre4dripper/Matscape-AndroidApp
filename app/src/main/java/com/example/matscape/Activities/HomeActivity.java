@@ -29,7 +29,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Collections;
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
         MatrixCardsRecyclerAdapter.MatrixCardsInterface,
@@ -52,13 +51,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static MaterialButton dotButton, bracketOpen, bracketClose;
     public static CardView[] matOperationButtons = new CardView[10];
     public static CardView moveCursorLeft, moveCursorRight, backSpaceButton;
+    public static CardView homeNumpadCardView;
     String name;
     //for navigation drawer
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
     private ImageView addMatrixCardsButton;
     private ImageView addResultCardsButton;
-    private CardView homeNumpadCardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,8 +166,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCREEN_STATE_ON)
                     homeNumpadCardView.setVisibility(View.GONE);
-                else
-                    homeNumpadCardView.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -321,18 +318,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void clickedCard(int position) {
 
-        //TODO make focus changeable without refreshing whole list,
-        // TODO make sure expression focus depend on card focus,
-        // TODO prevent focus on already selected card (expression focus remain on selected text)
-        // TODO bug in focus change on rearranging
-        for(int i=0;i<ResultCardsController.resultCardsList.size();i++)
+        //TODO fix multiple selection of cards when copying
+        for (int i = 0; i < ResultCardsController.resultCardsList.size(); i++)
             ResultCardsController.resultCardsList.get(i).setHighlightedColor("#FFFFFF");
 
         ResultCardsController.resultCardsList.get(position).setHighlightedColor("#2196F3");
 
-        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRangeChanged(0,ResultCardsController.resultCardsList.size());
+        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRangeChanged(0, ResultCardsController.resultCardsList.size());
 
-        ResultCardsController.selectedCard=position;
+        ResultCardsController.selectedCard = position;
 
 
     }

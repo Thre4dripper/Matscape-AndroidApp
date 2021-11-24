@@ -3,6 +3,8 @@ package com.example.matscape.Adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,6 +19,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.matscape.Activities.HomeActivity;
+import com.example.matscape.Controllers.ResultCardsController;
 import com.example.matscape.R;
 import com.example.matscape.dataModels.ResultCards;
 
@@ -65,6 +69,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         String expression = resultCardsList.get(position).getExpression();
 
         holder.expressionField.setText(expression);
+        holder.expressionField.setShowSoftInputOnFocus(false);
 
     }
 
@@ -80,7 +85,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         void clickedCard(int position);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
 
         ConstraintLayout mResultCardCL;
         ImageView mDeleteButton, mCopyButton;
@@ -101,8 +106,26 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             mDragButton=itemView.findViewById(R.id.resultCardDragButton);
             mMessageView=itemView.findViewById(R.id.ResultCardMessage);
 
+            expressionField.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+                }
 
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    ResultCardsController.resultCardsList.get(getAdapterPosition()).setExpression(expressionField.getText().toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            expressionField.setOnFocusChangeListener((view, b) -> HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE));
+
+            expressionField.setOnClickListener(this);
             mResultCardCL.setOnTouchListener(this);
             mDeleteButton.setOnClickListener(this);
             mCopyButton.setOnClickListener(this);
@@ -114,6 +137,8 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
                 resultCardsInterface.deleteResult(getAdapterPosition());
             else if(view==mCopyButton)
                 resultCardsInterface.copyResult(getAdapterPosition());
+            else if(view==expressionField)
+                HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE);
         }
 
         @SuppressLint("ClickableViewAccessibility")

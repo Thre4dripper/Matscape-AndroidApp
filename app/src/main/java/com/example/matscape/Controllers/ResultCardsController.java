@@ -54,11 +54,24 @@ public class ResultCardsController {
 
     public static void addResultCards(Context context, int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView) {
 
-        resultCardsList.add(new ResultCards("hello",
-                null,
-                null,
-                0,
-                0,
+        String expression="",message="message";
+        List<List<String>> matrix=null;
+        int rows=0,columns=0;
+
+        if(receivedCard!=null)
+        {
+            expression=receivedCard.getExpression();
+            message=receivedCard.getMessage();
+            matrix=receivedCard.getResultMatrix();
+            rows=receivedCard.getMatrixRows();
+            columns=receivedCard.getMatrixColumns();
+        }
+
+        resultCardsList.add(position,new ResultCards(expression,
+                message,
+                matrix,
+                rows,
+                columns,
                 14,
                 "#FFFFFF"
         ));
@@ -75,11 +88,6 @@ public class ResultCardsController {
         if(view== HomeActivity.numpadButtons[0]) {
 
             Toast.makeText(context,"clicked", Toast.LENGTH_SHORT).show();
-//            List<ExpressionItem> list=resultCardsList.get(selectedCard).getExpression();
-//            list.add(new ExpressionItem("0",0,selectedCard));
-//            resultCardsList.get(selectedCard).setExpression(list);
-//            ResultCardsRecyclerAdapter.expressionAdapter.notifyItemInserted(list.size()-1);
-//            mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
     }
 }
