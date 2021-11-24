@@ -16,7 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Activities.HomeActivity;
@@ -26,32 +25,33 @@ import com.example.matscape.dataModels.ResultCards;
 
 import java.util.List;
 
-public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCardsRecyclerAdapter.ViewHolder>{
+public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCardsRecyclerAdapter.ViewHolder> {
 
     private static final String TAG = "ResultCardsRecyclerAdapter";
 
     public static float ONE_DP;
 
-    public  static ItemTouchHelper resultCardsTouchHelper;
-    public  static ResultCardsInterface resultCardsInterface;
-    public  static List<ResultCards> resultCardsList;
+    public static ItemTouchHelper resultCardsTouchHelper;
+    public static ResultCardsInterface resultCardsInterface;
+    public static List<ResultCards> resultCardsList;
 
     //Constructor
-    public ResultCardsRecyclerAdapter(Context context,List<ResultCards> list,ItemTouchHelper itemTouchHelper,
-                                      ResultCardsInterface resultCardsInterface){
+    public ResultCardsRecyclerAdapter(Context context, List<ResultCards> list, ItemTouchHelper itemTouchHelper,
+                                      ResultCardsInterface resultCardsInterface) {
 
-        resultCardsList=list;
-        resultCardsTouchHelper=itemTouchHelper;
-        ResultCardsRecyclerAdapter.resultCardsInterface=resultCardsInterface;
+        resultCardsList = list;
+        resultCardsTouchHelper = itemTouchHelper;
+        ResultCardsRecyclerAdapter.resultCardsInterface = resultCardsInterface;
 
         ONE_DP = context.getResources().getDisplayMetrics().density;
     }
 
-    @NonNull @Override
+    @NonNull
+    @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        Context context=parent.getContext();
-        View view= LayoutInflater.from(context).inflate(R.layout.item_result_card,parent,false);
+        Context context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.item_result_card, parent, false);
 
         return new ViewHolder(view);
     }
@@ -71,6 +71,9 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         holder.expressionField.setText(expression);
         holder.expressionField.setShowSoftInputOnFocus(false);
 
+        if (position == ResultCardsController.selectedCard)
+            holder.expressionField.requestFocus();
+
     }
 
     @Override
@@ -81,11 +84,13 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
     public interface ResultCardsInterface {
         void deleteResult(int position);
+
         void copyResult(int position);
+
         void clickedCard(int position);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
 
         ConstraintLayout mResultCardCL;
         ImageView mDeleteButton, mCopyButton;
@@ -99,12 +104,12 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mResultCardCL=itemView.findViewById(R.id.ResultCardCL);
-            expressionField=itemView.findViewById(R.id.ExpressionField);
-            mDeleteButton=itemView.findViewById(R.id.DeleteResultButton);
-            mCopyButton=itemView.findViewById(R.id.CopyResultButton);
-            mDragButton=itemView.findViewById(R.id.resultCardDragButton);
-            mMessageView=itemView.findViewById(R.id.ResultCardMessage);
+            mResultCardCL = itemView.findViewById(R.id.ResultCardCL);
+            expressionField = itemView.findViewById(R.id.ExpressionField);
+            mDeleteButton = itemView.findViewById(R.id.DeleteResultButton);
+            mCopyButton = itemView.findViewById(R.id.CopyResultButton);
+            mDragButton = itemView.findViewById(R.id.resultCardDragButton);
+            mMessageView = itemView.findViewById(R.id.ResultCardMessage);
 
             expressionField.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -126,26 +131,34 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             expressionField.setOnFocusChangeListener((view, b) -> HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE));
 
             expressionField.setOnClickListener(this);
-            mResultCardCL.setOnTouchListener(this);
+            expressionField.setOnTouchListener(this);
+            mResultCardCL.setOnClickListener(this);
             mDeleteButton.setOnClickListener(this);
             mCopyButton.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if(view==mDeleteButton)
+            if (view == mDeleteButton)
                 resultCardsInterface.deleteResult(getAdapterPosition());
-            else if(view==mCopyButton)
+            else if (view == mCopyButton)
                 resultCardsInterface.copyResult(getAdapterPosition());
-            else if(view==expressionField)
+            else if (view == mResultCardCL) {
+                resultCardsInterface.clickedCard(getAdapterPosition());
                 HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE);
+            }
+
+
         }
 
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            if(view==mResultCardCL)
-                resultCardsInterface.clickedCard(getAdapterPosition());
+
+            if (view == expressionField) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP)
+                    resultCardsInterface.clickedCard(getAdapterPosition());
+            }
             return false;
         }
     }

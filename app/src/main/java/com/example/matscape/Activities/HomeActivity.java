@@ -52,7 +52,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static CardView[] matOperationButtons = new CardView[10];
     public static CardView moveCursorLeft, moveCursorRight, backSpaceButton;
     public static CardView homeNumpadCardView;
-    String name;
     //for navigation drawer
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
@@ -316,18 +315,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void clickedCard(int position) {
+    public void clickedCard(int clickedCard) {
 
-        //TODO fix multiple selection of cards when copying
-        for (int i = 0; i < ResultCardsController.resultCardsList.size(); i++)
-            ResultCardsController.resultCardsList.get(i).setHighlightedColor("#FFFFFF");
+        //removing color from previous selected card
+        ResultCardsController.resultCardsList.get(ResultCardsController.selectedCard).setHighlightedColor("#FFFFFF");
+        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(ResultCardsController.selectedCard);
 
-        ResultCardsController.resultCardsList.get(position).setHighlightedColor("#2196F3");
+        //setting color to newly selected card
+        ResultCardsController.resultCardsList.get(clickedCard).setHighlightedColor("#2196F3");
+        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(clickedCard);
 
-        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRangeChanged(0, ResultCardsController.resultCardsList.size());
-
-        ResultCardsController.selectedCard = position;
-
-
+        ResultCardsController.selectedCard = clickedCard;
     }
 }

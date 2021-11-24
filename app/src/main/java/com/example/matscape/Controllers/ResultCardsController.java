@@ -43,6 +43,10 @@ public class ResultCardsController {
             Collections.swap(resultCardsList, fromPosition, toPosition);
             mResultCardsRecyclerAdapter.notifyItemMoved(fromPosition, toPosition);
 
+            //updating selected card position when rearranging cards
+            if(fromPosition==selectedCard)
+                selectedCard=toPosition;
+
             return true;
         }
 
