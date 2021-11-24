@@ -2,23 +2,28 @@ package com.example.matscape.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.R;
+import com.example.matscape.dataModels.ExpressionItem;
 import com.example.matscape.dataModels.ResultCards;
 
 import java.util.List;
 
-public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCardsRecyclerAdapter.ViewHolder> {
+public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCardsRecyclerAdapter.ViewHolder> implements
+        ResultCardsExpressionAdapter.ExpressionItemClickInterface {
 
     private static final String TAG = "ResultCardsRecyclerAdapter";
 
@@ -27,9 +32,11 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
     public  static ItemTouchHelper resultCardsTouchHelper;
     public  static ResultCardsInterface resultCardsInterface;
     public  static List<ResultCards> resultCardsList;
+    public static ResultCardsExpressionAdapter expressionAdapter;
 
     //Constructor
-    public ResultCardsRecyclerAdapter(Context context,List<ResultCards> list,ItemTouchHelper itemTouchHelper,ResultCardsInterface resultCardsInterface){
+    public ResultCardsRecyclerAdapter(Context context,List<ResultCards> list,ItemTouchHelper itemTouchHelper,
+                                      ResultCardsInterface resultCardsInterface){
 
         resultCardsList=list;
         resultCardsTouchHelper=itemTouchHelper;
@@ -55,9 +62,10 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             resultCardsTouchHelper.startDrag(holder);
             return true;
         });
+        holder.mDragButton.setBackgroundColor(Color.parseColor(resultCardsList.get(position).getHighlightedColor()));
 
-        List<String> expression = resultCardsList.get(position).getExpression();
-        ResultCardsExpressionAdapter expressionAdapter=new ResultCardsExpressionAdapter(expression);
+        List<ExpressionItem> expression = resultCardsList.get(position).getExpression();
+        expressionAdapter=new ResultCardsExpressionAdapter(expression,this);
         holder.expressionRecyclerView.setAdapter(expressionAdapter);
 
     }
@@ -67,13 +75,21 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         return resultCardsList.size();
     }
 
+    @Override
+    public void expressionItemClick(int position) {
+        resultCardsInterface.clickedCard(position);
+        System.out.println(position);
+    }
+
     public interface ResultCardsInterface {
         void deleteResult(int position);
         void copyResult(int position);
+        void clickedCard(int position);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
 
+        ConstraintLayout mResultCardCL;
         ImageView mDeleteButton, mCopyButton;
         ImageView mDragButton;
 
@@ -81,9 +97,11 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
         TextView mMessageView;
 
+        @SuppressLint("ClickableViewAccessibility")
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            mResultCardCL=itemView.findViewById(R.id.ResultCardCL);
             expressionRecyclerView=itemView.findViewById(R.id.ExpressionRecyclerView);
             mDeleteButton=itemView.findViewById(R.id.DeleteResultButton);
             mCopyButton=itemView.findViewById(R.id.CopyResultButton);
@@ -95,6 +113,8 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
                     false
             ));
 
+            mResultCardCL.setOnTouchListener(this);
+            expressionRecyclerView.setOnTouchListener(this);
             mDeleteButton.setOnClickListener(this);
             mCopyButton.setOnClickListener(this);
         }
@@ -105,6 +125,16 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
                 resultCardsInterface.deleteResult(getAdapterPosition());
             else if(view==mCopyButton)
                 resultCardsInterface.copyResult(getAdapterPosition());
+        }
+
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if(view==expressionRecyclerView)
+                resultCardsInterface.clickedCard(getAdapterPosition());
+            else if(view==mResultCardCL)
+                resultCardsInterface.clickedCard(getAdapterPosition());
+            return false;
         }
     }
 }

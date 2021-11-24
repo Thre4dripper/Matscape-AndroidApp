@@ -29,6 +29,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Collections;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
         MatrixCardsRecyclerAdapter.MatrixCardsInterface,
@@ -315,5 +316,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void copyResult(int position) {
         ResultCards resultCard = ResultCardsController.resultCardsList.get(position);
         ResultCardsController.addResultCards(this, position + 1, resultCard, mResultCardsRecyclerView);
+    }
+
+    @Override
+    public void clickedCard(int position) {
+
+        //TODO make focus changeable without refreshing whole list,
+        // TODO make sure expression focus depend on card focus,
+        // TODO prevent focus on already selected card (expression focus remain on selected text)
+        // TODO bug in focus change on rearranging
+        for(int i=0;i<ResultCardsController.resultCardsList.size();i++)
+            ResultCardsController.resultCardsList.get(i).setHighlightedColor("#FFFFFF");
+
+        ResultCardsController.resultCardsList.get(position).setHighlightedColor("#2196F3");
+
+        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRangeChanged(0,ResultCardsController.resultCardsList.size());
+
+        ResultCardsController.selectedCard=position;
+
+
     }
 }

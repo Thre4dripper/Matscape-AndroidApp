@@ -1,36 +1,28 @@
 package com.example.matscape.Controllers;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Activities.HomeActivity;
 import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
-import com.example.matscape.R;
+import com.example.matscape.dataModels.ExpressionItem;
 import com.example.matscape.dataModels.ResultCards;
-import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class ResultCardsController {
+    private static final String TAG = "ResultCardsController";
 
     public static ResultCardsRecyclerAdapter mResultCardsRecyclerAdapter;
     public static List<ResultCards> resultCardsList = new ArrayList<>();
-    public static int resultCardCounter = 0;
-
-    public static MaterialButton[] numpadButtons = new MaterialButton[10];
-    public static MaterialButton plusButton, minusButton, multiplyButton, divideButton;
-    public static MaterialButton dotButton, bracketOpen, bracketClose;
-
-    public static CardView[] matOperationButtons = new CardView[10];
-    public static CardView moveCursorLeft, moveCursorRight, backSpaceButton;
+    public static int resultCardCounter = 0,selectedCard=0;
 
     /**
      * ===================================== CALLBACK FOR DRAGGING RESULT CARDS ===========================================
@@ -68,7 +60,8 @@ public class ResultCardsController {
                 null,
                 0,
                 0,
-                14
+                14,
+                "#FFFFFF"
         ));
 
         mResultCardsRecyclerAdapter.notifyItemInserted(position);
@@ -80,7 +73,13 @@ public class ResultCardsController {
     }
 
     public static void InitKeyboard(Context context,View view) {
-        if(view== HomeActivity.numpadButtons[0])
-            Toast.makeText(context, "1 clicked", Toast.LENGTH_SHORT).show();
+        if(view== HomeActivity.numpadButtons[0]) {
+
+            List<ExpressionItem> list=resultCardsList.get(selectedCard).getExpression();
+            list.add(new ExpressionItem("0",0,selectedCard));
+            resultCardsList.get(selectedCard).setExpression(list);
+            ResultCardsRecyclerAdapter.expressionAdapter.notifyItemInserted(list.size()-1);
+            mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
     }
 }

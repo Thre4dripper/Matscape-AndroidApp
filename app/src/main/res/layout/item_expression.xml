@@ -5,9 +5,11 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/ItemExpression"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/placeholder_matrix_text"
+        android:background="@null"
         android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
