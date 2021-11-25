@@ -3,6 +3,7 @@ package com.example.matscape.Controllers;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -101,5 +102,90 @@ public class ResultCardsController {
 
         resultCardCounter++;
 
+    }
+
+    /**
+     * ======================================= METHOD FOR HOME KEYBOARD INPUT CONTROL =====================================
+     **/
+    public static void HomeKeyboardInputControl(Context context, EditText editText,View view){
+        int selection;
+        String expressionText;
+        for (int i = 0; i < 10; i++)
+            if (view == HomeActivity.numpadButtons[i]) {
+                selection = editText.getSelectionStart();
+                expressionText = resultCardsList.get(selectedCard).getExpression();
+                resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + i + expressionText.substring(selection));
+                resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+                ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+            }
+
+        //multiply 'x' button
+        if (view == HomeActivity.multiplyButton) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + "•" + expressionText.substring(selection));
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //plus '+' button
+        else if (view == HomeActivity.plusButton) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + "+" + expressionText.substring(selection));
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //minus '-' button
+        else if (view == HomeActivity.minusButton) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + "-" + expressionText.substring(selection));
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //divide '/' button
+        else if (view == HomeActivity.divideButton) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + "/" + expressionText.substring(selection));
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //dot '.' button
+        else if (view == HomeActivity.dotButton) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + "." + expressionText.substring(selection));
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+
+        }
+        //opening bracket '(' button
+        else if (view == HomeActivity.bracketOpen) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + "(" + expressionText.substring(selection));
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //closing bracket ')' button
+        else if (view == HomeActivity.bracketClose) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + ")" + expressionText.substring(selection));
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //backspace button
+        else if (view == HomeActivity.backSpaceButton) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            //cursor position must not be at start and expression field must not be empty
+            if (selection > 0 && !expressionText.equals("")) {
+                resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection - 1) + expressionText.substring(selection));
+                resultCardsList.get(selectedCard).setCursorPosition(selection - 1);
+                ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+            }
+        }
     }
 }
