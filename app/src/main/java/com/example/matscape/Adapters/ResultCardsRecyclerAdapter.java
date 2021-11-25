@@ -34,7 +34,6 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
     public static ItemTouchHelper resultCardsTouchHelper;
     public static ResultCardsInterface resultCardsInterface;
     public static List<ResultCards> resultCardsList;
-    private static int selection;
     private static int cardPosition = 0;
     private static String expressionText;
     @SuppressLint("StaticFieldLeak")
@@ -146,8 +145,12 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             mCopyButton.setOnClickListener(this);
         }
 
+        /**
+         * ======================================= METHOD FOR HOME KEYBOARD INPUT CONTROL =====================================
+         **/
         public static void InitKeyboard(Context context, View view) {
 
+            int selection;
             for (int i = 0; i < 10; i++)
                 if (view == HomeActivity.numpadButtons[i]) {
                     selection = editText.getSelectionStart();
@@ -156,6 +159,75 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
                     resultCardsList.get(cardPosition).setCursorPosition(selection + 1);
                     ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
                 }
+
+            //multiply 'x' button
+            if (view == HomeActivity.multiplyButton) {
+                selection = editText.getSelectionStart();
+                expressionText = resultCardsList.get(cardPosition).getExpression();
+                resultCardsList.get(cardPosition).setExpression(expressionText.substring(0, selection) + "•" + expressionText.substring(selection));
+                resultCardsList.get(cardPosition).setCursorPosition(selection + 1);
+                ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
+            }
+            //plus '+' button
+            else if (view == HomeActivity.plusButton) {
+                selection = editText.getSelectionStart();
+                expressionText = resultCardsList.get(cardPosition).getExpression();
+                resultCardsList.get(cardPosition).setExpression(expressionText.substring(0, selection) + "+" + expressionText.substring(selection));
+                resultCardsList.get(cardPosition).setCursorPosition(selection + 1);
+                ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
+            }
+            //minus '-' button
+            else if (view == HomeActivity.minusButton) {
+                selection = editText.getSelectionStart();
+                expressionText = resultCardsList.get(cardPosition).getExpression();
+                resultCardsList.get(cardPosition).setExpression(expressionText.substring(0, selection) + "-" + expressionText.substring(selection));
+                resultCardsList.get(cardPosition).setCursorPosition(selection + 1);
+                ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
+            }
+            //divide '/' button
+            else if (view == HomeActivity.divideButton) {
+                selection = editText.getSelectionStart();
+                expressionText = resultCardsList.get(cardPosition).getExpression();
+                resultCardsList.get(cardPosition).setExpression(expressionText.substring(0, selection) + "/" + expressionText.substring(selection));
+                resultCardsList.get(cardPosition).setCursorPosition(selection + 1);
+                ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
+            }
+            //dot '.' button
+            else if (view == HomeActivity.dotButton) {
+                selection = editText.getSelectionStart();
+                expressionText = resultCardsList.get(cardPosition).getExpression();
+                resultCardsList.get(cardPosition).setExpression(expressionText.substring(0, selection) + "." + expressionText.substring(selection));
+                resultCardsList.get(cardPosition).setCursorPosition(selection + 1);
+                ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
+
+            }
+            //opening bracket '(' button
+            else if (view == HomeActivity.bracketOpen) {
+                selection = editText.getSelectionStart();
+                expressionText = resultCardsList.get(cardPosition).getExpression();
+                resultCardsList.get(cardPosition).setExpression(expressionText.substring(0, selection) + "(" + expressionText.substring(selection));
+                resultCardsList.get(cardPosition).setCursorPosition(selection + 1);
+                ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
+            }
+            //closing bracket ')' button
+            else if (view == HomeActivity.bracketClose) {
+                selection = editText.getSelectionStart();
+                expressionText = resultCardsList.get(cardPosition).getExpression();
+                resultCardsList.get(cardPosition).setExpression(expressionText.substring(0, selection) + ")" + expressionText.substring(selection));
+                resultCardsList.get(cardPosition).setCursorPosition(selection + 1);
+                ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
+            }
+            //backspace button
+            else if (view == HomeActivity.backSpaceButton) {
+                selection = editText.getSelectionStart();
+                expressionText = resultCardsList.get(cardPosition).getExpression();
+                //cursor position must not be at start and expression field must not be empty
+                if (selection > 0 && !expressionText.equals("")) {
+                    resultCardsList.get(cardPosition).setExpression(expressionText.substring(0, selection - 1) + expressionText.substring(selection));
+                    resultCardsList.get(cardPosition).setCursorPosition(selection - 1);
+                    ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
+                }
+            }
         }
 
         @Override

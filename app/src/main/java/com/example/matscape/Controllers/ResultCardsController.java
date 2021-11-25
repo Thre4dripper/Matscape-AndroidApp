@@ -102,14 +102,4 @@ public class ResultCardsController {
         resultCardCounter++;
 
     }
-
-    public static void InitKeyboard(Context context,View view) {
-        int selection=resultCardsList.get(selectedCard).getCursorPosition();
-        String expression=resultCardsList.get(selectedCard).getExpression();;
-        if(view== HomeActivity.numpadButtons[0]) {
-            resultCardsList.get(selectedCard).setExpression(expression.substring(0,selection)+"0"+expression.substring(selection));
-            resultCardsList.get(selectedCard).setCursorPosition(selection+1);
-            mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
-        }
-    }
 }
