@@ -236,7 +236,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         //sending OnClicks to ResultCardsController for Click Handling
-        ResultCardsController.InitKeyboard(this, view);
+        ResultCardsRecyclerAdapter.ViewHolder.InitKeyboard(this, view);
     }
 
     /**

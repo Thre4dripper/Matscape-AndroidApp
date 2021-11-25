@@ -5,15 +5,17 @@ import java.util.List;
 public class ResultCards {
 
     String expression;
+    int cursorPosition;
     String message;
     List<List<String>> resultMatrix;
     int matrixRows,matrixColumns;
     double textSize;
     String highlightedColor;
 
-    public ResultCards(String expression, String message, List<List<String>> resultMatrix,
+    public ResultCards(String expression,int cursorPosition, String message, List<List<String>> resultMatrix,
                        int matrixRows, int matrixColumns, double textSize, String highlightedColor) {
         this.expression = expression;
+        this.cursorPosition=cursorPosition;
         this.message = message;
         this.resultMatrix = resultMatrix;
         this.matrixRows = matrixRows;
@@ -28,6 +30,14 @@ public class ResultCards {
 
     public void setExpression(String expression) {
         this.expression = expression;
+    }
+
+    public int getCursorPosition() {
+        return cursorPosition;
+    }
+
+    public void setCursorPosition(int cursorPosition) {
+        this.cursorPosition = cursorPosition;
     }
 
     public String getMessage() {

@@ -27,13 +27,18 @@ import java.util.List;
 
 public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCardsRecyclerAdapter.ViewHolder> {
 
-    private static final String TAG = "ResultCardsRecyclerAdapter";
+    private static final String TAG = "ResultCardsRecycler";
 
     public static float ONE_DP;
 
     public static ItemTouchHelper resultCardsTouchHelper;
     public static ResultCardsInterface resultCardsInterface;
     public static List<ResultCards> resultCardsList;
+    private static int selection;
+    private static int cardPosition = 0;
+    private static String expressionText;
+    @SuppressLint("StaticFieldLeak")
+    private static EditText editText;
 
     //Constructor
     public ResultCardsRecyclerAdapter(Context context, List<ResultCards> list, ItemTouchHelper itemTouchHelper,
@@ -71,8 +76,12 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         holder.expressionField.setText(expression);
         holder.expressionField.setShowSoftInputOnFocus(false);
 
-        if (position == ResultCardsController.selectedCard)
-            holder.expressionField.setSelection(expression.length());
+        if (position == ResultCardsController.selectedCard) {
+            editText = holder.expressionField;
+            cardPosition = holder.getAdapterPosition();
+            expressionText = holder.expressionField.getText().toString();
+            holder.expressionField.setSelection(resultCardsList.get(position).getCursorPosition());
+        }
 
 
     }
@@ -93,12 +102,10 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
 
+        EditText expressionField;
         ConstraintLayout mResultCardCL;
         ImageView mDeleteButton, mCopyButton;
         ImageView mDragButton;
-
-        EditText expressionField;
-
         TextView mMessageView;
 
         @SuppressLint("ClickableViewAccessibility")
@@ -120,12 +127,12 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                    ResultCardsController.resultCardsList.get(getAdapterPosition()).setExpression(expressionField.getText().toString());
                 }
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-                    ResultCardsController.resultCardsList.get(getAdapterPosition()).setExpression(expressionField.getText().toString());
+
                 }
             });
 
@@ -137,6 +144,18 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             mResultCardCL.setOnClickListener(this);
             mDeleteButton.setOnClickListener(this);
             mCopyButton.setOnClickListener(this);
+        }
+
+        public static void InitKeyboard(Context context, View view) {
+
+            for (int i = 0; i < 10; i++)
+                if (view == HomeActivity.numpadButtons[i]) {
+                    selection = editText.getSelectionStart();
+                    expressionText = resultCardsList.get(cardPosition).getExpression();
+                    resultCardsList.get(cardPosition).setExpression(expressionText.substring(0, selection) + i + expressionText.substring(selection));
+                    resultCardsList.get(cardPosition).setCursorPosition(selection + 1);
+                    ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(cardPosition);
+                }
         }
 
         @Override

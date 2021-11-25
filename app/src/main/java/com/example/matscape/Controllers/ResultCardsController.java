@@ -86,6 +86,7 @@ public class ResultCardsController {
         }
 
         resultCardsList.add(position,new ResultCards(expression,
+                0,
                 message,
                 matrix,
                 rows,
@@ -103,11 +104,11 @@ public class ResultCardsController {
     }
 
     public static void InitKeyboard(Context context,View view) {
-        int selection;
-        String expression;
+        int selection=resultCardsList.get(selectedCard).getCursorPosition();
+        String expression=resultCardsList.get(selectedCard).getExpression();;
         if(view== HomeActivity.numpadButtons[0]) {
-            expression=resultCardsList.get(selectedCard).getExpression();
-            resultCardsList.get(selectedCard).setExpression(expression+"0");
+            resultCardsList.get(selectedCard).setExpression(expression.substring(0,selection)+"0"+expression.substring(selection));
+            resultCardsList.get(selectedCard).setCursorPosition(selection+1);
             mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
     }
