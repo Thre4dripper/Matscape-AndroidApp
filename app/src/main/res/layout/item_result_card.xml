@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:minHeight="60dp"
+    android:minHeight="80dp"
     android:id="@+id/ResultCardCL">
 
 
@@ -29,15 +29,16 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginTop="32dp"
         android:background="@null"
-        app:layout_constraintBottom_toBottomOf="@+id/resultCardDragButton"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="@+id/AddResultMatrixButton"
         app:layout_constraintEnd_toStartOf="@+id/AddResultMatrixButton"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/resultCardDragButton"
-        app:layout_constraintTop_toTopOf="parent"
-        android:inputType="text"
-        tools:ignore="LabelFor"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toTopOf="@+id/resultCardDragButton"
+        tools:ignore="LabelFor" />
 
     <TextView
         android:id="@+id/ResultCardMessage"
@@ -69,14 +70,14 @@
         android:id="@+id/cardView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/DeleteResultButton">
+        app:layout_constraintTop_toBottomOf="@+id/ExpressionField">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -265,7 +266,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_end="5dp" />
+                app:layout_constraintGuide_percent="0.90816325" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

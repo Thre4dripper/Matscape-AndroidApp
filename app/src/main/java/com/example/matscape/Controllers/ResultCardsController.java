@@ -1,6 +1,7 @@
 package com.example.matscape.Controllers;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class ResultCardsController {
             return false;
         }
 
+        /*=========================== called everytime when a card is rearranged even from several cards ================================*/
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             int fromPosition = viewHolder.getAdapterPosition();
@@ -43,10 +45,16 @@ public class ResultCardsController {
             Collections.swap(resultCardsList, fromPosition, toPosition);
             mResultCardsRecyclerAdapter.notifyItemMoved(fromPosition, toPosition);
 
-            //updating selected card position when rearranging cards
+            //updating selected card position when rearranging selected card
             if(fromPosition==selectedCard)
                 selectedCard=toPosition;
-
+            else{
+                //updating card position when rearranging cards upper to lower and lower to upper w.r.t. selected card
+                if(fromPosition<selectedCard && selectedCard==toPosition)
+                    selectedCard--;
+                if(fromPosition>selectedCard && selectedCard==toPosition)
+                    selectedCard++;
+            }
             return true;
         }
 
@@ -95,8 +103,10 @@ public class ResultCardsController {
     }
 
     public static void InitKeyboard(Context context,View view) {
+        int selection;
+        String expression;
         if(view== HomeActivity.numpadButtons[0]) {
-            String expression=resultCardsList.get(selectedCard).getExpression();
+            expression=resultCardsList.get(selectedCard).getExpression();
             resultCardsList.get(selectedCard).setExpression(expression+"0");
             mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }

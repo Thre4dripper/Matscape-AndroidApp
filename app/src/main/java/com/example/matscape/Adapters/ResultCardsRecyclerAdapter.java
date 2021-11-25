@@ -120,12 +120,12 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    ResultCardsController.resultCardsList.get(getAdapterPosition()).setExpression(expressionField.getText().toString());
+
                 }
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-
+                    ResultCardsController.resultCardsList.get(getAdapterPosition()).setExpression(expressionField.getText().toString());
                 }
             });
 
@@ -151,8 +151,6 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
                 //always focus selected card's field
                 expressionField.requestFocus();
             }
-
-
         }
 
         @SuppressLint("ClickableViewAccessibility")
