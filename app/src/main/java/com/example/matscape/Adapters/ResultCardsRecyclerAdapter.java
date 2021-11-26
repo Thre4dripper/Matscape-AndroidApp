@@ -90,7 +90,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
         void copyResult(int position);
 
-        void clickedCard(int position);
+        void clickedCard(int position,int from);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
@@ -153,7 +153,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             else if (view == mCopyButton)
                 resultCardsInterface.copyResult(getAdapterPosition());
             else if (view == mResultCardCL) {
-                resultCardsInterface.clickedCard(getAdapterPosition());
+                resultCardsInterface.clickedCard(getAdapterPosition(),0);
                 HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE);
                 //always focus selected card's field
                 expressionField.requestFocus();
@@ -166,7 +166,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
             if (view == expressionField) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP)
-                    resultCardsInterface.clickedCard(getAdapterPosition());
+                    resultCardsInterface.clickedCard(getAdapterPosition(),0);
             }
             return false;
         }

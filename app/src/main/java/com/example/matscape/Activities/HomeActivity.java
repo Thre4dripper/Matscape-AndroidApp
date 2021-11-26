@@ -2,6 +2,7 @@ package com.example.matscape.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -298,6 +299,29 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ResultCardsController.resultCardsList.remove(position);
         ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRemoved(position);
         ResultCardsController.resultCardCounter--;
+
+        //selected card position must be updated on card removal
+        //CARD removed before selected card
+        if (position < ResultCardsController.selectedCard)
+            ResultCardsController.selectedCard--;
+
+        //selected card is itself removed
+        else if (position == ResultCardsController.selectedCard) {
+
+            //when last card is selected and is removed
+            if (position == ResultCardsController.resultCardsList.size() - 1) {
+                clickedCard(ResultCardsController.selectedCard, 1);
+                ResultCardsController.selectedCard = 0;
+            }
+            //otherwise next card gets selected
+            else if (position < ResultCardsController.resultCardsList.size())
+                clickedCard(ResultCardsController.selectedCard, 1);
+
+        }
+
+
+        Log.d(TAG, "deleteResult: " + ResultCardsController.resultCardCounter + "," + ResultCardsController.selectedCard);
+
     }
 
     @Override
@@ -307,9 +331,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void clickedCard(int clickedCard) {
+    public void clickedCard(int clickedCard, int from) {
 
-        if (clickedCard != ResultCardsController.selectedCard) {
+        //'from' specifies from where this function is called '0' for click and '1' for manual call when a card is removed
+        if (clickedCard != ResultCardsController.selectedCard || from == 1) {
+
             //removing color from previous selected card
             ResultCardsController.resultCardsList.get(ResultCardsController.selectedCard).setHighlightedColor("#FFFFFF");
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(ResultCardsController.selectedCard);

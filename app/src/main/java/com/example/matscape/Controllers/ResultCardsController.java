@@ -1,10 +1,9 @@
 package com.example.matscape.Controllers;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -21,9 +20,10 @@ import java.util.List;
 public class ResultCardsController {
     private static final String TAG = "ResultCardsController";
 
+    @SuppressLint("StaticFieldLeak")
     public static ResultCardsRecyclerAdapter mResultCardsRecyclerAdapter;
     public static List<ResultCards> resultCardsList = new ArrayList<>();
-    public static int resultCardCounter = 0,selectedCard=0;
+    public static int resultCardCounter = 0, selectedCard = 0;
 
     /**
      * ===================================== CALLBACK FOR DRAGGING RESULT CARDS ===========================================
@@ -47,13 +47,13 @@ public class ResultCardsController {
             mResultCardsRecyclerAdapter.notifyItemMoved(fromPosition, toPosition);
 
             //updating selected card position when rearranging selected card
-            if(fromPosition==selectedCard)
-                selectedCard=toPosition;
-            else{
+            if (fromPosition == selectedCard)
+                selectedCard = toPosition;
+            else {
                 //updating card position when rearranging cards upper to lower and lower to upper w.r.t. selected card
-                if(fromPosition<selectedCard && selectedCard==toPosition)
+                if (fromPosition < selectedCard && selectedCard == toPosition)
                     selectedCard--;
-                if(fromPosition>selectedCard && selectedCard==toPosition)
+                if (fromPosition > selectedCard && selectedCard == toPosition)
                     selectedCard++;
             }
             return true;
@@ -67,26 +67,25 @@ public class ResultCardsController {
 
     public static void addResultCards(Context context, int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView) {
 
-        String expression="",message="message";
-        List<List<String>> matrix=null;
-        int rows=0,columns=0;
+        String expression = "", message = "message";
+        List<List<String>> matrix = null;
+        int rows = 0, columns = 0;
 
         String highlightedColor;
-        if(resultCardCounter==0)
-            highlightedColor="#2196F3";
+        if (resultCardCounter == 0)
+            highlightedColor = "#2196F3";
         else
-            highlightedColor="#FFFFFF";
+            highlightedColor = "#FFFFFF";
 
-        if(receivedCard!=null)
-        {
-            expression=receivedCard.getExpression();
-            message=receivedCard.getMessage();
-            matrix=receivedCard.getResultMatrix();
-            rows=receivedCard.getMatrixRows();
-            columns=receivedCard.getMatrixColumns();
+        if (receivedCard != null) {
+            expression = receivedCard.getExpression();
+            message = receivedCard.getMessage();
+            matrix = receivedCard.getResultMatrix();
+            rows = receivedCard.getMatrixRows();
+            columns = receivedCard.getMatrixColumns();
         }
 
-        resultCardsList.add(position,new ResultCards(expression,
+        resultCardsList.add(position, new ResultCards(expression,
                 0,
                 message,
                 matrix,
@@ -107,7 +106,7 @@ public class ResultCardsController {
     /**
      * ======================================= METHOD FOR HOME KEYBOARD INPUT CONTROL =====================================
      **/
-    public static void HomeKeyboardInputControl(Context context, EditText editText,View view){
+    public static void HomeKeyboardInputControl(Context context, EditText editText, View view) {
         int selection;
         String expressionText;
         for (int i = 0; i < 10; i++)
@@ -164,7 +163,7 @@ public class ResultCardsController {
         else if (view == HomeActivity.bracketOpen) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
-            resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + "(" + expressionText.substring(selection));
+            resultCardsList.get(selectedCard).setExpression(expressionText.substring(0, selection) + "()" + expressionText.substring(selection));
             resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
