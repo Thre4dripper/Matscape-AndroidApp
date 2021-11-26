@@ -3,8 +3,14 @@ package com.example.matscape.Adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -68,8 +74,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         });
         holder.mDragButton.setBackgroundColor(Color.parseColor(resultCardsList.get(position).getHighlightedColor()));
 
-        String expression = resultCardsList.get(position).getExpression();
-
+        SpannableStringBuilder expression = resultCardsList.get(position).getExpression();
         holder.expressionField.setText(expression);
         holder.expressionField.setShowSoftInputOnFocus(false);
 
@@ -120,7 +125,9 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    ResultCardsController.resultCardsList.get(getAdapterPosition()).setExpression(expressionField.getText().toString());
+                    ResultCardsController.resultCardsList.get(getAdapterPosition()).setExpression(
+                            new SpannableStringBuilder(expressionField.getText().toString())
+                    );
                 }
 
                 @Override

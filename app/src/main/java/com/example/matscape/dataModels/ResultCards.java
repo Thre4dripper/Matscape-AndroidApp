@@ -1,10 +1,12 @@
 package com.example.matscape.dataModels;
 
+import android.text.SpannableStringBuilder;
+
 import java.util.List;
 
 public class ResultCards {
 
-    String expression;
+    SpannableStringBuilder expression;
     int cursorPosition;
     String message;
     List<List<String>> resultMatrix;
@@ -12,7 +14,7 @@ public class ResultCards {
     double textSize;
     String highlightedColor;
 
-    public ResultCards(String expression,int cursorPosition, String message, List<List<String>> resultMatrix,
+    public ResultCards(SpannableStringBuilder expression,int cursorPosition, String message, List<List<String>> resultMatrix,
                        int matrixRows, int matrixColumns, double textSize, String highlightedColor) {
         this.expression = expression;
         this.cursorPosition=cursorPosition;
@@ -24,11 +26,11 @@ public class ResultCards {
         this.highlightedColor=highlightedColor;
     }
 
-    public String getExpression() {
+    public SpannableStringBuilder getExpression() {
         return expression;
     }
 
-    public void setExpression(String expression) {
+    public void setExpression(SpannableStringBuilder expression) {
         this.expression = expression;
     }
 
