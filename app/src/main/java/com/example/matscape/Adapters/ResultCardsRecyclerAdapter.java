@@ -3,14 +3,9 @@ package com.example.matscape.Adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextWatcher;
-import android.text.style.AbsoluteSizeSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -95,7 +90,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
         void copyResult(int position);
 
-        void clickedCard(int position,int from);
+        void clickedCard(int position, int from);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
@@ -150,7 +145,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
          * ======================================= METHOD FOR HOME KEYBOARD INPUT CONTROL =====================================
          **/
         public static void InitKeyboard(Context context, View view) {
-            ResultCardsController.HomeKeyboardInputControl(context,editText,view);
+            ResultCardsController.HomeKeyboardInputControl(context, editText, view);
         }
 
         @Override
@@ -160,7 +155,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             else if (view == mCopyButton)
                 resultCardsInterface.copyResult(getAdapterPosition());
             else if (view == mResultCardCL) {
-                resultCardsInterface.clickedCard(getAdapterPosition(),0);
+                resultCardsInterface.clickedCard(getAdapterPosition(), 0);
                 HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE);
                 //always focus selected card's field
                 expressionField.requestFocus();
@@ -173,7 +168,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
             if (view == expressionField) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP)
-                    resultCardsInterface.clickedCard(getAdapterPosition(),0);
+                    resultCardsInterface.clickedCard(getAdapterPosition(), 0);
             }
             return false;
         }

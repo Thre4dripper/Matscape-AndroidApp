@@ -207,38 +207,86 @@ public class ResultCardsController {
                 resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
                 ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
             }
-        } else if (view == HomeActivity.matOperationButtons[0]) {
+        }
+        //Determinant Button
+        else if (view == HomeActivity.matOperationButtons[0]) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
             resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "det()"));
             resultCardsList.get(selectedCard).setCursorPosition(selection + 4);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
-        } else if (view == HomeActivity.matOperationButtons[1]) {
+        }
+        //Transpose Button
+        else if (view == HomeActivity.matOperationButtons[1]) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
             expressionText.insert(selection, Html.fromHtml("<sup><small>T</small></sup>"));
             resultCardsList.get(selectedCard).setExpression(expressionText);
             resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
-        } else if (view == HomeActivity.matOperationButtons[6]) {
+        }
+        //Square Button
+        else if (view == HomeActivity.matOperationButtons[2]) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            expressionText.insert(selection, Html.fromHtml("<sup><small>2</small></sup>"));
+            resultCardsList.get(selectedCard).setExpression(expressionText);
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //Cube Button
+        else if (view == HomeActivity.matOperationButtons[3]) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            expressionText.insert(selection, Html.fromHtml("<sup><small>3</small></sup>"));
+            resultCardsList.get(selectedCard).setExpression(expressionText);
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //Power Button
+        else if (view == HomeActivity.matOperationButtons[4]) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            expressionText.insert(selection, Html.fromHtml("<sup><small>nth</small></sup>"));
+            resultCardsList.get(selectedCard).setExpression(expressionText);
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 3);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //Inverse Button
+        else if (view == HomeActivity.matOperationButtons[5]) {
+            selection = editText.getSelectionStart();
+            expressionText = resultCardsList.get(selectedCard).getExpression();
+            expressionText.insert(selection, Html.fromHtml("<sup><small>-1</small></sup>"));
+            resultCardsList.get(selectedCard).setExpression(expressionText);
+            resultCardsList.get(selectedCard).setCursorPosition(selection + 2);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+        }
+        //Trace Button
+        else if (view == HomeActivity.matOperationButtons[6]) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
             resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "trc()"));
             resultCardsList.get(selectedCard).setCursorPosition(selection + 4);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
-        } else if (view == HomeActivity.matOperationButtons[7]) {
+        }
+        //Adjoint Button
+        else if (view == HomeActivity.matOperationButtons[7]) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
             resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "Adj()"));
             resultCardsList.get(selectedCard).setCursorPosition(selection + 4);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
-        } else if (view == HomeActivity.matOperationButtons[8]) {
+        }
+        //Minors Button
+        else if (view == HomeActivity.matOperationButtons[8]) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
             resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "min()"));
             resultCardsList.get(selectedCard).setCursorPosition(selection + 4);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
-        } else if (view == HomeActivity.matOperationButtons[9]) {
+        }
+        //Cofactor Button
+        else if (view == HomeActivity.matOperationButtons[9]) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
             resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "Cof()"));
