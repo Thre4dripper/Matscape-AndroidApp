@@ -2,6 +2,7 @@ package com.example.matscape.Controllers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ public class ResultCardsController {
     public static ResultCardsRecyclerAdapter mResultCardsRecyclerAdapter;
     public static List<ResultCards> resultCardsList = new ArrayList<>();
     public static int resultCardCounter = 0, selectedCard = 0;
+    public static boolean isNthPowerButtonPressed = false;
 
     /**
      * ===================================== CALLBACK FOR DRAGGING RESULT CARDS ===========================================
@@ -117,7 +119,12 @@ public class ResultCardsController {
             if (view == HomeActivity.numpadButtons[i]) {
                 selection = editText.getSelectionStart();
                 expressionText = resultCardsList.get(selectedCard).getExpression();
-                resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, String.valueOf(i)));
+                //making numpad numbers superscript when nth power button is pressed
+                if (isNthPowerButtonPressed)
+                    resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection,
+                            Html.fromHtml("<sup><small>" + i + "</small></sup>")));
+                else
+                    resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, String.valueOf(i)));
                 resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
                 ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
             }
@@ -245,12 +252,13 @@ public class ResultCardsController {
         }
         //Power Button
         else if (view == HomeActivity.matOperationButtons[4]) {
-            selection = editText.getSelectionStart();
-            expressionText = resultCardsList.get(selectedCard).getExpression();
-            expressionText.insert(selection, Html.fromHtml("<sup><small>nth</small></sup>"));
-            resultCardsList.get(selectedCard).setExpression(expressionText);
-            resultCardsList.get(selectedCard).setCursorPosition(selection + 3);
-            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+            if (isNthPowerButtonPressed) {
+                HomeActivity.matOperationButtons[4].setCardBackgroundColor(Color.parseColor("#FFFFFF"));
+                isNthPowerButtonPressed = false;
+            } else {
+                HomeActivity.matOperationButtons[4].setCardBackgroundColor(Color.parseColor("#B0BEC5"));
+                isNthPowerButtonPressed = true;
+            }
         }
         //Inverse Button
         else if (view == HomeActivity.matOperationButtons[5]) {
