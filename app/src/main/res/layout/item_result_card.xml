@@ -32,7 +32,7 @@
         android:layout_marginTop="32dp"
         android:background="@null"
         android:importantForAutofill="no"
-        android:inputType="text"
+        android:inputType="textNoSuggestions"
         app:layout_constraintBottom_toBottomOf="@+id/AddResultMatrixButton"
         app:layout_constraintEnd_toStartOf="@+id/AddResultMatrixButton"
         app:layout_constraintHorizontal_bias="0.0"

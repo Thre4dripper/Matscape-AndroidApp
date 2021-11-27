@@ -230,19 +230,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mMatrixCardsRecyclerView
             );
         } else if (addResultCardsButton.equals(view)) {
-            ResultCardsController.addResultCards(this,
+            ResultCardsController.addResultCards(
                     ResultCardsController.resultCardCounter,
                     null,
                     mResultCardsRecyclerView);
         }
 
         //sending OnClicks to ResultCardsController for Click Handling
-        ResultCardsRecyclerAdapter.ViewHolder.InitKeyboard(this, view);
+        ResultCardsRecyclerAdapter.ViewHolder.InitKeyboard(view);
     }
 
     /**
      * ======================================== OVERRIDE METHODS FOR MATRIX CARDS ================================================
      **/
+    @Override
+    public void clickCard(int position) {
+        ResultCardsRecyclerAdapter.ViewHolder.MatrixCardsOnClick(position);
+    }
+
     @Override
     public void deleteMatrix(int position, String deletedName) {
       /*  new MaterialAlertDialogBuilder(this)
@@ -327,7 +332,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void copyResult(int position) {
         ResultCards resultCard = ResultCardsController.resultCardsList.get(position);
-        ResultCardsController.addResultCards(this, position + 1, resultCard, mResultCardsRecyclerView);
+        ResultCardsController.addResultCards(position + 1, resultCard, mResultCardsRecyclerView);
     }
 
     @Override

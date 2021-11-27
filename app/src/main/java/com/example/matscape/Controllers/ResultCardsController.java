@@ -1,7 +1,6 @@
 package com.example.matscape.Controllers;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -70,7 +69,7 @@ public class ResultCardsController {
         }
     };
 
-    public static void addResultCards(Context context, int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView) {
+    public static void addResultCards(int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView) {
 
         SpannableStringBuilder expression = new SpannableStringBuilder("");
         String message = "message";
@@ -110,9 +109,26 @@ public class ResultCardsController {
     }
 
     /**
+     * ====================================== METHOD FOR MATRIX CARDS CLICK INPUT CONTROL =================================
+     **/
+    public static void MatrixCardsOnClick(@NonNull EditText editText, int position) {
+        //cursor position and expression retrieval
+        int selection = editText.getSelectionStart();
+        SpannableStringBuilder expressionText = resultCardsList.get(selectedCard).getExpression();
+
+        //clicked matrix name
+        String matrixName = MatrixCardsController.matrixCardsList.get(position).getMatrixName();
+
+        //setting text to selected expression field
+        resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, matrixName));
+        resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+    }
+
+    /**
      * ======================================= METHOD FOR HOME KEYBOARD INPUT CONTROL =====================================
      **/
-    public static void HomeKeyboardInputControl(Context context, EditText editText, View view) {
+    public static void HomeKeyboardInputControl(EditText editText, View view) {
         int selection;
         SpannableStringBuilder expressionText;
         for (int i = 0; i < 10; i++)
@@ -133,7 +149,11 @@ public class ResultCardsController {
         if (view == HomeActivity.multiplyButton) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
-            resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "•"));
+            if (isNthPowerButtonPressed)
+                resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection,
+                        Html.fromHtml("<sup><small>•</small></sup>")));
+            else
+                resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "•"));
             resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
@@ -141,7 +161,11 @@ public class ResultCardsController {
         else if (view == HomeActivity.plusButton) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
-            resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "+"));
+            if (isNthPowerButtonPressed)
+                resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection,
+                        Html.fromHtml("<sup><small>+</small></sup>")));
+            else
+                resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "+"));
             resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
@@ -149,7 +173,11 @@ public class ResultCardsController {
         else if (view == HomeActivity.minusButton) {
             selection = editText.getSelectionStart();
             expressionText = resultCardsList.get(selectedCard).getExpression();
-            resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "-"));
+            if (isNthPowerButtonPressed)
+                resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection,
+                        Html.fromHtml("<sup><small>-</small></sup>")));
+            else
+                resultCardsList.get(selectedCard).setExpression(expressionText.insert(selection, "-"));
             resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
@@ -305,7 +333,7 @@ public class ResultCardsController {
 
     }
 
-    public static void KeyboardBackSpace(int selection, SpannableStringBuilder expressionText) {
+    public static void KeyboardBackSpace(int selection, @NonNull SpannableStringBuilder expressionText) {
         if (selection < expressionText.length() && expressionText.charAt(selection - 1) == '(' && expressionText.charAt(selection) == ')')
             resultCardsList.get(selectedCard).setExpression(expressionText.replace(selection - 1, selection + 1, ""));
         else

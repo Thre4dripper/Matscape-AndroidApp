@@ -39,7 +39,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
     private static EditText editText;
 
     //Constructor
-    public ResultCardsRecyclerAdapter(Context context, List<ResultCards> list, ItemTouchHelper itemTouchHelper,
+    public ResultCardsRecyclerAdapter(@NonNull Context context, List<ResultCards> list, ItemTouchHelper itemTouchHelper,
                                       ResultCardsInterface resultCardsInterface) {
 
         resultCardsList = list;
@@ -142,10 +142,17 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         }
 
         /**
+         * ======================================= METHOD FOR MATRIX CARDS CLICK INPUT CONTROL ================================
+         **/
+        public static void MatrixCardsOnClick(int position) {
+            ResultCardsController.MatrixCardsOnClick(editText, position);
+        }
+
+        /**
          * ======================================= METHOD FOR HOME KEYBOARD INPUT CONTROL =====================================
          **/
-        public static void InitKeyboard(Context context, View view) {
-            ResultCardsController.HomeKeyboardInputControl(context, editText, view);
+        public static void InitKeyboard(View view) {
+            ResultCardsController.HomeKeyboardInputControl(editText, view);
         }
 
         @Override

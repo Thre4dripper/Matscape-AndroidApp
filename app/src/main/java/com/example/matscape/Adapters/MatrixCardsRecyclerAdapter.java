@@ -29,7 +29,7 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
     public static List<MatrixCards> matrixCardsList;
 
 
-    public MatrixCardsRecyclerAdapter(Context context, List<MatrixCards> list, ItemTouchHelper itemTouchHelper, MatrixCardsInterface matrixCardsInterface) {
+    public MatrixCardsRecyclerAdapter(@NonNull Context context, List<MatrixCards> list, ItemTouchHelper itemTouchHelper, MatrixCardsInterface matrixCardsInterface) {
         matrixCardsList = list;
         matrixCardsTouchHelper = itemTouchHelper;
         MatrixCardsRecyclerAdapter.matrixCardsInterface = matrixCardsInterface;
@@ -65,24 +65,24 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
         });
 
         //matrix name
-        String matrixName=matrixCardsList.get(position).getMatrixName();
+        String matrixName = matrixCardsList.get(position).getMatrixName();
         holder.mMatrixName.setText(matrixName);
 
         //matrix dimensions
-        int rows=matrixCardsList.get(position).getMatrixRows();
-        int columns=matrixCardsList.get(position).getMatrixColumns();
+        int rows = matrixCardsList.get(position).getMatrixRows();
+        int columns = matrixCardsList.get(position).getMatrixColumns();
 
         //matrix elements
-        List<List<String>> matrix=matrixCardsList.get(position).getMatrix();
+        List<List<String>> matrix = matrixCardsList.get(position).getMatrix();
 
         //resetting visibility of all text fields
-        for(int i=0;i<5;i++)
-            for(int j=0;j<5;j++)
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
                 holder.mMatrixTextViews[i][j].setVisibility(View.GONE);
 
         //setting visibility and matrix elements to text fields
-        for(int i=0;i<rows;i++)
-            for(int j=0;j<columns;j++) {
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < columns; j++) {
                 holder.mMatrixTextViews[i][j].setVisibility(View.VISIBLE);
                 holder.mMatrixTextViews[i][j].setText(matrix.get(i).get(j));
             }
@@ -95,6 +95,8 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
     }
 
     public interface MatrixCardsInterface {
+        void clickCard(int position);
+
         void deleteMatrix(int position, String deletedName);
 
         void copyMatrix(int position);
@@ -116,7 +118,7 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mCardView = itemView.findViewById(R.id.card);
+            mCardView = itemView.findViewById(R.id.matrixCard);
             mMatrixName = itemView.findViewById(R.id.MatrixName);
 
             mMatrixTextViews[0][0] = itemView.findViewById(R.id.MatrixCardTextView11);
@@ -150,6 +152,7 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
             mSubMatrixButton = itemView.findViewById(R.id.SubMatrixButton);
             mEditButton = itemView.findViewById(R.id.EditMatrixButton);
 
+            mCardView.setOnClickListener(this);
             mDeleteButton.setOnClickListener(this);
             mCopyButton.setOnClickListener(this);
             mSubMatrixButton.setOnClickListener(this);
@@ -161,7 +164,10 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
 
         @Override
         public void onClick(View view) {
-            if (view == mDeleteButton) {
+            if (view == mCardView) {
+                matrixCardsInterface.clickCard(getAdapterPosition());
+
+            } else if (view == mDeleteButton) {
                 matrixCardsInterface.deleteMatrix(getAdapterPosition(), mMatrixName.getText().toString());
 
             } else if (view == mCopyButton) {
