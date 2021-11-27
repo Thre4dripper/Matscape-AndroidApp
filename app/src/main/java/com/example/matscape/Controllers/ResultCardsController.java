@@ -108,6 +108,7 @@ public class ResultCardsController {
 
     }
 
+    //TODO optimise for auto inputs of multiply when ')' , letter , numbers etc.. encounter
     /**
      * ====================================== METHOD FOR MATRIX CARDS CLICK INPUT CONTROL =================================
      **/
@@ -333,6 +334,8 @@ public class ResultCardsController {
 
     }
 
+    //TODO handle all possible backspace scenarios in result cards
+    /**=================================== METHOD FOR HANDLING BACKSPACE EVENTS ==================================**/
     public static void KeyboardBackSpace(int selection, @NonNull SpannableStringBuilder expressionText) {
         if (selection < expressionText.length() && expressionText.charAt(selection - 1) == '(' && expressionText.charAt(selection) == ')')
             resultCardsList.get(selectedCard).setExpression(expressionText.replace(selection - 1, selection + 1, ""));

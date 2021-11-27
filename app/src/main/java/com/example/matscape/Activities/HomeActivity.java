@@ -236,8 +236,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mResultCardsRecyclerView);
         }
 
-        //sending OnClicks to ResultCardsController for Click Handling
-        ResultCardsRecyclerAdapter.ViewHolder.InitKeyboard(view);
+        //sending Home Keyboard OnClicks to ResultCardsController for Click Handling
+        if (ResultCardsController.resultCardCounter > 0)
+            ResultCardsRecyclerAdapter.ViewHolder.InitKeyboard(view);
     }
 
     /**
@@ -245,7 +246,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      **/
     @Override
     public void clickCard(int position) {
-        ResultCardsRecyclerAdapter.ViewHolder.MatrixCardsOnClick(position);
+        if (ResultCardsController.resultCardCounter > 0)
+            ResultCardsRecyclerAdapter.ViewHolder.MatrixCardsOnClick(position);
     }
 
     @Override
@@ -310,7 +312,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if (position < ResultCardsController.selectedCard)
             ResultCardsController.selectedCard--;
 
-        //selected card is itself removed
+            //selected card is itself removed
         else if (position == ResultCardsController.selectedCard) {
 
             //when last card is selected and is removed
