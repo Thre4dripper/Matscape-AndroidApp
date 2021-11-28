@@ -91,7 +91,6 @@ public class MatrixCardsController {
                     matrix,
                     rows,
                     columns,
-                    14,
                     matrixCardsRecyclerView.getHeight()
             ));
 

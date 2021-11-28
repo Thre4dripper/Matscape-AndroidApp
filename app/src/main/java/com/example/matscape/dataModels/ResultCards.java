@@ -6,32 +6,35 @@ import java.util.List;
 
 public class ResultCards {
 
-    SpannableStringBuilder expression;
+    SpannableStringBuilder expressionString;
     int cursorPosition;
+    StringBuilder calculationString;
+    List<Integer> calculationStringIndexList;
     String message;
     List<List<String>> resultMatrix;
-    int matrixRows,matrixColumns;
-    double textSize;
+    int matrixRows, matrixColumns;
     String highlightedColor;
 
-    public ResultCards(SpannableStringBuilder expression,int cursorPosition, String message, List<List<String>> resultMatrix,
-                       int matrixRows, int matrixColumns, double textSize, String highlightedColor) {
-        this.expression = expression;
-        this.cursorPosition=cursorPosition;
+    public ResultCards(SpannableStringBuilder expressionString, int cursorPosition, StringBuilder calculationString,
+                       List<Integer> calculationStringIndexList, String message, List<List<String>> resultMatrix,
+                       int matrixRows, int matrixColumns, String highlightedColor) {
+        this.expressionString = expressionString;
+        this.cursorPosition = cursorPosition;
+        this.calculationString = calculationString;
+        this.calculationStringIndexList = calculationStringIndexList;
         this.message = message;
         this.resultMatrix = resultMatrix;
         this.matrixRows = matrixRows;
         this.matrixColumns = matrixColumns;
-        this.textSize = textSize;
-        this.highlightedColor=highlightedColor;
+        this.highlightedColor = highlightedColor;
     }
 
-    public SpannableStringBuilder getExpression() {
-        return expression;
+    public SpannableStringBuilder getExpressionString() {
+        return expressionString;
     }
 
-    public void setExpression(SpannableStringBuilder expression) {
-        this.expression = expression;
+    public void setExpressionString(SpannableStringBuilder expressionString) {
+        this.expressionString = expressionString;
     }
 
     public int getCursorPosition() {
@@ -40,6 +43,22 @@ public class ResultCards {
 
     public void setCursorPosition(int cursorPosition) {
         this.cursorPosition = cursorPosition;
+    }
+
+    public StringBuilder getCalculationString() {
+        return calculationString;
+    }
+
+    public void setCalculationString(StringBuilder calculationString) {
+        this.calculationString = calculationString;
+    }
+
+    public List<Integer> getCalculationStringIndexList() {
+        return calculationStringIndexList;
+    }
+
+    public void setCalculationStringIndexList(List<Integer> calculationStringIndexList) {
+        this.calculationStringIndexList = calculationStringIndexList;
     }
 
     public String getMessage() {
@@ -72,14 +91,6 @@ public class ResultCards {
 
     public void setMatrixColumns(int matrixColumns) {
         this.matrixColumns = matrixColumns;
-    }
-
-    public double getTextSize() {
-        return textSize;
-    }
-
-    public void setTextSize(double textSize) {
-        this.textSize = textSize;
     }
 
     public String getHighlightedColor() {

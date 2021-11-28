@@ -6,16 +6,14 @@ public class MatrixCards {
 
     String matrixName;
     List<List<String>> matrix;
-    int matrixRows,matrixColumns;
-    double textSize;
+    int matrixRows, matrixColumns;
     int height;
 
-    public MatrixCards(String matrixName, List<List<String>> matrix, int matrixRows, int matrixColumns, double textSize, int height) {
+    public MatrixCards(String matrixName, List<List<String>> matrix, int matrixRows, int matrixColumns, int height) {
         this.matrixName = matrixName;
         this.matrix = matrix;
         this.matrixRows = matrixRows;
         this.matrixColumns = matrixColumns;
-        this.textSize = textSize;
         this.height = height;
     }
 
@@ -49,10 +47,6 @@ public class MatrixCards {
 
     public void setMatrixColumns(int matrixColumns) {
         this.matrixColumns = matrixColumns;
-    }
-
-    public double getTextSize() {
-        return textSize;
     }
 
     public int getHeight() {

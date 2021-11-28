@@ -222,6 +222,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+
+        //sending Home Keyboard OnClicks to ResultCardsController for Click Handling
+        if (ResultCardsController.resultCardCounter > 0)
+            ResultCardsRecyclerAdapter.ViewHolder.InitKeyboard(view);
+
         //when Add Matrix button is clicked
         if (addMatrixCardsButton.equals(view)) {
             MatrixCardsController.addMatrixCards(this,
@@ -236,9 +241,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mResultCardsRecyclerView);
         }
 
-        //sending Home Keyboard OnClicks to ResultCardsController for Click Handling
-        if (ResultCardsController.resultCardCounter > 0)
-            ResultCardsRecyclerAdapter.ViewHolder.InitKeyboard(view);
     }
 
     /**

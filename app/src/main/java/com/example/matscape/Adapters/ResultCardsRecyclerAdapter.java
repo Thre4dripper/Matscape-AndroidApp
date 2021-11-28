@@ -69,7 +69,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         });
         holder.mDragButton.setBackgroundColor(Color.parseColor(resultCardsList.get(position).getHighlightedColor()));
 
-        SpannableStringBuilder expression = resultCardsList.get(position).getExpression();
+        SpannableStringBuilder expression = resultCardsList.get(position).getExpressionString();
         holder.expressionField.setText(expression);
         holder.expressionField.setShowSoftInputOnFocus(false);
 
@@ -120,7 +120,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    ResultCardsController.resultCardsList.get(getAdapterPosition()).setExpression(
+                    ResultCardsController.resultCardsList.get(getAdapterPosition()).setExpressionString(
                             new SpannableStringBuilder(expressionField.getText())
                     );
                 }
