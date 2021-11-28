@@ -6,7 +6,8 @@ import java.util.List;
 
 public class ResultCards {
 
-    SpannableStringBuilder expression;
+    SpannableStringBuilder expressionString;
+    StringBuilder calculationString;
     int cursorPosition;
     String message;
     List<List<String>> resultMatrix;
@@ -14,9 +15,10 @@ public class ResultCards {
     double textSize;
     String highlightedColor;
 
-    public ResultCards(SpannableStringBuilder expression,int cursorPosition, String message, List<List<String>> resultMatrix,
+    public ResultCards(SpannableStringBuilder expressionString,StringBuilder calculationString,int cursorPosition, String message, List<List<String>> resultMatrix,
                        int matrixRows, int matrixColumns, double textSize, String highlightedColor) {
-        this.expression = expression;
+        this.expressionString = expressionString;
+        this.calculationString=calculationString;
         this.cursorPosition=cursorPosition;
         this.message = message;
         this.resultMatrix = resultMatrix;
@@ -26,12 +28,20 @@ public class ResultCards {
         this.highlightedColor=highlightedColor;
     }
 
-    public SpannableStringBuilder getExpression() {
-        return expression;
+    public SpannableStringBuilder getExpressionString() {
+        return expressionString;
     }
 
-    public void setExpression(SpannableStringBuilder expression) {
-        this.expression = expression;
+    public void setExpressionString(SpannableStringBuilder expressionString) {
+        this.expressionString = expressionString;
+    }
+
+    public StringBuilder getCalculationString() {
+        return calculationString;
+    }
+
+    public void setCalculationString(StringBuilder calculationString) {
+        this.calculationString = calculationString;
     }
 
     public int getCursorPosition() {
