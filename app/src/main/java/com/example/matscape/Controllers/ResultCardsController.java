@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Activities.HomeActivity;
 import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
+import com.example.matscape.Utils.ExpressionBuilder;
 import com.example.matscape.dataModels.ResultCards;
 
 import java.util.ArrayList;
@@ -309,16 +310,11 @@ public class ResultCardsController {
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
 
-        Object[] spans = expressionText.getSpans(0, expressionText.length(), Object.class);
-        for (Object span : spans) {
-            if (span.getClass().equals(SuperscriptSpan.class)) {
-                SuperscriptSpan s = (SuperscriptSpan) span;
-                Log.d(TAG, expressionText.getSpanEnd(s) + "");
+        calculationString=ExpressionBuilder.generateCalculationString(expressionText);
+        calculationStringIndexList=ExpressionBuilder.generateCalculationStringIndexList(expressionText);
 
-                // Get the range in spannableString where this span has been applied.
-                // How do I do this?
-            }
-        }
+        resultCardsList.get(selectedCard).setCalculationString(calculationString);
+        resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
     }
 
     //TODO handle all possible backspace scenarios in result cards
