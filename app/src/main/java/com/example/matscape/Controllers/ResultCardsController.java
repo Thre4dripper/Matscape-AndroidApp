@@ -5,8 +5,6 @@ import android.graphics.Color;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.SuperscriptSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -99,7 +97,7 @@ public class ResultCardsController {
         resultCardsList.add(position, new ResultCards(expression,
                 0,
                 new StringBuilder(),
-                null,
+                new ArrayList<>(),
                 message,
                 matrix,
                 rows,
@@ -122,16 +120,34 @@ public class ResultCardsController {
      **/
     public static void MatrixCardsOnClick(@NonNull EditText editText, int position) {
         //cursor position and expression retrieval
-        int selection = editText.getSelectionStart();
+        int cursorPosition = editText.getSelectionStart();
         SpannableStringBuilder expressionText = resultCardsList.get(selectedCard).getExpressionString();
+        StringBuilder calculationString = resultCardsList.get(selectedCard).getCalculationString();
+        List<Integer> calculationStringIndexList = resultCardsList.get(selectedCard).getCalculationStringIndexList();
+        int mappedIndex = 0;
+        if (cursorPosition > 0)
+            mappedIndex = calculationStringIndexList.get(cursorPosition - 1) + 1;
 
         //clicked matrix name
         String matrixName = MatrixCardsController.matrixCardsList.get(position).getMatrixName();
 
         //setting text to selected expression field
-        resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(selection, matrixName));
-        resultCardsList.get(selectedCard).setCursorPosition(selection + 1);
+        if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+            resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•" + matrixName));
+            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
+        } else {
+            resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, matrixName));
+            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 1);
+        }
+
         ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+
+        //updating after usage
+        calculationString = ExpressionBuilder.generateCalculationString(expressionText);
+        calculationStringIndexList = ExpressionBuilder.generateCalculationStringIndexList(expressionText);
+
+        resultCardsList.get(selectedCard).setCalculationString(calculationString);
+        resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
     }
 
     /**
@@ -143,17 +159,29 @@ public class ResultCardsController {
         SpannableStringBuilder expressionText = resultCardsList.get(selectedCard).getExpressionString();
         StringBuilder calculationString = resultCardsList.get(selectedCard).getCalculationString();
         List<Integer> calculationStringIndexList = resultCardsList.get(selectedCard).getCalculationStringIndexList();
+        int mappedIndex = 0;
+        if (cursorPosition > 0)
+            mappedIndex = calculationStringIndexList.get(cursorPosition - 1) + 1;
 
         for (int i = 0; i < 10; i++)
             if (view == HomeActivity.numpadButtons[i]) {
                 //making numpad numbers superscript when nth power button is pressed
-                if (isNthPowerButtonPressed)
-                    expressionText.insert(cursorPosition, Html.fromHtml("<sup><small>" + i + "</small></sup>"));
-                else
-                    expressionText.insert(cursorPosition, String.valueOf(i));
+                if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+                    if (isNthPowerButtonPressed)
+                        expressionText.insert(cursorPosition, Html.fromHtml("<sup><small>" + "•" + i + "</small></sup>"));
+                    else
+                        expressionText.insert(cursorPosition, "•" + i);
+                    resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
+                } else {
+                    if (isNthPowerButtonPressed)
+                        expressionText.insert(cursorPosition, Html.fromHtml("<sup><small>" + i + "</small></sup>"));
+                    else
+                        expressionText.insert(cursorPosition, String.valueOf(i));
+                    resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 1);
+                }
 
                 resultCardsList.get(selectedCard).setExpressionString(expressionText);
-                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 1);
+
                 ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
             }
 
@@ -199,15 +227,26 @@ public class ResultCardsController {
         }
         //dot '.' button
         else if (view == HomeActivity.dotButton) {
-            resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "."));
-            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 1);
+            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•."));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
+            } else {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "."));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 1);
+            }
+
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
 
         }
         //opening bracket '(' button
         else if (view == HomeActivity.bracketOpen) {
-            resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "()"));
-            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 1);
+            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
+            } else {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 1);
+            }
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
         //closing bracket ')' button
@@ -243,8 +282,14 @@ public class ResultCardsController {
         }
         //Determinant Button
         else if (view == HomeActivity.matOperationButtons[0]) {
-            resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "det()"));
-            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•det()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
+            } else {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "det()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            }
+
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
         //Transpose Button
@@ -287,31 +332,56 @@ public class ResultCardsController {
         }
         //Trace Button
         else if (view == HomeActivity.matOperationButtons[6]) {
-            resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "trc()"));
-            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•trc()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
+            } else {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "trc()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            }
+
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
         //Adjoint Button
         else if (view == HomeActivity.matOperationButtons[7]) {
-            resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "Adj()"));
-            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•Adj()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
+            } else {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "Adj()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            }
+
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
         //Minors Button
         else if (view == HomeActivity.matOperationButtons[8]) {
-            resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "min()"));
-            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•min()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
+            } else {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "min()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            }
+
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
         //Cofactor Button
         else if (view == HomeActivity.matOperationButtons[9]) {
-            resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "Cof()"));
-            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•Cof()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
+            } else {
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "Cof()"));
+                resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
+            }
+
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
         }
 
-        calculationString=ExpressionBuilder.generateCalculationString(expressionText);
-        calculationStringIndexList=ExpressionBuilder.generateCalculationStringIndexList(expressionText);
+        //updating after usage
+        calculationString = ExpressionBuilder.generateCalculationString(expressionText);
+        calculationStringIndexList = ExpressionBuilder.generateCalculationStringIndexList(expressionText);
 
         resultCardsList.get(selectedCard).setCalculationString(calculationString);
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
@@ -326,7 +396,7 @@ public class ResultCardsController {
         if (selection < expressionText.length() && expressionText.charAt(selection - 1) == '(' && expressionText.charAt(selection) == ')') {
             expressionText.delete(selection - 1, selection + 1);
         } else {
-         expressionText.delete(selection - 1, selection);
+            expressionText.delete(selection - 1, selection);
         }
         resultCardsList.get(selectedCard).setExpressionString(expressionText);
         resultCardsList.get(selectedCard).setCursorPosition(selection - 1);

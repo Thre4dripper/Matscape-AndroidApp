@@ -50,19 +50,18 @@ public class ExpressionBuilder {
         spansIndexes.clear();
         getSpans(expression);
 
-        int iterator = 0, iterator2 = 0;
+        int baseCounter=0,powerCounter = 0;
         for (int i = 0; i < expression.length(); i++) {
             if (!spansIndexes.contains(i))
-                IndexList.add(iterator2++);
+                IndexList.add(baseCounter++);
             else {
                 if (!spansIndexes.contains(i - 1)) {
-                    iterator++;
-                    IndexList.add(i + iterator * 3 + iterator - 1);
-                    iterator2 +=5;
-                } else
-                {
-                    IndexList.add(i + iterator * 3 + iterator - 1);
-                    iterator2++;
+                    powerCounter++;
+                    IndexList.add(i + powerCounter * 3 + powerCounter - 1);
+                    baseCounter += 5;
+                } else {
+                    IndexList.add(i + powerCounter * 3 + powerCounter - 1);
+                    baseCounter++;
                 }
             }
         }
