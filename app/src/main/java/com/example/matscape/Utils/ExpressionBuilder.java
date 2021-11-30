@@ -28,7 +28,7 @@ public class ExpressionBuilder {
             if (!spansIndexes.contains(i))
                 calculationString.append(expression.charAt(i));
             else {
-                if (i > 0 && !spansIndexes.contains(i - 1)) {
+                if (!spansIndexes.contains(i - 1)) {
                     calculationString.append(" ^(").append(expression.charAt(i)).append(")");
                     iterator++;
                 } else
@@ -50,17 +50,20 @@ public class ExpressionBuilder {
         spansIndexes.clear();
         getSpans(expression);
 
-        int iterator = 0, counter = 0;
+        int iterator = 0, iterator2 = 0;
         for (int i = 0; i < expression.length(); i++) {
             if (!spansIndexes.contains(i))
-                IndexList.add(counter++);
+                IndexList.add(iterator2++);
             else {
-                if (i > 0 && !spansIndexes.contains(i - 1)) {
+                if (!spansIndexes.contains(i - 1)) {
                     iterator++;
                     IndexList.add(i + iterator * 3 + iterator - 1);
-                    counter += i + 4;
+                    iterator2 +=5;
                 } else
+                {
                     IndexList.add(i + iterator * 3 + iterator - 1);
+                    iterator2++;
+                }
             }
         }
 
