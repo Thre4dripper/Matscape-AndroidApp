@@ -124,15 +124,14 @@ public class ResultCardsController {
         SpannableStringBuilder expressionText = resultCardsList.get(selectedCard).getExpressionString();
         StringBuilder calculationString = resultCardsList.get(selectedCard).getCalculationString();
         List<Integer> calculationStringIndexList = resultCardsList.get(selectedCard).getCalculationStringIndexList();
-        int mappedIndex = 0;
-        if (cursorPosition > 0)
-            mappedIndex = calculationStringIndexList.get(cursorPosition - 1) + 1;
 
         //clicked matrix name
         String matrixName = MatrixCardsController.matrixCardsList.get(position).getMatrixName();
 
-        //setting text to selected expression field
-        if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+        //setting matrix Name to selected expression field
+        //with checking eligibility of auto multiply
+        if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)
+                || (cursorPosition > 0 && Character.isLetterOrDigit(expressionText.charAt(cursorPosition - 1)))) {
             resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•" + matrixName));
             resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
         } else {
@@ -159,14 +158,11 @@ public class ResultCardsController {
         SpannableStringBuilder expressionText = resultCardsList.get(selectedCard).getExpressionString();
         StringBuilder calculationString = resultCardsList.get(selectedCard).getCalculationString();
         List<Integer> calculationStringIndexList = resultCardsList.get(selectedCard).getCalculationStringIndexList();
-        int mappedIndex = 0;
-        if (cursorPosition > 0)
-            mappedIndex = calculationStringIndexList.get(cursorPosition - 1) + 1;
 
         for (int i = 0; i < 10; i++)
             if (view == HomeActivity.numpadButtons[i]) {
                 //making numpad numbers superscript when nth power button is pressed
-                if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+                if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
                     if (isNthPowerButtonPressed)
                         expressionText.insert(cursorPosition, Html.fromHtml("<sup><small>" + "•" + i + "</small></sup>"));
                     else
@@ -227,7 +223,7 @@ public class ResultCardsController {
         }
         //dot '.' button
         else if (view == HomeActivity.dotButton) {
-            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+            if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
                 resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•."));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
             } else {
@@ -240,7 +236,7 @@ public class ResultCardsController {
         }
         //opening bracket '(' button
         else if (view == HomeActivity.bracketOpen) {
-            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+            if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
                 resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
             } else {
@@ -282,7 +278,7 @@ public class ResultCardsController {
         }
         //Determinant Button
         else if (view == HomeActivity.matOperationButtons[0]) {
-            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+            if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
                 resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•det()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
@@ -332,7 +328,7 @@ public class ResultCardsController {
         }
         //Trace Button
         else if (view == HomeActivity.matOperationButtons[6]) {
-            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+            if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
                 resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•trc()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
@@ -344,7 +340,7 @@ public class ResultCardsController {
         }
         //Adjoint Button
         else if (view == HomeActivity.matOperationButtons[7]) {
-            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+            if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
                 resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•Adj()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
@@ -356,7 +352,7 @@ public class ResultCardsController {
         }
         //Minors Button
         else if (view == HomeActivity.matOperationButtons[8]) {
-            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+            if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
                 resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•min()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
@@ -368,7 +364,7 @@ public class ResultCardsController {
         }
         //Cofactor Button
         else if (view == HomeActivity.matOperationButtons[9]) {
-            if (calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')') {
+            if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
                 resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•Cof()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
@@ -401,5 +397,35 @@ public class ResultCardsController {
         resultCardsList.get(selectedCard).setExpressionString(expressionText);
         resultCardsList.get(selectedCard).setCursorPosition(selection - 1);
         ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+    }
+
+    /**
+     * ====================================== METHOD FOR CHECKING FOR AUTO MULTIPLY ================================
+     **/
+    public static boolean putMultiply(int cursorPosition, SpannableStringBuilder expression,
+                                      StringBuilder calculationString, List<Integer> mappedIndexes) {
+        int mappedIndex = 0;
+        if (cursorPosition > 0)
+            mappedIndex = mappedIndexes.get(cursorPosition - 1) + 1;
+
+
+        boolean isPower;
+        isPower = calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')';
+        //above condition is also true for writing between normal closed brackets also '()'
+
+        //strictly checking for power
+        if (isPower) {
+            int i = mappedIndex;
+            while (i > 0 && calculationString.charAt(i) != '(') i--;
+            if (i == 0)
+                isPower = false;
+            else
+                isPower = calculationString.charAt(i - 1) == '^';
+        }
+
+        boolean isBracket = cursorPosition > 0 && expression.charAt(cursorPosition - 1) == ')';
+        boolean isMatrixName = cursorPosition > 0 && Character.isAlphabetic(expression.charAt(cursorPosition - 1));
+
+        return isPower || isBracket || isMatrixName;
     }
 }
