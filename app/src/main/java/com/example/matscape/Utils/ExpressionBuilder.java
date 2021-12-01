@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ExpressionBuilder {
     private static final String TAG = "ExpressionBuilder";
-    private static final List<Integer> spansIndexes = new ArrayList<>();
+    private static List<Integer> spansIndexesList = new ArrayList<>();
 
     /**
      * ==================================== FUNCTION TO GENERATE CALCULATION STRING ==============================
@@ -20,19 +20,19 @@ public class ExpressionBuilder {
     @NonNull
     public static StringBuilder generateCalculationString(SpannableStringBuilder expression) {
         StringBuilder calculationString = new StringBuilder();
-        spansIndexes.clear();
-        getSpans(expression);
+        spansIndexesList.clear();
+        spansIndexesList = getSpans(expression);
 
         int iterator = 0;
         for (int i = 0; i < expression.length(); i++) {
-            if (!spansIndexes.contains(i))
+            if (!spansIndexesList.contains(i))
                 calculationString.append(expression.charAt(i));
             else {
-                if (!spansIndexes.contains(i - 1)) {
-                    calculationString.append(" ^(").append(expression.charAt(i)).append(")");
+                if (!spansIndexesList.contains(i - 1)) {
+                    calculationString.append("^(").append(expression.charAt(i)).append(")");
                     iterator++;
                 } else
-                    calculationString.insert(i + iterator * 3 + iterator - 1, expression.charAt(i));
+                    calculationString.insert(i + iterator * 3 - 2, expression.charAt(i));
             }
         }
 
@@ -47,20 +47,20 @@ public class ExpressionBuilder {
     @NonNull
     public static List<Integer> generateCalculationStringIndexList(SpannableStringBuilder expression) {
         List<Integer> IndexList = new ArrayList<>();
-        spansIndexes.clear();
+        spansIndexesList.clear();
         getSpans(expression);
 
-        int baseCounter=0,powerCounter = 0;
+        int baseCounter = 0, powerCounter = 0;
         for (int i = 0; i < expression.length(); i++) {
-            if (!spansIndexes.contains(i))
+            if (!spansIndexesList.contains(i))
                 IndexList.add(baseCounter++);
             else {
-                if (!spansIndexes.contains(i - 1)) {
+                if (!spansIndexesList.contains(i - 1)) {
                     powerCounter++;
-                    IndexList.add(i + powerCounter * 3 + powerCounter - 1);
-                    baseCounter += 5;
+                    IndexList.add(i + powerCounter * 3 - 1);
+                    baseCounter += 4;
                 } else {
-                    IndexList.add(i + powerCounter * 3 + powerCounter - 1);
+                    IndexList.add(i + powerCounter * 3 - 1);
                     baseCounter++;
                 }
             }
@@ -73,15 +73,17 @@ public class ExpressionBuilder {
     /**
      * ========================== FUNCTION TO GET SPANS APPLIED ON EXPRESSION TEXT =================================
      **/
-    public static void getSpans(@NonNull SpannableStringBuilder expression) {
+    public static List<Integer> getSpans(@NonNull SpannableStringBuilder expression) {
         int spanStart;
+        List<Integer> spansList = new ArrayList<>();
         Object[] spans = expression.getSpans(0, expression.length(), Object.class);
         for (Object span : spans) {
             if (span.getClass().equals(SuperscriptSpan.class)) {
                 SuperscriptSpan s = (SuperscriptSpan) span;
                 spanStart = expression.getSpanStart(s);
-                spansIndexes.add(spanStart);
+                spansList.add(spanStart);
             }
         }
+        return spansList;
     }
 }

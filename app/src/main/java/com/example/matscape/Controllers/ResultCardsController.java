@@ -405,6 +405,7 @@ public class ResultCardsController {
     public static boolean putMultiply(int cursorPosition, SpannableStringBuilder expression,
                                       StringBuilder calculationString, List<Integer> mappedIndexes) {
         int mappedIndex = 0;
+        //getting char at 'prev cursor' position and checking 'its' next char
         if (cursorPosition > 0)
             mappedIndex = mappedIndexes.get(cursorPosition - 1) + 1;
 
