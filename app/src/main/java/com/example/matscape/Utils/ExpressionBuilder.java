@@ -35,8 +35,6 @@ public class ExpressionBuilder {
                     modifiedString.insert(i + iterator * 3 - 1, expression.charAt(i));
             }
         }
-
-        Log.d(TAG, modifiedString.toString());
         return modifiedString;
     }
 
@@ -97,5 +95,8 @@ public class ExpressionBuilder {
             if(Character.isDigit(calculationString.charAt(i-1)) && !Character.isDigit(calculationString.charAt(i)))
                 calculationString.insert(i," ");
         }
+
+        Log.d(TAG, "CalculationString: "+calculationString);
+        ExpressionChecker.finalExpressionCheck(calculationString.toString());
     }
 }
