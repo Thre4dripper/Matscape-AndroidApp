@@ -388,19 +388,39 @@ public class ResultCardsController {
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
     }
 
-    //TODO handle all possible backspace scenarios in result cards
-
     /**
      * =================================== METHOD FOR HANDLING BACKSPACE EVENTS ==================================
      **/
-    public static void KeyboardBackSpace(int selection, @NonNull SpannableStringBuilder expressionText) {
-        if (selection < expressionText.length() && expressionText.charAt(selection - 1) == '(' && expressionText.charAt(selection) == ')') {
-            expressionText.delete(selection - 1, selection + 1);
-        } else {
-            expressionText.delete(selection - 1, selection);
+    public static void KeyboardBackSpace(int cursorPosition, @NonNull SpannableStringBuilder expressionText) {
+        //backspace for '()'
+        if (cursorPosition < expressionText.length() && expressionText.charAt(cursorPosition - 1) == '(' &&
+                expressionText.charAt(cursorPosition) == ')') {
+            expressionText.delete(cursorPosition - 1, cursorPosition + 1);
+            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition - 1);
+        }
+        //backspace for lowercase chars in matrix operations
+        else if (Character.isLowerCase(expressionText.charAt(cursorPosition - 1))) {
+
+            //before cursor
+            while (cursorPosition > 0 && Character.isLowerCase(expressionText.charAt(cursorPosition - 1))) {
+                expressionText.delete(cursorPosition - 1, cursorPosition);
+                cursorPosition--;
+            }
+
+            //after cursor
+            while (cursorPosition < expressionText.length() && Character.isLowerCase(expressionText.charAt(cursorPosition))) {
+                expressionText.delete(cursorPosition, cursorPosition + 1);
+            }
+
+            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition);
+        }
+        //general case for backspace
+        else {
+            expressionText.delete(cursorPosition - 1, cursorPosition);
+            resultCardsList.get(selectedCard).setCursorPosition(cursorPosition - 1);
         }
         resultCardsList.get(selectedCard).setExpressionString(expressionText);
-        resultCardsList.get(selectedCard).setCursorPosition(selection - 1);
+
         ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
     }
 
