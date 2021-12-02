@@ -142,8 +142,10 @@ public class ResultCardsController {
         ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
 
         //updating after usage
-        calculationString = ExpressionBuilder.generateCalculationString(expressionText);
-        calculationStringIndexList = ExpressionBuilder.generateCalculationStringIndexList(expressionText);
+        calculationString = ExpressionBuilder.insertSuperscript(expressionText);
+        calculationStringIndexList = ExpressionBuilder.getMappedIndexesList(expressionText);
+
+        ExpressionBuilder.generateCalculationString(calculationString);
 
         resultCardsList.get(selectedCard).setCalculationString(calculationString);
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
@@ -163,9 +165,10 @@ public class ResultCardsController {
             if (view == HomeActivity.numpadButtons[i]) {
                 //making numpad numbers superscript when nth power button is pressed
                 if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                    if (isNthPowerButtonPressed)
-                        expressionText.insert(cursorPosition, Html.fromHtml("<sup><small>" + "•" + i + "</small></sup>"));
-                    else
+                    if (isNthPowerButtonPressed) {
+                        expressionText.insert(cursorPosition, Html.fromHtml("<sup><small>" + "•" + "</small></sup>"));
+                        expressionText.insert(cursorPosition + 1, Html.fromHtml("<sup><small>" + i + "</small></sup>"));
+                    } else
                         expressionText.insert(cursorPosition, "•" + i);
                     resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
                 } else {
@@ -321,7 +324,8 @@ public class ResultCardsController {
         }
         //Inverse Button
         else if (view == HomeActivity.matOperationButtons[5]) {
-            expressionText.insert(cursorPosition, Html.fromHtml("<sup><small>-1</small></sup>"));
+            expressionText.insert(cursorPosition, Html.fromHtml("<sup><small>-</small></sup>"));
+            expressionText.insert(cursorPosition + 1, Html.fromHtml("<sup><small>1</small></sup>"));
             resultCardsList.get(selectedCard).setExpressionString(expressionText);
             resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
@@ -376,8 +380,9 @@ public class ResultCardsController {
         }
 
         //updating after usage
-        calculationString = ExpressionBuilder.generateCalculationString(expressionText);
-        calculationStringIndexList = ExpressionBuilder.generateCalculationStringIndexList(expressionText);
+        calculationString = ExpressionBuilder.insertSuperscript(expressionText);
+        calculationStringIndexList = ExpressionBuilder.getMappedIndexesList(expressionText);
+        ExpressionBuilder.generateCalculationString(calculationString);
 
         resultCardsList.get(selectedCard).setCalculationString(calculationString);
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
@@ -411,7 +416,11 @@ public class ResultCardsController {
 
 
         boolean isPower;
-        isPower = calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')';
+        if (isNthPowerButtonPressed)
+            isPower = false;
+        else
+            isPower = calculationString.length() != 0 && calculationString.length() > mappedIndex && calculationString.charAt(mappedIndex) == ')';
+
         //above condition is also true for writing between normal closed brackets also '()'
 
         //strictly checking for power
