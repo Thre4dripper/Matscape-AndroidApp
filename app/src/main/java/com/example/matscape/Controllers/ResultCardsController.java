@@ -239,11 +239,19 @@ public class ResultCardsController {
         }
         //opening bracket '(' button
         else if (view == HomeActivity.bracketOpen) {
-            if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•()"));
+            //handed all possible scenarios for better user experience
+            if ((cursorPosition > 0 && Character.isDigit(expressionText.charAt(cursorPosition - 1))) ||
+                    putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
+                if (cursorPosition == expressionText.length())
+                    resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•()"));
+                else
+                    resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•("));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
             } else {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "()"));
+                if (cursorPosition == expressionText.length())
+                    resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "()"));
+                else
+                    resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "("));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 1);
             }
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);

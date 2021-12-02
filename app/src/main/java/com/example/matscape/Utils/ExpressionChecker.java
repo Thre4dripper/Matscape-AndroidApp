@@ -41,4 +41,6 @@ public class ExpressionChecker {
         // Check Empty Stack
         return (stack.isEmpty());
     }
+
+    //TODO make a empty bracket checker
 }

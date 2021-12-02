@@ -21,7 +21,7 @@ public class ExpressionBuilder {
     public static StringBuilder insertSuperscript(SpannableStringBuilder expression) {
         StringBuilder modifiedString = new StringBuilder();
         spansList.clear();
-        spansList =getSpans(expression);
+        spansList = getSpans(expression);
 
         int iterator = 0;
         for (int i = 0; i < expression.length(); i++) {
@@ -45,7 +45,7 @@ public class ExpressionBuilder {
     public static List<Integer> getMappedIndexesList(SpannableStringBuilder expression) {
         List<Integer> IndexList = new ArrayList<>();
         spansList.clear();
-        spansList =getSpans(expression);
+        spansList = getSpans(expression);
 
         int baseCounter = 0, powerCounter = 0;
         for (int i = 0; i < expression.length(); i++) {
@@ -87,16 +87,27 @@ public class ExpressionBuilder {
     /**
      * ==================================== FUNCTION TO GENERATE CALCULATION STRING ==============================
      **/
-    public static void generateCalculationString(@NonNull StringBuilder expression){
-        StringBuilder calculationString=new StringBuilder(expression);
+    public static void generateCalculationString(@NonNull StringBuilder expression) {
+        String calculationString = expression.toString();
 
-        for(int i=1;i<calculationString.length();i++)
-        {
-            if(Character.isDigit(calculationString.charAt(i-1)) && !Character.isDigit(calculationString.charAt(i)))
-                calculationString.insert(i," ");
+        for (int i = 1; i < calculationString.length(); i++) {
+            if (Character.isDigit(calculationString.charAt(i - 1)) && !Character.isDigit(calculationString.charAt(i)))
+                calculationString = calculationString.substring(0, i) + " " + calculationString.substring(i);
         }
 
-        Log.d(TAG, "CalculationString: "+calculationString);
-        ExpressionChecker.finalExpressionCheck(calculationString.toString());
+        //replaced all mat operations to symbols for postfix conversion
+        if (calculationString.contains("det"))
+            calculationString = calculationString.replace("det", "#");
+        if (calculationString.contains("trc"))
+            calculationString = calculationString.replace("trc", "$");
+        if (calculationString.contains("Adj"))
+            calculationString = calculationString.replace("Adj", "@");
+        if (calculationString.contains("min"))
+            calculationString = calculationString.replace("min", "%");
+        if (calculationString.contains("Cof"))
+            calculationString = calculationString.replace("Cof", "&");
+
+        Log.d(TAG, "CalculationString: " + calculationString);
+        ExpressionChecker.finalExpressionCheck(calculationString);
     }
 }
