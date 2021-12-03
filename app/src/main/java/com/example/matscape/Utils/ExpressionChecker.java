@@ -15,11 +15,18 @@ public class ExpressionChecker {
         String postfix = null;
 
 
-        Log.d(TAG, "postfix:" + areBracketsBalanced(expression));
+        Log.d(TAG, "postfix:" + bracketChecker(expression));
     }
 
-    static boolean areBracketsBalanced(@NonNull String expr) {
-        // Using ArrayDeque is faster than using Stack class
+    /**=============================== METHOD FOR EMPTY AND BALANCED BRACKETS CHECKING ============================**/
+    static boolean bracketChecker(@NonNull String expr) {
+
+        //empty bracket checking
+        if(expr.contains("()"))
+            return false;
+
+        //Balanced brackets checking
+        // using ArrayDeque is faster than using Stack class
         Deque<Character> stack = new ArrayDeque<>();
 
         // Traversing the Expression
@@ -42,5 +49,4 @@ public class ExpressionChecker {
         return (stack.isEmpty());
     }
 
-    //TODO make a empty bracket checker
 }

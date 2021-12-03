@@ -90,6 +90,44 @@ public class ExpressionBuilder {
     public static void generateCalculationString(@NonNull StringBuilder expression) {
         String calculationString = expression.toString();
 
+        //optimised calculation string by putting '•' if user forgets it
+        for (int i = 1; i < calculationString.length(); i++) {
+
+            //bracket to bracket,digit,letter
+            if (calculationString.charAt(i - 1) == ')'
+                    && (calculationString.charAt(i) == '(' || Character.isLetterOrDigit(calculationString.charAt(i))))
+                calculationString = calculationString.substring(0, i) + "•" + calculationString.substring(i);
+
+            //digit to bracket,,letter
+            if (Character.isDigit(calculationString.charAt(i - 1)) &&
+                    (calculationString.charAt(i) == '(' || Character.isAlphabetic(calculationString.charAt(i))))
+                calculationString = calculationString.substring(0, i) + "•" + calculationString.substring(i);
+
+            //letter to bracket,digit,letter
+            if (Character.isAlphabetic(calculationString.charAt(i - 1)) &&
+                    (calculationString.charAt(i) == '(' || Character.isLetterOrDigit(calculationString.charAt(i))))
+                calculationString = calculationString.substring(0, i) + "•" + calculationString.substring(i);
+        }
+
+        //optimised calculation string for unary minus at 0 index
+        if(!calculationString.equals(""))
+        {
+            if(calculationString.charAt(0)=='-' && calculationString.length()>1 && Character.isUpperCase(calculationString.charAt(1)))
+                calculationString="~"+calculationString;
+            else if(calculationString.charAt(0)=='-')
+                calculationString="0"+calculationString;
+        }
+
+        //optimised calculation string for unary minus at any index
+        for(int i=1;i<calculationString.length()-1;i++)
+        {
+            if(calculationString.charAt(i)=='-' && calculationString.charAt(i-1)=='(' && Character.isUpperCase(calculationString.charAt(i+1)))
+                calculationString=calculationString.substring(0,i)+"~"+calculationString.substring(i);
+            else if(calculationString.charAt(i)=='-' && calculationString.charAt(i-1)=='(')
+                calculationString=calculationString.substring(0,i)+"0"+calculationString.substring(i);
+        }
+
+        //OPTIMISING CALCULATION STRING FOR MULTI DIGIT POSTFIX CONVERSION BY A SEPARATOR
         for (int i = 1; i < calculationString.length(); i++) {
             if (Character.isDigit(calculationString.charAt(i - 1)) && !Character.isDigit(calculationString.charAt(i)))
                 calculationString = calculationString.substring(0, i) + " " + calculationString.substring(i);
@@ -100,12 +138,12 @@ public class ExpressionBuilder {
             calculationString = calculationString.replace("det", "#");
         if (calculationString.contains("trc"))
             calculationString = calculationString.replace("trc", "$");
-        if (calculationString.contains("Adj"))
-            calculationString = calculationString.replace("Adj", "@");
+        if (calculationString.contains("adj"))
+            calculationString = calculationString.replace("adj", "@");
         if (calculationString.contains("min"))
             calculationString = calculationString.replace("min", "%");
-        if (calculationString.contains("Cof"))
-            calculationString = calculationString.replace("Cof", "&");
+        if (calculationString.contains("cof"))
+            calculationString = calculationString.replace("cof", "&");
 
         Log.d(TAG, "CalculationString: " + calculationString);
         ExpressionChecker.finalExpressionCheck(calculationString);

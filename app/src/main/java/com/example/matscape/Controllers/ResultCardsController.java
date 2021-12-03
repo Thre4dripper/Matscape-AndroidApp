@@ -353,10 +353,10 @@ public class ResultCardsController {
         //Adjoint Button
         else if (view == HomeActivity.matOperationButtons[7]) {
             if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•Adj()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•adj()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "Adj()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "adj()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
             }
 
@@ -377,10 +377,10 @@ public class ResultCardsController {
         //Cofactor Button
         else if (view == HomeActivity.matOperationButtons[9]) {
             if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•Cof()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•cof()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "Cof()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "cof()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
             }
 
