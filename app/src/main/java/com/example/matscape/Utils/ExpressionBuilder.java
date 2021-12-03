@@ -104,7 +104,7 @@ public class ExpressionBuilder {
                 calculationString = calculationString.substring(0, i) + "•" + calculationString.substring(i);
 
             //letter to bracket,digit,letter
-            if (Character.isAlphabetic(calculationString.charAt(i - 1)) &&
+            if (Character.isUpperCase(calculationString.charAt(i - 1)) &&
                     (calculationString.charAt(i) == '(' || Character.isLetterOrDigit(calculationString.charAt(i))))
                 calculationString = calculationString.substring(0, i) + "•" + calculationString.substring(i);
         }

@@ -462,7 +462,7 @@ public class ResultCardsController {
         }
 
         boolean isBracket = cursorPosition > 0 && expression.charAt(cursorPosition - 1) == ')';
-        boolean isMatrixName = cursorPosition > 0 && Character.isAlphabetic(expression.charAt(cursorPosition - 1));
+        boolean isMatrixName = cursorPosition > 0 && Character.isUpperCase(expression.charAt(cursorPosition - 1));
 
         return isPower || isBracket || isMatrixName;
     }
