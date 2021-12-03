@@ -90,7 +90,7 @@ public class ExpressionBuilder {
     public static void generateCalculationString(@NonNull StringBuilder expression) {
         String calculationString = expression.toString();
 
-        //optimised calculation string by putting '•' if user forgets it
+        //OPTIMISED CALCULATION STRING FOR MISSING '•'
         for (int i = 1; i < calculationString.length(); i++) {
 
             //bracket to bracket,digit,letter
@@ -109,7 +109,7 @@ public class ExpressionBuilder {
                 calculationString = calculationString.substring(0, i) + "•" + calculationString.substring(i);
         }
 
-        //optimised calculation string for unary minus at 0 index
+        //OPTIMISED CALCULATION STRING FOR UNARY MINUS
         if(!calculationString.equals(""))
         {
             if(calculationString.charAt(0)=='-' && calculationString.length()>1 && Character.isUpperCase(calculationString.charAt(1)))
@@ -118,7 +118,6 @@ public class ExpressionBuilder {
                 calculationString="0"+calculationString;
         }
 
-        //optimised calculation string for unary minus at any index
         for(int i=1;i<calculationString.length()-1;i++)
         {
             if(calculationString.charAt(i)=='-' && calculationString.charAt(i-1)=='(' && Character.isUpperCase(calculationString.charAt(i+1)))
@@ -133,7 +132,7 @@ public class ExpressionBuilder {
                 calculationString = calculationString.substring(0, i) + " " + calculationString.substring(i);
         }
 
-        //replaced all mat operations to symbols for postfix conversion
+        //REPLACED ALL MAT OPERATIONS BY SYMBOLS FOR POSTFIX CONVERSION
         if (calculationString.contains("det"))
             calculationString = calculationString.replace("det", "#");
         if (calculationString.contains("trc"))
