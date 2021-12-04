@@ -87,7 +87,7 @@ public class ExpressionBuilder {
     /**
      * ==================================== FUNCTION TO GENERATE CALCULATION STRING ==============================
      **/
-    public static void generateCalculationString(@NonNull StringBuilder expression) {
+    public static void generateCalculationString(@NonNull StringBuilder expression,int selectedCard) {
         String calculationString = expression.toString();
 
         //OPTIMISED CALCULATION STRING FOR MISSING '•'
@@ -144,7 +144,8 @@ public class ExpressionBuilder {
         if (calculationString.contains("cof"))
             calculationString = calculationString.replace("cof", "&");
 
-        Log.d(TAG, "CalculationString: " + calculationString);
-        ExpressionChecker.finalExpressionCheck(calculationString);
+        if(ExpressionChecker.finalExpressionCheck(calculationString)==0)
+            Log.d(TAG, "Valid Expression");
+
     }
 }

@@ -145,7 +145,7 @@ public class ResultCardsController {
         calculationString = ExpressionBuilder.insertSuperscript(expressionText);
         calculationStringIndexList = ExpressionBuilder.getMappedIndexesList(expressionText);
 
-        ExpressionBuilder.generateCalculationString(calculationString);
+        ExpressionBuilder.generateCalculationString(calculationString,selectedCard);
 
         resultCardsList.get(selectedCard).setCalculationString(calculationString);
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
@@ -390,7 +390,7 @@ public class ResultCardsController {
         //updating after usage
         calculationString = ExpressionBuilder.insertSuperscript(expressionText);
         calculationStringIndexList = ExpressionBuilder.getMappedIndexesList(expressionText);
-        ExpressionBuilder.generateCalculationString(calculationString);
+        ExpressionBuilder.generateCalculationString(calculationString,selectedCard);
 
         resultCardsList.get(selectedCard).setCalculationString(calculationString);
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
