@@ -9,64 +9,97 @@ public class ExpressionChecker {
     private static final String TAG = "ExpressionChecker";
 
     public static int finalExpressionCheck(String expression) {
-        String postfix = "";
+        String postfix;
+
+        //variable for brackets error codes
         int isBracketBalanced = bracketChecker(expression);
+
+        //early termination of execution if brackets are not balanced
         if (isBracketBalanced == 0)
             postfix = InfixToPostfix(expression);
         else
             return isBracketBalanced;
 
+        //CODE FOR FAKE EVALUATION OF EXPRESSION FOR FINDING 'HUMAN ERRORS' IN EXPRESSION
         Stack<Character> stack = new Stack<>();
+        //for multi digit postfix evaluation
         int flag = 0;
         char currentChar;
+
+        //loop for iterating over whole expression
         for (int i = 0; i < postfix.length(); i++) {
             currentChar = postfix.charAt(i);
+
+            //whole multi-digit number pushed into stack as one entity by blocking all other digits
             if (Character.isDigit(currentChar) && flag == 0) {
                 stack.push(currentChar);
                 flag = 1;
-            } else if (currentChar == ' ')
+            }
+
+            //clearing flag for next multi digit number
+            else if (currentChar == ' ')
                 flag = 0;
+
+                //Matrix Names pushed normally
             else if (Character.isUpperCase(currentChar))
                 stack.push(currentChar);
 
+                //binary operators encountered
             else if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/' || currentChar == '^') {
                 char c1, c2;
+
+                //more operators results in early empty stack
                 if (!stack.isEmpty())
                     c1 = stack.pop();
                 else {
                     return -2;
                 }
 
+                //more operators results in early empty stack
                 if (!stack.isEmpty())
                     c2 = stack.pop();
                 else {
                     return -2;
                 }
 
+                //operation is performed by operators, on two operands, so any of the popped character must not be operator
                 if (c1 != '+' && c1 != '-' && c1 != '•' && c1 != '/' && c1 != '^' && c2 != '+' && c2 != '-' && c2 != '•' && c2 != '/' && c2 != '^') {
+                    //binary operators perform on two operands and ONE result is pushed into stack
                     stack.push(c1);
-                } else {
+                }
+                //if so this is a operator mistake
+                else {
                     return -2;
                 }
-            } else if (currentChar == '#' || currentChar == '$' || currentChar == '@'
-                    || currentChar == '%' || currentChar == '*' || currentChar == '~') {
+            }
+
+            //matrix operators encountered
+            else if (currentChar == '#' || currentChar == '$' || currentChar == '@' || currentChar == '%' ||
+                    currentChar == '*' || currentChar == '~') {
                 char c;
+
+                //more operators results in early empty stack
                 if (!stack.isEmpty())
                     c = stack.pop();
                 else {
                     return -3;
                 }
 
+                //matrix operation is unary operation, so popped character must not be matrix operation
                 if (c != '#' && c != '$' && c != '@' && c != '%' && c != '*' && c != '~')
                     stack.push(c);
+                    //if so this is a operator mistake
                 else
                     return -3;
             }
         }
 
+        //after whole evaluation, only final result must remain in the stack
         if (stack.size() > 1) {
             return -4;
         }
+
+        //all clear
         return 0;
     }
 
@@ -87,13 +120,16 @@ public class ExpressionChecker {
             else if (expr.charAt(i) == ')')
                 isBracketsBalanced--;
 
+            //var must be >=0 all the time
             if (isBracketsBalanced < 0)
                 return -12;
         }
 
+        //variable must be 0 for balanced brackets
         if (isBracketsBalanced == 0)
             return 0;
-        else return -12;
+        else
+            return -12;
     }
 
     /**

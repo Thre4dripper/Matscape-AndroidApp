@@ -89,7 +89,7 @@ public class ExpressionBuilder {
     /**
      * ==================================== FUNCTION TO GENERATE CALCULATION STRING ==============================
      **/
-    public static void generateCalculationString(@NonNull StringBuilder expression,int selectedCard) {
+    public static void generateCalculationString(@NonNull StringBuilder expression, int selectedCard) {
         String calculationString = expression.toString();
 
         //OPTIMISED CALCULATION STRING FOR MISSING '•'
@@ -112,20 +112,18 @@ public class ExpressionBuilder {
         }
 
         //OPTIMISED CALCULATION STRING FOR UNARY MINUS
-        if(!calculationString.equals(""))
-        {
-            if(calculationString.charAt(0)=='-' && calculationString.length()>1 && Character.isUpperCase(calculationString.charAt(1)))
-                calculationString="~"+calculationString;
-            else if(calculationString.charAt(0)=='-')
-                calculationString="0"+calculationString;
+        if (!calculationString.equals("")) {
+            if (calculationString.charAt(0) == '-' && calculationString.length() > 1 && Character.isUpperCase(calculationString.charAt(1)))
+                calculationString = "~" + calculationString;
+            else if (calculationString.charAt(0) == '-')
+                calculationString = "0" + calculationString;
         }
 
-        for(int i=1;i<calculationString.length()-1;i++)
-        {
-            if(calculationString.charAt(i)=='-' && calculationString.charAt(i-1)=='(' && Character.isUpperCase(calculationString.charAt(i+1)))
-                calculationString=calculationString.substring(0,i)+"~"+calculationString.substring(i);
-            else if(calculationString.charAt(i)=='-' && calculationString.charAt(i-1)=='(')
-                calculationString=calculationString.substring(0,i)+"0"+calculationString.substring(i);
+        for (int i = 1; i < calculationString.length() - 1; i++) {
+            if (calculationString.charAt(i) == '-' && calculationString.charAt(i - 1) == '(' && Character.isUpperCase(calculationString.charAt(i + 1)))
+                calculationString = calculationString.substring(0, i) + "~" + calculationString.substring(i);
+            else if (calculationString.charAt(i) == '-' && calculationString.charAt(i - 1) == '(')
+                calculationString = calculationString.substring(0, i) + "0" + calculationString.substring(i);
         }
 
         //OPTIMISING CALCULATION STRING FOR MULTI DIGIT POSTFIX CONVERSION BY A SEPARATOR
@@ -148,21 +146,34 @@ public class ExpressionBuilder {
 
         //TODO handle transpose 'T' and replace it with some special char
 
-        Log.d(TAG, "CalculationString: "+calculationString);
+        Log.d(TAG, "CalculationString: " + calculationString);
 
-        //setting message view based on returned error code
-        int errorCode=ExpressionChecker.finalExpressionCheck(calculationString);
-        switch (errorCode)
-        {
-            case -11: ResultCardsController.resultCardsList.get(selectedCard).setMessage("Empty Brackets");
-            break;
-            case -12: ResultCardsController.resultCardsList.get(selectedCard).setMessage("Bracket Mistake");
+        int returnCode = ExpressionChecker.finalExpressionCheck(calculationString);
+
+        //setting message view based on returned code
+        setErrorMessage(selectedCard, returnCode);
+    }
+
+    /**
+     * ============================ METHOD FOR SETTING ERROR MESSAGE IN RESULT CARD ===============================
+     **/
+    public static void setErrorMessage(int selectedCard, int errorCode) {
+
+        switch (errorCode) {
+            case -11:
+                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Empty Brackets");
                 break;
-            case -2: ResultCardsController.resultCardsList.get(selectedCard).setMessage("Operator Mistake");
+            case -12:
+                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Bracket Mistake");
                 break;
-            case -3: ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix Mistake");
+            case -2:
+                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Operator Mistake");
                 break;
-            default:ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
+            case -3:
+                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix Mistake");
+                break;
+            default:
+                ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
         }
 
         ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
