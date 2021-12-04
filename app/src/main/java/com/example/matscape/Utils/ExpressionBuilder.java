@@ -149,6 +149,8 @@ public class ExpressionBuilder {
         //TODO handle transpose 'T' and replace it with some special char
 
         Log.d(TAG, "CalculationString: "+calculationString);
+
+        //setting message view based on returned error code
         int errorCode=ExpressionChecker.finalExpressionCheck(calculationString);
         switch (errorCode)
         {
@@ -160,6 +162,7 @@ public class ExpressionBuilder {
                 break;
             case -3: ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix Mistake");
                 break;
+            default:ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
         }
 
         ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);

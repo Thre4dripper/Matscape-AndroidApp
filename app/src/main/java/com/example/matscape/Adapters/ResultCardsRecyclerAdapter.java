@@ -77,6 +77,8 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             editText = holder.expressionField;
             holder.expressionField.setSelection(resultCardsList.get(position).getCursorPosition());
         }
+
+        holder.mMessageView.setText(resultCardsList.get(position).getMessage());
     }
 
     @Override
