@@ -1,7 +1,5 @@
 package com.example.matscape.Utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import java.util.Stack;
@@ -11,22 +9,75 @@ public class ExpressionChecker {
     private static final String TAG = "ExpressionChecker";
 
     public static int finalExpressionCheck(String expression) {
-                String postfix = "";
-        if (bracketChecker(expression))
+        String postfix = "";
+        int isBracketBalanced = bracketChecker(expression);
+        if (isBracketBalanced == 0)
             postfix = InfixToPostfix(expression);
-        else return -1;
-        Log.d(TAG, "postfix: " + postfix);
+        else
+            return isBracketBalanced;
+
+        Stack<Character> stack = new Stack<>();
+        int flag = 0;
+        char currentChar;
+        for (int i = 0; i < postfix.length(); i++) {
+            currentChar = postfix.charAt(i);
+            if (Character.isDigit(currentChar) && flag == 0) {
+                stack.push(currentChar);
+                flag = 1;
+            } else if (currentChar == ' ')
+                flag = 0;
+            else if (Character.isUpperCase(currentChar))
+                stack.push(currentChar);
+
+            else if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/' || currentChar == '^') {
+                char c1, c2;
+                if (!stack.isEmpty())
+                    c1 = stack.pop();
+                else {
+                    return -2;
+                }
+
+                if (!stack.isEmpty())
+                    c2 = stack.pop();
+                else {
+                    return -2;
+                }
+
+                if (c1 != '+' && c1 != '-' && c1 != '•' && c1 != '/' && c1 != '^' && c2 != '+' && c2 != '-' && c2 != '•' && c2 != '/' && c2 != '^') {
+                    stack.push(c1);
+                } else {
+                    return -2;
+                }
+            } else if (currentChar == '#' || currentChar == '$' || currentChar == '@'
+                    || currentChar == '%' || currentChar == '*' || currentChar == '~') {
+                char c;
+                if (!stack.isEmpty())
+                    c = stack.pop();
+                else {
+                    return -3;
+                }
+
+                if (c != '#' && c != '$' && c != '@' && c != '%' && c != '*' && c != '~')
+                    stack.push(c);
+                else
+                    return -3;
+            }
+        }
+
+        if (stack.size() > 1) {
+            return -4;
+        }
         return 0;
     }
 
     /**
      * =============================== METHOD FOR EMPTY AND BALANCED BRACKETS CHECKING ============================
      **/
-    private static boolean bracketChecker(@NonNull String expr) {
+    private static int bracketChecker(@NonNull String expr) {
 
         //empty bracket checking
         if (expr.contains("()"))
-            return false;
+            return -11;
 
         int isBracketsBalanced = 0;
 
@@ -37,10 +88,12 @@ public class ExpressionChecker {
                 isBracketsBalanced--;
 
             if (isBracketsBalanced < 0)
-                return false;
+                return -12;
         }
 
-        return isBracketsBalanced == 0;
+        if (isBracketsBalanced == 0)
+            return 0;
+        else return -12;
     }
 
     /**

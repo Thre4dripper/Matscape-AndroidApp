@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.matscape.Controllers.ResultCardsController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,8 +146,22 @@ public class ExpressionBuilder {
         if (calculationString.contains("cof"))
             calculationString = calculationString.replace("cof", "&");
 
-        if(ExpressionChecker.finalExpressionCheck(calculationString)==0)
-            Log.d(TAG, "Valid Expression");
+        //TODO handle transpose 'T' and replace it with some special char
 
+        Log.d(TAG, "CalculationString: "+calculationString);
+        int errorCode=ExpressionChecker.finalExpressionCheck(calculationString);
+        switch (errorCode)
+        {
+            case -11: ResultCardsController.resultCardsList.get(selectedCard).setMessage("Empty Brackets");
+            break;
+            case -12: ResultCardsController.resultCardsList.get(selectedCard).setMessage("Bracket Mistake");
+                break;
+            case -2: ResultCardsController.resultCardsList.get(selectedCard).setMessage("Operator Mistake");
+                break;
+            case -3: ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix Mistake");
+                break;
+        }
+
+        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
     }
 }
