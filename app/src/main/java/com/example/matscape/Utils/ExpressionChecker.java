@@ -8,7 +8,7 @@ public class ExpressionChecker {
 
     private static final String TAG = "ExpressionChecker";
 
-    public static int finalExpressionCheck(String expression) {
+    public static int finalExpressionCheck(String expression,int selectedCard) {
         String postfix;
 
         //variable for brackets error codes
@@ -98,6 +98,8 @@ public class ExpressionChecker {
         if (stack.size() > 1) {
             return -4;
         }
+
+        ExpressionEvaluator.EvaluateExpression(postfix,selectedCard);
 
         //all clear
         return 0;

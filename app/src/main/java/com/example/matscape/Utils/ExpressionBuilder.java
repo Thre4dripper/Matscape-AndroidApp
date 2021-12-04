@@ -148,7 +148,9 @@ public class ExpressionBuilder {
 
         Log.d(TAG, "CalculationString: " + calculationString);
 
-        int returnCode = ExpressionChecker.finalExpressionCheck(calculationString);
+        int returnCode=0;
+        if(!calculationString.isEmpty())
+         returnCode= ExpressionChecker.finalExpressionCheck(calculationString,selectedCard);
 
         //setting message view based on returned code
         setErrorMessage(selectedCard, returnCode);
