@@ -1,7 +1,5 @@
 package com.example.matscape.Utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.example.matscape.Controllers.MatrixCardsController;
@@ -72,7 +70,7 @@ public class ExpressionEvaluator {
             }
         }
 
-        Log.d(TAG, "Ans: " + stack.pop());
+        setResult(stack.pop(), selectedCard);
     }
 
     public static List<List<String>> getCurrentMatrix(Character Name) {
@@ -80,5 +78,20 @@ public class ExpressionEvaluator {
         int matrixIndex = MatrixCardsController.matrixCardsList.indexOf(String.valueOf(Name));
 
         return MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
+    }
+
+    public static void setResult(List<List<String>> result, int selectedCard) {
+
+        if (result != null) {
+            ResultCardsController.resultCardsList.get(selectedCard).setResultMatrix(result);
+            ResultCardsController.resultCardsList.get(selectedCard).setMatrixColumns(result.get(0).size());
+            ResultCardsController.resultCardsList.get(selectedCard).setMatrixRows(result.size());
+        } else {
+            ResultCardsController.resultCardsList.get(selectedCard).setResultMatrix(null);
+            ResultCardsController.resultCardsList.get(selectedCard).setMatrixColumns(0);
+            ResultCardsController.resultCardsList.get(selectedCard).setMatrixRows(0);
+        }
+        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
+
     }
 }

@@ -161,6 +161,7 @@ public class ExpressionBuilder {
         int returnCode = 0;
         if (!calculationString.isEmpty())
             returnCode = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
+        else ExpressionEvaluator.setResult(null,selectedCard);
 
         //setting message view based on returned code
         setErrorMessage(selectedCard, returnCode);

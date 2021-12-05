@@ -79,6 +79,24 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         }
 
         holder.mMessageView.setText(resultCardsList.get(position).getMessage());
+
+        int rows = resultCardsList.get(position).getMatrixRows();
+        int columns = resultCardsList.get(position).getMatrixColumns();
+        List<List<String>> matrix = resultCardsList.get(position).getResultMatrix();
+
+        //resetting visibility of all result matrix text views
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
+                holder.mResultTextViews[i][j].setVisibility(View.GONE);
+
+
+        //setting result
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                holder.mResultTextViews[i][j].setText(matrix.get(i).get(j));
+                holder.mResultTextViews[i][j].setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
@@ -103,6 +121,8 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         ImageView mDragButton;
         TextView mMessageView;
 
+        TextView[][] mResultTextViews = new TextView[5][5];
+
         @SuppressLint("ClickableViewAccessibility")
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -114,6 +134,34 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             mDragButton = itemView.findViewById(R.id.resultCardDragButton);
             mMessageView = itemView.findViewById(R.id.ResultCardMessage);
 
+            //initialising result matrix text views
+            mResultTextViews[0][0] = itemView.findViewById(R.id.ResultCardTextView11);
+            mResultTextViews[0][1] = itemView.findViewById(R.id.ResultCardTextView12);
+            mResultTextViews[0][2] = itemView.findViewById(R.id.ResultCardTextView13);
+            mResultTextViews[0][3] = itemView.findViewById(R.id.ResultCardTextView14);
+            mResultTextViews[0][4] = itemView.findViewById(R.id.ResultCardTextView15);
+            mResultTextViews[1][0] = itemView.findViewById(R.id.ResultCardTextView21);
+            mResultTextViews[1][1] = itemView.findViewById(R.id.ResultCardTextView22);
+            mResultTextViews[1][2] = itemView.findViewById(R.id.ResultCardTextView23);
+            mResultTextViews[1][3] = itemView.findViewById(R.id.ResultCardTextView24);
+            mResultTextViews[1][4] = itemView.findViewById(R.id.ResultCardTextView25);
+            mResultTextViews[2][0] = itemView.findViewById(R.id.ResultCardTextView31);
+            mResultTextViews[2][1] = itemView.findViewById(R.id.ResultCardTextView32);
+            mResultTextViews[2][2] = itemView.findViewById(R.id.ResultCardTextView33);
+            mResultTextViews[2][3] = itemView.findViewById(R.id.ResultCardTextView34);
+            mResultTextViews[2][4] = itemView.findViewById(R.id.ResultCardTextView35);
+            mResultTextViews[3][0] = itemView.findViewById(R.id.ResultCardTextView41);
+            mResultTextViews[3][1] = itemView.findViewById(R.id.ResultCardTextView42);
+            mResultTextViews[3][2] = itemView.findViewById(R.id.ResultCardTextView43);
+            mResultTextViews[3][3] = itemView.findViewById(R.id.ResultCardTextView44);
+            mResultTextViews[3][4] = itemView.findViewById(R.id.ResultCardTextView45);
+            mResultTextViews[4][0] = itemView.findViewById(R.id.ResultCardTextView51);
+            mResultTextViews[4][1] = itemView.findViewById(R.id.ResultCardTextView52);
+            mResultTextViews[4][2] = itemView.findViewById(R.id.ResultCardTextView53);
+            mResultTextViews[4][3] = itemView.findViewById(R.id.ResultCardTextView54);
+            mResultTextViews[4][4] = itemView.findViewById(R.id.ResultCardTextView55);
+
+            //listeners on expression field
             expressionField.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

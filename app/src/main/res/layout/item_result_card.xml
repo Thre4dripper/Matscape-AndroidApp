@@ -105,24 +105,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView11"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView21"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView31"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView41"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView51"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
@@ -139,24 +139,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView12"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView22"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView32"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView42"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView52"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
@@ -173,24 +173,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView13"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView23"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView33"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView43"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView53"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
@@ -207,24 +207,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView14"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView24"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView34"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView44"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView54"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
@@ -241,24 +241,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView15"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView25"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView35"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView45"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView55"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
