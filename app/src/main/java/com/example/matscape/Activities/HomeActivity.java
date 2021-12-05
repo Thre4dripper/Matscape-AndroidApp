@@ -342,6 +342,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void clickedCard(int clickedCard, int from) {
 
+        //TODO BUG HERE when deleting selected card from bottom to top
         //'from' specifies from where this function is called '0' for click and '1' for manual call when a card is removed
         if (clickedCard != ResultCardsController.selectedCard || from == 1) {
 

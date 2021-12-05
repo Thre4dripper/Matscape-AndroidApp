@@ -46,6 +46,7 @@ public class MatrixCardsController {
             int toPosition = target.getAdapterPosition();
 
             Collections.swap(MatrixCardsController.matrixCardsList, fromPosition, toPosition);
+            Collections.swap(MatrixCardsController.matrixNamesList, fromPosition, toPosition);
             mMatrixCardsRecyclerAdapter.notifyItemMoved(fromPosition, toPosition);
 
             return true;

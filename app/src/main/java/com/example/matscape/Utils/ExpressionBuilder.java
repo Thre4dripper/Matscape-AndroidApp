@@ -135,7 +135,7 @@ public class ExpressionBuilder {
 
         //OPTIMISED CALCULATION STRING FOR PUTTING '0' BEFORE EACH '.'
         if (!calculationString.equals("") && calculationString.charAt(0) == '.')
-                calculationString = "0" + calculationString;
+            calculationString = "0" + calculationString;
 
         for (int i = 1; i < calculationString.length(); i++) {
             if (!Character.isDigit(calculationString.charAt(i - 1)) && calculationString.charAt(i) == '.')
@@ -159,9 +159,16 @@ public class ExpressionBuilder {
         Log.d(TAG, "CalculationString: " + calculationString);
 
         int returnCode = 0;
+
+
         if (!calculationString.isEmpty())
             returnCode = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
-        else ExpressionEvaluator.setResult(null,selectedCard);
+            //clearing result when expression is empty
+        else ExpressionEvaluator.setResult(null, selectedCard);
+
+        //clearing previous result when an error occurred
+        if (returnCode != 0)
+            ExpressionEvaluator.setResult(null, selectedCard);
 
         //setting message view based on returned code
         setErrorMessage(selectedCard, returnCode);
@@ -171,6 +178,7 @@ public class ExpressionBuilder {
      * ============================ METHOD FOR SETTING ERROR MESSAGE IN RESULT CARD ===============================
      **/
     public static void setErrorMessage(int selectedCard, int errorCode) {
+
 
         switch (errorCode) {
             case -11:
@@ -188,8 +196,6 @@ public class ExpressionBuilder {
             case -4:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Decimal Mistake");
                 break;
-            default:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
         }
 
         ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);

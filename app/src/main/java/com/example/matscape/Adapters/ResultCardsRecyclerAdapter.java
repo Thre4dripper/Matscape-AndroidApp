@@ -80,6 +80,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
         holder.mMessageView.setText(resultCardsList.get(position).getMessage());
 
+        //getting result matrix
         int rows = resultCardsList.get(position).getMatrixRows();
         int columns = resultCardsList.get(position).getMatrixColumns();
         List<List<String>> matrix = resultCardsList.get(position).getResultMatrix();
