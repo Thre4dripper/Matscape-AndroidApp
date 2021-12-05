@@ -111,7 +111,7 @@ public class ExpressionBuilder {
                 calculationString = calculationString.substring(0, i) + "•" + calculationString.substring(i);
         }
 
-        //OPTIMISED CALCULATION STRING FOR UNARY MINUS
+        //OPTIMISED CALCULATION STRING FOR UNARY MINUS FOR DIGIT FOR INDEX 0
         if (!calculationString.equals("")) {
             if (calculationString.charAt(0) == '-' && calculationString.length() > 1 && Character.isUpperCase(calculationString.charAt(1)))
                 calculationString = "~" + calculationString;
@@ -119,6 +119,7 @@ public class ExpressionBuilder {
                 calculationString = "0" + calculationString;
         }
 
+        //OPTIMISED CALCULATION STRING FOR UNARY MINUS FOR MATRIX FOR ANY INDEX
         for (int i = 1; i < calculationString.length() - 1; i++) {
             if (calculationString.charAt(i) == '-' && calculationString.charAt(i - 1) == '(' && Character.isUpperCase(calculationString.charAt(i + 1)))
                 calculationString = calculationString.substring(0, i) + "~" + calculationString.substring(i);
@@ -128,8 +129,17 @@ public class ExpressionBuilder {
 
         //OPTIMISING CALCULATION STRING FOR MULTI DIGIT POSTFIX CONVERSION BY A SEPARATOR
         for (int i = 1; i < calculationString.length(); i++) {
-            if (Character.isDigit(calculationString.charAt(i - 1)) && !Character.isDigit(calculationString.charAt(i)))
+            if (Character.isDigit(calculationString.charAt(i - 1)) && calculationString.charAt(i) != '.' && !Character.isDigit(calculationString.charAt(i)))
                 calculationString = calculationString.substring(0, i) + " " + calculationString.substring(i);
+        }
+
+        //OPTIMISED CALCULATION STRING FOR PUTTING '0' BEFORE EACH '.'
+        if (!calculationString.equals("") && calculationString.charAt(0) == '.')
+                calculationString = "0" + calculationString;
+
+        for (int i = 1; i < calculationString.length(); i++) {
+            if (!Character.isDigit(calculationString.charAt(i - 1)) && calculationString.charAt(i) == '.')
+                calculationString = calculationString.substring(0, i) + "0" + calculationString.substring(i);
         }
 
         //REPLACED ALL MAT OPERATIONS BY SYMBOLS FOR POSTFIX CONVERSION
@@ -148,9 +158,9 @@ public class ExpressionBuilder {
 
         Log.d(TAG, "CalculationString: " + calculationString);
 
-        int returnCode=0;
-        if(!calculationString.isEmpty())
-         returnCode= ExpressionChecker.finalExpressionCheck(calculationString,selectedCard);
+        int returnCode = 0;
+        if (!calculationString.isEmpty())
+            returnCode = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
 
         //setting message view based on returned code
         setErrorMessage(selectedCard, returnCode);
@@ -173,6 +183,9 @@ public class ExpressionBuilder {
                 break;
             case -3:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix Mistake");
+                break;
+            case -4:
+                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Decimal Mistake");
                 break;
             default:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("");

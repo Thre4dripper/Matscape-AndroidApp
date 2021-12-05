@@ -1,5 +1,7 @@
 package com.example.matscape.Utils;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.Stack;
@@ -12,13 +14,16 @@ public class ExpressionChecker {
         String postfix;
 
         //variable for brackets error codes
-        int isBracketBalanced = bracketChecker(expression);
-
+        int isBracketsValid = bracketChecker(expression);
+        int isDecimalsValid = decimalChecker(expression);
         //early termination of execution if brackets are not balanced
-        if (isBracketBalanced == 0)
+        if (isBracketsValid == 0)
             postfix = InfixToPostfix(expression);
         else
-            return isBracketBalanced;
+            return isBracketsValid;
+
+        if (isDecimalsValid != 0)
+            return isDecimalsValid;
 
         //CODE FOR FAKE EVALUATION OF EXPRESSION FOR FINDING 'HUMAN ERRORS' IN EXPRESSION
         Stack<Character> stack = new Stack<>();
@@ -96,12 +101,45 @@ public class ExpressionChecker {
 
         //after whole evaluation, only final result must remain in the stack
         if (stack.size() > 1) {
-            return -4;
+            return -3;
         }
 
         ExpressionEvaluator.EvaluateExpression(postfix,selectedCard);
-
         //all clear
+        return 0;
+    }
+
+    /**
+     * ======================================= METHOD FOR VALID DECIMALS CHECKING ================================
+     **/
+    public static int decimalChecker(@NonNull String expr){
+
+        int flag=0;
+        char currentChar;
+
+        //for going up to i+1 in loops as well as scanning whole expression
+        expr+=";";
+
+        //Digit Must be present after decimal
+        for(int i=0;i<expr.length()-1;i++)
+            if(expr.charAt(i)=='.' && !Character.isDigit(expr.charAt(i+1)))
+               return -4;
+
+        //every number should contain only 1 decimal
+        for(int i=0;i<expr.length()-1;i++)
+        {
+            currentChar=expr.charAt(i);
+            if(Character.isDigit(currentChar) || currentChar=='.')
+            {
+                if(flag==0 && currentChar=='.')
+                    flag=1;
+                else if(flag==1 && currentChar=='.')
+                    return -4;
+            }
+            else if(currentChar==' ')
+                flag=0;
+        }
+
         return 0;
     }
 
