@@ -1,5 +1,7 @@
 package com.example.matscape.Utils;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.matscape.Controllers.MatrixCardsController;
@@ -43,29 +45,32 @@ public class ExpressionEvaluator {
                 stack.push(getCurrentMatrix(currentChar));
 
             else if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/' || currentChar == '^') {
-                List<List<String>> num1 = stack.pop();
-                List<List<String>> num2 = stack.pop();
+                List<List<String>> str1 = stack.pop();
+                List<List<String>> str2 = stack.pop();
                 List<List<String>> result = new ArrayList<>();
                 result.add(new ArrayList<>());
+
+                //when both fetched strings are numbers
+                if(!Character.isUpperCase(str2.get(0).get(0).charAt(0)) && !Character.isUpperCase(str1.get(0).get(0).charAt(0)))
                 switch (currentChar) {
                     case '+':
-                        result.get(0).add(String.valueOf(Double.parseDouble(num2.get(0).get(0)) + Double.parseDouble(num1.get(0).get(0))));
+                        result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) + Double.parseDouble(str1.get(0).get(0))));
                         stack.push(result);
                         break;
                     case '-':
-                        result.get(0).add(String.valueOf(Double.parseDouble(num2.get(0).get(0)) - Double.parseDouble(num1.get(0).get(0))));
+                        result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) - Double.parseDouble(str1.get(0).get(0))));
                         stack.push(result);
                         break;
                     case '•':
-                        result.get(0).add(String.valueOf(Double.parseDouble(num2.get(0).get(0)) * Double.parseDouble(num1.get(0).get(0))));
+                        result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) * Double.parseDouble(str1.get(0).get(0))));
                         stack.push(result);
                         break;
                     case '/':
-                        result.get(0).add(String.valueOf(Double.parseDouble(num2.get(0).get(0)) / Double.parseDouble(num1.get(0).get(0))));
+                        result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) / Double.parseDouble(str1.get(0).get(0))));
                         stack.push(result);
                         break;
                     case '^':
-                        result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(num2.get(0).get(0)), Double.parseDouble(num1.get(0).get(0)))));
+                        result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(str2.get(0).get(0)), Double.parseDouble(str1.get(0).get(0)))));
                         stack.push(result);
                         break;
                 }

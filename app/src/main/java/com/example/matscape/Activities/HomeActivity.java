@@ -260,12 +260,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         //TODO bug here on multiple rapid touches
         MatrixCardsController.matrixCardsList.remove(position);
-        MatrixCardsController.matrixNamesList.add(deletedName);
+        MatrixCardsController.matrixNamesList.remove(position);
+        MatrixCardsController.remainingMatrixNamesList.add(deletedName);
         MatrixCardsController.matrixCardCounter--;
         MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemRemoved(position);
 
         //sorting Names List after adding 'deletedName' name from Matrix Cards
-        Collections.sort(MatrixCardsController.matrixNamesList);
+        Collections.sort(MatrixCardsController.remainingMatrixNamesList);
           /*      })
                 .setNegativeButton("No", (dialogInterface, i) -> {
                     dialogInterface.dismiss();

@@ -142,10 +142,10 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
          * 5 - Updated Matrix Name in CardsList Too
          * 6 - Notified Matrix Cards RecyclerAdapter to reflect back changes in the Recycler View
          */
-        MatrixCardsController.matrixNamesList.remove(i);
-        MatrixCardsController.matrixNamesList.add(currentMatrixName);
+        MatrixCardsController.remainingMatrixNamesList.remove(i);
+        MatrixCardsController.remainingMatrixNamesList.add(currentMatrixName);
 
-        Collections.sort(MatrixCardsController.matrixNamesList);
+        Collections.sort(MatrixCardsController.remainingMatrixNamesList);
 
         currentMatrixName = mNamesSpinner.getText().toString();
 
@@ -398,7 +398,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         currentMatrixName = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixName();
         mNamesSpinner.setText(currentMatrixName);
 
-        ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, MatrixCardsController.matrixNamesList);
+        ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, MatrixCardsController.remainingMatrixNamesList);
         mNamesSpinner.setAdapter(namesAdapter);
         mNamesSpinner.setOnItemClickListener(this);
     }

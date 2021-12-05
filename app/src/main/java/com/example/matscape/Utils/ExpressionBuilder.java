@@ -164,7 +164,10 @@ public class ExpressionBuilder {
         if (!calculationString.isEmpty())
             returnCode = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
             //clearing result when expression is empty
-        else ExpressionEvaluator.setResult(null, selectedCard);
+        else {
+            ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
+            ExpressionEvaluator.setResult(null, selectedCard);
+        }
 
         //clearing previous result when an error occurred
         if (returnCode != 0)
