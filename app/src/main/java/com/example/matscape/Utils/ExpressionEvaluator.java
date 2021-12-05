@@ -17,7 +17,7 @@ public class ExpressionEvaluator {
         for (int i = 0; i < postfixExpression.length(); i++) {
             currentChar = postfixExpression.charAt(i);
 
-            if (Character.isDigit(currentChar)) {
+            if ((Character.isDigit(currentChar) || currentChar=='.')) {
                 if (flag == 0) {
                     stack.push(String.valueOf(currentChar));
                     flag = 1;

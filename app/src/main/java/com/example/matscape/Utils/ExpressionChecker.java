@@ -188,8 +188,8 @@ public class ExpressionChecker {
         for (int i = 0; i < expression.length(); i++) {
             currentChar = expression.charAt(i);
 
-            //appending Matrix Names and Digits with their separator
-            if (Character.isLetterOrDigit(currentChar) || currentChar == ' ')
+            //appending Matrix Names and Digits with their separator and decimal
+            if (Character.isLetterOrDigit(currentChar) || currentChar=='.' || currentChar == ' ')
                 postfixExpression.append(currentChar);
 
             else if (currentChar == '(')
