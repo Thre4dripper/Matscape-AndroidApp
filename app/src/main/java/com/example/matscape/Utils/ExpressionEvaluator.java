@@ -102,6 +102,31 @@ public class ExpressionEvaluator {
                             }
                             break;
                     }
+                else if (str2.size() == 1 && str2.get(0).size() == 1 && (str1.size() > 1 || str1.get(0).size() > 1))
+                    switch (currentChar) {
+                        case '+':
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Added in Matrices");
+                            error = true;
+                            break;
+                        case '-':
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Subtracted from Matrices");
+                            error = true;
+                            break;
+                        case '•':
+                            result = MatrixOperations.ScalarMultiply(str1, Double.parseDouble(str2.get(0).get(0)));
+                            stack.push(result);
+                            break;
+                        case '/':
+                            result = MatrixOperations.ScalarDivide(str1, Double.parseDouble(str2.get(0).get(0)));
+                            stack.push(result);
+                            break;
+                        case '^':
+                            /*
+                             * NOT POSSIBLE (will never encounter)
+                             * app doesn't have functionality to raise matrix as a power to some number
+                             */
+                            break;
+                    }
             }
         }
 
@@ -151,7 +176,7 @@ public class ExpressionEvaluator {
         boolean isResultValuesInt = true;
         int rows = result.size();
         int columns = result.get(0).size();
-        double currentValue = 0;
+        double currentValue;
 
         //checking for result contains double value or not, Also rounding up to 2 decimal places
         for (int i = 0; i < rows; i++) {
