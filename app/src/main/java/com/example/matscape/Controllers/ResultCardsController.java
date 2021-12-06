@@ -145,7 +145,7 @@ public class ResultCardsController {
         calculationString = ExpressionBuilder.insertSuperscript(expressionText);
         calculationStringIndexList = ExpressionBuilder.getMappedIndexesList(expressionText);
 
-        ExpressionBuilder.generateCalculationString(calculationString,selectedCard);
+        ExpressionBuilder.generateCalculationString(calculationString, selectedCard);
 
         resultCardsList.get(selectedCard).setCalculationString(calculationString);
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
@@ -162,7 +162,9 @@ public class ResultCardsController {
         List<Integer> calculationStringIndexList = resultCardsList.get(selectedCard).getCalculationStringIndexList();
 
         for (int i = 0; i < 10; i++)
+            //numpad numbers
             if (view == HomeActivity.numpadButtons[i]) {
+
                 //making numpad numbers superscript when nth power button is pressed
                 if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
                     if (isNthPowerButtonPressed) {
@@ -170,12 +172,14 @@ public class ResultCardsController {
                         expressionText.insert(cursorPosition + 1, Html.fromHtml("<sup><small>" + i + "</small></sup>"));
                     } else
                         expressionText.insert(cursorPosition, "•" + i);
+
                     resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
                 } else {
                     if (isNthPowerButtonPressed)
                         expressionText.insert(cursorPosition, Html.fromHtml("<sup><small>" + i + "</small></sup>"));
                     else
                         expressionText.insert(cursorPosition, String.valueOf(i));
+
                     resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 1);
                 }
 
@@ -390,7 +394,7 @@ public class ResultCardsController {
         //updating after usage
         calculationString = ExpressionBuilder.insertSuperscript(expressionText);
         calculationStringIndexList = ExpressionBuilder.getMappedIndexesList(expressionText);
-        ExpressionBuilder.generateCalculationString(calculationString,selectedCard);
+        ExpressionBuilder.generateCalculationString(calculationString, selectedCard);
 
         resultCardsList.get(selectedCard).setCalculationString(calculationString);
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
@@ -462,7 +466,9 @@ public class ResultCardsController {
         }
 
         boolean isBracket = cursorPosition > 0 && expression.charAt(cursorPosition - 1) == ')';
-        boolean isMatrixName = cursorPosition > 0 && Character.isUpperCase(expression.charAt(cursorPosition - 1));
+
+        //auto put multiply only when power button not pressed
+        boolean isMatrixName = cursorPosition > 0 && Character.isUpperCase(expression.charAt(cursorPosition - 1)) && !isNthPowerButtonPressed;
 
         return isPower || isBracket || isMatrixName;
     }

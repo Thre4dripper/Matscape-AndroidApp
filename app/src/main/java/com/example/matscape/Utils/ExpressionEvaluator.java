@@ -93,7 +93,7 @@ public class ExpressionEvaluator {
                             stack.push(result);
                             break;
                         case '^':
-                            result = MatrixOperations.Power(str2, Double.parseDouble(str1.get(0).get(0)));
+                            result = MatrixOperations.matrixPower(str2, Double.parseDouble(str1.get(0).get(0)));
                             if (result != null)
                                 stack.push(result);
                             else {
@@ -130,7 +130,7 @@ public class ExpressionEvaluator {
                 else if ((str2.size() > 1 || str2.get(0).size() > 1) && (str1.size() > 1 || str1.get(0).size() > 1))
                     switch (currentChar) {
                         case '+':
-                            result=MatrixOperations.matrixAddition(str2,str1);
+                            result = MatrixOperations.matrixAddition(str2, str1);
                             if (result != null)
                                 stack.push(result);
                             else {
@@ -139,7 +139,7 @@ public class ExpressionEvaluator {
                             }
                             break;
                         case '-':
-                            result=MatrixOperations.matrixSubtraction(str2,str1);
+                            result = MatrixOperations.matrixSubtraction(str2, str1);
                             if (result != null)
                                 stack.push(result);
                             else {
@@ -149,7 +149,12 @@ public class ExpressionEvaluator {
                             break;
                         case '•':
                             result = MatrixOperations.matrixMultiply(str2, str1);
-                            stack.push(result);
+                            if (result != null)
+                                stack.push(result);
+                            else {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrices with Incompatible dimensions");
+                                error = true;
+                            }
                             break;
                         case '/':
                             result = MatrixOperations.ScalarDivide(str1, Double.parseDouble(str2.get(0).get(0)));
@@ -162,6 +167,56 @@ public class ExpressionEvaluator {
                              */
                             break;
                     }
+            } else if (currentChar == '#' || currentChar == '$' || currentChar == '@'
+                    || currentChar == '%' || currentChar == '*' || currentChar == '~') {
+                List<List<String>> str = stack.pop();
+                List<List<String>> result = new ArrayList<>();
+                result.add(new ArrayList<>());
+
+                switch (currentChar) {
+                    //TODO handle all cases for 1x1 matrix and resolve cofactor operation
+                    case '#':
+                        if (str.size() == str.get(0).size()) {
+                            result.get(0).add(String.valueOf(MatrixOperations.determinant(str)));
+                            stack.push(result);
+                        } else {
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a determinant ");
+                            error = true;
+                        }
+
+                        break;
+
+                    case '@':
+                        if (str.size() == str.get(0).size()) {
+                            result = MatrixOperations.adjoint(str);
+                            stack.push(result);
+                        } else {
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Adjoint ");
+                            error = true;
+                        }
+                        break;
+
+                    case '%':
+                        if (str.size() == str.get(0).size()) {
+                            result = MatrixOperations.minorMatrix(str);
+                            stack.push(result);
+                        } else {
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Minors ");
+                            error = true;
+                        }
+                        break;
+
+                    case '*':
+                        if (str.size() == str.get(0).size()) {
+                            result = MatrixOperations.cofactorMatrix(str);
+                            stack.push(result);
+                        } else {
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Cofactors ");
+                            error = true;
+                        }
+                        break;
+                }
+
             }
         }
 
