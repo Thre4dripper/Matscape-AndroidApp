@@ -1,7 +1,5 @@
 package com.example.matscape.Utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.example.matscape.Controllers.MatrixCardsController;
@@ -87,16 +85,21 @@ public class ExpressionEvaluator {
                             error = true;
                             break;
                         case '•':
-                            result=MatrixOperations.ScalarMultiply(str2,Double.parseDouble(str1.get(0).get(0)));
+                            result = MatrixOperations.ScalarMultiply(str2, Double.parseDouble(str1.get(0).get(0)));
                             stack.push(result);
                             break;
                         case '/':
-                            result=MatrixOperations.ScalarDivide(str2,Double.parseDouble(str1.get(0).get(0)));
+                            result = MatrixOperations.ScalarDivide(str2, Double.parseDouble(str1.get(0).get(0)));
                             stack.push(result);
                             break;
                         case '^':
-                            result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(str2.get(0).get(0)), Double.parseDouble(str1.get(0).get(0)))));
-                            stack.push(result);
+                            result = MatrixOperations.Power(str2, Double.parseDouble(str1.get(0).get(0)));
+                            if (result != null)
+                                stack.push(result);
+                            else {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Power Only works on Square Matrices");
+                                error = true;
+                            }
                             break;
                     }
             }
@@ -119,14 +122,13 @@ public class ExpressionEvaluator {
 
         int matrixIndex = MatrixCardsController.matrixNamesList.indexOf(String.valueOf(Name));
         //receiving matrix by its index
-        List<List<String>> receivedMatrix=MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
+        List<List<String>> receivedMatrix = MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
 
         //cloning original matrix, so that any changes doesn't reflect back
-        List<List<String>> clone=new ArrayList<>();
-        for(int i=0;i<receivedMatrix.size();i++)
-        {
+        List<List<String>> clone = new ArrayList<>();
+        for (int i = 0; i < receivedMatrix.size(); i++) {
             clone.add(new ArrayList<>());
-            for(int j=0;j<receivedMatrix.get(0).size();j++)
+            for (int j = 0; j < receivedMatrix.get(0).size(); j++)
                 clone.get(i).add(receivedMatrix.get(i).get(j));
 
         }
@@ -149,7 +151,7 @@ public class ExpressionEvaluator {
         boolean isResultValuesInt = true;
         int rows = result.size();
         int columns = result.get(0).size();
-        double currentValue=0;
+        double currentValue = 0;
 
         //checking for result contains double value or not, Also rounding up to 2 decimal places
         for (int i = 0; i < rows; i++) {
@@ -157,7 +159,7 @@ public class ExpressionEvaluator {
                 currentValue = Double.parseDouble(result.get(i).get(j));
 
                 //rounding up to 2 decimal places
-                result.get(i).set(j, String.valueOf(Math.round(currentValue*100.0)/100.0));
+                result.get(i).set(j, String.valueOf(Math.round(currentValue * 100.0) / 100.0));
 
                 //logic for checking number is in decimal or not
                 if (currentValue != (int) currentValue) {
