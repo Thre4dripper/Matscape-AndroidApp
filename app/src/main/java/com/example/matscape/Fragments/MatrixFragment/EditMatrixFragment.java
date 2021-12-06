@@ -449,6 +449,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      **/
     public void moveFocus() {
 
+        //TODO on focus change, cursor should be at last in that cell
         Log.d(TAG, "moveFocus: "+currentRow+" "+currentColumn);
         //when nothing is selected , first field should be selected for right and down key
         if((currentRow==-1 && currentColumn==0) || (currentRow==0 && currentColumn==-1))

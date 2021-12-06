@@ -22,7 +22,8 @@ public class ExpressionEvaluator {
         int flag = 0;
         char currentChar;
         List<List<String>> number;
-        for (int i = 0; i < postfixExpression.length(); i++) {
+        boolean error = false;
+        for (int i = 0; i < postfixExpression.length() && !error; i++) {
             currentChar = postfixExpression.charAt(i);
 
             if (Character.isDigit(currentChar) || currentChar == '.') {
@@ -44,6 +45,7 @@ public class ExpressionEvaluator {
             else if (Character.isUpperCase(currentChar))
                 stack.push(getCurrentMatrix(currentChar));
 
+
             else if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/' || currentChar == '^') {
                 List<List<String>> str1 = stack.pop();
                 List<List<String>> str2 = stack.pop();
@@ -51,46 +53,84 @@ public class ExpressionEvaluator {
                 result.add(new ArrayList<>());
 
                 //when both fetched strings are numbers
-                if(!Character.isUpperCase(str2.get(0).get(0).charAt(0)) && !Character.isUpperCase(str1.get(0).get(0).charAt(0)))
-                switch (currentChar) {
-                    case '+':
-                        result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) + Double.parseDouble(str1.get(0).get(0))));
-                        stack.push(result);
-                        break;
-                    case '-':
-                        result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) - Double.parseDouble(str1.get(0).get(0))));
-                        stack.push(result);
-                        break;
-                    case '•':
-                        result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) * Double.parseDouble(str1.get(0).get(0))));
-                        stack.push(result);
-                        break;
-                    case '/':
-                        result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) / Double.parseDouble(str1.get(0).get(0))));
-                        stack.push(result);
-                        break;
-                    case '^':
-                        result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(str2.get(0).get(0)), Double.parseDouble(str1.get(0).get(0)))));
-                        stack.push(result);
-                        break;
-                }
+                if (str2.size() == 1 && str2.get(0).size() == 1 && str1.size() == 1 && str1.get(0).size() == 1)
+                    switch (currentChar) {
+                        case '+':
+                            result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) + Double.parseDouble(str1.get(0).get(0))));
+                            stack.push(result);
+                            break;
+                        case '-':
+                            result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) - Double.parseDouble(str1.get(0).get(0))));
+                            stack.push(result);
+                            break;
+                        case '•':
+                            result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) * Double.parseDouble(str1.get(0).get(0))));
+                            stack.push(result);
+                            break;
+                        case '/':
+                            result.get(0).add(String.valueOf(Double.parseDouble(str2.get(0).get(0)) / Double.parseDouble(str1.get(0).get(0))));
+                            stack.push(result);
+                            break;
+                        case '^':
+                            result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(str2.get(0).get(0)), Double.parseDouble(str1.get(0).get(0)))));
+                            stack.push(result);
+                            break;
+                    }
+                else if ((str2.size() > 1 || str2.get(0).size() > 1) && str1.size() == 1 && str1.get(0).size() == 1)
+                    switch (currentChar) {
+                        case '+':
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Added in Matrices");
+                            error = true;
+                            break;
+                        case '-':
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Subtracted from Matrices");
+                            error = true;
+                            break;
+                        case '•':
+                            result=MatrixOperations.ScalarMultiply(str2,Double.parseDouble(str1.get(0).get(0)));
+                            stack.push(result);
+                            break;
+                        case '/':
+                            result=MatrixOperations.ScalarDivide(str2,Double.parseDouble(str1.get(0).get(0)));
+                            stack.push(result);
+                            break;
+                        case '^':
+                            result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(str2.get(0).get(0)), Double.parseDouble(str1.get(0).get(0)))));
+                            stack.push(result);
+                            break;
+                    }
             }
         }
 
-        //resetting Result Card's  message for Valid Expression
-        ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
+        if (!error) {
+            //resetting Result Card's  message for Valid Expression
+            ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
 
-        //sending result to Result Card
-        setResult(stack.pop(), selectedCard);
+            //sending result to Result Card
+            setResult(stack.pop(), selectedCard);
+        } else setResult(null, selectedCard);
     }
 
     /**
      * ================================= METHOD FOR GETTING MATRIX FROM ITS NAME ===================================
      **/
+    @NonNull
     public static List<List<String>> getCurrentMatrix(Character Name) {
 
         int matrixIndex = MatrixCardsController.matrixNamesList.indexOf(String.valueOf(Name));
-        return MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
+        //receiving matrix by its index
+        List<List<String>> receivedMatrix=MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
+
+        //cloning original matrix, so that any changes doesn't reflect back
+        List<List<String>> clone=new ArrayList<>();
+        for(int i=0;i<receivedMatrix.size();i++)
+        {
+            clone.add(new ArrayList<>());
+            for(int j=0;j<receivedMatrix.get(0).size();j++)
+                clone.get(i).add(receivedMatrix.get(i).get(j));
+
+        }
+        return clone;
     }
 
     /**
@@ -109,7 +149,7 @@ public class ExpressionEvaluator {
         boolean isResultValuesInt = true;
         int rows = result.size();
         int columns = result.get(0).size();
-        double currentValue;
+        double currentValue=0;
 
         //checking for result contains double value or not, Also rounding up to 2 decimal places
         for (int i = 0; i < rows; i++) {
@@ -117,7 +157,7 @@ public class ExpressionEvaluator {
                 currentValue = Double.parseDouble(result.get(i).get(j));
 
                 //rounding up to 2 decimal places
-                result.get(i).set(i, Math.round(currentValue * 100) / 100.0 + "");
+                result.get(i).set(j, String.valueOf(Math.round(currentValue*100.0)/100.0));
 
                 //logic for checking number is in decimal or not
                 if (currentValue != (int) currentValue) {
