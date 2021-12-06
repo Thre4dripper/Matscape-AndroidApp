@@ -127,6 +127,41 @@ public class ExpressionEvaluator {
                              */
                             break;
                     }
+                else if ((str2.size() > 1 || str2.get(0).size() > 1) && (str1.size() > 1 || str1.get(0).size() > 1))
+                    switch (currentChar) {
+                        case '+':
+                            result=MatrixOperations.matrixAddition(str2,str1);
+                            if (result != null)
+                                stack.push(result);
+                            else {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrices with Incompatible dimensions");
+                                error = true;
+                            }
+                            break;
+                        case '-':
+                            result=MatrixOperations.matrixSubtraction(str2,str1);
+                            if (result != null)
+                                stack.push(result);
+                            else {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrices with Incompatible dimensions");
+                                error = true;
+                            }
+                            break;
+                        case '•':
+                            result = MatrixOperations.matrixMultiply(str2, str1);
+                            stack.push(result);
+                            break;
+                        case '/':
+                            result = MatrixOperations.ScalarDivide(str1, Double.parseDouble(str2.get(0).get(0)));
+                            stack.push(result);
+                            break;
+                        case '^':
+                            /*
+                             * NOT POSSIBLE (will never encounter)
+                             * app doesn't have functionality to raise matrix as a power to some number
+                             */
+                            break;
+                    }
             }
         }
 
