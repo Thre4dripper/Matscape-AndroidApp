@@ -1,5 +1,7 @@
 package com.example.matscape.Utils;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.matscape.Controllers.MatrixCardsController;
@@ -11,7 +13,7 @@ import java.util.Stack;
 
 public class ExpressionEvaluator {
     private static final String TAG = "ExpressionEvaluator";
-
+    public static boolean error = false;
     /**
      * ================================== MASTER FUNCTION FOR EVALUATING EXPRESSION =========================
      **/
@@ -20,7 +22,7 @@ public class ExpressionEvaluator {
         int flag = 0;
         char currentChar;
         List<List<String>> number;
-        boolean error = false;
+
         for (int i = 0; i < postfixExpression.length() && !error; i++) {
             currentChar = postfixExpression.charAt(i);
 
@@ -93,13 +95,12 @@ public class ExpressionEvaluator {
                             stack.push(result);
                             break;
                         case '^':
-                            result = MatrixOperations.matrixPower(str2, Double.parseDouble(str1.get(0).get(0)));
+                            result = MatrixOperations.matrixPower(str2, Double.parseDouble(str1.get(0).get(0)),selectedCard);
                             if (result != null)
                                 stack.push(result);
-                            else {
-                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Power Only works on Square Matrices");
+                            else
                                 error = true;
-                            }
+
                             break;
                     }
                 else if (str2.size() == 1 && str2.get(0).size() == 1 && (str1.size() > 1 || str1.get(0).size() > 1))
@@ -163,7 +164,7 @@ public class ExpressionEvaluator {
                         case '^':
                             /*
                              * NOT POSSIBLE (will never encounter)
-                             * app doesn't have functionality to raise matrix as a power to some number
+                             * app doesn't have functionality to raise matrix as a power to some matrix
                              */
                             break;
                     }
@@ -174,7 +175,7 @@ public class ExpressionEvaluator {
                 result.add(new ArrayList<>());
 
                 switch (currentChar) {
-                    //TODO handle all cases for 1x1 matrix and resolve cofactor operation
+
                     //for determinant
                     case '#':
                         if (str.size() == str.get(0).size()) {
