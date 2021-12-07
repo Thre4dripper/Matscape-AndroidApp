@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.matscape.Activities.HomeActivity;
 import com.example.matscape.Controllers.ResultCardsController;
 import com.example.matscape.R;
-import com.example.matscape.dataModels.ResultCards;
+import com.example.matscape.models.ResultCards;
 
 import java.util.List;
 

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.matscape.Activities.HomeActivity;
 import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
 import com.example.matscape.Utils.ExpressionBuilder;
-import com.example.matscape.dataModels.ResultCards;
+import com.example.matscape.models.ResultCards;
 
 import java.util.ArrayList;
 import java.util.Collections;

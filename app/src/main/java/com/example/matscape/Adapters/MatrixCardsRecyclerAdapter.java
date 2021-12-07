@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.R;
-import com.example.matscape.dataModels.MatrixCards;
+import com.example.matscape.models.MatrixCards;
 
 import java.util.List;
 

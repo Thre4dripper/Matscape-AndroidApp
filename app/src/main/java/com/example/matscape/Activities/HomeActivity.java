@@ -23,8 +23,8 @@ import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
 import com.example.matscape.Controllers.MatrixCardsController;
 import com.example.matscape.Controllers.ResultCardsController;
 import com.example.matscape.R;
-import com.example.matscape.dataModels.MatrixCards;
-import com.example.matscape.dataModels.ResultCards;
+import com.example.matscape.models.MatrixCards;
+import com.example.matscape.models.ResultCards;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 

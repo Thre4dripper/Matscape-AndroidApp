@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MatrixOperations {
     /**
-     * ============================================ METHOD FOR SCALAR MULTIPLY OF MATRIX =============================================================
+     * ====================================== METHOD FOR SCALAR MULTIPLY OF MATRIX ===========================================
      **/
     @NonNull
     public static List<List<String>> ScalarMultiply(@NonNull List<List<String>> A, double scalar) {
@@ -30,7 +30,7 @@ public class MatrixOperations {
     }
 
     /**
-     * ============================================ METHOD FOR SCALAR DIVIDE OF MATRIX =============================================================
+     * ==================================== METHOD FOR SCALAR DIVIDE OF MATRIX ============================================
      **/
     @NonNull
     public static List<List<String>> ScalarDivide(@NonNull List<List<String>> A, double scalar) {
@@ -52,7 +52,7 @@ public class MatrixOperations {
     }
 
     /**
-     * ============================================ METHOD FOR ADDITION OF MATRICES =============================================================
+     * ======================================== METHOD FOR ADDITION OF MATRICES ==============================================
      **/
     @Nullable
     public static List<List<String>> matrixAddition(@NonNull List<List<String>> A, @NonNull List<List<String>> B) {
@@ -79,7 +79,7 @@ public class MatrixOperations {
     }
 
     /**
-     * ============================================ METHOD FOR SUBTRACTION OF MATRICES =============================================================
+     * ================================== METHOD FOR SUBTRACTION OF MATRICES ================================================
      **/
     @Nullable
     public static List<List<String>> matrixSubtraction(@NonNull List<List<String>> A, @NonNull List<List<String>> B) {
@@ -106,7 +106,7 @@ public class MatrixOperations {
     }
 
     /**
-     * ============================================ METHOD FOR MULTIPLICATION OF MATRICES =============================================================
+     * ================================== METHOD FOR MULTIPLICATION OF MATRICES ==========================================
      **/
     @Nullable
     public static List<List<String>> matrixMultiply(@NonNull List<List<String>> A, @NonNull List<List<String>> B) {
@@ -138,22 +138,7 @@ public class MatrixOperations {
     }
 
     /**
-     * ============================================ METHOD FOR POWER OF MATRIX =============================================================
-     **/
-    @Nullable
-    public static List<List<String>> matrixPower(List<List<String>> A, double power) {
-        List<List<String>> result = A;
-
-        for (int i = 0; i < power - 1; i++) {
-            result = matrixMultiply(A, result);
-            if (result == null)
-                return null;
-        }
-        return result;
-    }
-
-    /**
-     * ============================================ METHOD FOR DETERMINANT OF MATRIX =============================================================
+     * ===================================== METHOD FOR FINDING DETERMINANT OF MATRIX =====================================
      **/
     public static double determinant(@NonNull List<List<String>> A) {
         if (A.size() == 1)
@@ -175,8 +160,44 @@ public class MatrixOperations {
         return det;
     }
 
+    @NonNull
+    public static List<List<String>> transpose(@NonNull List<List<String>> A) {
+        List<List<String>> B = new ArrayList<>();
+        for (int i = 0; i < A.size(); i++) {
+            B.add(new ArrayList<>());
+            for (int j = 0; j < A.size(); j++)
+                B.get(i).add(A.get(j).get(i));
+        }
+        return B;
+    }
+
     /**
-     * ================================= METHOD FOR CALCULATING MINOR OF MATRIX ==============================
+     * ============================================ METHOD FOR FINDING POWER OF MATRIX ==================================
+     **/
+    @Nullable
+    public static List<List<String>> matrixPower(List<List<String>> A, double power) {
+        List<List<String>> result = A;
+
+        for (int i = 0; i < power - 1; i++) {
+            result = matrixMultiply(A, result);
+            if (result == null)
+                return null;
+        }
+        return result;
+    }
+
+    /**
+     * ========================================= METHOD FOR FINDING TRACE OF MATRIX ======================================
+     **/
+    public static double trace(@NonNull List<List<String>> A) {
+        double trace = 0;
+        for (int i = 0; i < A.size(); i++)
+            trace += Double.parseDouble(A.get(i).get(i));
+        return trace;
+    }
+
+    /**
+     * ========================================== METHOD FOR CALCULATING MINOR OF MATRIX ================================
      **/
     public static double minors(@NonNull List<List<String>> A, int rows, int cols) {
         List<List<String>> B = new ArrayList<>();
@@ -209,15 +230,12 @@ public class MatrixOperations {
     }
 
     /**
-     * ================================= METHOD FOR GENERATING MINOR  MATRIX =====================================
+     * ======================================== METHOD FOR GENERATING MINOR  MATRIX =======================================
      **/
     @NonNull
     public static List<List<String>> minorMatrix(@NonNull List<List<String>> A) {
         List<List<String>> B = new ArrayList<>();
         int n = A.size();
-
-        //for 1x1 matrix returning Null matrix
-        if (n == 1) return B;
 
         for (int i = 0; i < n; i++) {
             B.add(new ArrayList<>());
@@ -253,14 +271,10 @@ public class MatrixOperations {
      **/
     @NonNull
     public static List<List<String>> adjoint(@NonNull List<List<String>> A) {
-        List<List<String>> B = new ArrayList<>();
-        int n = A.size();
-
-        //for 1x1 matrix returning Null matrix
-        if (n == 1) return B;
+        List<List<String>> B;
 
         B = cofactorMatrix(A);
-
+        B = transpose(B);
         return B;
     }
 
@@ -272,7 +286,11 @@ public class MatrixOperations {
         List<List<String>> B = new ArrayList<>();
 
         if (determinant(A) != 0) {
-            if (n == 1) return B;
+            //inverse of 1x1 matrix is simple reciprocal of 1x1 element
+            if (n == 1) {
+                B.add(new ArrayList<>());
+                B.get(0).add(String.valueOf(1 / Double.parseDouble(A.get(0).get(0))));
+            }
 
             B = adjoint(A);
 

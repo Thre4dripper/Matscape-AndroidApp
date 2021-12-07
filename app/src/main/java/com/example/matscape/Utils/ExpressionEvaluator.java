@@ -168,50 +168,81 @@ public class ExpressionEvaluator {
                             break;
                     }
             } else if (currentChar == '#' || currentChar == '$' || currentChar == '@'
-                    || currentChar == '%' || currentChar == '*' || currentChar == '~') {
+                    || currentChar == '%' || currentChar == '&' || currentChar == '~') {
                 List<List<String>> str = stack.pop();
                 List<List<String>> result = new ArrayList<>();
                 result.add(new ArrayList<>());
 
                 switch (currentChar) {
                     //TODO handle all cases for 1x1 matrix and resolve cofactor operation
+                    //for determinant
                     case '#':
                         if (str.size() == str.get(0).size()) {
                             result.get(0).add(String.valueOf(MatrixOperations.determinant(str)));
                             stack.push(result);
                         } else {
-                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a determinant ");
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Determinant");
                             error = true;
                         }
 
                         break;
 
+                    //for trace
+                    case '$':
+                        if (str.size() == str.get(0).size()) {
+                            result.get(0).add(String.valueOf(MatrixOperations.trace(str)));
+                            stack.push(result);
+                        } else {
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Trace");
+                            error = true;
+                        }
+                        break;
+
+                    //for adjoint
                     case '@':
                         if (str.size() == str.get(0).size()) {
-                            result = MatrixOperations.adjoint(str);
+                            if (str.size() != 1)
+                                result = MatrixOperations.adjoint(str);
+
+                                //adjoint is 1 for 1x1 matrices
+                            else
+                                result.get(0).add("1");
+
                             stack.push(result);
                         } else {
-                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Adjoint ");
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Adjoint");
                             error = true;
                         }
                         break;
 
+                    //for minors
                     case '%':
                         if (str.size() == str.get(0).size()) {
-                            result = MatrixOperations.minorMatrix(str);
-                            stack.push(result);
+                            if (str.size() != 1) {
+                                result = MatrixOperations.minorMatrix(str);
+                                stack.push(result);
+                            } else {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("1x1 Matrices do not have Minors");
+                                error = true;
+                            }
                         } else {
-                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Minors ");
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Minors");
                             error = true;
                         }
                         break;
 
-                    case '*':
+                    //for cofactors
+                    case '&':
                         if (str.size() == str.get(0).size()) {
-                            result = MatrixOperations.cofactorMatrix(str);
-                            stack.push(result);
+                            if (str.size() != 1) {
+                                result = MatrixOperations.cofactorMatrix(str);
+                                stack.push(result);
+                            } else {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("1x1 Matrices do not have Cofactors");
+                                error = true;
+                            }
                         } else {
-                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Cofactors ");
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Cofactors");
                             error = true;
                         }
                         break;
@@ -220,13 +251,13 @@ public class ExpressionEvaluator {
             }
         }
 
+        //resetting message and sending result if there is no error
         if (!error) {
-            //resetting Result Card's  message for Valid Expression
             ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
-
-            //sending result to Result Card
             setResult(stack.pop(), selectedCard);
-        } else setResult(null, selectedCard);
+        }
+        //error encountered
+        else setResult(null, selectedCard);
     }
 
     /**

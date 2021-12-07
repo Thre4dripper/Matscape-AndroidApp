@@ -1,4 +1,4 @@
-package com.example.matscape.dataModels;
+package com.example.matscape.models;
 
 import android.text.SpannableStringBuilder;
 

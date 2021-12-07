@@ -80,7 +80,7 @@ public class ExpressionChecker {
 
             //matrix operators encountered
             else if (currentChar == '#' || currentChar == '$' || currentChar == '@' || currentChar == '%' ||
-                    currentChar == '*' || currentChar == '~') {
+                    currentChar == '&' || currentChar == '~') {
                 char c;
 
                 //more operators results in early empty stack
@@ -91,7 +91,7 @@ public class ExpressionChecker {
                 }
 
                 //matrix operation is unary operation, so popped character must not be matrix operation
-                if (c != '#' && c != '$' && c != '@' && c != '%' && c != '*' && c != '~')
+                if (c != '#' && c != '$' && c != '@' && c != '%' && c != '&' && c != '~')
                     stack.push(c);
                     //if so this is a operator mistake
                 else
@@ -241,7 +241,7 @@ public class ExpressionChecker {
             case '$':   //for trace
             case '@':  //for adjoint
             case '%':  //for minors
-            case '*':   //for cofactors
+            case '&':   //for cofactors
             case '~':   //for unary minus for matrix
                 return 4;
         }
