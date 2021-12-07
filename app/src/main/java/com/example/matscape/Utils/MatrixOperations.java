@@ -1,7 +1,5 @@
 package com.example.matscape.Utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -12,6 +10,7 @@ import java.util.List;
 
 public class MatrixOperations {
     private static final String TAG = "MatrixOperations";
+
     /**
      * ====================================== METHOD FOR SCALAR MULTIPLY OF MATRIX ===========================================
      **/
@@ -143,12 +142,11 @@ public class MatrixOperations {
     }
 
     @Nullable
-    public static List<List<String>> matrixDivide(@NonNull List<List<String>> A, @NonNull List<List<String>> B)
-    {
-        List<List<String>> InverseMatrix=inverse(B);
-        if(InverseMatrix==null)
+    public static List<List<String>> matrixDivide(@NonNull List<List<String>> A, @NonNull List<List<String>> B) {
+        List<List<String>> InverseMatrix = inverse(B);
+        if (InverseMatrix == null)
             return null;
-        return matrixMultiply(A,InverseMatrix);
+        return matrixMultiply(A, InverseMatrix);
     }
 
     /**
@@ -177,7 +175,7 @@ public class MatrixOperations {
     @NonNull
     public static List<List<String>> transpose(@NonNull List<List<String>> A) {
         List<List<String>> B = new ArrayList<>();
-        for (int i = 0; i < A.size(); i++) {
+        for (int i = 0; i < A.get(0).size(); i++) {
             B.add(new ArrayList<>());
             for (int j = 0; j < A.size(); j++)
                 B.get(i).add(A.get(j).get(i));
@@ -189,20 +187,22 @@ public class MatrixOperations {
      * ============================================ METHOD FOR FINDING POWER OF MATRIX ==================================
      **/
     @Nullable
-    public static List<List<String>> matrixPower(List<List<String>> A, double power,int selectedCard) {
+    public static List<List<String>> matrixPower(List<List<String>> A, String power, int selectedCard) {
         List<List<String>> result = new ArrayList<>();
+        if (power.equals("|"))
+            return transpose(A);
+        double Power = Double.parseDouble(power);
 
-        if (power > 0) {
+        if (Power > 0) {
             result = A;
-            for (int i = 0; i < power - 1; i++) {
+            for (int i = 0; i < Power - 1; i++) {
                 result = matrixMultiply(A, result);
-                if (result == null)
-                {
+                if (result == null) {
                     ResultCardsController.resultCardsList.get(selectedCard).setMessage("Power Only works on Square Matrices");
                     return null;
                 }
             }
-        } else if (power == 0) {
+        } else if (Power == 0) {
 
             //generating Identity matrix for 0 power
             for (int i = 0; i < A.size(); i++) {
@@ -214,11 +214,9 @@ public class MatrixOperations {
                         result.get(i).add("0");
                 }
             }
-        }
-        else if(power<0)
-        {
-            result= matrixPower(inverse(A),-1*power,selectedCard);
-            if(result==null)
+        } else if (Power < 0) {
+            result = matrixPower(inverse(A), String.valueOf(-1 * Power), selectedCard);
+            if (result == null)
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Singular Matrices Do not Have Inverse");
         }
         return result;
@@ -322,7 +320,7 @@ public class MatrixOperations {
     @Nullable
     public static List<List<String>> inverse(@NonNull List<List<String>> A) {
         List<List<String>> B = new ArrayList<>();
-        int n=A.size();
+        int n = A.size();
 
         if (determinant(A) != 0) {
             //inverse of 1x1 matrix is simple reciprocal of 1x1 element

@@ -124,7 +124,7 @@ public class ExpressionBuilder {
         for (int i = 1; i < calculationString.length() - 1; i++) {
             //replacing - with ~ in case of matrix to make it as a unary matrix operation
             if (calculationString.charAt(i) == '-' && calculationString.charAt(i - 1) == '(' && Character.isUpperCase(calculationString.charAt(i + 1)))
-                calculationString = calculationString.substring(0, i) + "~" + calculationString.substring(i+1);
+                calculationString = calculationString.substring(0, i) + "~" + calculationString.substring(i + 1);
             else if (calculationString.charAt(i) == '-' && calculationString.charAt(i - 1) == '(')
                 calculationString = calculationString.substring(0, i) + "0" + calculationString.substring(i);
         }
@@ -156,27 +156,55 @@ public class ExpressionBuilder {
         if (calculationString.contains("cof"))
             calculationString = calculationString.replace("cof", "&");
 
-        //TODO handle transpose 'T' and replace it with some special char
+        //return code from evaluation of expression
+        int RETURN_CODE = 0;
+
+        //converting 'T' of transpose to '|' in every place
+        int transposeIndex;
+        for (int i = 0; i < calculationString.length(); i++) {
+            transposeIndex = calculationString.indexOf("T", i);
+            if (transposeIndex != -1) {
+                calculationString = calculationString.substring(0, transposeIndex) + "|" + calculationString.substring(transposeIndex + 1);
+                int j = transposeIndex;
+
+                //'+' or '-' should not be present inside transpose brackets
+                //checking on left from transpose
+                while (calculationString.charAt(j) != '(') {
+                    if (calculationString.charAt(j) == '+' || calculationString.charAt(j) == '-') {
+                        RETURN_CODE = -5;
+                        break;
+                    }
+                    j--;
+                }
+                j = transposeIndex;
+                //checking on right from transpose
+                while (calculationString.charAt(j) != ')') {
+                    if (calculationString.charAt(j) == '+' || calculationString.charAt(j) == '-') {
+                        RETURN_CODE = -5;
+                        break;
+                    }
+                    j++;
+                }
+            }
+        }
 
         Log.d(TAG, "CalculationString: " + calculationString);
 
-        int returnCode = 0;
-
-
-        if (!calculationString.isEmpty())
-            returnCode = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
-            //clearing result when expression is empty
+        if (!calculationString.isEmpty() && RETURN_CODE == 0) {
+            RETURN_CODE = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
+        }
+        //clearing result when expression is empty
         else {
             ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
             ExpressionEvaluator.setResult(null, selectedCard);
         }
 
         //clearing previous result when an error occurred
-        if (returnCode != 0)
+        if (RETURN_CODE != 0)
             ExpressionEvaluator.setResult(null, selectedCard);
 
         //setting message view based on returned code
-        setErrorMessage(selectedCard, returnCode);
+        setErrorMessage(selectedCard, RETURN_CODE);
     }
 
     /**
@@ -200,6 +228,9 @@ public class ExpressionBuilder {
                 break;
             case -4:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Decimal Mistake");
+                break;
+            case -5:
+                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Error Calculating Transpose");
                 break;
         }
 

@@ -24,7 +24,7 @@ public class ExpressionEvaluator {
         char currentChar;
         List<List<String>> number;
 
-        for (int i = 0; i < postfixExpression.length() && error!=-1; i++) {
+        for (int i = 0; i < postfixExpression.length() && error != -1; i++) {
             currentChar = postfixExpression.charAt(i);
 
             if (Character.isDigit(currentChar) || currentChar == '.') {
@@ -43,7 +43,12 @@ public class ExpressionEvaluator {
             } else if (currentChar == ' ')
                 flag = 0;
 
-            else if (Character.isUpperCase(currentChar))
+            else if (currentChar == '|') {
+                number = new ArrayList<>();
+                number.add(new ArrayList<>());
+                number.get(0).add(String.valueOf(currentChar));
+                stack.push(number);
+            } else if (Character.isUpperCase(currentChar))
                 stack.push(getCurrentMatrix(currentChar));
 
 
@@ -96,7 +101,7 @@ public class ExpressionEvaluator {
                             stack.push(result);
                             break;
                         case '^':
-                            result = MatrixOperations.matrixPower(str2, Double.parseDouble(str1.get(0).get(0)), selectedCard);
+                            result = MatrixOperations.matrixPower(str2, str1.get(0).get(0), selectedCard);
                             if (result != null)
                                 stack.push(result);
                             else
@@ -160,11 +165,10 @@ public class ExpressionEvaluator {
                             break;
                         case '/':
                             result = MatrixOperations.matrixDivide(str2, str1);
-                            if(result!=null) {
+                            if (result != null) {
                                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix");
                                 error = 1;
-                            }
-                            else {
+                            } else {
                                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix\n" +
                                         "Singular Matrices Do not Have Inverse");
                                 error = -1;
@@ -274,9 +278,9 @@ public class ExpressionEvaluator {
         }
 
         //resetting message and sending result if there is no error
-        if (error!=-1) {
+        if (error != -1) {
             //warning but not error
-            if(error!=1)
+            if (error != 1)
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
             setResult(stack.pop(), selectedCard);
         }
@@ -327,7 +331,6 @@ public class ExpressionEvaluator {
             for (int j = 0; j < columns; j++) {
                 currentValue = Double.parseDouble(result.get(i).get(j));
 
-                //TODO rounding up digits
                 //rounding up to 2 decimal places
                 result.get(i).set(j, String.valueOf(Math.round(currentValue * 100.0) / 100.0));
 

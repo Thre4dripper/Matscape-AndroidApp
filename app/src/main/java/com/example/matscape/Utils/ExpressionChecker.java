@@ -45,6 +45,8 @@ public class ExpressionChecker {
             else if (currentChar == ' ')
                 flag = 0;
 
+            else if(currentChar=='|')
+                stack.push(currentChar);
                 //Matrix Names pushed normally
             else if (Character.isUpperCase(currentChar))
                 stack.push(currentChar);
