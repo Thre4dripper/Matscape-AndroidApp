@@ -1,7 +1,5 @@
 package com.example.matscape.Utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.example.matscape.Controllers.MatrixCardsController;
@@ -14,6 +12,7 @@ import java.util.Stack;
 public class ExpressionEvaluator {
     private static final String TAG = "ExpressionEvaluator";
     public static boolean error = false;
+
     /**
      * ================================== MASTER FUNCTION FOR EVALUATING EXPRESSION =========================
      **/
@@ -95,7 +94,7 @@ public class ExpressionEvaluator {
                             stack.push(result);
                             break;
                         case '^':
-                            result = MatrixOperations.matrixPower(str2, Double.parseDouble(str1.get(0).get(0)),selectedCard);
+                            result = MatrixOperations.matrixPower(str2, Double.parseDouble(str1.get(0).get(0)), selectedCard);
                             if (result != null)
                                 stack.push(result);
                             else
@@ -158,7 +157,8 @@ public class ExpressionEvaluator {
                             }
                             break;
                         case '/':
-                            result = MatrixOperations.ScalarDivide(str1, Double.parseDouble(str2.get(0).get(0)));
+                            result = MatrixOperations.matrixDivide(str2, str1);
+                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix");
                             stack.push(result);
                             break;
                         case '^':
@@ -247,6 +247,16 @@ public class ExpressionEvaluator {
                             error = true;
                         }
                         break;
+                    case '~':
+                        List<List<String>> nullMatrix=new ArrayList<>();
+                        for(int j=0;j<str.size();j++)
+                        {
+                            nullMatrix.add(new ArrayList<>());
+                            for(int k=0;k<str.get(0).size();k++)
+                                nullMatrix.get(j).add("0");
+                        }
+                        result=MatrixOperations.matrixSubtraction(nullMatrix,str);
+                        stack.push(result);
                 }
 
             }

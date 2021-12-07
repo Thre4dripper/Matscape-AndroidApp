@@ -113,16 +113,18 @@ public class ExpressionBuilder {
 
         //OPTIMISED CALCULATION STRING FOR UNARY MINUS FOR DIGIT FOR INDEX 0
         if (!calculationString.equals("")) {
+            //replacing - with ~ in case of matrix to make it as a unary matrix operation
             if (calculationString.charAt(0) == '-' && calculationString.length() > 1 && Character.isUpperCase(calculationString.charAt(1)))
-                calculationString = "~" + calculationString;
+                calculationString = "~" + calculationString.substring(1);
             else if (calculationString.charAt(0) == '-')
                 calculationString = "0" + calculationString;
         }
 
         //OPTIMISED CALCULATION STRING FOR UNARY MINUS FOR MATRIX FOR ANY INDEX
         for (int i = 1; i < calculationString.length() - 1; i++) {
+            //replacing - with ~ in case of matrix to make it as a unary matrix operation
             if (calculationString.charAt(i) == '-' && calculationString.charAt(i - 1) == '(' && Character.isUpperCase(calculationString.charAt(i + 1)))
-                calculationString = calculationString.substring(0, i) + "~" + calculationString.substring(i);
+                calculationString = calculationString.substring(0, i) + "~" + calculationString.substring(i+1);
             else if (calculationString.charAt(i) == '-' && calculationString.charAt(i - 1) == '(')
                 calculationString = calculationString.substring(0, i) + "0" + calculationString.substring(i);
         }

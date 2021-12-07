@@ -142,6 +142,15 @@ public class MatrixOperations {
         return result;
     }
 
+    @Nullable
+    public static List<List<String>> matrixDivide(@NonNull List<List<String>> A, @NonNull List<List<String>> B)
+    {
+        List<List<String>> InverseMatrix=inverse(B);
+        if(InverseMatrix==null)
+            return null;
+        return matrixMultiply(A,InverseMatrix);
+    }
+
     /**
      * ===================================== METHOD FOR FINDING DETERMINANT OF MATRIX =====================================
      **/
