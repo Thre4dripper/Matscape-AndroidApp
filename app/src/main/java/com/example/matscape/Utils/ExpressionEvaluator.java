@@ -11,18 +11,20 @@ import java.util.Stack;
 
 public class ExpressionEvaluator {
     private static final String TAG = "ExpressionEvaluator";
-    public static boolean error = false;
+    public static int error = 0;
 
     /**
      * ================================== MASTER FUNCTION FOR EVALUATING EXPRESSION =========================
      **/
     public static void EvaluateExpression(@NonNull String postfixExpression, int selectedCard) {
+        //resetting error code
+        error = 0;
         Stack<List<List<String>>> stack = new Stack<>();
         int flag = 0;
         char currentChar;
         List<List<String>> number;
 
-        for (int i = 0; i < postfixExpression.length() && !error; i++) {
+        for (int i = 0; i < postfixExpression.length() && error!=-1; i++) {
             currentChar = postfixExpression.charAt(i);
 
             if (Character.isDigit(currentChar) || currentChar == '.') {
@@ -79,11 +81,11 @@ public class ExpressionEvaluator {
                     switch (currentChar) {
                         case '+':
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Added in Matrices");
-                            error = true;
+                            error = -1;
                             break;
                         case '-':
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Subtracted from Matrices");
-                            error = true;
+                            error = -1;
                             break;
                         case '•':
                             result = MatrixOperations.ScalarMultiply(str2, Double.parseDouble(str1.get(0).get(0)));
@@ -98,7 +100,7 @@ public class ExpressionEvaluator {
                             if (result != null)
                                 stack.push(result);
                             else
-                                error = true;
+                                error = -1;
 
                             break;
                     }
@@ -106,11 +108,11 @@ public class ExpressionEvaluator {
                     switch (currentChar) {
                         case '+':
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Added in Matrices");
-                            error = true;
+                            error = -1;
                             break;
                         case '-':
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Subtracted from Matrices");
-                            error = true;
+                            error = -1;
                             break;
                         case '•':
                             result = MatrixOperations.ScalarMultiply(str1, Double.parseDouble(str2.get(0).get(0)));
@@ -135,7 +137,7 @@ public class ExpressionEvaluator {
                                 stack.push(result);
                             else {
                                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrices with Incompatible dimensions");
-                                error = true;
+                                error = -1;
                             }
                             break;
                         case '-':
@@ -144,7 +146,7 @@ public class ExpressionEvaluator {
                                 stack.push(result);
                             else {
                                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrices with Incompatible dimensions");
-                                error = true;
+                                error = -1;
                             }
                             break;
                         case '•':
@@ -153,12 +155,20 @@ public class ExpressionEvaluator {
                                 stack.push(result);
                             else {
                                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrices with Incompatible dimensions");
-                                error = true;
+                                error = -1;
                             }
                             break;
                         case '/':
                             result = MatrixOperations.matrixDivide(str2, str1);
-                            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix");
+                            if(result!=null) {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix");
+                                error = 1;
+                            }
+                            else {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix\n" +
+                                        "Singular Matrices Do not Have Inverse");
+                                error = -1;
+                            }
                             stack.push(result);
                             break;
                         case '^':
@@ -168,7 +178,9 @@ public class ExpressionEvaluator {
                              */
                             break;
                     }
-            } else if (currentChar == '#' || currentChar == '$' || currentChar == '@'
+            }
+            //UNARY MATRIX OPERATIONS
+            else if (currentChar == '#' || currentChar == '$' || currentChar == '@'
                     || currentChar == '%' || currentChar == '&' || currentChar == '~') {
                 List<List<String>> str = stack.pop();
                 List<List<String>> result = new ArrayList<>();
@@ -183,7 +195,7 @@ public class ExpressionEvaluator {
                             stack.push(result);
                         } else {
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Determinant");
-                            error = true;
+                            error = -1;
                         }
 
                         break;
@@ -195,7 +207,7 @@ public class ExpressionEvaluator {
                             stack.push(result);
                         } else {
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Trace");
-                            error = true;
+                            error = -1;
                         }
                         break;
 
@@ -212,7 +224,7 @@ public class ExpressionEvaluator {
                             stack.push(result);
                         } else {
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Adjoint");
-                            error = true;
+                            error = -1;
                         }
                         break;
 
@@ -224,11 +236,11 @@ public class ExpressionEvaluator {
                                 stack.push(result);
                             } else {
                                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("1x1 Matrices do not have Minors");
-                                error = true;
+                                error = -1;
                             }
                         } else {
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Minors");
-                            error = true;
+                            error = -1;
                         }
                         break;
 
@@ -240,22 +252,21 @@ public class ExpressionEvaluator {
                                 stack.push(result);
                             } else {
                                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("1x1 Matrices do not have Cofactors");
-                                error = true;
+                                error = -1;
                             }
                         } else {
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Cofactors");
-                            error = true;
+                            error = -1;
                         }
                         break;
                     case '~':
-                        List<List<String>> nullMatrix=new ArrayList<>();
-                        for(int j=0;j<str.size();j++)
-                        {
+                        List<List<String>> nullMatrix = new ArrayList<>();
+                        for (int j = 0; j < str.size(); j++) {
                             nullMatrix.add(new ArrayList<>());
-                            for(int k=0;k<str.get(0).size();k++)
+                            for (int k = 0; k < str.get(0).size(); k++)
                                 nullMatrix.get(j).add("0");
                         }
-                        result=MatrixOperations.matrixSubtraction(nullMatrix,str);
+                        result = MatrixOperations.matrixSubtraction(nullMatrix, str);
                         stack.push(result);
                 }
 
@@ -263,8 +274,10 @@ public class ExpressionEvaluator {
         }
 
         //resetting message and sending result if there is no error
-        if (!error) {
-            ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
+        if (error!=-1) {
+            //warning but not error
+            if(error!=1)
+                ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
             setResult(stack.pop(), selectedCard);
         }
         //error encountered
@@ -309,23 +322,24 @@ public class ExpressionEvaluator {
         int rows = result.size();
         int columns = result.get(0).size();
         double currentValue;
-
         //checking for result contains double value or not, Also rounding up to 2 decimal places
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 currentValue = Double.parseDouble(result.get(i).get(j));
 
+                //TODO rounding up digits
                 //rounding up to 2 decimal places
                 result.get(i).set(j, String.valueOf(Math.round(currentValue * 100.0) / 100.0));
 
+
                 //logic for checking number is in decimal or not
-                if (currentValue != (int) currentValue) {
+                if (currentValue != Math.floor(currentValue)) {
                     isResultValuesInt = false;
-                    break;
                 }
                 //breaking loop if any of the value is in decimal
             }
         }
+
 
         //trimming '.0' from result when all result values are pure Integer
         if (isResultValuesInt) {
