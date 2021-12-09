@@ -144,6 +144,7 @@ public class ExpressionBuilder {
                 calculationString = calculationString.substring(0, i) + "0" + calculationString.substring(i);
         }
 
+        //TODO make a class that contains only constants
         //REPLACED ALL MAT OPERATIONS BY SYMBOLS FOR POSTFIX CONVERSION
         if (calculationString.contains("det"))
             calculationString = calculationString.replace("det", "#");
@@ -162,28 +163,20 @@ public class ExpressionBuilder {
         //converting 'T' of transpose to '|' in every place
         int transposeIndex;
         for (int i = 0; i < calculationString.length(); i++) {
-            transposeIndex = calculationString.indexOf("T", i);
+            transposeIndex = calculationString.indexOf("^", i);
             if (transposeIndex != -1) {
-                calculationString = calculationString.substring(0, transposeIndex) + "|" + calculationString.substring(transposeIndex + 1);
-                int j = transposeIndex;
-
-                //'+' or '-' should not be present inside transpose brackets
-                //checking on left from transpose
-                while (calculationString.charAt(j) != '(') {
-                    if (calculationString.charAt(j) == '+' || calculationString.charAt(j) == '-') {
-                        RETURN_CODE = -5;
-                        break;
+                i+=2;
+                while (calculationString.charAt(i) != ')') {
+                    switch (calculationString.charAt(i)) {
+                        case 'T':
+                            calculationString = calculationString.substring(0, i) + "|" + calculationString.substring(i + 1);
+                            break;
+                        case '+':
+                        case '-':
+                            RETURN_CODE = -5;
+                            break;
                     }
-                    j--;
-                }
-                j = transposeIndex;
-                //checking on right from transpose
-                while (calculationString.charAt(j) != ')') {
-                    if (calculationString.charAt(j) == '+' || calculationString.charAt(j) == '-') {
-                        RETURN_CODE = -5;
-                        break;
-                    }
-                    j++;
+                    i++;
                 }
             }
         }
@@ -191,7 +184,7 @@ public class ExpressionBuilder {
         Log.d(TAG, "CalculationString: " + calculationString);
 
         if (!calculationString.isEmpty() && RETURN_CODE == 0) {
-            RETURN_CODE = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
+             RETURN_CODE = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
         }
         //clearing result when expression is empty
         else {

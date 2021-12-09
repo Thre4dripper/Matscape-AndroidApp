@@ -187,7 +187,7 @@ public class MatrixOperations {
      * ============================================ METHOD FOR FINDING POWER OF MATRIX ==================================
      **/
     @Nullable
-    public static List<List<String>> matrixPower(List<List<String>> A, String power, int selectedCard) {
+    public static List<List<String>> matrixPower(List<List<String>> A, @NonNull String power, int selectedCard) {
         List<List<String>> result = new ArrayList<>();
         if (power.equals("|"))
             return transpose(A);

@@ -113,7 +113,6 @@ public class ResultCardsController {
 
     }
 
-    //TODO optimise for auto inputs of multiply when ')' , letter , numbers etc.. encounter
 
     /**
      * ====================================== METHOD FOR MATRIX CARDS CLICK INPUT CONTROL =================================

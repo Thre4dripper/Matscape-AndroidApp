@@ -78,7 +78,12 @@ public class ExpressionEvaluator {
                             stack.push(result);
                             break;
                         case '^':
-                            result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(str2.get(0).get(0)), Double.parseDouble(str1.get(0).get(0)))));
+                            if(!str1.get(0).get(0).equals("|"))
+                                result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(str2.get(0).get(0)), Double.parseDouble(str1.get(0).get(0)))));
+                            else {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Scalars Do not have Transpose");
+                                error = -1;
+                            }
                             stack.push(result);
                             break;
                     }
@@ -195,8 +200,13 @@ public class ExpressionEvaluator {
                     //for determinant
                     case '#':
                         if (str.size() == str.get(0).size()) {
-                            result.get(0).add(String.valueOf(MatrixOperations.determinant(str)));
-                            stack.push(result);
+                                result.get(0).add(String.valueOf(MatrixOperations.determinant(str)));
+                                stack.push(result);
+                                //for 1x1 matrices
+                            if(str.size()==1) {
+                                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Determinant of 1x1 matrix is element itself");
+                                error = 1;
+                            }
                         } else {
                             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Determinant");
                             error = -1;
@@ -294,6 +304,7 @@ public class ExpressionEvaluator {
     @NonNull
     public static List<List<String>> getCurrentMatrix(Character Name) {
 
+        //TODO change matrixNamesList also when changing matrix name from EDIT MATRIX
         int matrixIndex = MatrixCardsController.matrixNamesList.indexOf(String.valueOf(Name));
         //receiving matrix by its index
         List<List<String>> receivedMatrix = MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
@@ -343,7 +354,7 @@ public class ExpressionEvaluator {
             }
         }
 
-
+        //TODO remove decimals from identity matrix from A^(-1)*A or A*A^(-1)
         //trimming '.0' from result when all result values are pure Integer
         if (isResultValuesInt) {
             for (int i = 0; i < rows; i++) {
