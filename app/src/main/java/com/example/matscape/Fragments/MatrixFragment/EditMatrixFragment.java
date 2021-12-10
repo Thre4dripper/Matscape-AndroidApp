@@ -142,6 +142,11 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
          * 5 - Updated Matrix Name in CardsList Too
          * 6 - Notified Matrix Cards RecyclerAdapter to reflect back changes in the Recycler View
          */
+        //TODO simplify this log
+        MatrixCardsController.matrixNamesList.remove(currentMatrixName);
+        MatrixCardsController.matrixNamesList.add(matrixCardIndex,MatrixCardsController.remainingMatrixNamesList.get(i));
+
+        Log.d(TAG, "onItemClick: "+MatrixCardsController.matrixNamesList);
         MatrixCardsController.remainingMatrixNamesList.remove(i);
         MatrixCardsController.remainingMatrixNamesList.add(currentMatrixName);
 

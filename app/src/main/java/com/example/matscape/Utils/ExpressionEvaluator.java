@@ -1,6 +1,7 @@
 package com.example.matscape.Utils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.matscape.Controllers.MatrixCardsController;
 import com.example.matscape.Controllers.ResultCardsController;
@@ -13,6 +14,7 @@ public class ExpressionEvaluator {
     private static final String TAG = "ExpressionEvaluator";
     public static int error = 0;
 
+    //TODO print error messages in separate function based on error codes
     /**
      * ================================== MASTER FUNCTION FOR EVALUATING EXPRESSION =========================
      **/
@@ -49,7 +51,7 @@ public class ExpressionEvaluator {
                 number.get(0).add(String.valueOf(currentChar));
                 stack.push(number);
             } else if (Character.isUpperCase(currentChar))
-                stack.push(getCurrentMatrix(currentChar));
+                stack.push(getCurrentMatrix(currentChar,selectedCard));
 
 
             else if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/' || currentChar == '^') {
@@ -301,12 +303,18 @@ public class ExpressionEvaluator {
     /**
      * ================================= METHOD FOR GETTING MATRIX FROM ITS NAME ===================================
      **/
-    @NonNull
-    public static List<List<String>> getCurrentMatrix(Character Name) {
 
-        //TODO change matrixNamesList also when changing matrix name from EDIT MATRIX
+    @Nullable
+    public static List<List<String>> getCurrentMatrix(Character Name, int selectedCard) {
+
         int matrixIndex = MatrixCardsController.matrixNamesList.indexOf(String.valueOf(Name));
         //receiving matrix by its index
+        if(matrixIndex==-1)
+        {
+            error=-1;
+            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix '"+Name+"' doesn't Exist");
+            return null;
+        }
         List<List<String>> receivedMatrix = MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
 
         //cloning original matrix, so that any changes doesn't reflect back
