@@ -144,7 +144,7 @@ public class ExpressionBuilder {
                 calculationString = calculationString.substring(0, i) + "0" + calculationString.substring(i);
         }
 
-        //TODO make a class that contains only constants
+        //TODO make a class that contains only constants and also error codes
         //REPLACED ALL MAT OPERATIONS BY SYMBOLS FOR POSTFIX CONVERSION
         if (calculationString.contains("det"))
             calculationString = calculationString.replace("det", "#");
@@ -167,6 +167,7 @@ public class ExpressionBuilder {
             if (transposeIndex != -1) {
                 i+=2;
                 while (calculationString.charAt(i) != ')') {
+                    //TODO negative powers should work as soon as Transpose is not present
                     switch (calculationString.charAt(i)) {
                         case 'T':
                             calculationString = calculationString.substring(0, i) + "|" + calculationString.substring(i + 1);
@@ -191,7 +192,6 @@ public class ExpressionBuilder {
             ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
             ExpressionEvaluator.setResult(null, selectedCard);
         }
-
         //clearing previous result when an error occurred
         if (RETURN_CODE != 0)
             ExpressionEvaluator.setResult(null, selectedCard);

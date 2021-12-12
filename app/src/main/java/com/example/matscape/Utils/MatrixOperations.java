@@ -1,5 +1,7 @@
 package com.example.matscape.Utils;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -198,7 +200,7 @@ public class MatrixOperations {
             for (int i = 0; i < Power - 1; i++) {
                 result = matrixMultiply(A, result);
                 if (result == null) {
-                    ResultCardsController.resultCardsList.get(selectedCard).setMessage("Power Only works on Square Matrices");
+                    ExpressionEvaluator.evaluationErrorCode=-130;
                     return null;
                 }
             }
@@ -215,9 +217,10 @@ public class MatrixOperations {
                 }
             }
         } else if (Power < 0) {
-            result = matrixPower(inverse(A), String.valueOf(-1 * Power), selectedCard);
+            result = inverse(A);
             if (result == null)
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Singular Matrices Do not Have Inverse");
+                ExpressionEvaluator.evaluationErrorCode=-140;
+            matrixPower(inverse(A), String.valueOf(-1 * Power), selectedCard);
         }
         return result;
     }
