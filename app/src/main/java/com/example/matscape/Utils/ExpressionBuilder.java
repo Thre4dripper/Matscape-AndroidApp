@@ -1,5 +1,6 @@
 package com.example.matscape.Utils;
 
+import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.style.SuperscriptSpan;
 import android.util.Log;
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.example.matscape.Constants.Constant;
 import com.example.matscape.Controllers.ResultCardsController;
+import com.example.matscape.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +92,7 @@ public class ExpressionBuilder {
     /**
      * ==================================== FUNCTION TO GENERATE CALCULATION STRING ==============================
      **/
-    public static void generateCalculationString(@NonNull StringBuilder expression, int selectedCard) {
+    public static void generateCalculationString(Context context, @NonNull StringBuilder expression, int selectedCard) {
         String calculationString = expression.toString();
 
         //OPTIMISED CALCULATION STRING FOR MISSING '•'
@@ -116,7 +118,7 @@ public class ExpressionBuilder {
         if (!calculationString.equals("")) {
             //replacing - with ~ in case of matrix to make it as a unary matrix operation
             if (calculationString.charAt(0) == '-' && calculationString.length() > 1 && Character.isUpperCase(calculationString.charAt(1)))
-                calculationString = "~" + calculationString.substring(1);
+                calculationString = Constant.MAT_UNARY_MINUS + calculationString.substring(1);
             else if (calculationString.charAt(0) == '-')
                 calculationString = "0" + calculationString;
         }
@@ -125,7 +127,7 @@ public class ExpressionBuilder {
         for (int i = 1; i < calculationString.length() - 1; i++) {
             //replacing - with ~ in case of matrix to make it as a unary matrix operation
             if (calculationString.charAt(i) == '-' && calculationString.charAt(i - 1) == '(' && Character.isUpperCase(calculationString.charAt(i + 1)))
-                calculationString = calculationString.substring(0, i) + "~" + calculationString.substring(i + 1);
+                calculationString = calculationString.substring(0, i) + Constant.MAT_UNARY_MINUS + calculationString.substring(i + 1);
             else if (calculationString.charAt(i) == '-' && calculationString.charAt(i - 1) == '(')
                 calculationString = calculationString.substring(0, i) + "0" + calculationString.substring(i);
         }
@@ -145,18 +147,17 @@ public class ExpressionBuilder {
                 calculationString = calculationString.substring(0, i) + "0" + calculationString.substring(i);
         }
 
-        //TODO make a class that contains only constants and also error codes
         //REPLACED ALL MAT OPERATIONS BY SYMBOLS FOR POSTFIX CONVERSION
-        if (calculationString.contains("det"))
-            calculationString = calculationString.replace("det", "#");
-        if (calculationString.contains("trc"))
-            calculationString = calculationString.replace("trc", "$");
-        if (calculationString.contains("adj"))
-            calculationString = calculationString.replace("adj", "@");
-        if (calculationString.contains("min"))
-            calculationString = calculationString.replace("min", "%");
-        if (calculationString.contains("cof"))
-            calculationString = calculationString.replace("cof", "&");
+        if (calculationString.contains(Constant.DET))
+            calculationString = calculationString.replace(Constant.DET, Constant.DET_SYMBOL);
+        if (calculationString.contains(Constant.TRC))
+            calculationString = calculationString.replace(Constant.TRC, Constant.TRC_SYMBOL);
+        if (calculationString.contains(Constant.ADJ))
+            calculationString = calculationString.replace(Constant.ADJ, Constant.ADJ_SYMBOL);
+        if (calculationString.contains(Constant.MIN))
+            calculationString = calculationString.replace(Constant.MIN, Constant.MIN_SYMBOL);
+        if (calculationString.contains(Constant.COF))
+            calculationString = calculationString.replace(Constant.COF, Constant.COF_SYMBOL);
 
         //return code from evaluation of expression
         int RETURN_CODE = 0;

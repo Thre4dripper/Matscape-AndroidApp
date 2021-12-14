@@ -1,6 +1,7 @@
 package com.example.matscape.Controllers;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Activities.HomeActivity;
 import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
+import com.example.matscape.Constants.Constant;
 import com.example.matscape.Utils.ExpressionBuilder;
 import com.example.matscape.models.ResultCards;
 
@@ -117,7 +119,7 @@ public class ResultCardsController {
     /**
      * ====================================== METHOD FOR MATRIX CARDS CLICK INPUT CONTROL =================================
      **/
-    public static void MatrixCardsOnClick(@NonNull EditText editText, int position) {
+    public static void MatrixCardsOnClick(Context context, @NonNull EditText editText, int position) {
         //cursor position and expression retrieval
         int cursorPosition = editText.getSelectionStart();
         SpannableStringBuilder expressionText = resultCardsList.get(selectedCard).getExpressionString();
@@ -144,7 +146,7 @@ public class ResultCardsController {
         calculationString = ExpressionBuilder.insertSuperscript(expressionText);
         calculationStringIndexList = ExpressionBuilder.getMappedIndexesList(expressionText);
 
-        ExpressionBuilder.generateCalculationString(calculationString, selectedCard);
+        ExpressionBuilder.generateCalculationString(context,calculationString, selectedCard);
 
         resultCardsList.get(selectedCard).setCalculationString(calculationString);
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);
@@ -153,7 +155,7 @@ public class ResultCardsController {
     /**
      * ======================================= METHOD FOR HOME KEYBOARD INPUT CONTROL =====================================
      **/
-    public static void HomeKeyboardInputControl(@NonNull EditText editText, View view) {
+    public static void HomeKeyboardInputControl(Context context,@NonNull EditText editText, View view) {
 
         int cursorPosition = editText.getSelectionStart();
         SpannableStringBuilder expressionText = resultCardsList.get(selectedCard).getExpressionString();
@@ -293,10 +295,10 @@ public class ResultCardsController {
         //Determinant Button
         else if (view == HomeActivity.matOperationButtons[0]) {
             if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•det()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•"+Constant.DET+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "det()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, Constant.DET+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
             }
 
@@ -344,10 +346,10 @@ public class ResultCardsController {
         //Trace Button
         else if (view == HomeActivity.matOperationButtons[6]) {
             if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•trc()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•"+ Constant.TRC+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "trc()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, Constant.TRC+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
             }
 
@@ -356,10 +358,10 @@ public class ResultCardsController {
         //Adjoint Button
         else if (view == HomeActivity.matOperationButtons[7]) {
             if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•adj()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•"+Constant.ADJ+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "adj()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, Constant.ADJ+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
             }
 
@@ -368,10 +370,10 @@ public class ResultCardsController {
         //Minors Button
         else if (view == HomeActivity.matOperationButtons[8]) {
             if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•min()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•"+Constant.MIN+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "min()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, Constant.MIN+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
             }
 
@@ -380,10 +382,10 @@ public class ResultCardsController {
         //Cofactor Button
         else if (view == HomeActivity.matOperationButtons[9]) {
             if (putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•cof()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•"+Constant.COF+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 5);
             } else {
-                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "cof()"));
+                resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, Constant.COF+"()"));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 4);
             }
 
@@ -393,7 +395,7 @@ public class ResultCardsController {
         //updating after usage
         calculationString = ExpressionBuilder.insertSuperscript(expressionText);
         calculationStringIndexList = ExpressionBuilder.getMappedIndexesList(expressionText);
-        ExpressionBuilder.generateCalculationString(calculationString, selectedCard);
+        ExpressionBuilder.generateCalculationString(context,calculationString, selectedCard);
 
         resultCardsList.get(selectedCard).setCalculationString(calculationString);
         resultCardsList.get(selectedCard).setCalculationStringIndexList(calculationStringIndexList);

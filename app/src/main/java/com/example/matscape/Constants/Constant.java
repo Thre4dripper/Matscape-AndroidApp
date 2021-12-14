@@ -29,4 +29,20 @@ public class Constant {
     //Evaluation Time Warnings
     public static final int WARNING_DIVISOR_AS_INVERSE=50;
     public static final int WARNING_1X1_DETERMINANT=60;
+
+    //String Constants
+    public static final String DET="det";
+    public static final String TRC="trc";
+    public static final String ADJ="adj";
+    public static final String MIN="min";
+    public static final String COF="cof";
+
+    public static final String DET_SYMBOL="#";
+    public static final String TRC_SYMBOL="$";
+    public static final String ADJ_SYMBOL="@";
+    public static final String MIN_SYMBOL="%";
+    public static final String COF_SYMBOL="&";
+    public static final String MAT_UNARY_MINUS="~";
+
+
 }

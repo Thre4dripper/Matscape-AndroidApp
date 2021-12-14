@@ -229,24 +229,25 @@ public class ExpressionChecker {
      * ================================ METHOD FOR FINDING PRECEDENCE OF OPERATOR ==================================
      **/
     private static int Precedence(char ch) {
-        switch (ch) {
-            case '+':
-            case '-':
+        String character=String.valueOf(ch);
+        switch (character) {
+            case "+":
+            case "-":
                 return 1;
 
-            case '•':
-            case '/':
+            case "•":
+            case "/":
                 return 2;
 
-            case '^':
+            case "^":
                 return 3;
 
-            case '#':  //for determinant
-            case '$':   //for trace
-            case '@':  //for adjoint
-            case '%':  //for minors
-            case '&':   //for cofactors
-            case '~':   //for unary minus for matrix
+            case Constant.DET_SYMBOL:  //for determinant
+            case Constant.TRC_SYMBOL:   //for trace
+            case Constant.ADJ_SYMBOL:  //for adjoint
+            case Constant.MIN_SYMBOL:  //for minors
+            case Constant.COF_SYMBOL:   //for cofactors
+            case Constant.MAT_UNARY_MINUS:   //for unary minus for matrix
                 return 4;
         }
         return -1;

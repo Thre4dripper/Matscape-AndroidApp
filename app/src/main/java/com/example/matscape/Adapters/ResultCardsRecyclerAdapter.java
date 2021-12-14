@@ -195,15 +195,15 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
         /**
          * ======================================= METHOD FOR MATRIX CARDS CLICK INPUT CONTROL ================================
          **/
-        public static void MatrixCardsOnClick(int position) {
-            ResultCardsController.MatrixCardsOnClick(editText, position);
+        public static void MatrixCardsOnClick(Context context,int position) {
+            ResultCardsController.MatrixCardsOnClick(context,editText, position);
         }
 
         /**
          * ======================================= METHOD FOR HOME KEYBOARD INPUT CONTROL =====================================
          **/
-        public static void InitKeyboard(View view) {
-            ResultCardsController.HomeKeyboardInputControl(editText, view);
+        public static void InitKeyboard(Context context,View view) {
+            ResultCardsController.HomeKeyboardInputControl(context,editText, view);
         }
 
         @Override
