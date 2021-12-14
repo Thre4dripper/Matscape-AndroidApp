@@ -1,10 +1,9 @@
 package com.example.matscape.Utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.matscape.Constants.Constant;
 import com.example.matscape.Controllers.MatrixCardsController;
 import com.example.matscape.Controllers.ResultCardsController;
 
@@ -86,7 +85,7 @@ public class ExpressionEvaluator {
                             if (!str1.get(0).get(0).equals("|"))
                                 result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(str2.get(0).get(0)), Double.parseDouble(str1.get(0).get(0)))));
                             else
-                                evaluationErrorCode = -10;
+                                evaluationErrorCode = Constant.ERROR_SCALAR_TRANSPOSE;
 
                             stack.push(result);
                             break;
@@ -95,10 +94,10 @@ public class ExpressionEvaluator {
                 else if ((str2.size() > 1 || str2.get(0).size() > 1) && str1.size() == 1 && str1.get(0).size() == 1)
                     switch (currentChar) {
                         case '+':
-                            evaluationErrorCode = -20;
+                            evaluationErrorCode = Constant.ERROR_MATRIX_SCALAR_ADDITION;
                             break;
                         case '-':
-                            evaluationErrorCode = -30;
+                            evaluationErrorCode = Constant.ERROR_MATRIX_SCALAR_SUBTRACTION;
                             break;
                         case '•':
                             result = MatrixOperations.ScalarMultiply(str2, Double.parseDouble(str1.get(0).get(0)));
@@ -109,21 +108,22 @@ public class ExpressionEvaluator {
                             stack.push(result);
                             break;
                         case '^':
-                            if(str2.size()==str2.get(0).size()) {
+                            if (str2.size() == str2.get(0).size()) {
                                 result = MatrixOperations.matrixPower(str2, str1.get(0).get(0));
-                                    stack.push(result);
+                                stack.push(result);
+                            } else {
+                                evaluationErrorCode = Constant.ERROR_SQUARE_MATRIX_POWER;
                             }
-                            else evaluationErrorCode=-130;
                             break;
                     }
                     //WHEN FIRST STRING IS NUMBER AND SECOND IS MATRIX
                 else if (str2.size() == 1 && str2.get(0).size() == 1 && (str1.size() > 1 || str1.get(0).size() > 1))
                     switch (currentChar) {
                         case '+':
-                            evaluationErrorCode = -20;
+                            evaluationErrorCode = Constant.ERROR_MATRIX_SCALAR_ADDITION;
                             break;
                         case '-':
-                            evaluationErrorCode = -30;
+                            evaluationErrorCode = Constant.ERROR_MATRIX_SCALAR_SUBTRACTION;
                             break;
                         case '•':
                             result = MatrixOperations.ScalarMultiply(str1, Double.parseDouble(str2.get(0).get(0)));
@@ -148,7 +148,7 @@ public class ExpressionEvaluator {
                             if (result != null)
                                 stack.push(result);
                             else
-                                evaluationErrorCode = -40;
+                                evaluationErrorCode = Constant.ERROR_INCOMPATIBLE_DIMENS;
 
                             break;
                         case '-':
@@ -156,23 +156,22 @@ public class ExpressionEvaluator {
                             if (result != null)
                                 stack.push(result);
                             else
-                                evaluationErrorCode = -40;
+                                evaluationErrorCode = Constant.ERROR_INCOMPATIBLE_DIMENS;
                             break;
                         case '•':
                             result = MatrixOperations.matrixMultiply(str2, str1);
                             if (result != null)
                                 stack.push(result);
                             else
-                                evaluationErrorCode = -40;
+                                evaluationErrorCode = Constant.ERROR_INCOMPATIBLE_DIMENS;
                             break;
                         case '/':
                             result = MatrixOperations.matrixDivide(str2, str1);
-                            if (result != null)
-                                evaluationErrorCode = 50;
-                            else
-                                evaluationErrorCode = -50;
+                            if (result != null) {
+                                evaluationErrorCode = Constant.WARNING_DIVISOR_AS_INVERSE;
+                                stack.push(result);
+                            }
 
-                            stack.push(result);
                             break;
                         case '^':
                             /*
@@ -198,9 +197,9 @@ public class ExpressionEvaluator {
                             stack.push(result);
                             //for 1x1 matrices
                             if (str.size() == 1)
-                                evaluationErrorCode = 60;
+                                evaluationErrorCode = Constant.WARNING_1X1_DETERMINANT;
                         } else
-                            evaluationErrorCode = -60;
+                            evaluationErrorCode = Constant.ERROR_SQUARE_MATRIX_DETERMINANT;
 
 
                         break;
@@ -211,7 +210,7 @@ public class ExpressionEvaluator {
                             result.get(0).add(String.valueOf(MatrixOperations.trace(str)));
                             stack.push(result);
                         } else
-                            evaluationErrorCode = -70;
+                            evaluationErrorCode = Constant.ERROR_SQUARE_MATRIX_TRACE;
 
                         break;
 
@@ -227,7 +226,7 @@ public class ExpressionEvaluator {
 
                             stack.push(result);
                         } else
-                            evaluationErrorCode = -80;
+                            evaluationErrorCode = Constant.ERROR_SQUARE_MATRIX_ADJOINT;
 
                         break;
 
@@ -238,10 +237,10 @@ public class ExpressionEvaluator {
                                 result = MatrixOperations.minorMatrix(str);
                                 stack.push(result);
                             } else
-                                evaluationErrorCode = -90;
+                                evaluationErrorCode = Constant.ERROR_1X1_MINOR;
 
                         } else
-                            evaluationErrorCode = -100;
+                            evaluationErrorCode = Constant.ERROR_SQUARE_MATRIX_MINORS;
 
                         break;
 
@@ -252,10 +251,10 @@ public class ExpressionEvaluator {
                                 result = MatrixOperations.cofactorMatrix(str);
                                 stack.push(result);
                             } else
-                                evaluationErrorCode = -110;
+                                evaluationErrorCode = Constant.ERROR_1X1_COFACTOR;
 
                         } else
-                            evaluationErrorCode = -120;
+                            evaluationErrorCode = Constant.ERROR_SQUARE_MATRIX_COFACTORS;
 
                         break;
                     case '~':
@@ -291,7 +290,7 @@ public class ExpressionEvaluator {
         int matrixIndex = MatrixCardsController.matrixNamesList.indexOf(String.valueOf(Name));
         //receiving matrix by its index
         if (matrixIndex == -1) {
-            evaluationErrorCode = -1;
+            evaluationErrorCode = Constant.ERROR_NO_MATRIX_FOUND;
             ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix '" + Name + "' doesn't Exist");
             return null;
         }
@@ -363,53 +362,53 @@ public class ExpressionEvaluator {
 
     public static void setErrorsAndWarnings(int selectedCard) {
         switch (evaluationErrorCode) {
-            case -10:
+            case Constant.ERROR_SCALAR_TRANSPOSE:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Scalars Do not have Transpose");
                 break;
-            case -20:
+            case Constant.ERROR_MATRIX_SCALAR_ADDITION:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Added in Matrices");
                 break;
-            case -30:
+            case Constant.ERROR_MATRIX_SCALAR_SUBTRACTION:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Subtracted from Matrices");
                 break;
-            case -40:
+            case Constant.ERROR_INCOMPATIBLE_DIMENS:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrices with Incompatible dimensions");
                 break;
-            case -50:
+            case Constant.ERROR_MATRIX_DIVIDE_SINGULAR:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix\n" +
                         "Singular Matrices Do not Have Inverse");
                 break;
-            case 50:
+            case Constant.WARNING_DIVISOR_AS_INVERSE:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix");
                 break;
-            case -60:
+            case Constant.ERROR_SQUARE_MATRIX_DETERMINANT:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Determinant");
                 break;
-            case 60:
+            case Constant.WARNING_1X1_DETERMINANT:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Determinant of 1x1 matrix is element itself");
                 break;
-            case -70:
+            case Constant.ERROR_SQUARE_MATRIX_TRACE:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Trace");
                 break;
-            case -80:
+            case Constant.ERROR_SQUARE_MATRIX_ADJOINT:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Adjoint");
                 break;
-            case -90:
+            case Constant.ERROR_1X1_MINOR:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("1x1 Matrices do not have Minors");
                 break;
-            case -100:
+            case Constant.ERROR_SQUARE_MATRIX_MINORS:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Minors");
                 break;
-            case -110:
+            case Constant.ERROR_1X1_COFACTOR:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("1x1 Matrices do not have Cofactors");
                 break;
-            case -120:
+            case Constant.ERROR_SQUARE_MATRIX_COFACTORS:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Cofactors");
                 break;
-            case -130:
+            case Constant.ERROR_SQUARE_MATRIX_POWER:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Power Only works on Square Matrices");
                 break;
-            case -140:
+            case Constant.ERROR_SINGULAR_MATRIX_INVERSE:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Singular Matrices Do not Have Inverse");
                 break;
             default:

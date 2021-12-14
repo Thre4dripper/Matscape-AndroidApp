@@ -1,4 +1,4 @@
-package com.example.matscape.Fragments.MatrixFragment;
+package com.example.matscape.Fragments.MatrixFragments;
 
 import android.os.Bundle;
 import android.text.TextUtils;

@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.matscape.Constants.Constant;
 import com.example.matscape.Controllers.ResultCardsController;
 
 import java.util.ArrayList;
@@ -213,22 +214,22 @@ public class ExpressionBuilder {
 
 
         switch (errorCode) {
-            case -11:
+            case Constant.ERROR_EMPTY_BRACKETS:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Empty Brackets");
                 break;
-            case -12:
+            case Constant.ERROR_MISTAKE_BRACKETS:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Bracket Mistake");
                 break;
-            case -2:
+            case Constant.ERROR_MISTAKE_OPERATOR:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Operator Mistake");
                 break;
-            case -3:
+            case Constant.ERROR_MISTAKE_MATRIX:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix Mistake");
                 break;
-            case -4:
+            case Constant.ERROR_MISTAKE_DECIMAL:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Decimal Mistake");
                 break;
-            case -5:
+            case Constant.ERROR_MISTAKE_TRANSPOSE:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Error Calculating Transpose");
                 break;
         }

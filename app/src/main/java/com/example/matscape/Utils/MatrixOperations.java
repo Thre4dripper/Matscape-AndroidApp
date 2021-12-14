@@ -1,11 +1,9 @@
 package com.example.matscape.Utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.matscape.Controllers.ResultCardsController;
+import com.example.matscape.Constants.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,9 +145,16 @@ public class MatrixOperations {
     @Nullable
     public static List<List<String>> matrixDivide(@NonNull List<List<String>> A, @NonNull List<List<String>> B) {
         List<List<String>> InverseMatrix = inverse(B);
-        if (InverseMatrix == null)
+        if (InverseMatrix == null) {
+            ExpressionEvaluator.evaluationErrorCode = Constant.WARNING_DIVISOR_AS_INVERSE;
             return null;
-        return matrixMultiply(A, InverseMatrix);
+        }
+        List<List<String>> result = matrixMultiply(A, InverseMatrix);
+        if (result == null) {
+            ExpressionEvaluator.evaluationErrorCode = Constant.ERROR_INCOMPATIBLE_DIMENS;
+            return null;
+        }
+        return result;
     }
 
     /**
@@ -217,7 +222,7 @@ public class MatrixOperations {
             result = inverse(A);
             //inverse will be null if and only if determinant is be zero
             if (result == null)
-                ExpressionEvaluator.evaluationErrorCode=-140;
+                ExpressionEvaluator.evaluationErrorCode = Constant.ERROR_SINGULAR_MATRIX_INVERSE;
             matrixPower(inverse(A), String.valueOf(-1 * Power));
         }
         return result;

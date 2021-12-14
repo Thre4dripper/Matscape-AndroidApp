@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.matscape.Constants.Constant;
+
 import java.util.Stack;
 
 public class ExpressionChecker {
@@ -59,14 +61,14 @@ public class ExpressionChecker {
                 if (!stack.isEmpty())
                     c1 = stack.pop();
                 else {
-                    return -2;
+                    return Constant.ERROR_MISTAKE_OPERATOR;
                 }
 
                 //more operators results in early empty stack
                 if (!stack.isEmpty())
                     c2 = stack.pop();
                 else {
-                    return -2;
+                    return Constant.ERROR_MISTAKE_OPERATOR;
                 }
 
                 //operation is performed by operators, on two operands, so any of the popped character must not be operator
@@ -76,7 +78,7 @@ public class ExpressionChecker {
                 }
                 //if so this is a operator mistake
                 else {
-                    return -2;
+                    return Constant.ERROR_MISTAKE_OPERATOR;
                 }
             }
 
@@ -89,7 +91,7 @@ public class ExpressionChecker {
                 if (!stack.isEmpty())
                     c = stack.pop();
                 else {
-                    return -3;
+                    return Constant.ERROR_MISTAKE_MATRIX;
                 }
 
                 //matrix operation is unary operation, so popped character must not be matrix operation
@@ -97,13 +99,13 @@ public class ExpressionChecker {
                     stack.push(c);
                     //if so this is a operator mistake
                 else
-                    return -3;
+                    return Constant.ERROR_MISTAKE_MATRIX;
             }
         }
 
         //after whole evaluation, only final result must remain in the stack
         if (stack.size() > 1) {
-            return -3;
+            return Constant.ERROR_MISTAKE_MATRIX;
         }
 
         ExpressionEvaluator.EvaluateExpression(postfix,selectedCard);
@@ -125,7 +127,7 @@ public class ExpressionChecker {
         //Digit Must be present after decimal
         for(int i=0;i<expr.length()-1;i++)
             if(expr.charAt(i)=='.' && !Character.isDigit(expr.charAt(i+1)))
-               return -4;
+               return Constant.ERROR_MISTAKE_DECIMAL;
 
         //every number should contain only 1 decimal
         for(int i=0;i<expr.length()-1;i++)
@@ -136,7 +138,7 @@ public class ExpressionChecker {
                 if(flag==0 && currentChar=='.')
                     flag=1;
                 else if(flag==1 && currentChar=='.')
-                    return -4;
+                    return Constant.ERROR_MISTAKE_DECIMAL;
             }
             else if(currentChar==' ')
                 flag=0;
@@ -152,7 +154,7 @@ public class ExpressionChecker {
 
         //empty bracket checking
         if (expr.contains("()"))
-            return -11;
+            return Constant.ERROR_EMPTY_BRACKETS;
 
         int isBracketsBalanced = 0;
 
@@ -164,14 +166,14 @@ public class ExpressionChecker {
 
             //var must be >=0 all the time
             if (isBracketsBalanced < 0)
-                return -12;
+                return Constant.ERROR_MISTAKE_BRACKETS;
         }
 
         //variable must be 0 for balanced brackets
         if (isBracketsBalanced == 0)
             return 0;
         else
-            return -12;
+            return Constant.ERROR_MISTAKE_BRACKETS;
     }
 
     /**

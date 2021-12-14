@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.matscape.Fragments.MatrixFragment.EditMatrixFragment;
-import com.example.matscape.Fragments.MatrixFragment.SubMatrixFragment;
+import com.example.matscape.Fragments.MatrixFragments.EditMatrixFragment;
+import com.example.matscape.Fragments.MatrixFragments.SubMatrixFragment;
 import com.example.matscape.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
