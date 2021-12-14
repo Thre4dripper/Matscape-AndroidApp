@@ -165,17 +165,23 @@ public class ExpressionBuilder {
         for (int i = 0; i < calculationString.length(); i++) {
             transposeIndex = calculationString.indexOf("^", i);
             if (transposeIndex != -1) {
-                i+=2;
+                i += 2;
+
+                //for detecting +,- and T in power
+                int flag1 = 0, flag2 = 0;
                 while (calculationString.charAt(i) != ')') {
-                    //TODO negative powers should work as soon as Transpose is not present
-                    switch (calculationString.charAt(i)) {
-                        case 'T':
-                            calculationString = calculationString.substring(0, i) + "|" + calculationString.substring(i + 1);
-                            break;
-                        case '+':
-                        case '-':
-                            RETURN_CODE = -5;
-                            break;
+
+                    if ((calculationString.charAt(i) == '+' || calculationString.charAt(i) == '-'))
+                        flag1 = 1;
+                    if (calculationString.charAt(i) == 'T') {
+                        calculationString = calculationString.substring(0, i) + "|" + calculationString.substring(i + 1);
+                        flag2 = 1;
+                    }
+
+                    //if both '+','-' and 'T' are present in power then it is invalid transpose
+                    if (flag1 == 1 && flag2 == 1) {
+                        RETURN_CODE = -5;
+                        break;
                     }
                     i++;
                 }
@@ -185,7 +191,7 @@ public class ExpressionBuilder {
         Log.d(TAG, "CalculationString: " + calculationString);
 
         if (!calculationString.isEmpty() && RETURN_CODE == 0) {
-             RETURN_CODE = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
+            RETURN_CODE = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
         }
         //clearing result when expression is empty
         else {

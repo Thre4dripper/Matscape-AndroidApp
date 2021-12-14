@@ -109,9 +109,11 @@ public class ExpressionEvaluator {
                             stack.push(result);
                             break;
                         case '^':
-                            result = MatrixOperations.matrixPower(str2, str1.get(0).get(0), selectedCard);
-                            if (result != null)
-                                stack.push(result);
+                            if(str2.size()==str2.get(0).size()) {
+                                result = MatrixOperations.matrixPower(str2, str1.get(0).get(0));
+                                    stack.push(result);
+                            }
+                            else evaluationErrorCode=-130;
                             break;
                     }
                     //WHEN FIRST STRING IS NUMBER AND SECOND IS MATRIX
@@ -360,7 +362,6 @@ public class ExpressionEvaluator {
     }
 
     public static void setErrorsAndWarnings(int selectedCard) {
-        //TODO fix last error code
         switch (evaluationErrorCode) {
             case -10:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Scalars Do not have Transpose");

@@ -9,6 +9,7 @@ import com.example.matscape.Controllers.ResultCardsController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MatrixOperations {
     private static final String TAG = "MatrixOperations";
@@ -189,7 +190,7 @@ public class MatrixOperations {
      * ============================================ METHOD FOR FINDING POWER OF MATRIX ==================================
      **/
     @Nullable
-    public static List<List<String>> matrixPower(List<List<String>> A, @NonNull String power, int selectedCard) {
+    public static List<List<String>> matrixPower(List<List<String>> A, @NonNull String power) {
         List<List<String>> result = new ArrayList<>();
         if (power.equals("|"))
             return transpose(A);
@@ -198,11 +199,7 @@ public class MatrixOperations {
         if (Power > 0) {
             result = A;
             for (int i = 0; i < Power - 1; i++) {
-                result = matrixMultiply(A, result);
-                if (result == null) {
-                    ExpressionEvaluator.evaluationErrorCode=-130;
-                    return null;
-                }
+                result = Objects.requireNonNull(matrixMultiply(A, result));
             }
         } else if (Power == 0) {
 
@@ -218,9 +215,10 @@ public class MatrixOperations {
             }
         } else if (Power < 0) {
             result = inverse(A);
+            //inverse will be null if and only if determinant is be zero
             if (result == null)
                 ExpressionEvaluator.evaluationErrorCode=-140;
-            matrixPower(inverse(A), String.valueOf(-1 * Power), selectedCard);
+            matrixPower(inverse(A), String.valueOf(-1 * Power));
         }
         return result;
     }
