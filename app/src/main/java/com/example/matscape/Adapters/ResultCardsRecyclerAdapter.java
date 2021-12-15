@@ -111,6 +111,8 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
         void copyResult(int position);
 
+        void addResultMatrix(int position);
+
         void clickedCard(int position, int from);
     }
 
@@ -118,7 +120,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
 
         EditText expressionField;
         ConstraintLayout mResultCardCL;
-        ImageView mDeleteButton, mCopyButton;
+        ImageView mDeleteButton, mCopyButton,mAddResultMatrixButton;
         ImageView mDragButton;
         TextView mMessageView;
 
@@ -132,6 +134,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             expressionField = itemView.findViewById(R.id.ExpressionField);
             mDeleteButton = itemView.findViewById(R.id.DeleteResultButton);
             mCopyButton = itemView.findViewById(R.id.CopyResultButton);
+            mAddResultMatrixButton=itemView.findViewById(R.id.AddResultMatrixButton);
             mDragButton = itemView.findViewById(R.id.resultCardDragButton);
             mMessageView = itemView.findViewById(R.id.ResultCardMessage);
 
@@ -190,6 +193,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             mResultCardCL.setOnClickListener(this);
             mDeleteButton.setOnClickListener(this);
             mCopyButton.setOnClickListener(this);
+            mAddResultMatrixButton.setOnClickListener(this);
         }
 
         /**
@@ -212,6 +216,8 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
                 resultCardsInterface.deleteResult(getAdapterPosition());
             else if (view == mCopyButton)
                 resultCardsInterface.copyResult(getAdapterPosition());
+            else if (view == mAddResultMatrixButton)
+                resultCardsInterface.addResultMatrix(getAdapterPosition());
             else if (view == mResultCardCL) {
                 resultCardsInterface.clickedCard(getAdapterPosition(), 0);
                 HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE);

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -334,6 +335,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void copyResult(int position) {
         ResultCards resultCard = ResultCardsController.resultCardsList.get(position);
         ResultCardsController.addResultCards(position + 1, resultCard, mResultCardsRecyclerView);
+    }
+
+    @Override
+    public void addResultMatrix(int position) {
+        ResultCards resultCard = ResultCardsController.resultCardsList.get(position);
+
+        //result card should not be empty
+        if(resultCard.getResultMatrix().size()>0) {
+            MatrixCards matrixCard = new MatrixCards(null,
+                    resultCard.getResultMatrix(),
+                    resultCard.getMatrixRows(),
+                    resultCard.getMatrixColumns(),
+                    0);
+
+            MatrixCardsController.addMatrixCards(this, MatrixCardsController.matrixCardCounter, matrixCard, mMatrixCardsRecyclerView);
+        }
+        else
+            Toast.makeText(this, "Empty Result Card", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override

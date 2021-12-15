@@ -336,6 +336,7 @@ public class ExpressionEvaluator {
             for (int j = 0; j < columns; j++) {
                 currentValue = Double.parseDouble(result.get(i).get(j));
 
+                //TODO implement precision change in settings
                 //rounding up to 2 decimal places
                 result.get(i).set(j, String.valueOf(Math.round(currentValue * 100.0) / 100.0));
 

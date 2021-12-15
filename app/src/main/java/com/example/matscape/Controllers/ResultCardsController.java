@@ -77,27 +77,37 @@ public class ResultCardsController {
      **/
     public static void addResultCards(int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView) {
 
-        //Conditional Operator
+        SpannableStringBuilder expression = new SpannableStringBuilder("");
+        int cursorPosition=0;
+        StringBuilder calculationString=new StringBuilder();
+        List<Integer> calculationStringIndexList=new ArrayList<>();
+        String message = "message";
+        List<List<String>> matrix = new ArrayList<>();
+        int rows = 0, columns = 0;
+
         String highlightedColor=resultCardCounter==0?"#2196F3":"#FFFFFF";
 
-        //initialized new Result Card
-        ResultCards newResultCard=new ResultCards(new SpannableStringBuilder(),
-                0,
-                new StringBuilder(),
-                new ArrayList<>(),
-                "message",
-                new ArrayList<>(),
-                0,
-                0,
-                highlightedColor);
-
-
-        //overwritten new Result card with received card if copied
         if (receivedCard != null) {
-            newResultCard=receivedCard;
+            expression = receivedCard.getExpressionString();
+            cursorPosition=receivedCard.getCursorPosition();
+            calculationString=receivedCard.getCalculationString();
+            calculationStringIndexList=receivedCard.getCalculationStringIndexList();
+            message = receivedCard.getMessage();
+            matrix = receivedCard.getResultMatrix();
+            rows = receivedCard.getMatrixRows();
+            columns = receivedCard.getMatrixColumns();
         }
 
-        resultCardsList.add(position,newResultCard);
+        resultCardsList.add(position, new ResultCards(expression,
+                cursorPosition,
+                calculationString,
+                calculationStringIndexList,
+                message,
+                matrix,
+                rows,
+                columns,
+                highlightedColor
+        ));
 
         mResultCardsRecyclerAdapter.notifyItemInserted(position);
 
