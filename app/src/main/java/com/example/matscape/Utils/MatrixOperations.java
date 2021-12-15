@@ -146,7 +146,7 @@ public class MatrixOperations {
     public static List<List<String>> matrixDivide(@NonNull List<List<String>> A, @NonNull List<List<String>> B) {
         List<List<String>> InverseMatrix = inverse(B);
         if (InverseMatrix == null) {
-            ExpressionEvaluator.evaluationErrorCode = Constant.WARNING_DIVISOR_AS_INVERSE;
+            ExpressionEvaluator.evaluationErrorCode = Constant.ERROR_MATRIX_DIVIDE_SINGULAR;
             return null;
         }
         List<List<String>> result = matrixMultiply(A, InverseMatrix);
@@ -222,8 +222,11 @@ public class MatrixOperations {
             result = inverse(A);
             //inverse will be null if and only if determinant is be zero
             if (result == null)
+            {
                 ExpressionEvaluator.evaluationErrorCode = Constant.ERROR_SINGULAR_MATRIX_INVERSE;
-            matrixPower(inverse(A), String.valueOf(-1 * Power));
+                return null;
+            }
+            result=matrixPower(result, String.valueOf(-1 * Power));
         }
         return result;
     }

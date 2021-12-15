@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 
 import com.example.matscape.Constants.Constant;
 import com.example.matscape.Controllers.ResultCardsController;
-import com.example.matscape.R;
 
 import java.util.ArrayList;
 import java.util.List;

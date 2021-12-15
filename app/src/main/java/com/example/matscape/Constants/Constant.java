@@ -10,7 +10,6 @@ public class Constant {
     public static final int ERROR_MISTAKE_TRANSPOSE=-5;
 
     //Evaluation Time Error Codes
-    public static final int ERROR_SCALAR_TRANSPOSE=-10;
     public static final int ERROR_MATRIX_SCALAR_ADDITION=-20;
     public static final int ERROR_MATRIX_SCALAR_SUBTRACTION=-30;
     public static final int ERROR_SQUARE_MATRIX_POWER=-130;

@@ -1,5 +1,7 @@
 package com.example.matscape.Utils;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -85,7 +87,8 @@ public class ExpressionEvaluator {
                             if (!str1.get(0).get(0).equals("|"))
                                 result.get(0).add(String.valueOf(Math.pow(Double.parseDouble(str2.get(0).get(0)), Double.parseDouble(str1.get(0).get(0)))));
                             else
-                                evaluationErrorCode = Constant.ERROR_SCALAR_TRANSPOSE;
+                                result.get(0).add(str2.get(0).get(0));
+
 
                             stack.push(result);
                             break;
@@ -271,12 +274,16 @@ public class ExpressionEvaluator {
             }
         }
 
-        //resetting message and sending result if there is no error
-        if (evaluationErrorCode == 0) {
+        //TODO change message color for errors and warnings
+        //sending final result if there are no errors, warnings are allowed
+        if (evaluationErrorCode == 0 || evaluationErrorCode == Constant.WARNING_DIVISOR_AS_INVERSE
+                || evaluationErrorCode == Constant.WARNING_1X1_DETERMINANT) {
             setResult(stack.pop(), selectedCard);
         }
         //error encountered
         else setResult(null, selectedCard);
+
+        //setting error message text based on result
         setErrorsAndWarnings(selectedCard);
     }
 
@@ -319,7 +326,7 @@ public class ExpressionEvaluator {
             ResultCardsController.resultCardsList.get(selectedCard).setMatrixRows(0);
             return;
         }
-
+        Log.d(TAG, "EvaluateExpression: " + result);
         boolean isResultValuesInt = true;
         int rows = result.size();
         int columns = result.get(0).size();
@@ -362,9 +369,6 @@ public class ExpressionEvaluator {
 
     public static void setErrorsAndWarnings(int selectedCard) {
         switch (evaluationErrorCode) {
-            case Constant.ERROR_SCALAR_TRANSPOSE:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Scalars Do not have Transpose");
-                break;
             case Constant.ERROR_MATRIX_SCALAR_ADDITION:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Added in Matrices");
                 break;

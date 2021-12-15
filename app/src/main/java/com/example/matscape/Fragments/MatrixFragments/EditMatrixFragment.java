@@ -205,7 +205,10 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         } else if (view == numpadRight) {
             currentColumn++;
             moveFocus();
-        } else {
+        }
+
+        //Any field must be focused (these values 0..4) for numpad click, other wise app will crash
+        else if(currentRow!=-1 && currentColumn!=-1){
             //matrix elements changed
             isEditMatrixBackSafe = false;
 
