@@ -2,7 +2,6 @@ package com.example.matscape.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -225,7 +224,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         //sending Home Keyboard OnClicks to ResultCardsController for Click Handling
         if (ResultCardsController.resultCardCounter > 0)
-            ResultCardsRecyclerAdapter.ViewHolder.InitKeyboard(this,view);
+            ResultCardsRecyclerAdapter.ViewHolder.InitKeyboard(this, view);
 
         //when Add Matrix button is clicked
         if (addMatrixCardsButton.equals(view)) {
@@ -249,7 +248,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void clickCard(int position) {
         if (ResultCardsController.resultCardCounter > 0)
-            ResultCardsRecyclerAdapter.ViewHolder.MatrixCardsOnClick(this,position);
+            ResultCardsRecyclerAdapter.ViewHolder.MatrixCardsOnClick(this, position);
     }
 
     @Override
@@ -318,19 +317,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             //selected card is itself removed
         else if (position == ResultCardsController.selectedCard) {
 
-            //when last card is selected and is removed
-            if (position == ResultCardsController.resultCardsList.size() - 1) {
+            //when selected card removed is last card prev card gets selected, && size>0
+            if (position == ResultCardsController.resultCardsList.size() && ResultCardsController.resultCardsList.size() != 0) {
+                ResultCardsController.selectedCard--;
                 clickedCard(ResultCardsController.selectedCard, 1);
-                ResultCardsController.selectedCard = 0;
             }
             //otherwise next card gets selected
             else if (position < ResultCardsController.resultCardsList.size())
                 clickedCard(ResultCardsController.selectedCard, 1);
 
         }
-
-
-        Log.d(TAG, "deleteResult: " + ResultCardsController.resultCardCounter + "," + ResultCardsController.selectedCard);
 
     }
 
@@ -343,7 +339,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void clickedCard(int clickedCard, int from) {
 
-        //TODO BUG HERE when deleting selected card from bottom to top
         //'from' specifies from where this function is called '0' for click and '1' for manual call when a card is removed
         if (clickedCard != ResultCardsController.selectedCard || from == 1) {
 

@@ -71,10 +71,8 @@ public class MatrixCardsController {
             List<List<String>> matrix;
             int rows = 5, columns = 5;
 
-            boolean copiedCard = matrixCard != null;
-
             //initialises variables when copied card is received
-            if (copiedCard) {
+            if (matrixCard!=null) {
                 matrix = matrixCard.getMatrix();
                 rows = matrixCard.getMatrixRows();
                 columns = matrixCard.getMatrixColumns();

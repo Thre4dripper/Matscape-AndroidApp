@@ -77,35 +77,27 @@ public class ResultCardsController {
      **/
     public static void addResultCards(int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView) {
 
-        SpannableStringBuilder expression = new SpannableStringBuilder("");
-        String message = "message";
-        List<List<String>> matrix = null;
-        int rows = 0, columns = 0;
+        //Conditional Operator
+        String highlightedColor=resultCardCounter==0?"#2196F3":"#FFFFFF";
 
-        String highlightedColor;
-        if (resultCardCounter == 0)
-            highlightedColor = "#2196F3";
-        else
-            highlightedColor = "#FFFFFF";
-
-        if (receivedCard != null) {
-            expression = receivedCard.getExpressionString();
-            message = receivedCard.getMessage();
-            matrix = receivedCard.getResultMatrix();
-            rows = receivedCard.getMatrixRows();
-            columns = receivedCard.getMatrixColumns();
-        }
-
-        resultCardsList.add(position, new ResultCards(expression,
+        //initialized new Result Card
+        ResultCards newResultCard=new ResultCards(new SpannableStringBuilder(),
                 0,
                 new StringBuilder(),
                 new ArrayList<>(),
-                message,
-                matrix,
-                rows,
-                columns,
-                highlightedColor
-        ));
+                "message",
+                new ArrayList<>(),
+                0,
+                0,
+                highlightedColor);
+
+
+        //overwritten new Result card with received card if copied
+        if (receivedCard != null) {
+            newResultCard=receivedCard;
+        }
+
+        resultCardsList.add(position,newResultCard);
 
         mResultCardsRecyclerAdapter.notifyItemInserted(position);
 
