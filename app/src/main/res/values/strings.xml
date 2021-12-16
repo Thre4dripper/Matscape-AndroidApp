@@ -86,4 +86,6 @@
     <string name="numpadMinus">‒</string>
     <string name="desc_keyboard_backspace">BackSpace</string>
 
+    //for App Settings
+    <string name="default_matrix_heading">Default Matrix Size</string>
 </resources>

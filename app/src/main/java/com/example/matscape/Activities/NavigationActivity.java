@@ -1,6 +1,7 @@
 package com.example.matscape.Activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -43,6 +44,7 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
     public void setupFragments(Intent receivedIntent){
         fragmentId=receivedIntent.getIntExtra(HomeActivity.NAVIGATION_FRAGMENT_KEY,-1);
 
+        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.blue_black));
         Fragment fragment = null;
         switch (fragmentId){
             case 1:

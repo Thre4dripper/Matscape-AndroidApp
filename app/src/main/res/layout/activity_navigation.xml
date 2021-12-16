@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textColor="@color/blue_black"
         app:layout_constraintBottom_toBottomOf="@+id/NavHeaderIcon"
         app:layout_constraintStart_toEndOf="@+id/NavHeaderIcon"
         app:layout_constraintTop_toTopOf="@+id/NavHeaderIcon" />
