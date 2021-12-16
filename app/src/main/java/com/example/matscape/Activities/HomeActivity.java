@@ -2,6 +2,8 @@ package com.example.matscape.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -57,6 +59,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Toolbar mToolbar;
     private ImageView addMatrixCardsButton;
     private ImageView addResultCardsButton;
+
+    //for blocking back button for accidental clicks
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -342,7 +347,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ResultCards resultCard = ResultCardsController.resultCardsList.get(position);
 
         //result card should not be empty
-        if(resultCard.getResultMatrix()!=null) {
+        if (resultCard.getResultMatrix() != null) {
             MatrixCards matrixCard = new MatrixCards(null,
                     resultCard.getResultMatrix(),
                     resultCard.getMatrixRows(),
@@ -350,8 +355,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     0);
 
             MatrixCardsController.addMatrixCards(this, MatrixCardsController.matrixCardCounter, matrixCard, mMatrixCardsRecyclerView);
-        }
-        else
+        } else
             Toast.makeText(this, "Empty Result Card", Toast.LENGTH_SHORT).show();
 
     }
@@ -376,6 +380,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        homeNumpadCardView.setVisibility(View.GONE);
+
+        //first home numpad will get vanished then double click back functionality execute
+        if (homeNumpadCardView.getVisibility() == View.VISIBLE)
+            homeNumpadCardView.setVisibility(View.GONE);
+        else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler(Looper.getMainLooper()).postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+        }
     }
 }

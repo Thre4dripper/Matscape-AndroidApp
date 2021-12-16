@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -17,6 +18,8 @@ import com.example.matscape.R;
 public class NavigationActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageView mBackButton, mSaveButton;
+    ImageView mHeaderIcon;
+    TextView mHeaderTitle;
     int fragmentId;
 
     @Override
@@ -26,6 +29,9 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
 
         mBackButton = findViewById(R.id.NavigationActivityBack);
         mSaveButton = findViewById(R.id.NavigationActivitySave);
+
+        mHeaderIcon=findViewById(R.id.NavHeaderIcon);
+        mHeaderTitle=findViewById(R.id.NavHeaderTitle);
 
         mBackButton.setOnClickListener(this);
         mSaveButton.setOnClickListener(this);
@@ -41,15 +47,23 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
         switch (fragmentId){
             case 1:
                 fragment=new SettingsFragment();
+                mHeaderIcon.setImageResource(R.drawable.ic_nav_settings);
+                mHeaderTitle.setText(this.getString(R.string.action_settings));
                 break;
             case 2:
                 fragment=new HTUFragment();
+                mHeaderIcon.setImageResource(R.drawable.ic_nav_htu);
+                mHeaderTitle.setText(this.getString(R.string.action_htu));
                 break;
             case 3:
                 fragment=new FeedbackFragment();
+                mHeaderIcon.setImageResource(R.drawable.ic_nav_feedback);
+                mHeaderTitle.setText(this.getString(R.string.action_feedback));
                 break;
             case 4:
                 fragment = new AboutFragment();
+                mHeaderIcon.setImageResource(R.drawable.ic_nav_about);
+                mHeaderTitle.setText(this.getString(R.string.action_about));
                 break;
 
         }
