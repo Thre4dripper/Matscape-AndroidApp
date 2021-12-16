@@ -84,16 +84,21 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
         if (rows == columns)
             mIdentityMatrixRadio.setEnabled(true);
 
-            //for non square matrices, when Identity matrix radio is already selected
-        else if (mIdentityMatrixRadio.isChecked()) {
+
+        else {
             mIdentityMatrixRadio.setEnabled(false);
 
-            //null matrix radio will be selected
-            mNullMatrixRadio.setChecked(true);
-            isNullSelected = true;
+            //for non square matrices, when Identity matrix radio is already selected
+            if (mIdentityMatrixRadio.isChecked()) {
 
-            //message for the user
-            Toast.makeText(getContext(), "Only Square Matrices can be selected as Identity Matrices", Toast.LENGTH_SHORT).show();
+                //null matrix radio will be selected
+                mNullMatrixRadio.setChecked(true);
+                isNullSelected = true;
+
+                //message for the user
+                Toast.makeText(getContext(), "Only Square Matrices can be selected as Identity Matrices", Toast.LENGTH_SHORT).show();
+            }
+
         }
         changePreviewMatrixSize();
     }
