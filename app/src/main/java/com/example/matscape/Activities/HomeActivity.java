@@ -342,7 +342,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ResultCards resultCard = ResultCardsController.resultCardsList.get(position);
 
         //result card should not be empty
-        if(resultCard.getResultMatrix().size()>0) {
+        if(resultCard.getResultMatrix()!=null) {
             MatrixCards matrixCard = new MatrixCards(null,
                     resultCard.getResultMatrix(),
                     resultCard.getMatrixRows(),

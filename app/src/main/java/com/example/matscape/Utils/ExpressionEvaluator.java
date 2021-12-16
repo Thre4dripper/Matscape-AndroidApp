@@ -349,7 +349,6 @@ public class ExpressionEvaluator {
             }
         }
 
-        //TODO remove decimals from identity matrix from A^(-1)*A or A*A^(-1)
         //trimming '.0' from result when all result values are pure Integer
         if (isResultValuesInt) {
             for (int i = 0; i < rows; i++) {
@@ -416,7 +415,8 @@ public class ExpressionEvaluator {
             case Constant.ERROR_SINGULAR_MATRIX_INVERSE:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("Singular Matrices Do not Have Inverse");
                 break;
-            default:
+                //no error
+            case 0:
                 ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
         }
     }

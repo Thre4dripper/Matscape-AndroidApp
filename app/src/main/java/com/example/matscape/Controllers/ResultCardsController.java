@@ -81,8 +81,8 @@ public class ResultCardsController {
         int cursorPosition=0;
         StringBuilder calculationString=new StringBuilder();
         List<Integer> calculationStringIndexList=new ArrayList<>();
-        String message = "message";
-        List<List<String>> matrix = new ArrayList<>();
+        String message = "";
+        List<List<String>> matrix = null;
         int rows = 0, columns = 0;
 
         String highlightedColor=resultCardCounter==0?"#2196F3":"#FFFFFF";
