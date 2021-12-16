@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/SettingsGuideline1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView">
@@ -34,22 +35,27 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev11"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev21"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev31"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev41"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev51"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
@@ -60,47 +66,27 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev12"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev22"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev32"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev42"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
-                style="@style/DefaultMatrixPreviewBullets"
-                tools:ignore="ContentDescription" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/ChangeMatrixLinearLayouts"
-            app:layout_constraintTop_toBottomOf="@+id/imageView">
-
-            <ImageView
-                style="@style/DefaultMatrixPreviewBullets"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                style="@style/DefaultMatrixPreviewBullets"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                style="@style/DefaultMatrixPreviewBullets"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                style="@style/DefaultMatrixPreviewBullets"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
+                android:id="@+id/SettingsMatrixPrev52"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
@@ -110,22 +96,27 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev13"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev23"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev33"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev43"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev53"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
@@ -135,22 +126,57 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev14"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev24"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev34"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev44"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
 
             <ImageView
+                android:id="@+id/SettingsMatrixPrev54"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/ChangeMatrixLinearLayouts"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev15"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev25"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev35"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev45"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev55"
                 style="@style/DefaultMatrixPreviewBullets"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
@@ -173,7 +199,7 @@
         app:trackColorInactive="@color/light_blue_black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+        app:layout_constraintTop_toTopOf="@+id/SettingsGuideline1" />
 
     <com.google.android.material.slider.Slider
         android:id="@+id/NavColumnSlider"
@@ -194,7 +220,7 @@
         app:layout_constraintTop_toBottomOf="@+id/NavRowSlider" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline5"
+        android:id="@+id/SettingsGuideline1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

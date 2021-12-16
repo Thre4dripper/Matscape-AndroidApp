@@ -162,6 +162,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         isEditMatrixBackSafe = false;
     }
 
+    //TODO change seekbar to Material Slider
     /**
      * ============================================ OVERRIDE METHOD FOR SEEKBARS =================================================
      **/

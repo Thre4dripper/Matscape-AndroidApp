@@ -45,7 +45,7 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
         fragmentId=receivedIntent.getIntExtra(HomeActivity.NAVIGATION_FRAGMENT_KEY,-1);
 
         mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.blue_black));
-        Fragment fragment = null;
+        Fragment fragment = new Fragment();
         switch (fragmentId){
             case 1:
                 fragment=new SettingsFragment();
@@ -70,7 +70,6 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
 
         }
 
-        assert fragment != null;
         getSupportFragmentManager().beginTransaction().replace(R.id.NavigationFrameLayout,fragment).commit();
     }
 
