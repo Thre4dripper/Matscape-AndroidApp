@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Adapters.MatrixCardsRecyclerAdapter;
 import com.example.matscape.Adapters.ResultCardsRecyclerAdapter;
+import com.example.matscape.Constants.Constant;
 import com.example.matscape.Controllers.MatrixCardsController;
 import com.example.matscape.Controllers.ResultCardsController;
 import com.example.matscape.R;
@@ -36,12 +37,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         MatrixCardsRecyclerAdapter.MatrixCardsInterface,
         ResultCardsRecyclerAdapter.ResultCardsInterface {
 
-    public static final String NAVIGATION_FRAGMENT_KEY = "navigationFragmentKey";
-    public static final String CHANGE_MATRIX_ACTIVITY_KEY = "changeMatrixActivityKey";
-    public static final String MATRIX_CARD_POSITION_KEY = "matrixElementsSendingKey";
-
-    public static final int EDIT_MATRIX_FRAGMENT_ID = 1;
-    public static final int SUB_MATRIX_FRAGMENT_ID = 2;
     private static final String TAG = "HomeActivity";
     //for matrix cards recycler view
     public static RecyclerView mMatrixCardsRecyclerView;
@@ -99,22 +94,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             int navMenuItemId = item.getItemId();
             if (navMenuItemId == R.id.action_settings) {
                 Intent intent = new Intent(this, NavigationActivity.class);
-                intent.putExtra(NAVIGATION_FRAGMENT_KEY, 1);
+                intent.putExtra(Constant.NAVIGATION_FRAGMENT_KEY, Constant.NAV_SETTINGS_FRAGMENT_ID);
                 startActivity(intent);
 
             } else if (navMenuItemId == R.id.action_htu) {
                 Intent intent = new Intent(this, NavigationActivity.class);
-                intent.putExtra(NAVIGATION_FRAGMENT_KEY, 2);
+                intent.putExtra(Constant.NAVIGATION_FRAGMENT_KEY, Constant.NAV_HTU_FRAGMENT_ID);
                 startActivity(intent);
 
             } else if (navMenuItemId == R.id.action_feedback) {
                 Intent intent = new Intent(this, NavigationActivity.class);
-                intent.putExtra(NAVIGATION_FRAGMENT_KEY, 3);
+                intent.putExtra(Constant.NAVIGATION_FRAGMENT_KEY, Constant.NAV_FEEDBACK_FRAGMENT_ID);
                 startActivity(intent);
 
             } else if (navMenuItemId == R.id.action_about) {
                 Intent intent = new Intent(this, NavigationActivity.class);
-                intent.putExtra(NAVIGATION_FRAGMENT_KEY, 4);
+                intent.putExtra(Constant.NAVIGATION_FRAGMENT_KEY, Constant.NAV_ABOUT_FRAGMENT_ID);
                 startActivity(intent);
 
             }
@@ -291,16 +286,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void subMatrix(int position) {
         Intent intent = new Intent(this, ChangeMatrixActivity.class);
-        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY, SUB_MATRIX_FRAGMENT_ID);
-        intent.putExtra(MATRIX_CARD_POSITION_KEY, position);
+        intent.putExtra(Constant.CHANGE_MATRIX_ACTIVITY_KEY, Constant.SUB_MATRIX_FRAGMENT_ID);
+        intent.putExtra(Constant.MATRIX_CARD_POSITION_KEY, position);
         startActivity(intent);
     }
 
     @Override
     public void editMatrix(int position) {
         Intent intent = new Intent(this, ChangeMatrixActivity.class);
-        intent.putExtra(CHANGE_MATRIX_ACTIVITY_KEY, EDIT_MATRIX_FRAGMENT_ID);
-        intent.putExtra(MATRIX_CARD_POSITION_KEY, position);
+        intent.putExtra(Constant.CHANGE_MATRIX_ACTIVITY_KEY, Constant.EDIT_MATRIX_FRAGMENT_ID);
+        intent.putExtra(Constant.MATRIX_CARD_POSITION_KEY, position);
         startActivity(intent);
     }
 

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.matscape.Constants.Constant;
 import com.example.matscape.Fragments.MatrixFragments.EditMatrixFragment;
 import com.example.matscape.Fragments.MatrixFragments.SubMatrixFragment;
 import com.example.matscape.R;
@@ -39,16 +40,16 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
      **/
     public void setupFragments(@NonNull Intent receivedIntent) {
 
-        fragmentId = receivedIntent.getIntExtra(HomeActivity.CHANGE_MATRIX_ACTIVITY_KEY, -1);
-        int matrixCardIndex = receivedIntent.getIntExtra(HomeActivity.MATRIX_CARD_POSITION_KEY, -1);
+        fragmentId = receivedIntent.getIntExtra(Constant.CHANGE_MATRIX_ACTIVITY_KEY, -1);
+        int matrixCardIndex = receivedIntent.getIntExtra(Constant.MATRIX_CARD_POSITION_KEY, -1);
 
         Fragment fragment = null;
         switch (fragmentId) {
-            case 1:
+            case Constant.EDIT_MATRIX_FRAGMENT_ID:
                 fragment = new EditMatrixFragment(matrixCardIndex);
                 break;
 
-            case 2:
+            case Constant.SUB_MATRIX_FRAGMENT_ID:
                 fragment = new SubMatrixFragment(matrixCardIndex, mSaveButton);
                 break;
         }
@@ -64,12 +65,12 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View view) {
         if (view == mBackButton) {
             //branching back button for both fragments
-            if (fragmentId == HomeActivity.EDIT_MATRIX_FRAGMENT_ID) EditMatrixBack();
-            else if (fragmentId == HomeActivity.SUB_MATRIX_FRAGMENT_ID) SubMatrixBack();
+            if (fragmentId == Constant.EDIT_MATRIX_FRAGMENT_ID) EditMatrixBack();
+            else if (fragmentId == Constant.SUB_MATRIX_FRAGMENT_ID) SubMatrixBack();
         } else if (view == mSaveButton) {
             //branching save button for both fragments
-            if (fragmentId == HomeActivity.EDIT_MATRIX_FRAGMENT_ID) EditMatrixSave();
-            else if (fragmentId == HomeActivity.SUB_MATRIX_FRAGMENT_ID) SubMatrixSave();
+            if (fragmentId == Constant.EDIT_MATRIX_FRAGMENT_ID) EditMatrixSave();
+            else if (fragmentId == Constant.SUB_MATRIX_FRAGMENT_ID) SubMatrixSave();
         }
 
     }

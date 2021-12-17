@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.matscape.Adapters.MatrixCardsRecyclerAdapter;
+import com.example.matscape.Preferences.Preferences;
 import com.example.matscape.models.MatrixCards;
 
 import java.util.ArrayList;
@@ -69,7 +70,8 @@ public class MatrixCardsController {
 
             //TODO needed to change matrix dimens and type through database when settings is implemented
             List<List<String>> matrix;
-            int rows = 5, columns = 5;
+            int rows = Preferences.getDefaultRows(context);
+            int columns = Preferences.getDefaultColumns(context);
 
             //initialises variables when copied card is received
             if (matrixCard!=null) {

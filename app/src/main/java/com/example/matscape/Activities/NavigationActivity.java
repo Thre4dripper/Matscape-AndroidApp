@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.matscape.Constants.Constant;
 import com.example.matscape.Fragments.NavigationFragments.AboutFragment;
 import com.example.matscape.Fragments.NavigationFragments.FeedbackFragment;
 import com.example.matscape.Fragments.NavigationFragments.HTUFragment;
@@ -42,27 +43,27 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void setupFragments(Intent receivedIntent){
-        fragmentId=receivedIntent.getIntExtra(HomeActivity.NAVIGATION_FRAGMENT_KEY,-1);
+        fragmentId=receivedIntent.getIntExtra(Constant.NAVIGATION_FRAGMENT_KEY,-1);
 
         mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.blue_black));
         Fragment fragment = new Fragment();
         switch (fragmentId){
-            case 1:
+            case Constant.NAV_SETTINGS_FRAGMENT_ID:
                 fragment=new SettingsFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_settings);
                 mHeaderTitle.setText(this.getString(R.string.action_settings));
                 break;
-            case 2:
+            case Constant.NAV_HTU_FRAGMENT_ID:
                 fragment=new HTUFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_htu);
                 mHeaderTitle.setText(this.getString(R.string.action_htu));
                 break;
-            case 3:
+            case Constant.NAV_FEEDBACK_FRAGMENT_ID:
                 fragment=new FeedbackFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_feedback);
                 mHeaderTitle.setText(this.getString(R.string.action_feedback));
                 break;
-            case 4:
+            case Constant.NAV_ABOUT_FRAGMENT_ID:
                 fragment = new AboutFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_about);
                 mHeaderTitle.setText(this.getString(R.string.action_about));
