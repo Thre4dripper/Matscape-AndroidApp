@@ -184,39 +184,18 @@
 
     <com.google.android.material.slider.Slider
         android:id="@+id/NavRowSlider"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
+        style="@style/MatrixDimensionsSliders"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="16dp"
-        android:stepSize="1"
-        android:valueFrom="1"
-        android:valueTo="5"
-        app:haloColor="@color/blue_black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/SettingsGuideline1"
-        app:thumbColor="@color/blue_black"
-        app:trackColorActive="@color/blue_black"
-        app:trackColorInactive="@color/light_blue_black" />
+        app:layout_constraintTop_toTopOf="@+id/SettingsGuideline1" />
 
     <com.google.android.material.slider.Slider
         android:id="@+id/NavColumnSlider"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:stepSize="1"
-        android:valueFrom="1"
-        android:valueTo="5"
-        app:haloColor="@color/blue_black"
+        style="@style/MatrixDimensionsSliders"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/NavRowSlider"
-        app:thumbColor="@color/blue_black"
-        app:trackColorActive="@color/blue_black"
-        app:trackColorInactive="@color/light_blue_black" />
+        app:layout_constraintTop_toBottomOf="@+id/NavRowSlider" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/SettingsGuideline1"

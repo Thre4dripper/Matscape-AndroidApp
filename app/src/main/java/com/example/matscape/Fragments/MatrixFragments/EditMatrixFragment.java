@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -19,16 +18,18 @@ import androidx.fragment.app.Fragment;
 import com.example.matscape.Controllers.MatrixCardsController;
 import com.example.matscape.R;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener,
-        AdapterView.OnItemClickListener, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+        AdapterView.OnItemClickListener, Slider.OnChangeListener, View.OnClickListener {
 
     private static final String TAG = "EditMatrixFragment";
     //boolean for checking changed information before returning back
@@ -43,7 +44,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     static MaterialButton[] numpadMaterialButtons = new MaterialButton[12];
     private ImageView numpadUp, numpadDown, numpadLeft, numpadRight, numpadBackSpace;
     private AutoCompleteTextView mNamesSpinner;
-    private SeekBar mRowsSeekbar, mColumnsSeekbar;
+    private Slider mRowsSlider, mColumnsSlider;
     //TODO numpad visibility will be controlled by this
     public static CardView editNumpadCardView;
 
@@ -92,8 +93,8 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_matrix_edit, container, false);
         mNamesSpinner = fragmentView.findViewById(R.id.MatrixNamesSpinner);
-        mRowsSeekbar = fragmentView.findViewById(R.id.EditMatrixRowsSeekbar);
-        mColumnsSeekbar = fragmentView.findViewById(R.id.EditMatrixColumnsSeekBar);
+        mRowsSlider = fragmentView.findViewById(R.id.EditMatrixRowsSlider);
+        mColumnsSlider = fragmentView.findViewById(R.id.EditMatrixColumnsSlider);
         editNumpadCardView = fragmentView.findViewById(R.id.EditNumpadCardView);
         BindMatrixFields(fragmentView);
 
@@ -162,30 +163,20 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         isEditMatrixBackSafe = false;
     }
 
-    //TODO change seekbar to Material Slider
     /**
-     * ============================================ OVERRIDE METHOD FOR SEEKBARS =================================================
+     * ============================================ OVERRIDE METHOD FOR SLIDERS =================================================
      **/
+
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+    public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
 
         //matrix size changed
         isEditMatrixBackSafe = false;
 
-        if (seekBar == mRowsSeekbar) rows = progress + 1;
-        else if (seekBar == mColumnsSeekbar) columns = progress + 1;
+        if(slider== mRowsSlider)rows=(int) value;
+        else if(slider== mColumnsSlider)columns=(int) value;
 
         changeMatrixSize();
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
     }
 
     /**
@@ -419,13 +410,16 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         rows = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixRows();
         columns = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixColumns();
 
-        mRowsSeekbar.setProgress(rows - 1);
-        mColumnsSeekbar.setProgress(columns - 1);
+        mRowsSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Rows: %.0f", value));
+        mColumnsSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Columns: %.0f", value));
+
+        mRowsSlider.setValue(rows);
+        mColumnsSlider.setValue(columns);
 
         changeMatrixSize();
 
-        mRowsSeekbar.setOnSeekBarChangeListener(this);
-        mColumnsSeekbar.setOnSeekBarChangeListener(this);
+        mRowsSlider.addOnChangeListener(this);
+        mColumnsSlider.addOnChangeListener(this);
     }
 
     /**

@@ -433,49 +433,20 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/RowsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/text_rows"
+    <com.google.android.material.slider.Slider
+        android:id="@+id/EditMatrixRowsSlider"
+        style="@style/MatrixDimensionsSliders"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textInputLayout"
-        app:layout_constraintTop_toTopOf="@+id/textInputLayout" />
+        app:layout_constraintTop_toTopOf="@+id/EditMatrixGuideLine" />
 
-    <SeekBar
-        android:id="@+id/EditMatrixRowsSeekbar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:max="4"
-        android:progress="3"
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/EditMatrixColumnsSlider"
+        style="@style/MatrixDimensionsSliders"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/ColumnsTextView"
-        app:layout_constraintTop_toTopOf="@+id/RowsTextView" />
-
-    <TextView
-        android:id="@+id/ColumnsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/text_columns"
-        app:layout_constraintBottom_toBottomOf="@+id/textInputLayout"
-        app:layout_constraintStart_toEndOf="@+id/textInputLayout" />
-
-    <SeekBar
-        android:id="@+id/EditMatrixColumnsSeekBar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:max="4"
-        android:progress="3"
-        app:layout_constraintBottom_toBottomOf="@+id/ColumnsTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/ColumnsTextView" />
+        app:layout_constraintStart_toEndOf="@+id/textInputLayout"
+        app:layout_constraintTop_toBottomOf="@+id/EditMatrixRowsSlider" />
 
 
     <androidx.cardview.widget.CardView

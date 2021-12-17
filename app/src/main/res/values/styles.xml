@@ -127,6 +127,20 @@
         <item name="android:padding">0px</item>
     </style>
 
+    //for Material Sliders
+    <style name="MatrixDimensionsSliders">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:stepSize">1</item>
+        <item name="android:valueFrom">1</item>
+        <item name="android:valueTo">5</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="haloColor">@color/blue_black</item>
+        <item name="thumbColor">@color/blue_black</item>
+        <item name="trackColorActive">@color/blue_black</item>
+        <item name="trackColorInactive">@color/light_blue_black</item>
+    </style>
     //for Settings Default Matrix Preview Bullets
 
     <style name="DefaultMatrixPreviewBullets">
