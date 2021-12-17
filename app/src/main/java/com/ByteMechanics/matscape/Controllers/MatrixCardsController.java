@@ -1,6 +1,7 @@
 package com.ByteMechanics.matscape.Controllers;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,7 +28,7 @@ public class MatrixCardsController {
 
     //this list is accessed by edit matrix name spinner
     public static List<String> remainingMatrixNamesList = new ArrayList<>();
-    public static List<String> matrixNamesList=new ArrayList<>();
+    public static List<String> matrixNamesList = new ArrayList<>();
 
     /**
      * ===================================== CALLBACK FOR DRAGGING MATRIX CARDS ===========================================
@@ -68,24 +69,35 @@ public class MatrixCardsController {
         //matrices should be less than 26
         if (matrixCardCounter < 26) {
 
-            //TODO needed to change matrix dimens and type through database when settings is implemented
             List<List<String>> matrix;
             int rows = Preferences.getDefaultRows(context);
             int columns = Preferences.getDefaultColumns(context);
+            boolean isNullMatrixType = Preferences.getDefaultMatrixType(context);
 
             //initialises variables when copied card is received
-            if (matrixCard!=null) {
+            if (matrixCard != null) {
                 matrix = matrixCard.getMatrix();
                 rows = matrixCard.getMatrixRows();
                 columns = matrixCard.getMatrixColumns();
             } else {
                 //null matrixCard received means New matrix is adding
                 matrix = new ArrayList<>();
-                for (int i = 0; i < 5; i++) {
-                    matrix.add(new ArrayList<>());
-                    for (int j = 0; j < 5; j++)
-                        matrix.get(i).add("0");
-                }
+
+                if (isNullMatrixType)
+                    for (int i = 0; i < rows; i++) {
+                        matrix.add(new ArrayList<>());
+                        for (int j = 0; j < columns; j++)
+                            matrix.get(i).add("0");
+                    }
+                else
+                    for (int i = 0; i < rows; i++) {
+                        matrix.add(new ArrayList<>());
+                        for (int j = 0; j < columns; j++)
+                            if (i == j)
+                                matrix.get(i).add("1");
+                            else
+                                matrix.get(i).add("0");
+                    }
             }
 
             Collections.sort(remainingMatrixNamesList);

@@ -88,7 +88,7 @@
 
     //for App Settings
     <string name="default_matrix_heading">Default Matrix Size</string>
-    <string name="add_new_matrices_as">Add New Matrices as</string>
+    <string name="default_matrix_type">Default Matrix Type</string>
     <string name="null_matrices">Null Matrices</string>
     <string name="identity_matrices">Identity Matrices</string>
 </resources>
