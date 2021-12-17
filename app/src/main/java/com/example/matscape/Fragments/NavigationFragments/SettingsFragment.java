@@ -10,11 +10,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.matscape.Preferences.Preferences;
 import com.example.matscape.R;
 import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.slider.Slider;
 
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class SettingsFragment extends Fragment implements Slider.OnChangeListener {
@@ -104,6 +106,9 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
     }
 
     public void setSliderLabels() {
+        rows=Preferences.getDefaultRows(requireContext());
+        columns=Preferences.getDefaultColumns(requireContext());
+
         mRowSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Rows: %.0f", value));
         mColumnSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Columns: %.0f", value));
 
@@ -133,5 +138,7 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
                 prevMatrix[i][j].setVisibility(View.VISIBLE);
             }
         }
+
+        Preferences.saveDimensions(requireContext(),rows,columns);
     }
 }

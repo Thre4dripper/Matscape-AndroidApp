@@ -140,6 +140,7 @@
         <item name="thumbColor">@color/blue_black</item>
         <item name="trackColorActive">@color/blue_black</item>
         <item name="trackColorInactive">@color/light_blue_black</item>
+        <item name="tickColor">@color/blue_black</item>
     </style>
     //for Settings Default Matrix Preview Bullets
 
