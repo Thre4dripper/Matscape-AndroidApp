@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -15,6 +16,7 @@ import com.ByteMechanics.matscape.Fragments.NavigationFragments.FeedbackFragment
 import com.ByteMechanics.matscape.Fragments.NavigationFragments.HTUFragment;
 import com.ByteMechanics.matscape.Fragments.NavigationFragments.SettingsFragment;
 import com.ByteMechanics.matscape.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class NavigationActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,34 +33,34 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
         mBackButton = findViewById(R.id.NavigationActivityBack);
         mSaveButton = findViewById(R.id.NavigationActivitySave);
 
-        mHeaderIcon=findViewById(R.id.NavHeaderIcon);
-        mHeaderTitle=findViewById(R.id.NavHeaderTitle);
+        mHeaderIcon = findViewById(R.id.NavHeaderIcon);
+        mHeaderTitle = findViewById(R.id.NavHeaderTitle);
 
         mBackButton.setOnClickListener(this);
         mSaveButton.setOnClickListener(this);
 
-        Intent receivedIntent=getIntent();
+        Intent receivedIntent = getIntent();
         setupFragments(receivedIntent);
     }
 
-    public void setupFragments(Intent receivedIntent){
-        fragmentId=receivedIntent.getIntExtra(Constant.NAVIGATION_FRAGMENT_KEY,-1);
+    public void setupFragments(@NonNull Intent receivedIntent) {
+        fragmentId = receivedIntent.getIntExtra(Constant.NAVIGATION_FRAGMENT_KEY, -1);
 
         mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.blue_black));
         Fragment fragment = new Fragment();
-        switch (fragmentId){
+        switch (fragmentId) {
             case Constant.NAV_SETTINGS_FRAGMENT_ID:
-                fragment=new SettingsFragment();
+                fragment = new SettingsFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_settings);
                 mHeaderTitle.setText(this.getString(R.string.action_settings));
                 break;
             case Constant.NAV_HTU_FRAGMENT_ID:
-                fragment=new HTUFragment();
+                fragment = new HTUFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_htu);
                 mHeaderTitle.setText(this.getString(R.string.action_htu));
                 break;
             case Constant.NAV_FEEDBACK_FRAGMENT_ID:
-                fragment=new FeedbackFragment();
+                fragment = new FeedbackFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_feedback);
                 mHeaderTitle.setText(this.getString(R.string.action_feedback));
                 break;
@@ -70,7 +72,7 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
 
         }
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.NavigationFrameLayout,fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.NavigationFrameLayout, fragment).commit();
     }
 
     /**
@@ -78,14 +80,57 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
      **/
     @Override
     public void onClick(View view) {
-        if(view==mBackButton)
-            super.onBackPressed();
-        else if(view==mSaveButton)
-            super.onBackPressed();
+        if (view == mBackButton)
+            switch (fragmentId) {
+                case Constant.NAV_SETTINGS_FRAGMENT_ID:
+                    SettingsBack();
+                    break;
+            }
+        else if (view == mSaveButton)
+            switch (fragmentId) {
+                case Constant.NAV_SETTINGS_FRAGMENT_ID:
+                    SettingsSave();
+                    break;
+            }
     }
 
     @Override
     public void onBackPressed() {
         onClick(mBackButton);
+    }
+
+    /**
+     * ======================================= METHOD FOR HANDLING SETTINGS BACK =======================================
+     **/
+    public void SettingsBack() {
+        //back safety
+        if (SettingsFragment.isSettingsBackSafe)
+            super.onBackPressed();
+
+            //then dialog box will display when something is changed, to prevent accidental back
+        else new MaterialAlertDialogBuilder(this)
+                .setMessage("Discard Changes")
+                .setPositiveButton("Yes", (dialogInterface, i) -> NavigationActivity.super.onBackPressed())
+                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
+    }
+
+    /**
+     * ======================================== METHOD FOR HANDLING SETTINGS SAVE ======================================
+     **/
+    public void SettingsSave() {
+        if (SettingsFragment.isSettingsBackSafe) {
+            SettingsFragment.SaveSettings(this);
+            super.onBackPressed();
+        }
+        //dialog box when something is changes to confirm changes
+        else new MaterialAlertDialogBuilder(this)
+                .setMessage("Save Changes")
+                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                    SettingsFragment.SaveSettings(this);
+                    NavigationActivity.super.onBackPressed();
+                })
+                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
     }
 }

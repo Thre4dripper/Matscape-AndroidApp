@@ -1,5 +1,6 @@
 package com.ByteMechanics.matscape.Fragments.NavigationFragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +23,27 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
 
     private static final String TAG = "SettingsFragment";
     private static final ImageView[][] prevMatrix = new ImageView[5][5];
-    public static int rows = 5, columns = 5;
-    public static boolean isNullSelected = true;
+    public static boolean isSettingsBackSafe = true;
+    private static int rows = 5, columns = 5;
+    private static boolean isNullSelected = true;
     private static Slider mRowSlider, mColumnSlider;
     private static MaterialRadioButton mNullMatrixRadio, mIdentityMatrixRadio;
 
+    //CONSTRUCTOR
+    public SettingsFragment() {
+        SettingsFragment.isSettingsBackSafe = true;
+    }
+
+    /**
+     * =============================================== METHOD FOR SAVE CHANGES ==================================================
+     **/
+    public static void SaveSettings(Context context) {
+        Preferences.saveDimensions(context, rows, columns);
+    }
+
+    /**
+     * =============================================== ON CREATE VIEW ==================================================
+     **/
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,6 +64,43 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
         return view;
     }
 
+    /**
+     * ============================================ OVERRIDE METHOD FOR SLIDERS =================================================
+     **/
+    @Override
+    public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+
+        isSettingsBackSafe = false;
+
+        if (slider == mRowSlider) rows = (int) value;
+        else if (slider == mColumnSlider) columns = (int) value;
+
+        //Identity Matrix radio will be enabled only for SQUARE matrices
+        if (rows == columns)
+            mIdentityMatrixRadio.setEnabled(true);
+
+
+        else {
+            mIdentityMatrixRadio.setEnabled(false);
+
+            //for non square matrices, when Identity matrix radio is already selected
+            if (mIdentityMatrixRadio.isChecked()) {
+
+                //null matrix radio will be selected
+                mNullMatrixRadio.setChecked(true);
+                isNullSelected = true;
+
+                //message for the user
+                Toast.makeText(getContext(), "Only Square Matrices can be selected as Identity Matrices", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        changePreviewMatrixSize();
+    }
+
+    /**
+     * ================================= METHOD FOR INITIALISING PREVIEW MATRIX IMAGE VIEWS ==================================
+     **/
     public void BindPreviewMatrixFields(@NonNull View view) {
         prevMatrix[0][0] = view.findViewById(R.id.SettingsMatrixPrev11);
         prevMatrix[0][1] = view.findViewById(R.id.SettingsMatrixPrev12);
@@ -76,37 +130,12 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
 
     }
 
-    @Override
-    public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-        if (slider == mRowSlider) rows = (int) value;
-        else if (slider == mColumnSlider) columns = (int) value;
-
-        //Identity Matrix radio will be enabled only for SQUARE matrices
-        if (rows == columns)
-            mIdentityMatrixRadio.setEnabled(true);
-
-
-        else {
-            mIdentityMatrixRadio.setEnabled(false);
-
-            //for non square matrices, when Identity matrix radio is already selected
-            if (mIdentityMatrixRadio.isChecked()) {
-
-                //null matrix radio will be selected
-                mNullMatrixRadio.setChecked(true);
-                isNullSelected = true;
-
-                //message for the user
-                Toast.makeText(getContext(), "Only Square Matrices can be selected as Identity Matrices", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-        changePreviewMatrixSize();
-    }
-
+    /**
+     * ============================================= METHOD FOR SETTINGS SLIDER VALUES ============================================
+     **/
     public void setSliderLabels() {
-        rows=Preferences.getDefaultRows(requireContext());
-        columns=Preferences.getDefaultColumns(requireContext());
+        rows = Preferences.getDefaultRows(requireContext());
+        columns = Preferences.getDefaultColumns(requireContext());
 
         mRowSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Rows: %.0f", value));
         mColumnSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Columns: %.0f", value));
@@ -118,11 +147,23 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
         mColumnSlider.addOnChangeListener(this);
     }
 
+    /**
+     * ============================================ METHOD FOR HANDLING RADIO BUTTONS ==========================================
+     **/
     public void RadioButtons() {
-        mNullMatrixRadio.setOnClickListener(view -> isNullSelected = true);
-        mIdentityMatrixRadio.setOnClickListener(view -> isNullSelected = false);
+        mNullMatrixRadio.setOnClickListener(view -> {
+            isNullSelected = true;
+            isSettingsBackSafe = false;
+        });
+        mIdentityMatrixRadio.setOnClickListener(view -> {
+            isNullSelected = false;
+            isSettingsBackSafe = false;
+        });
     }
 
+    /**
+     * ================================================= METHOD FOR CHANGING MATRIX SIZE  =======================================
+     **/
     public void changePreviewMatrixSize() {
 
         //resetting visibility
@@ -137,7 +178,5 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
                 prevMatrix[i][j].setVisibility(View.VISIBLE);
             }
         }
-
-        Preferences.saveDimensions(requireContext(),rows,columns);
     }
 }

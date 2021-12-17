@@ -3,10 +3,10 @@ package com.ByteMechanics.matscape.Constants;
 public class Constant {
 
     //Activity Switching Keys
-    public static final String NAVIGATION_FRAGMENT_KEY = "navigationFragmentKey";
-    public static final String CHANGE_MATRIX_ACTIVITY_KEY = "changeMatrixActivityKey";
+    public static final String NAVIGATION_FRAGMENT_KEY = "ByteMechanics.matscape.navigationFragmentKey";
+    public static final String CHANGE_MATRIX_ACTIVITY_KEY = "ByteMechanics.matscape.changeMatrixActivityKey";
     //Matrix card Position Key
-    public static final String MATRIX_CARD_POSITION_KEY = "matrixElementsSendingKey";
+    public static final String MATRIX_CARD_POSITION_KEY = "ByteMechanics.matscape.matrixElementsSendingKey";
 
     //Change Matrix Fragment IDs
     public static final int EDIT_MATRIX_FRAGMENT_ID = 1;
