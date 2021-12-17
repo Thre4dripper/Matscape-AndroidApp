@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -36,7 +37,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
     /**
      * ============================================ METHOD FOR SETTING BOTH FRAGMENTS ===========================================
      **/
-    public void setupFragments(Intent receivedIntent) {
+    public void setupFragments(@NonNull Intent receivedIntent) {
 
         fragmentId = receivedIntent.getIntExtra(HomeActivity.CHANGE_MATRIX_ACTIVITY_KEY, -1);
         int matrixCardIndex = receivedIntent.getIntExtra(HomeActivity.MATRIX_CARD_POSITION_KEY, -1);
@@ -83,18 +84,21 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
      * ======================================= METHOD FOR HANDLING EDIT MATRIX BACK =======================================
      **/
     public void EditMatrixBack() {
-        if (EditMatrixFragment.isEditMatrixBackSafe) {
-            if (EditMatrixFragment.editNumpadCardView.getVisibility() == View.VISIBLE)
-                EditMatrixFragment.editNumpadCardView.setVisibility(View.GONE);
-            else
-                super.onBackPressed();
-        }
-        //dialog box when something is changes to prevent accidental back
+            //firstly Numpad will hide on back press
+        if (EditMatrixFragment.editNumpadCardView.getVisibility() == View.VISIBLE)
+            EditMatrixFragment.editNumpadCardView.setVisibility(View.GONE);
+
+            //then back safety will work
+        else if (EditMatrixFragment.isEditMatrixBackSafe)
+            super.onBackPressed();
+
+            //then dialog box will display when something is changed, to prevent accidental back
         else new MaterialAlertDialogBuilder(this)
-                .setMessage("Discard Changes")
-                .setPositiveButton("Yes", (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
-                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
-                .show();
+                    .setMessage("Discard Changes")
+                    .setPositiveButton("Yes", (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
+                    .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                    .show();
+
     }
 
     /**
