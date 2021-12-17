@@ -112,12 +112,12 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      * ======================================= OVERRIDE METHOD FOR MATERIAL FIELDS ======================================
      **/
     @Override
-    public void onFocusChange(View view, boolean b) {
+    public void onFocusChange(View view, boolean isFocused) {
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++)
                 if (view == matrixFields[i][j]) {
-                    if (b) {
+                    if (isFocused) {
                         matrixFieldLayouts[i][j].setHint((i + 1) + "" + (j + 1));
                         currentRow = i;
                         currentColumn = j;
@@ -126,6 +126,9 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                     break;
                 }
         }
+
+        //Numpad should visible on matrix field click
+        editNumpadCardView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -185,6 +188,8 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     @Override
     public void onClick(View view) {
 
+        //sending on Clicks of MatrixFields
+        onFocusChange(view,true);
         if (view == numpadUp) {
             currentRow--;
             moveFocus();
@@ -329,6 +334,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
             for (int j = 0; j < 5; j++) {
                 matrixFields[i][j].setOnFocusChangeListener(this);
                 matrixFields[i][j].setShowSoftInputOnFocus(false);
+                matrixFields[i][j].setOnClickListener(this);
             }
     }
 
@@ -453,7 +459,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     public void moveFocus() {
 
         //TODO on focus change, cursor should be at last in that cell
-        Log.d(TAG, "moveFocus: "+currentRow+" "+currentColumn);
+
         //when nothing is selected , first field should be selected for right and down key
         if((currentRow==-1 && currentColumn==0) || (currentRow==0 && currentColumn==-1))
             matrixFieldLayouts[0][0].requestFocus();
