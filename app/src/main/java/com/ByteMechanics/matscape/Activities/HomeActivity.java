@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -58,6 +59,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     //for blocking back button for accidental clicks
     private boolean doubleBackToExitPressedOnce = false;
 
+    //for hint layouts
+    private LinearLayout mMatrixCardsHintLayout,mResultCardsHintLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +71,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         addMatrixCardsButton = findViewById(R.id.addMatrixCardButton);
         addResultCardsButton = findViewById(R.id.addResultCardButton);
         homeNumpadCardView = findViewById(R.id.HomeNumpadCardView);
+        mMatrixCardsHintLayout=findViewById(R.id.MatrixCardsHintLayout);
+        mResultCardsHintLayout=findViewById(R.id.ResultCardsHintLayout);
 
         addMatrixCardsButton.setOnClickListener(this);
         addResultCardsButton.setOnClickListener(this);
@@ -234,11 +240,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     null,
                     mMatrixCardsRecyclerView
             );
+
+            //hiding hint layout
+            if(MatrixCardsController.matrixCardCounter!=0)
+                mMatrixCardsHintLayout.setVisibility(View.GONE);
         } else if (addResultCardsButton.equals(view)) {
             ResultCardsController.addResultCards(
                     ResultCardsController.resultCardCounter,
                     null,
                     mResultCardsRecyclerView);
+
+            //hiding hint layout
+            if(ResultCardsController.resultCardCounter!=0)
+                mResultCardsHintLayout.setVisibility(View.GONE);
         }
 
     }
@@ -274,6 +288,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         .show();
 */
 
+        //showing hint layout
+        if(MatrixCardsController.matrixCardCounter==0)
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                mMatrixCardsHintLayout.setVisibility(View.VISIBLE);
+            }, 200);
     }
 
     @Override
@@ -329,6 +348,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
+        //showing hint layout
+        if(ResultCardsController.resultCardCounter==0)
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                mResultCardsHintLayout.setVisibility(View.VISIBLE);
+            }, 200);
     }
 
     @Override

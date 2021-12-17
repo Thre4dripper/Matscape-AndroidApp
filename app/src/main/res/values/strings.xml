@@ -24,6 +24,8 @@
     <string name="desc_copy_matrix">Copy matrix</string>
     <string name="desc_edit_matrix">Edit matrix</string>
     <string name="desc_sub_matrix">Create Sub matrix</string>
+    <string name="text_tap">Tap</string>
+    <string name="text_to_add_matrices">to Add Matrices</string>
 
     //for result cards
     <string name="desc_drag_result">Result Card Drag Handle</string>
@@ -31,6 +33,8 @@
     <string name="placeholder_result_msg">Message</string>
     <string name="desc_copy_result">Copy Result Card</string>
     <string name="desc_add_result_matrix">Add result card as new Matrix</string>
+    <string name="hint_result_field">Tap on Matrix Cards</string>
+    <string name="text_to_add_result_cards">to Add Result Cards</string>
 
     //for ChangeMatrix Activity
     <string name="desc_back">Go Back</string>
