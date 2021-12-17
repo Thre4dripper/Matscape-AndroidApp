@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.ByteMechanics.matscape.Preferences.Preferences;
@@ -25,20 +26,18 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
     private static final ImageView[][] prevMatrix = new ImageView[5][5];
     public static boolean isSettingsBackSafe = true;
     private static int rows = 5, columns = 5;
-    private static boolean isNullSelected = true;
+    private static boolean isNullSelected;
     private static Slider mRowSlider, mColumnSlider;
     private static MaterialRadioButton mNullMatrixRadio, mIdentityMatrixRadio;
 
-    //CONSTRUCTOR
-    public SettingsFragment() {
-        SettingsFragment.isSettingsBackSafe = true;
-    }
 
     /**
      * =============================================== METHOD FOR SAVE CHANGES ==================================================
      **/
     public static void SaveSettings(Context context) {
         Preferences.saveDimensions(context, rows, columns);
+        Preferences.saveMatrixType(context, isNullSelected);
+
     }
 
     /**
@@ -47,8 +46,19 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_nav_settings, container, false);
+        // Inflating layout for this fragment
+        return inflater.inflate(R.layout.fragment_nav_settings, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        SettingsFragment.isSettingsBackSafe = true;
+
+        rows = Preferences.getDefaultRows(requireContext());
+        columns = Preferences.getDefaultColumns(requireContext());
+        isNullSelected = Preferences.getDefaultMatrixType(requireContext());
 
         mRowSlider = view.findViewById(R.id.NavRowSlider);
         mColumnSlider = view.findViewById(R.id.NavColumnSlider);
@@ -59,9 +69,7 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
 
         BindPreviewMatrixFields(view);
         changePreviewMatrixSize();
-        RadioButtons();
-
-        return view;
+        setRadioButtons();
     }
 
     /**
@@ -87,8 +95,7 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
             if (mIdentityMatrixRadio.isChecked()) {
 
                 //null matrix radio will be selected
-                mNullMatrixRadio.setChecked(true);
-                isNullSelected = true;
+                mNullMatrixRadio.setChecked(isNullSelected = true);
 
                 //message for the user
                 Toast.makeText(getContext(), "Only Square Matrices can be selected as Identity Matrices", Toast.LENGTH_SHORT).show();
@@ -134,8 +141,7 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
      * ============================================= METHOD FOR SETTINGS SLIDER VALUES ============================================
      **/
     public void setSliderLabels() {
-        rows = Preferences.getDefaultRows(requireContext());
-        columns = Preferences.getDefaultColumns(requireContext());
+
 
         mRowSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Rows: %.0f", value));
         mColumnSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Columns: %.0f", value));
@@ -147,14 +153,24 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
         mColumnSlider.addOnChangeListener(this);
     }
 
+
     /**
      * ============================================ METHOD FOR HANDLING RADIO BUTTONS ==========================================
      **/
-    public void RadioButtons() {
+    public void setRadioButtons() {
+
+        if (isNullSelected)
+            mNullMatrixRadio.setChecked(true);
+        else
+            mIdentityMatrixRadio.setChecked(true);
+
+        mIdentityMatrixRadio.setEnabled(rows == columns);
+
         mNullMatrixRadio.setOnClickListener(view -> {
             isNullSelected = true;
             isSettingsBackSafe = false;
         });
+
         mIdentityMatrixRadio.setOnClickListener(view -> {
             isNullSelected = false;
             isSettingsBackSafe = false;

@@ -85,11 +85,21 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
                 case Constant.NAV_SETTINGS_FRAGMENT_ID:
                     SettingsBack();
                     break;
+                case Constant.NAV_HTU_FRAGMENT_ID:
+                case Constant.NAV_ABOUT_FRAGMENT_ID:
+                case Constant.NAV_FEEDBACK_FRAGMENT_ID:
+                    super.onBackPressed();
+                    break;
             }
         else if (view == mSaveButton)
             switch (fragmentId) {
                 case Constant.NAV_SETTINGS_FRAGMENT_ID:
                     SettingsSave();
+                    break;
+                case Constant.NAV_HTU_FRAGMENT_ID:
+                case Constant.NAV_ABOUT_FRAGMENT_ID:
+                case Constant.NAV_FEEDBACK_FRAGMENT_ID:
+                    super.onBackPressed();
                     break;
             }
     }

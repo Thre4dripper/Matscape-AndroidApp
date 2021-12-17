@@ -21,6 +21,16 @@ public class Preferences {
         editor.apply();
     }
 
+    public static void saveMatrixType(@NonNull Context context, boolean isNullSelected){
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean("DefaultMatrixType", isNullSelected);
+
+        editor.apply();
+    }
+
     public static int getDefaultRows(@NonNull Context context) {
         sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
         return sharedPreferences.getInt("DefaultRows", 5);
@@ -29,5 +39,10 @@ public class Preferences {
     public static int getDefaultColumns(@NonNull Context context) {
         sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
         return sharedPreferences.getInt("DefaultColumns", 5);
+    }
+
+    public static boolean getDefaultMatrixType(@NonNull Context context){
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("DefaultMatrixType", true);
     }
 }
