@@ -103,4 +103,34 @@
     <string name="text_OR">OR</string>
     <string name="text_join_telegram">Join Telegram Group</string>
     <string name="text_join">Join</string>
+
+    //for About Section
+    <string name="text_about_head_description">Description :</string>
+    <string name="text_about_description"><b>Matscape</b> is a high performance Matrix Calculator.
+        It can Evaluate simple as well as complex nested Expressions.
+        It has the ability to store multiple matrices so you can work on several matrices at the same time.
+    </string>
+    <string name="text_about_head_features">Features:</string>
+    <string name="text_about_feature1"><b>Multiple Matrices:</b> You can work with Multiple Matrices from A to Z at the same time
+        with Matrices of any dimensions. The size of the displayed Matrix will depend on your input.
+    </string>
+    <string name="text_about_feature2"><b>Multiple Outputs:</b> You can enter as many expressions as you want without any limit.
+        And there is also no limit on how nested you want your expressions.
+        Just make sure you enter valid expressions.
+        In case you have entered something Wrong or Invalid ,
+        the result cards will automatically display a message based on your mistake for better understanding.
+    </string>
+    <string name="text_about_feature3"><b>Matrix Operations:</b> There are a variety of different Matrix Operations you can play with like
+        <b>Determinant</b>,<b>Transpose</b>, <b>Power</b>, <b>Trace</b>, <b>Adjoint</b>, <b>Inverse</b>
+        and many more coming in Future Updates.
+    </string>
+    <string name="text_about_feature4"><b>Matrix Navigation:</b> When entering Matrix values, you can easily navigate between them</string>
+    <string name="text_about_feature5"><b>Matrix Laws:</b> Matscape Calculator fully obeys each and every matrix law like
+        A[k]=kA[], A|k|=kⁿA||, Inv(A)A=AInv(A)=I
+    </string>
+    <string name="text_about_feature6"><b>Numerical Calculator:</b> Matscape also have an Inbuilt Numerical Calculator,
+        so you don\'t have to go anywhere while doing Normal calculations also.
+    </string>
+    <string name="text_about_feature7"><b>Offline:</b> No Internet Required.</string>
+    <string name="TOS_PP">Terms of Service | Privacy Policy</string>
 </resources>

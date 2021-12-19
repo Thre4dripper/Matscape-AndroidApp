@@ -1,14 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.NavigationFragments.AboutFragment">
 
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="about fragment" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="6dp">
 
-</FrameLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/app_name"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:text="@string/text_about_head_description"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:justificationMode="inter_word"
+                android:text="@string/text_about_description" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:text="@string/text_about_head_features"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:justificationMode="inter_word"
+                android:text="@string/text_about_feature1" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:justificationMode="inter_word"
+                android:text="@string/text_about_feature2" />
+
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:justificationMode="inter_word"
+                android:text="@string/text_about_feature3" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:justificationMode="inter_word"
+                android:text="@string/text_about_feature4" />
+
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:justificationMode="inter_word"
+                android:text="@string/text_about_feature5" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:justificationMode="inter_word"
+                android:text="@string/text_about_feature6" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:text="@string/text_about_feature7" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="6dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:text="Version - 0.0.1 (Alpha)" />
+
+            <TextView
+                style="@style/AboutTextViews"
+                android:text="@string/TOS_PP" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
