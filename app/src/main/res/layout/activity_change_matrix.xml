@@ -12,26 +12,48 @@
         android:layout_height="40dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
-        android:padding="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/desc_back"
         android:focusable="true"
+        android:padding="8dp"
         android:src="@drawable/ic_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ChangeMatrixHeaderIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/action_settings"
+        app:layout_constraintBottom_toBottomOf="@+id/ChangeMatrixActivityBack"
+        app:layout_constraintStart_toEndOf="@+id/ChangeMatrixActivityBack"
+        app:layout_constraintTop_toTopOf="@+id/ChangeMatrixActivityBack"
+        app:srcCompat="@drawable/ic_mat_card_edit" />
+
+    <TextView
+        android:id="@+id/ChangeMatrixHeaderTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue_black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/ChangeMatrixHeaderIcon"
+        app:layout_constraintStart_toEndOf="@+id/ChangeMatrixHeaderIcon"
+        app:layout_constraintTop_toTopOf="@+id/ChangeMatrixHeaderIcon" />
 
     <ImageView
         android:id="@+id/ChangeMatrixActivitySave"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="4dp"
         android:layout_marginTop="8dp"
-        android:padding="8dp"
+        android:layout_marginEnd="4dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/desc_save"
         android:focusable="true"
+        android:padding="8dp"
         android:src="@drawable/ic_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

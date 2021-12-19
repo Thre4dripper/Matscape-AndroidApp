@@ -74,7 +74,7 @@
     <style name="EditMatrixFragNumpadImageBtns">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@android:color/holo_blue_dark</item>
+        <item name="android:background">@color/light_blue_black</item>
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>

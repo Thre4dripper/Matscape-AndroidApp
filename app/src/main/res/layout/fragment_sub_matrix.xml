@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:scrollbars="none"
-
         app:layout_constraintBottom_toTopOf="@+id/SubMatrixGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -145,7 +144,7 @@
 
                 <CheckBox
                     android:id="@+id/SubMatrixCheckC2"
-                    style="@style/SubMatrixCheckBoxes"/>
+                    style="@style/SubMatrixCheckBoxes" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout12"
@@ -385,7 +384,7 @@
 
                 <CheckBox
                     android:id="@+id/SubMatrixCheckC5"
-                    style="@style/SubMatrixCheckBoxes"/>
+                    style="@style/SubMatrixCheckBoxes" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout15"

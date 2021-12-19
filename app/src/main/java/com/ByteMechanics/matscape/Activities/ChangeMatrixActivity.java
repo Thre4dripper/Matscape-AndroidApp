@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 public class ChangeMatrixActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageView mBackButton, mSaveButton;
+    ImageView mHeaderIcon;
+    TextView mHeaderTitle;
     int fragmentId;
 
     @Override
@@ -27,6 +30,9 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
 
         mBackButton = findViewById(R.id.ChangeMatrixActivityBack);
         mSaveButton = findViewById(R.id.ChangeMatrixActivitySave);
+
+        mHeaderIcon = findViewById(R.id.ChangeMatrixHeaderIcon);
+        mHeaderTitle = findViewById(R.id.ChangeMatrixHeaderTitle);
 
         mBackButton.setOnClickListener(this);
         mSaveButton.setOnClickListener(this);
@@ -43,18 +49,22 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         fragmentId = receivedIntent.getIntExtra(Constant.CHANGE_MATRIX_ACTIVITY_KEY, -1);
         int matrixCardIndex = receivedIntent.getIntExtra(Constant.MATRIX_CARD_POSITION_KEY, -1);
 
-        Fragment fragment = null;
+        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.blue_black));
+        Fragment fragment = new Fragment();
         switch (fragmentId) {
             case Constant.EDIT_MATRIX_FRAGMENT_ID:
                 fragment = new EditMatrixFragment(matrixCardIndex);
+                mHeaderIcon.setImageResource(R.drawable.ic_mat_card_edit);
+                mHeaderTitle.setText("Edit Matrix");
                 break;
 
             case Constant.SUB_MATRIX_FRAGMENT_ID:
                 fragment = new SubMatrixFragment(matrixCardIndex, mSaveButton);
+                mHeaderIcon.setImageResource(R.drawable.ic_mat_card_sub_matrix);
+                mHeaderTitle.setText("Sub Matrix");
                 break;
         }
 
-        assert fragment != null;
         getSupportFragmentManager().beginTransaction().replace(R.id.ChangeMatrixActivityFrameLayout, fragment).commit();
     }
 
