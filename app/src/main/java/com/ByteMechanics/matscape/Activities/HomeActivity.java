@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private boolean doubleBackToExitPressedOnce = false;
 
     //for hint layouts
-    private LinearLayout mMatrixCardsHintLayout,mResultCardsHintLayout;
+    private LinearLayout mMatrixCardsHintLayout, mResultCardsHintLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +71,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         addMatrixCardsButton = findViewById(R.id.addMatrixCardButton);
         addResultCardsButton = findViewById(R.id.addResultCardButton);
         homeNumpadCardView = findViewById(R.id.HomeNumpadCardView);
-        mMatrixCardsHintLayout=findViewById(R.id.MatrixCardsHintLayout);
-        mResultCardsHintLayout=findViewById(R.id.ResultCardsHintLayout);
+        mMatrixCardsHintLayout = findViewById(R.id.MatrixCardsHintLayout);
+        mResultCardsHintLayout = findViewById(R.id.ResultCardsHintLayout);
 
         addMatrixCardsButton.setOnClickListener(this);
         addResultCardsButton.setOnClickListener(this);
@@ -242,7 +242,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             );
 
             //hiding hint layout
-            if(MatrixCardsController.matrixCardCounter!=0)
+            if (MatrixCardsController.matrixCardCounter != 0)
                 mMatrixCardsHintLayout.setVisibility(View.GONE);
         } else if (addResultCardsButton.equals(view)) {
             ResultCardsController.addResultCards(
@@ -251,7 +251,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mResultCardsRecyclerView);
 
             //hiding hint layout
-            if(ResultCardsController.resultCardCounter!=0)
+            if (ResultCardsController.resultCardCounter != 0)
                 mResultCardsHintLayout.setVisibility(View.GONE);
         }
 
@@ -289,10 +289,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 */
 
         //showing hint layout
-        if(MatrixCardsController.matrixCardCounter==0)
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                mMatrixCardsHintLayout.setVisibility(View.VISIBLE);
-            }, 200);
+        if (MatrixCardsController.matrixCardCounter == 0)
+            new Handler(Looper.getMainLooper()).postDelayed(() -> mMatrixCardsHintLayout.setVisibility(View.VISIBLE), 200);
     }
 
     @Override
@@ -349,10 +347,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         //showing hint layout
-        if(ResultCardsController.resultCardCounter==0)
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                mResultCardsHintLayout.setVisibility(View.VISIBLE);
-            }, 200);
+        if (ResultCardsController.resultCardCounter == 0)
+            new Handler(Looper.getMainLooper()).postDelayed(() -> mResultCardsHintLayout.setVisibility(View.VISIBLE), 200);
     }
 
     @Override
@@ -374,6 +370,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     0);
 
             MatrixCardsController.addMatrixCards(this, MatrixCardsController.matrixCardCounter, matrixCard, mMatrixCardsRecyclerView);
+
+            //showing hint layout
+            if (MatrixCardsController.matrixCardCounter != 0)
+                mMatrixCardsHintLayout.setVisibility(View.GONE);
         } else
             Toast.makeText(this, "Empty Result Card", Toast.LENGTH_SHORT).show();
 

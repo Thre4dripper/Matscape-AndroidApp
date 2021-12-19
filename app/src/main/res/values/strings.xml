@@ -95,4 +95,12 @@
     <string name="default_matrix_type">Default Matrix Type</string>
     <string name="null_matrices">Null Matrices</string>
     <string name="identity_matrices">Identity Matrices</string>
+
+    //for Feedback Section
+    <string name="text_report_bug">Bug</string>
+    <string name="text_request_feature">Feature</string>
+    <string name="hint_feedback">Feedback</string>
+    <string name="text_OR">OR</string>
+    <string name="text_join_telegram">Join Telegram Group</string>
+    <string name="text_join">Join</string>
 </resources>

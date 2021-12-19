@@ -58,16 +58,19 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
                 fragment = new HTUFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_htu);
                 mHeaderTitle.setText(this.getString(R.string.action_htu));
+                mSaveButton.setVisibility(View.GONE);
                 break;
             case Constant.NAV_FEEDBACK_FRAGMENT_ID:
                 fragment = new FeedbackFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_feedback);
                 mHeaderTitle.setText(this.getString(R.string.action_feedback));
+                mSaveButton.setImageResource(R.drawable.ic_send);
                 break;
             case Constant.NAV_ABOUT_FRAGMENT_ID:
                 fragment = new AboutFragment();
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_about);
                 mHeaderTitle.setText(this.getString(R.string.action_about));
+                mSaveButton.setVisibility(View.GONE);
                 break;
 
         }
