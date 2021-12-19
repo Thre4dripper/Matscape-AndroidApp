@@ -61,7 +61,7 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
                 mSaveButton.setVisibility(View.GONE);
                 break;
             case Constant.NAV_FEEDBACK_FRAGMENT_ID:
-                fragment = new FeedbackFragment();
+                fragment = new FeedbackFragment(mSaveButton);
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_feedback);
                 mHeaderTitle.setText(this.getString(R.string.action_feedback));
                 mSaveButton.setImageResource(R.drawable.ic_send);
@@ -90,8 +90,10 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
                     break;
                 case Constant.NAV_HTU_FRAGMENT_ID:
                 case Constant.NAV_ABOUT_FRAGMENT_ID:
-                case Constant.NAV_FEEDBACK_FRAGMENT_ID:
                     super.onBackPressed();
+                    break;
+                case Constant.NAV_FEEDBACK_FRAGMENT_ID:
+                    FeedbackBack();
                     break;
             }
         else if (view == mSaveButton)
@@ -101,7 +103,6 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
                     break;
                 case Constant.NAV_HTU_FRAGMENT_ID:
                 case Constant.NAV_ABOUT_FRAGMENT_ID:
-                case Constant.NAV_FEEDBACK_FRAGMENT_ID:
                     super.onBackPressed();
                     break;
             }
@@ -143,6 +144,22 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
                     SettingsFragment.SaveSettings(this);
                     NavigationActivity.super.onBackPressed();
                 })
+                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
+    }
+
+    /**
+     * ======================================= METHOD FOR HANDLING FEEDBACK'S BACK =======================================
+     **/
+    public void FeedbackBack() {
+        //back safety
+        if (FeedbackFragment.isFeedbackBackSafe)
+            super.onBackPressed();
+
+            //then dialog box will display when something is changed, to prevent accidental back
+        else new MaterialAlertDialogBuilder(this)
+                .setMessage("Discard Feedback")
+                .setPositiveButton("Yes", (dialogInterface, i) -> NavigationActivity.super.onBackPressed())
                 .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
