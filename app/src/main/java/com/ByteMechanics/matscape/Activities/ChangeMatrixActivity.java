@@ -55,13 +55,13 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
             case Constant.EDIT_MATRIX_FRAGMENT_ID:
                 fragment = new EditMatrixFragment(matrixCardIndex);
                 mHeaderIcon.setImageResource(R.drawable.ic_mat_card_edit);
-                mHeaderTitle.setText("Edit Matrix");
+                mHeaderTitle.setText(this.getString(R.string.text_edit_matrix));
                 break;
 
             case Constant.SUB_MATRIX_FRAGMENT_ID:
                 fragment = new SubMatrixFragment(matrixCardIndex, mSaveButton);
                 mHeaderIcon.setImageResource(R.drawable.ic_mat_card_sub_matrix);
-                mHeaderTitle.setText("Sub Matrix");
+                mHeaderTitle.setText(this.getString(R.string.text_sub_matrix));
                 break;
         }
 

@@ -39,6 +39,8 @@
     //for ChangeMatrix Activity
     <string name="desc_back">Go Back</string>
     <string name="desc_save">Save Changes</string>
+    <string name="text_edit_matrix">Edit Matrix</string>
+    <string name="text_sub_matrix">Sub Matrix</string>
 
     //for EditMatrixFragment
     <string name="hint_textInputLayout">0</string>

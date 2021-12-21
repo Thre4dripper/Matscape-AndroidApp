@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private boolean doubleBackToExitPressedOnce = false;
 
     //for hint layouts
-    private LinearLayout mMatrixCardsHintLayout, mResultCardsHintLayout;
+    private LinearLayout mMatrixCardsHintLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +72,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         addResultCardsButton = findViewById(R.id.addResultCardButton);
         homeNumpadCardView = findViewById(R.id.HomeNumpadCardView);
         mMatrixCardsHintLayout = findViewById(R.id.MatrixCardsHintLayout);
-        mResultCardsHintLayout = findViewById(R.id.ResultCardsHintLayout);
 
         addMatrixCardsButton.setOnClickListener(this);
         addResultCardsButton.setOnClickListener(this);
@@ -166,6 +165,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mResultCardsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         resultCardsTouchHelper.attachToRecyclerView(mResultCardsRecyclerView);
+
+        //adding initial card
+        onClick(addResultCardsButton);
     }
 
     public void InitHomeKeyboard() {
@@ -249,10 +251,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     ResultCardsController.resultCardCounter,
                     null,
                     mResultCardsRecyclerView);
-
-            //hiding hint layout
-            if (ResultCardsController.resultCardCounter != 0)
-                mResultCardsHintLayout.setVisibility(View.GONE);
         }
 
     }
@@ -268,29 +266,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void deleteMatrix(int position, String deletedName) {
-      /*  new MaterialAlertDialogBuilder(this)
-                .setMessage("Do you want to Delete this Matrix")
-                .setPositiveButton("Yes", (dialogInterface, i) -> {*/
 
-        //TODO bug here on multiple rapid touches
-        MatrixCardsController.matrixCardsList.remove(position);
-        MatrixCardsController.matrixNamesList.remove(position);
-        MatrixCardsController.remainingMatrixNamesList.add(deletedName);
-        MatrixCardsController.matrixCardCounter--;
-        MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemRemoved(position);
+        if(position!=RecyclerView.NO_POSITION) {
+            MatrixCardsController.matrixCardsList.remove(position);
+            MatrixCardsController.matrixNamesList.remove(position);
+            MatrixCardsController.remainingMatrixNamesList.add(deletedName);
+            MatrixCardsController.matrixCardCounter--;
+            MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemRemoved(position);
 
-        //sorting Names List after adding 'deletedName' name from Matrix Cards
-        Collections.sort(MatrixCardsController.remainingMatrixNamesList);
-          /*      })
-                .setNegativeButton("No", (dialogInterface, i) -> {
-                    dialogInterface.dismiss();
-                })
-        .show();
-*/
+            //sorting Names List after adding 'deletedName' name from Matrix Cards
+            Collections.sort(MatrixCardsController.remainingMatrixNamesList);
 
-        //showing hint layout
-        if (MatrixCardsController.matrixCardCounter == 0)
-            new Handler(Looper.getMainLooper()).postDelayed(() -> mMatrixCardsHintLayout.setVisibility(View.VISIBLE), 200);
+            //showing hint layout
+            if (MatrixCardsController.matrixCardCounter == 0)
+                new Handler(Looper.getMainLooper()).postDelayed(() -> mMatrixCardsHintLayout.setVisibility(View.VISIBLE), 200);
+        }
     }
 
     @Override
@@ -323,32 +313,33 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void deleteResult(int position) {
-        ResultCardsController.resultCardsList.remove(position);
-        ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRemoved(position);
-        ResultCardsController.resultCardCounter--;
+        if (position != RecyclerView.NO_POSITION) {
+            ResultCardsController.resultCardsList.remove(position);
+            ResultCardsController.mResultCardsRecyclerAdapter.notifyItemRemoved(position);
+            ResultCardsController.resultCardCounter--;
 
-        //selected card position must be updated on card removal
-        //CARD removed before selected card
-        if (position < ResultCardsController.selectedCard)
-            ResultCardsController.selectedCard--;
-
-            //selected card is itself removed
-        else if (position == ResultCardsController.selectedCard) {
-
-            //when selected card removed is last card prev card gets selected, && size>0
-            if (position == ResultCardsController.resultCardsList.size() && ResultCardsController.resultCardsList.size() != 0) {
+            //selected card position must be updated on card removal
+            //CARD removed before selected card
+            if (position < ResultCardsController.selectedCard)
                 ResultCardsController.selectedCard--;
-                clickedCard(ResultCardsController.selectedCard, 1);
+
+                //selected card is itself removed
+            else if (position == ResultCardsController.selectedCard) {
+
+                //when selected card removed is last card prev card gets selected, && size>0
+                if (position == ResultCardsController.resultCardsList.size() && ResultCardsController.resultCardsList.size() != 0) {
+                    ResultCardsController.selectedCard--;
+                    clickedCard(ResultCardsController.selectedCard, 1);
+                }
+                //otherwise next card gets selected
+                else if (position < ResultCardsController.resultCardsList.size())
+                    clickedCard(ResultCardsController.selectedCard, 1);
+
             }
-            //otherwise next card gets selected
-            else if (position < ResultCardsController.resultCardsList.size())
-                clickedCard(ResultCardsController.selectedCard, 1);
 
+            if (ResultCardsController.resultCardCounter == 0)
+                onClick(addResultCardsButton);
         }
-
-        //showing hint layout
-        if (ResultCardsController.resultCardCounter == 0)
-            new Handler(Looper.getMainLooper()).postDelayed(() -> mResultCardsHintLayout.setVisibility(View.VISIBLE), 200);
     }
 
     @Override
