@@ -280,7 +280,6 @@ public class ExpressionEvaluator {
             }
         }
 
-        //TODO change message color for errors and warnings
         //sending final result if there are no errors, warnings are allowed
         if (evaluationErrorCode == 0 || evaluationErrorCode == Constant.WARNING_DIVISOR_AS_INVERSE
                 || evaluationErrorCode == Constant.WARNING_1X1_DETERMINANT) {
