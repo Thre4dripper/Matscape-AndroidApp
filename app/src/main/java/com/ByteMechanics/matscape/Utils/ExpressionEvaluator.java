@@ -1,5 +1,11 @@
 package com.ByteMechanics.matscape.Utils;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,7 +22,7 @@ import java.util.Stack;
 public class ExpressionEvaluator {
     private static final String TAG = "ExpressionEvaluator";
     public static int evaluationErrorCode = 0;
-
+    private static SpannableString messageString;
 
     /**
      * ================================== MASTER FUNCTION FOR EVALUATING EXPRESSION =========================
@@ -55,7 +61,7 @@ public class ExpressionEvaluator {
                 number.get(0).add(String.valueOf(currentChar));
                 stack.push(number);
             } else if (Character.isUpperCase(currentChar))
-                stack.push(getCurrentMatrix(currentChar, selectedCard));
+                stack.push(getCurrentMatrix(currentChar));
 
 
             else if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/' || currentChar == '^') {
@@ -292,13 +298,13 @@ public class ExpressionEvaluator {
      **/
 
     @Nullable
-    public static List<List<String>> getCurrentMatrix(Character Name, int selectedCard) {
+    public static List<List<String>> getCurrentMatrix(Character Name) {
 
         int matrixIndex = MatrixCardsController.matrixNamesList.indexOf(String.valueOf(Name));
         //receiving matrix by its index
         if (matrixIndex == -1) {
             evaluationErrorCode = Constant.ERROR_NO_MATRIX_FOUND;
-            ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix '" + Name + "' doesn't Exist");
+            messageString = new SpannableString("Matrix '" + Name + "' doesn't Exist");
             return null;
         }
         List<List<String>> receivedMatrix = MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
@@ -368,56 +374,107 @@ public class ExpressionEvaluator {
     }
 
     public static void setErrorsAndWarnings(int selectedCard) {
+        //TODO extract string resources
         switch (evaluationErrorCode) {
             case Constant.ERROR_MATRIX_SCALAR_ADDITION:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Added in Matrices");
+                messageString = new SpannableString("Only Matrices can be Added in Matrices");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 break;
             case Constant.ERROR_MATRIX_SCALAR_SUBTRACTION:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Matrices can be Subtracted from Matrices");
+                messageString = new SpannableString("Only Matrices can be Subtracted from Matrices");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_INCOMPATIBLE_DIMENS:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrices with Incompatible dimensions");
+                messageString = new SpannableString("Matrices with Incompatible dimensions");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_MATRIX_DIVIDE_SINGULAR:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix\n" +
-                        "Singular Matrices Do not Have Inverse");
+                messageString = new SpannableString("Considering Inverse of Divisor Matrix" +
+                        "\nSingular Matrices Do not Have Inverse");
+
+                messageString.setSpan(new ForegroundColorSpan(Color.parseColor("#FFB74D")),0,38,
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),38,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.WARNING_DIVISOR_AS_INVERSE:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Considering Inverse of Divisor Matrix");
+                messageString = new SpannableString("Considering Inverse of Divisor Matrix");
+                messageString.setSpan(new ForegroundColorSpan(Color.parseColor("#FFB74D")),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_SQUARE_MATRIX_DETERMINANT:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Determinant");
+                messageString = new SpannableString("Only Square Matrices have a Determinant");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.WARNING_1X1_DETERMINANT:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Determinant of 1x1 matrix is element itself");
+                messageString = new SpannableString("Determinant of 1x1 matrix is element itself");
+                messageString.setSpan(new ForegroundColorSpan(Color.parseColor("#FFB74D")),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_SQUARE_MATRIX_TRACE:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Trace");
+                messageString = new SpannableString("Only Square Matrices have a Trace");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_SQUARE_MATRIX_ADJOINT:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Adjoint");
+                messageString = new SpannableString("Only Square Matrices have a Adjoint");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_1X1_MINOR:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("1x1 Matrices do not have Minors");
+                messageString = new SpannableString("1x1 Matrices do not have Minors");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_SQUARE_MATRIX_MINORS:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Minors");
+                messageString = new SpannableString("Only Square Matrices have a Minors");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_1X1_COFACTOR:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("1x1 Matrices do not have Cofactors");
+                messageString = new SpannableString("1x1 Matrices do not have Cofactors");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_SQUARE_MATRIX_COFACTORS:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Only Square Matrices have a Cofactors");
+                messageString = new SpannableString("Only Square Matrices have a Cofactors");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_SQUARE_MATRIX_POWER:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Power Only works on Square Matrices");
+                messageString = new SpannableString("Power Only works on Square Matrices");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
             case Constant.ERROR_SINGULAR_MATRIX_INVERSE:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Singular Matrices Do not Have Inverse");
+                messageString = new SpannableString("Singular Matrices Do not Have Inverse");
+                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
                 break;
-                //no error
+            //no error
             case 0:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
+                messageString = new SpannableString("");
         }
+        messageString.setSpan(new StyleSpan(Typeface.BOLD),0,messageString.length(),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        ResultCardsController.resultCardsList.get(selectedCard).setMessage(messageString);
     }
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
@@ -81,7 +82,7 @@ public class ResultCardsController {
         int cursorPosition=0;
         StringBuilder calculationString=new StringBuilder();
         List<Integer> calculationStringIndexList=new ArrayList<>();
-        String message = "";
+        SpannableString message = new SpannableString("");
         List<List<String>> matrix = null;
         int rows = 0, columns = 0;
 

@@ -1,5 +1,6 @@
 package com.ByteMechanics.matscape.models;
 
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 
 import java.util.List;
@@ -10,13 +11,13 @@ public class ResultCards {
     int cursorPosition;
     StringBuilder calculationString;
     List<Integer> calculationStringIndexList;
-    String message;
+    SpannableString message;
     List<List<String>> resultMatrix;
     int matrixRows, matrixColumns;
     String highlightedColor;
 
     public ResultCards(SpannableStringBuilder expressionString, int cursorPosition, StringBuilder calculationString,
-                       List<Integer> calculationStringIndexList, String message, List<List<String>> resultMatrix,
+                       List<Integer> calculationStringIndexList, SpannableString message, List<List<String>> resultMatrix,
                        int matrixRows, int matrixColumns, String highlightedColor) {
         this.expressionString = expressionString;
         this.cursorPosition = cursorPosition;
@@ -61,11 +62,11 @@ public class ResultCards {
         this.calculationStringIndexList = calculationStringIndexList;
     }
 
-    public String getMessage() {
+    public SpannableString getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(SpannableString message) {
         this.message = message;
     }
 

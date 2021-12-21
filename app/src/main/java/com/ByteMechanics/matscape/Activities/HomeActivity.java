@@ -167,7 +167,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         resultCardsTouchHelper.attachToRecyclerView(mResultCardsRecyclerView);
 
         //adding initial card
-        onClick(addResultCardsButton);
+        if (ResultCardsController.resultCardCounter == 0)
+            onClick(addResultCardsButton);
     }
 
     public void InitHomeKeyboard() {
@@ -267,7 +268,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void deleteMatrix(int position, String deletedName) {
 
-        if(position!=RecyclerView.NO_POSITION) {
+        if (position != RecyclerView.NO_POSITION) {
             MatrixCardsController.matrixCardsList.remove(position);
             MatrixCardsController.matrixNamesList.remove(position);
             MatrixCardsController.remainingMatrixNamesList.add(deletedName);
@@ -401,9 +402,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press BACK again to exit", Toast.LENGTH_SHORT).show();
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //Reset Matrix Cards View Model
+        MatrixCardsController.matrixCardsList.clear();
+        MatrixCardsController.matrixCardCounter = 0;
+        MatrixCardsController.matrixNamesList.clear();
+        MatrixCardsController.remainingMatrixNamesList.clear();
+
+        //Reset Result Cards View Model
+        ResultCardsController.resultCardsList.clear();
+        ResultCardsController.resultCardCounter = ResultCardsController.selectedCard = 0;
+        ResultCardsController.isNthPowerButtonPressed = false;
     }
 }

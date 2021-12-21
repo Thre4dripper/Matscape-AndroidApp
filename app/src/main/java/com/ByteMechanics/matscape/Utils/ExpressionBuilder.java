@@ -1,7 +1,13 @@
 package com.ByteMechanics.matscape.Utils;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.text.style.SuperscriptSpan;
 import android.util.Log;
 
@@ -196,7 +202,7 @@ public class ExpressionBuilder {
         }
         //clearing result when expression is empty
         else {
-            ResultCardsController.resultCardsList.get(selectedCard).setMessage("");
+            ResultCardsController.resultCardsList.get(selectedCard).setMessage(new SpannableString(""));
             ExpressionEvaluator.setResult(null, selectedCard);
         }
         //clearing previous result when an error occurred
@@ -211,29 +217,36 @@ public class ExpressionBuilder {
      * ============================ METHOD FOR SETTING ERROR MESSAGE IN RESULT CARD ===============================
      **/
     public static void setErrorMessage(int selectedCard, int errorCode) {
-
+        SpannableString messageString=new SpannableString("");
 
         switch (errorCode) {
             case Constant.ERROR_EMPTY_BRACKETS:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Empty Brackets");
+                messageString = new SpannableString("Empty Brackets");
                 break;
             case Constant.ERROR_MISTAKE_BRACKETS:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Bracket Mistake");
+                messageString = new SpannableString("Bracket Mistake");
                 break;
             case Constant.ERROR_MISTAKE_OPERATOR:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Operator Mistake");
+                messageString = new SpannableString("Operator Mistake");
                 break;
             case Constant.ERROR_MISTAKE_MATRIX:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Matrix Mistake");
+                messageString = new SpannableString("Matrix Mistake");
                 break;
             case Constant.ERROR_MISTAKE_DECIMAL:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Decimal Mistake");
+                messageString = new SpannableString("Decimal Mistake");
                 break;
             case Constant.ERROR_MISTAKE_TRANSPOSE:
-                ResultCardsController.resultCardsList.get(selectedCard).setMessage("Error Calculating Transpose");
+                messageString = new SpannableString("Error Calculating Transpose");
                 break;
         }
+        if(errorCode!=0) {
+            messageString.setSpan(new StyleSpan(Typeface.BOLD), 0, messageString.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
+            messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            ResultCardsController.resultCardsList.get(selectedCard).setMessage(messageString);
+        }
         ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(selectedCard);
     }
 }

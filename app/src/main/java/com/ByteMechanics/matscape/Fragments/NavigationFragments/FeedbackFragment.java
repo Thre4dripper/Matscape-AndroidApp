@@ -60,18 +60,9 @@ public class FeedbackFragment extends Fragment {
         mFeedbackField = view.findViewById(R.id.FeedbackField);
         mJoinButton = view.findViewById(R.id.FeedbackJoinButton);
 
-        handleFeedbackRadios();
         JoinTelegram();
         getFeedback();
         mSendButton.setOnClickListener(view1 -> sendFeedback());
-    }
-
-    /**
-     * ======================================== METHOD FOR HANDLING RADIO BUTTONS ==========================================
-     **/
-    public void handleFeedbackRadios() {
-        mBugRadio.setOnClickListener(view -> isFeedbackBackSafe = false);
-        mFeatureRadio.setOnClickListener(view -> isFeedbackBackSafe = false);
     }
 
     /**
