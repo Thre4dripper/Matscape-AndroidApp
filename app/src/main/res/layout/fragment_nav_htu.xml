@@ -31,19 +31,19 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:adjustViewBounds="true"
-                android:src="@raw/test1"
                 android:scaleType="centerInside"
+                android:src="@raw/test1"
                 tools:ignore="ContentDescription" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1- Delete Matrix\n2- Copy Matrix\n3- Sub Matrix\n4- Edit Matrix\n5- Rearrange Matrix Cards"
-                android:textStyle="bold"
-                android:lineSpacingExtra="5dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
-                android:textSize="16sp"/>
+                android:lineSpacingExtra="5dp"
+                android:text="1- Delete Matrix\n2- Copy Matrix\n3- Sub Matrix\n4- Edit Matrix\n5- Rearrange Matrix Cards"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <View
                 android:layout_width="match_parent"
@@ -57,19 +57,19 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:adjustViewBounds="true"
-                android:src="@raw/test2"
                 android:scaleType="centerInside"
+                android:src="@raw/test2"
                 tools:ignore="ContentDescription" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1- Add Result Card\n2- Add Result as Matrix\n3- Copy Card\n4- Delete Card\n5- Rearrange Result Cards"
-                android:textStyle="bold"
-                android:lineSpacingExtra="5dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
-                android:textSize="16sp"/>
+                android:lineSpacingExtra="5dp"
+                android:text="1- Add Result Card\n2- Add Result as Matrix\n3- Copy Card\n4- Delete Card\n5- Rearrange Result Cards"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <View
                 android:layout_width="match_parent"
@@ -82,24 +82,79 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="70dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="70dp"
                 android:layout_marginBottom="16dp"
                 android:adjustViewBounds="true"
-                android:src="@raw/test3"
                 android:scaleType="centerInside"
+                android:src="@raw/test3"
                 tools:ignore="ContentDescription" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1- Back\n2- Save\n3- Resize Matrix\n4- Rename Matrix\n5- Move Cell's Focus"
-                android:textStyle="bold"
-                android:lineSpacingExtra="5dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
-                android:textSize="16sp"/>
+                android:lineSpacingExtra="5dp"
+                android:text="1- Back\n2- Save\n3- Resize Matrix\n4- Rename Matrix\n5- Move Cell's Focus"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="?android:attr/listDivider" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="70dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="70dp"
+                android:layout_marginBottom="16dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:src="@raw/test4"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+                android:lineSpacingExtra="5dp"
+                android:text="1- Back\n2- Save\n3- Select Rows or Columns"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="?android:attr/listDivider" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:src="@raw/test5"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Note:- You can Enter Complex Expressions as nested as you want."
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <View
                 android:layout_width="match_parent"
