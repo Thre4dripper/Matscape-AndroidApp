@@ -12,12 +12,14 @@
         android:theme="@style/Theme.Matscape">
         <activity
             android:name="com.ByteMechanics.matscape.Activities.ChangeMatrixActivity"
+            android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
             android:name="com.ByteMechanics.matscape.Activities.NavigationActivity"
             android:exported="false" />
         <activity
             android:name="com.ByteMechanics.matscape.Activities.HomeActivity"
+            android:windowSoftInputMode="stateHidden"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
