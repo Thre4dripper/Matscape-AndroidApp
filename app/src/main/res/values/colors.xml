@@ -6,4 +6,5 @@
     <color name="blue_black">#263238</color>
     <color name="light_blue_black">#90A4AE</color>
     <color name="selected_card_color">#2196F3</color>
+    <color name="warning_color">#FFB74D</color>
 </resources>

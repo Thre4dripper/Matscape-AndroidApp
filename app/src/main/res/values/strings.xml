@@ -106,6 +106,34 @@
     <string name="text_join_telegram">Join Telegram Group</string>
     <string name="text_join">Join</string>
 
+    //for String Resources for Result cards Messages
+    //errors due to invalid expression
+    <string name="error_empty_brackets">Empty Brackets</string>
+    <string name="error_mistake_brackets">Bracket Mistake</string>
+    <string name="error_mistake_operator">Operator Mistake</string>
+    <string name="error_mistake_matrix">Matrix Mistake</string>
+    <string name="error_mistake_decimal">Decimal Mistake</string>
+    <string name="error_mistake_transpose">Error Calculating Transpose</string>
+
+    //errors due to logical mistakes
+    <string name="error_matrix_scalar_addition">Only Matrices can be Added in Matrices</string>
+    <string name="error_matrix_scalar_subtraction">Only Matrices can be Subtracted from Matrices</string>
+    <string name="error_incompatible_dimens">Matrices with Incompatible dimensions</string>
+    <string name="error_matrix_divide_singular">Considering Inverse of Divisor Matrix" +
+                        "\nSingular Matrices Do not Have Inverse</string>
+    <string name="warning_divisor_as_inverse">Considering Inverse of Divisor Matrix</string>
+    <string name="error_square_matrix_determinant">Only Square Matrices have a Determinant</string>
+    <string name="warning_1x1_determinant">Determinant of 1x1 matrix is element itself</string>
+    <string name="error_square_matrix_trace">Only Square Matrices have a Trace</string>
+    <string name="error_square_matrix_adjoint">Only Square Matrices have a Adjoint</string>
+    <string name="error_1x1_minor">1x1 Matrices do not have Minors</string>
+    <string name="error_square_matrix_minors">Only Square Matrices have a Minors</string>
+    <string name="error_1x1_cofactor">1x1 Matrices do not have Cofactors</string>
+    <string name="error_square_matrix_cofactors">Only Square Matrices have a Cofactors</string>
+    <string name="error_square_matrix_power">Power Only works on Square Matrices</string>
+    <string name="error_singular_matrix_inverse">Singular Matrices Do not Have Inverse</string>
+    <string name="error_no_matrix_found">Matrix \'%c\' does not Exist</string>
+
     //for About Section
     <string name="text_about_head_description">Description :</string>
     <string name="text_about_description"><b>Matscape</b> is a high performance Matrix Calculator.

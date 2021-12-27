@@ -1,5 +1,7 @@
 package com.ByteMechanics.matscape.Utils;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.ByteMechanics.matscape.Constants.Constant;
@@ -10,7 +12,7 @@ public class ExpressionChecker {
 
     private static final String TAG = "ExpressionChecker";
 
-    public static int finalExpressionCheck(String expression,int selectedCard) {
+    public static int finalExpressionCheck(Context context,String expression, int selectedCard) {
         String postfix;
 
         //variable for brackets error codes
@@ -106,7 +108,7 @@ public class ExpressionChecker {
             return Constant.ERROR_MISTAKE_MATRIX;
         }
 
-        ExpressionEvaluator.EvaluateExpression(postfix,selectedCard);
+        ExpressionEvaluator.EvaluateExpression(context,postfix,selectedCard);
         //all clear
         return 0;
     }

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 
 import com.ByteMechanics.matscape.Constants.Constant;
 import com.ByteMechanics.matscape.Controllers.ResultCardsController;
+import com.ByteMechanics.matscape.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,7 +199,7 @@ public class ExpressionBuilder {
         Log.d(TAG, "CalculationString: " + calculationString);
 
         if (!calculationString.isEmpty() && RETURN_CODE == 0) {
-            RETURN_CODE = ExpressionChecker.finalExpressionCheck(calculationString, selectedCard);
+            RETURN_CODE = ExpressionChecker.finalExpressionCheck(context,calculationString, selectedCard);
         }
         //clearing result when expression is empty
         else {
@@ -210,33 +211,33 @@ public class ExpressionBuilder {
             ExpressionEvaluator.setResult(null, selectedCard);
 
         //setting message view based on returned code
-        setErrorMessage(selectedCard, RETURN_CODE);
+        setErrorMessage(context,selectedCard, RETURN_CODE);
     }
 
     /**
      * ============================ METHOD FOR SETTING ERROR MESSAGE IN RESULT CARD ===============================
      **/
-    public static void setErrorMessage(int selectedCard, int errorCode) {
+    public static void setErrorMessage(Context context,int selectedCard, int errorCode) {
         SpannableString messageString=new SpannableString("");
 
         switch (errorCode) {
             case Constant.ERROR_EMPTY_BRACKETS:
-                messageString = new SpannableString("Empty Brackets");
+                messageString = new SpannableString(context.getString(R.string.error_empty_brackets));
                 break;
             case Constant.ERROR_MISTAKE_BRACKETS:
-                messageString = new SpannableString("Bracket Mistake");
+                messageString = new SpannableString(context.getString(R.string.error_mistake_brackets));
                 break;
             case Constant.ERROR_MISTAKE_OPERATOR:
-                messageString = new SpannableString("Operator Mistake");
+                messageString = new SpannableString(context.getString(R.string.error_mistake_operator));
                 break;
             case Constant.ERROR_MISTAKE_MATRIX:
-                messageString = new SpannableString("Matrix Mistake");
+                messageString = new SpannableString(context.getString(R.string.error_mistake_matrix));
                 break;
             case Constant.ERROR_MISTAKE_DECIMAL:
-                messageString = new SpannableString("Decimal Mistake");
+                messageString = new SpannableString(context.getString(R.string.error_mistake_decimal));
                 break;
             case Constant.ERROR_MISTAKE_TRANSPOSE:
-                messageString = new SpannableString("Error Calculating Transpose");
+                messageString = new SpannableString(context.getString(R.string.error_mistake_transpose));
                 break;
         }
         if(errorCode!=0) {

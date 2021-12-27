@@ -1,5 +1,6 @@
 package com.ByteMechanics.matscape.Utils;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.SpannableString;
@@ -10,10 +11,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.ByteMechanics.matscape.Constants.Constant;
 import com.ByteMechanics.matscape.Controllers.MatrixCardsController;
 import com.ByteMechanics.matscape.Controllers.ResultCardsController;
+import com.ByteMechanics.matscape.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,7 @@ public class ExpressionEvaluator {
     /**
      * ================================== MASTER FUNCTION FOR EVALUATING EXPRESSION =========================
      **/
-    public static void EvaluateExpression(@NonNull String postfixExpression, int selectedCard) {
+    public static void EvaluateExpression(Context context, @NonNull String postfixExpression, int selectedCard) {
         //resetting error code
         evaluationErrorCode = 0;
         Stack<List<List<String>>> stack = new Stack<>();
@@ -61,7 +64,7 @@ public class ExpressionEvaluator {
                 number.get(0).add(String.valueOf(currentChar));
                 stack.push(number);
             } else if (Character.isUpperCase(currentChar))
-                stack.push(getCurrentMatrix(currentChar));
+                stack.push(getCurrentMatrix(context, currentChar));
 
 
             else if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/' || currentChar == '^') {
@@ -289,7 +292,7 @@ public class ExpressionEvaluator {
         else setResult(null, selectedCard);
 
         //setting error message text based on result
-        setErrorsAndWarnings(selectedCard);
+        setErrorsAndWarnings(context, selectedCard);
     }
 
     /**
@@ -297,26 +300,19 @@ public class ExpressionEvaluator {
      **/
 
     @Nullable
-    public static List<List<String>> getCurrentMatrix(Character Name) {
+    public static List<List<String>> getCurrentMatrix(Context context, Character Name) {
 
         int matrixIndex = MatrixCardsController.matrixNamesList.indexOf(String.valueOf(Name));
         //receiving matrix by its index
         if (matrixIndex == -1) {
             evaluationErrorCode = Constant.ERROR_NO_MATRIX_FOUND;
-            messageString = new SpannableString("Matrix '" + Name + "' doesn't Exist");
+            messageString = new SpannableString(context.getString(R.string.error_no_matrix_found, Name));
             return null;
         }
         List<List<String>> receivedMatrix = MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
 
         //cloning original matrix, so that any changes doesn't reflect back
-        List<List<String>> clone = new ArrayList<>();
-        for (int i = 0; i < receivedMatrix.size(); i++) {
-            clone.add(new ArrayList<>());
-            for (int j = 0; j < receivedMatrix.get(0).size(); j++)
-                clone.get(i).add(receivedMatrix.get(i).get(j));
-
-        }
-        return clone;
+        return new ArrayList<>(receivedMatrix);
     }
 
     /**
@@ -372,99 +368,99 @@ public class ExpressionEvaluator {
 
     }
 
-    public static void setErrorsAndWarnings(int selectedCard) {
-        //TODO extract string resources
+    public static void setErrorsAndWarnings(Context context, int selectedCard) {
+
+        String warningColor = "#" + Integer.toHexString(ContextCompat.getColor(context, R.color.warning_color));
         switch (evaluationErrorCode) {
             case Constant.ERROR_MATRIX_SCALAR_ADDITION:
-                messageString = new SpannableString("Only Matrices can be Added in Matrices");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_matrix_scalar_addition));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 break;
             case Constant.ERROR_MATRIX_SCALAR_SUBTRACTION:
-                messageString = new SpannableString("Only Matrices can be Subtracted from Matrices");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_matrix_scalar_subtraction));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_INCOMPATIBLE_DIMENS:
-                messageString = new SpannableString("Matrices with Incompatible dimensions");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_incompatible_dimens));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_MATRIX_DIVIDE_SINGULAR:
-                messageString = new SpannableString("Considering Inverse of Divisor Matrix" +
-                        "\nSingular Matrices Do not Have Inverse");
+                messageString = new SpannableString(context.getString(R.string.error_matrix_divide_singular));
 
-                messageString.setSpan(new ForegroundColorSpan(Color.parseColor("#FFB74D")),0,38,
+                messageString.setSpan(new ForegroundColorSpan(Color.parseColor(warningColor)), 0, 38,
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),38,messageString.length(),
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 38, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.WARNING_DIVISOR_AS_INVERSE:
-                messageString = new SpannableString("Considering Inverse of Divisor Matrix");
-                messageString.setSpan(new ForegroundColorSpan(Color.parseColor("#FFB74D")),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.warning_divisor_as_inverse));
+                messageString.setSpan(new ForegroundColorSpan(Color.parseColor(warningColor)), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_SQUARE_MATRIX_DETERMINANT:
-                messageString = new SpannableString("Only Square Matrices have a Determinant");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_square_matrix_determinant));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.WARNING_1X1_DETERMINANT:
-                messageString = new SpannableString("Determinant of 1x1 matrix is element itself");
-                messageString.setSpan(new ForegroundColorSpan(Color.parseColor("#FFB74D")),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.warning_1x1_determinant));
+                messageString.setSpan(new ForegroundColorSpan(Color.parseColor(warningColor)), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_SQUARE_MATRIX_TRACE:
-                messageString = new SpannableString("Only Square Matrices have a Trace");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_square_matrix_trace));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_SQUARE_MATRIX_ADJOINT:
-                messageString = new SpannableString("Only Square Matrices have a Adjoint");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_square_matrix_adjoint));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_1X1_MINOR:
-                messageString = new SpannableString("1x1 Matrices do not have Minors");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_1x1_minor));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_SQUARE_MATRIX_MINORS:
-                messageString = new SpannableString("Only Square Matrices have a Minors");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_square_matrix_minors));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_1X1_COFACTOR:
-                messageString = new SpannableString("1x1 Matrices do not have Cofactors");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_1x1_cofactor));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_SQUARE_MATRIX_COFACTORS:
-                messageString = new SpannableString("Only Square Matrices have a Cofactors");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getText(R.string.error_square_matrix_cofactors));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_SQUARE_MATRIX_POWER:
-                messageString = new SpannableString("Power Only works on Square Matrices");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_square_matrix_power));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
             case Constant.ERROR_SINGULAR_MATRIX_INVERSE:
-                messageString = new SpannableString("Singular Matrices Do not Have Inverse");
-                messageString.setSpan(new ForegroundColorSpan(Color.RED),0,messageString.length(),
+                messageString = new SpannableString(context.getString(R.string.error_singular_matrix_inverse));
+                messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
                 break;
@@ -472,7 +468,7 @@ public class ExpressionEvaluator {
             case 0:
                 messageString = new SpannableString("");
         }
-        messageString.setSpan(new StyleSpan(Typeface.BOLD),0,messageString.length(),
+        messageString.setSpan(new StyleSpan(Typeface.BOLD), 0, messageString.length(),
                 Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         ResultCardsController.resultCardsList.get(selectedCard).setMessage(messageString);
     }
