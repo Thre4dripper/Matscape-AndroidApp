@@ -32,7 +32,7 @@
                 android:layout_margin="16dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerInside"
-                android:src="@raw/test1"
+                android:src="@raw/htu_ss1"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -58,7 +58,7 @@
                 android:layout_margin="16dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerInside"
-                android:src="@raw/test2"
+                android:src="@raw/htu_ss2"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -88,7 +88,7 @@
                 android:layout_marginBottom="16dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerInside"
-                android:src="@raw/test3"
+                android:src="@raw/htu_ss3"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -117,7 +117,7 @@
                 android:layout_marginBottom="16dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerInside"
-                android:src="@raw/test4"
+                android:src="@raw/htu_ss4"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -143,7 +143,7 @@
                 android:layout_margin="16dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerInside"
-                android:src="@raw/test5"
+                android:src="@raw/htu_ss5"
                 tools:ignore="ContentDescription" />
 
             <TextView

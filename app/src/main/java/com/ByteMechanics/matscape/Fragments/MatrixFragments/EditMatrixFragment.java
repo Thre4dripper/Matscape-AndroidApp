@@ -1,6 +1,8 @@
 package com.ByteMechanics.matscape.Fragments.MatrixFragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -34,10 +37,10 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     private static final String TAG = "EditMatrixFragment";
     //boolean for checking changed information before returning back
     public static boolean isEditMatrixBackSafe = true;
+    public static CardView editNumpadCardView;
     protected static int rows, columns;
     protected static int matrixCardIndex;
     protected static String currentMatrixName;
-
     //UI Elements
     static TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
     static TextInputEditText[][] matrixFields = new TextInputEditText[5][5];
@@ -45,16 +48,19 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     private ImageView numpadUp, numpadDown, numpadLeft, numpadRight, numpadBackSpace;
     private AutoCompleteTextView mNamesSpinner;
     private Slider mRowsSlider, mColumnsSlider;
-    //TODO numpad visibility will be controlled by this
-    public static CardView editNumpadCardView;
-
     //Local variables for manipulating matrix element Focus
-    private int currentRow=-1, currentColumn=-1;
+    private int currentRow = -1, currentColumn = -1;
 
     //CONSTRUCTOR
     public EditMatrixFragment(int matrixCardIndex) {
         EditMatrixFragment.matrixCardIndex = matrixCardIndex;
         EditMatrixFragment.isEditMatrixBackSafe = true;
+
+        //showing numpad after a delay and a message for numpad functionality
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            editNumpadCardView.setVisibility(View.VISIBLE);
+            Toast.makeText(requireContext(), "Press Back to Hide Numpad", Toast.LENGTH_SHORT).show();
+        }, 1500);
     }
 
     /**
@@ -148,9 +154,9 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
          */
         //TODO simplify this log
         MatrixCardsController.matrixNamesList.remove(currentMatrixName);
-        MatrixCardsController.matrixNamesList.add(matrixCardIndex,MatrixCardsController.remainingMatrixNamesList.get(i));
+        MatrixCardsController.matrixNamesList.add(matrixCardIndex, MatrixCardsController.remainingMatrixNamesList.get(i));
 
-        Log.d(TAG, "onItemClick: "+MatrixCardsController.matrixNamesList);
+        Log.d(TAG, "onItemClick: " + MatrixCardsController.matrixNamesList);
         MatrixCardsController.remainingMatrixNamesList.remove(i);
         MatrixCardsController.remainingMatrixNamesList.add(currentMatrixName);
 
@@ -176,8 +182,8 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         //matrix size changed
         isEditMatrixBackSafe = false;
 
-        if(slider== mRowsSlider)rows=(int) value;
-        else if(slider== mColumnsSlider)columns=(int) value;
+        if (slider == mRowsSlider) rows = (int) value;
+        else if (slider == mColumnsSlider) columns = (int) value;
 
         changeMatrixSize();
     }
@@ -189,7 +195,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     public void onClick(View view) {
 
         //sending on Clicks of MatrixFields
-        onFocusChange(view,true);
+        onFocusChange(view, true);
         if (view == numpadUp) {
             currentRow--;
             moveFocus();
@@ -205,7 +211,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         }
 
         //Any field must be focused (these values 0..4) for numpad click, other wise app will crash
-        else if(currentRow!=-1 && currentColumn!=-1){
+        else if (currentRow != -1 && currentColumn != -1) {
             //matrix elements changed
             isEditMatrixBackSafe = false;
 
@@ -459,7 +465,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     public void moveFocus() {
 
         //when nothing is selected , first field should be selected for right and down key
-        if((currentRow==-1 && currentColumn==0) || (currentRow==0 && currentColumn==-1))
+        if ((currentRow == -1 && currentColumn == 0) || (currentRow == 0 && currentColumn == -1))
             matrixFieldLayouts[0][0].requestFocus();
 
         //these conditions will also take care of the collision of above condition

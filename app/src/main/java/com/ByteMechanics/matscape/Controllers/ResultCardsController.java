@@ -469,7 +469,8 @@ public class ResultCardsController {
                 isPower = calculationString.charAt(i - 1) == '^';
         }
 
-        boolean isBracket = cursorPosition > 0 && expression.charAt(cursorPosition - 1) == ')';
+        //auto put multiply only when power button not pressed
+        boolean isBracket = cursorPosition > 0 && expression.charAt(cursorPosition - 1) == ')' && !isNthPowerButtonPressed;
 
         //auto put multiply only when power button not pressed
         boolean isMatrixName = cursorPosition > 0 && Character.isUpperCase(expression.charAt(cursorPosition - 1)) && !isNthPowerButtonPressed;
