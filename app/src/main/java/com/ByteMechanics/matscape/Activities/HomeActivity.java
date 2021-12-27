@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
@@ -82,6 +83,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         InitResultCardsRecyclerView();
 
         InitHomeKeyboard();
+
+        //preventing app from dark mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
     }
 
     /**
@@ -248,7 +252,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if (MatrixCardsController.matrixCardCounter != 0)
                 mMatrixCardsHintLayout.setVisibility(View.GONE);
         } else if (addResultCardsButton.equals(view)) {
-            ResultCardsController.addResultCards(
+            ResultCardsController.addResultCards(this,
                     ResultCardsController.resultCardCounter,
                     null,
                     mResultCardsRecyclerView);
@@ -346,7 +350,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void copyResult(int position) {
         ResultCards resultCard = ResultCardsController.resultCardsList.get(position);
-        ResultCardsController.addResultCards(position + 1, resultCard, mResultCardsRecyclerView);
+        ResultCardsController.addResultCards(this,position + 1, resultCard, mResultCardsRecyclerView);
     }
 
     @Override

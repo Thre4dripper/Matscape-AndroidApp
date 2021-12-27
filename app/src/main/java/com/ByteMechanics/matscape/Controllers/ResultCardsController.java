@@ -11,12 +11,14 @@ import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ByteMechanics.matscape.Activities.HomeActivity;
 import com.ByteMechanics.matscape.Adapters.ResultCardsRecyclerAdapter;
 import com.ByteMechanics.matscape.Constants.Constant;
+import com.ByteMechanics.matscape.R;
 import com.ByteMechanics.matscape.Utils.ExpressionBuilder;
 import com.ByteMechanics.matscape.models.ResultCards;
 
@@ -76,7 +78,7 @@ public class ResultCardsController {
     /**
      * ================================================== ADDING RESULT CARDS ====================================================
      **/
-    public static void addResultCards(int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView) {
+    public static void addResultCards(Context context,int position, ResultCards receivedCard, @NonNull RecyclerView resultCardsRecyclerView) {
 
         SpannableStringBuilder expression = new SpannableStringBuilder("");
         int cursorPosition=0;
@@ -86,7 +88,9 @@ public class ResultCardsController {
         List<List<String>> matrix = null;
         int rows = 0, columns = 0;
 
-        String highlightedColor=resultCardCounter==0?"#2196F3":"#FFFFFF";
+        String highlightedColor=resultCardCounter==0?
+                "#"+Integer.toHexString(ContextCompat.getColor(context,R.color.selected_card_color)) :
+                "#"+Integer.toHexString(ContextCompat.getColor(context,R.color.white));
 
         if (receivedCard != null) {
             expression = receivedCard.getExpressionString();

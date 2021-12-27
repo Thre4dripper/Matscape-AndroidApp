@@ -13,7 +13,7 @@
         android:layout_margin="16dp"
         android:text="@string/default_matrix_heading"
         android:textColor="@color/blue_black"
-        android:textSize="24sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -222,7 +222,7 @@
         android:layout_margin="16dp"
         android:text="@string/default_matrix_type"
         android:textColor="@color/blue_black"
-        android:textSize="24sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Heading1DividerHeading2" />

@@ -149,6 +149,7 @@
         <item name="android:layout_height">40dp</item>
         <item name="android:padding">10dp</item>
         <item name="srcCompat">@drawable/ic_nav_default_matrix_prev</item>
+        <item name="android:tint">@color/blue_black</item>
     </style>
 
     //for About TextViews
