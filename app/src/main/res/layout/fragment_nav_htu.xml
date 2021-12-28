@@ -41,7 +41,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
                 android:lineSpacingExtra="5dp"
-                android:text="1- Delete Matrix\n2- Copy Matrix\n3- Sub Matrix\n4- Edit Matrix\n5- Rearrange Matrix Cards"
+                android:text="@string/htu_1"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -67,7 +67,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
                 android:lineSpacingExtra="5dp"
-                android:text="1- Add Result Card\n2- Add Result as Matrix\n3- Copy Card\n4- Delete Card\n5- Rearrange Result Cards"
+                android:text="@string/htu_2"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -97,7 +97,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
                 android:lineSpacingExtra="5dp"
-                android:text="1- Back\n2- Save\n3- Resize Matrix\n4- Rename Matrix\n5- Move Cell's Focus"
+                android:text="@string/htu_3"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -126,7 +126,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
                 android:lineSpacingExtra="5dp"
-                android:text="1- Back\n2- Save\n3- Select Rows or Columns"
+                android:text="@string/htu_4"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -152,7 +152,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
                 android:lineSpacingExtra="5dp"
-                android:text="Note:- You can Enter Complex Expressions as nested as you want."
+                android:text="@string/htu_5"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

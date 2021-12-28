@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    //for navigation menu items
+    <string name="action_settings">Настройки</string>
+    <string name="action_htu">Как пользоваться</string>
+    <string name="action_feedback">Обратная связь</string>
+    <string name="action_about">около</string>
+
+    //home page imageViews content descriptions
+    <string name="desc_add_matrix">Добавить матрицу</string>
+    <string name="desc_add_result">Добавить карточку результата</string>
+    <string name="desc_settings_result">Настройки карты результатов</string>
+
+
+    //for matrix cards
+    <string name="desc_delete_matrix">Удалить матрицу</string>
+    <string name="desc_copy_matrix">Копировать матрицу</string>
+    <string name="desc_edit_matrix">Изменить матрицу</string>
+    <string name="desc_sub_matrix">Создать подматрицу</string>
+    <string name="text_tap">Кран</string>
+    <string name="text_to_add_matrices">добавить матрицы</string>
+
+    //for result cards
+    <string name="desc_drag_result">Ручка перетаскивания карты результатов</string>
+    <string name="desc_delete_result">Удалить этот результат</string>
+    <string name="placeholder_result_msg">Message</string>
+    <string name="desc_copy_result">Сообщение</string>
+    <string name="desc_add_result_matrix">Добавить карточку результата как новую матрицу</string>
+    <string name="hint_result_field">Нажмите на матричные карты</string>
+
+    //for ChangeMatrix Activity
+    <string name="desc_back">Возвращаться</string>
+    <string name="desc_save">Сохранить изменения</string>
+    <string name="text_edit_matrix">Редактировать матрицу</string>
+    <string name="text_sub_matrix">Подматрица</string>
+
+    //for EditMatrixFragment
+    <string name="hint_spinner">Имя</string>
+    <string name="text_rows">Рядов</string>
+    <string name="text_columns">Столбцы</string>
+
+    //for EditMatrixFragment Numpad
+    <string name="desc_edit_keyboard_focus_up">Переместить фокус ВВЕРХ</string>
+    <string name="desc_edit_keyboard_focus_down">Переместить фокус ВНИЗ</string>
+    <string name="desc_edit_keyboard_focus_right">Переместить фокус ВПРАВО</string>
+    <string name="desc_edit_keyboard_focus_left">Переместить фокус ВЛЕВО</string>
+
+    //for HomePage Keyboard
+    <string name="desc_move_cursor_left">Переместить курсор влево</string>
+    <string name="desc_move_cursor_right">Переместить курсор вправо</string>
+
+    //for Both EditMatrixFragment and Home Numpad
+    <string name="desc_keyboard_backspace">BackSpace</string>
+
+    //for How to Use Section
+    <string name="htu_1">1- Удалить матрицу \n2- Копировать матрицу \n3- Подматрица \n4- Редактировать матрицу \n5- Переупорядочить карты матрицы</string>
+    <string name="htu_2">1- Добавить карту результата \n2- Добавить результат как матрицу \n3- Копировать карту \n4- Удалить карту \n5- Переставить карты результатов</string>
+    <string name="htu_3">1- Назад \n2- Сохранить \n3- Изменить размер матрицы \n4- Переименовать матрицу \n5- Переместить фокус ячейки</string>
+    <string name="htu_4">1- Назад \n2- Сохранить \n3- Выбрать строки или столбцы</string>
+    <string name="htu_5">Примечание: - Вы можете вводить сложные выражения с любой степенью вложенности.</string>
+
+    //for App Settings
+    <string name="default_matrix_heading">Размер матрицы по умолчанию</string>
+    <string name="default_matrix_type">Тип матрицы по умолчанию</string>
+    <string name="text_null_matrices">Нулевые матрицы</string>
+    <string name="text_identity_matrices">Матрицы идентичности</string>
+
+    //for Feedback Section
+    <string name="text_report_bug">Ошибка</string>
+    <string name="text_request_feature">Особенность</string>
+    <string name="hint_feedback">Обратная связь</string>
+    <string name="text_OR">ИЛИ</string>
+    <string name="text_join_telegram">Присоединяйтесь к группе Telegram</string>
+    <string name="text_join">Присоединиться</string>
+
+    //for String Resources for Result cards Messages
+    //errors due to invalid expression
+    <string name="error_empty_brackets">Пустые скобки</string>
+    <string name="error_mistake_brackets">Ошибка кронштейна</string>
+    <string name="error_mistake_operator">Ошибка оператора</string>
+    <string name="error_mistake_matrix">Матричная ошибка</string>
+    <string name="error_mistake_decimal">Десятичная ошибка</string>
+    <string name="error_mistake_transpose">Ошибка при вычислении транспонирования</string>
+
+    //errors due to logical mistakes
+    <string name="error_matrix_scalar_addition">В матрицы можно добавлять только матрицы</string>
+    <string name="error_matrix_scalar_subtraction">Из матриц можно вычитать только матрицы</string>
+    <string name="error_incompatible_dimens">Матрицы с несовместимыми размерами</string>
+    <string name="error_matrix_divide_singular">Учитывая обратную матрицу делителей "+
+                        "\ nСингулярные матрицы не имеют обратных</string>
+    <string name="warning_divisor_as_inverse">Учет обратной матрицы делителей</string>
+    <string name="error_square_matrix_determinant">Только квадратные матрицы имеют определитель</string>
+    <string name="warning_1x1_determinant">Определитель матрицы 1x1 - это сам элемент</string>
+    <string name="error_square_matrix_trace">Только квадратные матрицы имеют след</string>
+    <string name="error_square_matrix_adjoint">Только квадратные матрицы имеют сопряженный</string>
+    <string name="error_1x1_minor">Матрицы 1x1 не имеют миноров</string>
+    <string name="error_square_matrix_minors">Только квадратные матрицы имеют миноры</string>
+    <string name="error_1x1_cofactor">Матрицы 1x1 не имеют кофакторов</string>
+    <string name="error_square_matrix_cofactors">Только квадратные матрицы имеют кофакторы</string>
+    <string name="error_square_matrix_power">Power работает только с квадратными матрицами</string>
+    <string name="error_singular_matrix_inverse">Сингулярные матрицы не имеют обратных</string>
+    <string name="error_no_matrix_found">Матрица \'% c \' не существует</string>
+
+    //for About Section
+    <string name="text_about_head_description">Description :</string>
+    <string name="text_about_description"><b>Matscape</b> is a high performance Matrix Calculator.
+        It can Evaluate simple as well as complex nested Expressions.
+        It has the ability to store multiple matrices so you can work on several matrices at the same time.
+    </string>
+    <string name="text_about_head_features">Features:</string>
+    <string name="text_about_feature1"><b>Multiple Matrices:</b> You can work with Multiple Matrices from A to Z at the same time
+        with Matrices of any dimensions. The size of the displayed Matrix will depend on your input.
+    </string>
+    <string name="text_about_feature2"><b>Multiple Outputs:</b> You can enter as many expressions as you want without any limit.
+        And there is also no limit on how nested you want your expressions.
+        Just make sure you enter valid expressions.
+        In case you have entered something Wrong or Invalid ,
+        the result cards will automatically display a message based on your mistake for better understanding.
+    </string>
+    <string name="text_about_feature3"><b>Matrix Operations:</b> There are a variety of different Matrix Operations you can play with like
+        <b>Determinant</b>,<b>Transpose</b>, <b>Power</b>, <b>Trace</b>, <b>Adjoint</b>, <b>Inverse</b>
+        and many more coming in Future Updates.
+    </string>
+    <string name="text_about_feature4"><b>Matrix Navigation:</b> When entering Matrix values, you can easily navigate between them</string>
+    <string name="text_about_feature5"><b>Matrix Laws:</b> Matscape Calculator fully obeys each and every matrix law like
+        A[k]=kA[], A|k|=kⁿA||, Inv(A)A=AInv(A)=I
+    </string>
+    <string name="text_about_feature6"><b>Numerical Calculator:</b> Matscape also have an Inbuilt Numerical Calculator,
+        so you don\'t have to go anywhere while doing Normal calculations also.
+    </string>
+    <string name="text_about_feature7"><b>Offline:</b> No Internet Required.</string>
+    <string name="TOS_PP">Terms of Service | Privacy Policy</string>
+</resources>

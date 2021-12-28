@@ -242,14 +242,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/null_matrices" />
+            android:text="@string/text_null_matrices" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/IdentityMatrixRadio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/identity_matrices" />
+            android:text="@string/text_identity_matrices" />
 
     </RadioGroup>
 

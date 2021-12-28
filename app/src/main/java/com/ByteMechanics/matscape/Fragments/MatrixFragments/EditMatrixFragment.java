@@ -33,6 +33,7 @@ import java.util.Objects;
 public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener,
         AdapterView.OnItemClickListener, Slider.OnChangeListener, View.OnClickListener {
 
+    //TODO fix only '.' and '-' in matrix field issue
     private static final String TAG = "EditMatrixFragment";
     //boolean for checking changed information before returning back
     public static boolean isEditMatrixBackSafe = true;

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Matscape</string>
 
-    //for homepage navigation drawer
+    //req Strings for homepage navigation drawer
     <string name="open" translatable="false">Open</string>
     <string name="close" translatable="false">Close</string>
 
@@ -14,12 +14,12 @@
     //home page imageViews content descriptions
     <string name="desc_add_matrix">Add Matrix</string>
     <string name="desc_add_result">Add Result Card</string>
-    <string name="desc_settings_result">Result Cards Settings</string>
+    <string name="desc_settings_result">Result Card Settings</string>
 
 
     //for matrix cards
-    <string name="placeholder_matrix_name">A</string>
-    <string name="placeholder_matrix_text">0</string>
+    <string name="placeholder_matrix_name" translatable="false">A</string>
+    <string name="placeholder_matrix_text" translatable="false">0</string>
     <string name="desc_delete_matrix">Delete matrix</string>
     <string name="desc_copy_matrix">Copy matrix</string>
     <string name="desc_edit_matrix">Edit matrix</string>
@@ -34,7 +34,6 @@
     <string name="desc_copy_result">Copy Result Card</string>
     <string name="desc_add_result_matrix">Add result card as new Matrix</string>
     <string name="hint_result_field">Tap on Matrix Cards</string>
-    <string name="text_to_add_result_cards">to Add Result Cards</string>
 
     //for ChangeMatrix Activity
     <string name="desc_back">Go Back</string>
@@ -43,10 +42,10 @@
     <string name="text_sub_matrix">Sub Matrix</string>
 
     //for EditMatrixFragment
-    <string name="hint_textInputLayout">0</string>
+    <string name="hint_textInputLayout" translatable="false">0</string>
     <string name="hint_spinner">Name</string>
-    <string name="text_plus">+</string>
-    <string name="text_minus">-</string>
+    <string name="text_plus" translatable="false">+</string>
+    <string name="text_minus" translatable="false">-</string>
     <string name="text_rows">Rows</string>
     <string name="text_columns">Columns</string>
 
@@ -57,46 +56,53 @@
     <string name="desc_edit_keyboard_focus_left">Move Focus LEFT</string>
 
     ////for HomePage Keyboard
-    <string name="home_keyboard_determinant">|A|</string>
-    <string name="home_keyboard_transpose">A<sup><small>T</small></sup></string>
-    <string name="home_keyboard_square">A<sup><small>2</small></sup></string>
-    <string name="home_keyboard_cube">A<sup><small>3</small></sup></string>
-    <string name="home_keyboard_nth_power">A<sup><small>n</small></sup></string>
-    <string name="home_keyboard_inverse">A<sup><small>-1</small></sup></string>
-    <string name="home_keyboard_trace">trc</string>
-    <string name="home_keyboard_adjoint">Adj</string>
-    <string name="home_keyboard_minors">minors</string>
-    <string name="home_keyboard_cofactors">Co-fac</string>
+    <string name="home_keyboard_determinant" translatable="false">|A|</string>
+    <string name="home_keyboard_transpose" translatable="false">A<sup><small>T</small></sup></string>
+    <string name="home_keyboard_square" translatable="false">A<sup><small>2</small></sup></string>
+    <string name="home_keyboard_cube" translatable="false">A<sup><small>3</small></sup></string>
+    <string name="home_keyboard_nth_power" translatable="false">A<sup><small>n</small></sup></string>
+    <string name="home_keyboard_inverse" translatable="false">A<sup><small>-1</small></sup></string>
+    <string name="home_keyboard_trace" translatable="false">Trc</string>
+    <string name="home_keyboard_adjoint" translatable="false">Adj</string>
+    <string name="home_keyboard_minors" translatable="false">Minors</string>
+    <string name="home_keyboard_cofactors" translatable="false">Co-fac</string>
 
-    <string name="home_numpad_multiply">X</string>
-    <string name="home_numpad_divide">÷</string>
-    <string name="home_numpad_add">+</string>
-    <string name="home_keyboard_bracket_open">(</string>
-    <string name="home_keyboard_bracket_close">)</string>
+    <string name="home_numpad_multiply" translatable="false">X</string>
+    <string name="home_numpad_divide" translatable="false">÷</string>
+    <string name="home_numpad_add" translatable="false">+</string>
+    <string name="home_keyboard_bracket_open" translatable="false">(</string>
+    <string name="home_keyboard_bracket_close" translatable="false">)</string>
 
     <string name="desc_move_cursor_left">Move Cursor Left</string>
     <string name="desc_move_cursor_right">Move Cursor Right</string>
 
     //for Both EditMatrixFragment and Home Numpad
-    <string name="numpad1">1</string>
-    <string name="numpad2">2</string>
-    <string name="numpad3">3</string>
-    <string name="numpad4">4</string>
-    <string name="numpad5">5</string>
-    <string name="numpad6">6</string>
-    <string name="numpad7">7</string>
-    <string name="numpad8">8</string>
-    <string name="numpad9">9</string>
-    <string name="numpad0">0</string>
-    <string name="numpadDot">.</string>
-    <string name="numpadMinus">‒</string>
+    <string name="numpad1" translatable="false">1</string>
+    <string name="numpad2" translatable="false">2</string>
+    <string name="numpad3" translatable="false">3</string>
+    <string name="numpad4" translatable="false">4</string>
+    <string name="numpad5" translatable="false">5</string>
+    <string name="numpad6" translatable="false">6</string>
+    <string name="numpad7" translatable="false">7</string>
+    <string name="numpad8" translatable="false">8</string>
+    <string name="numpad9" translatable="false">9</string>
+    <string name="numpad0" translatable="false">0</string>
+    <string name="numpadDot" translatable="false">.</string>
+    <string name="numpadMinus" translatable="false">‒</string>
     <string name="desc_keyboard_backspace">BackSpace</string>
+
+    //for How to Use Section
+    <string name="htu_1">1- Delete Matrix\n2- Copy Matrix\n3- Sub Matrix\n4- Edit Matrix\n5- Rearrange Matrix Cards</string>
+    <string name="htu_2">1- Add Result Card\n2- Add Result as Matrix\n3- Copy Card\n4- Delete Card\n5- Rearrange Result Cards</string>
+    <string name="htu_3">1- Back\n2- Save\n3- Resize Matrix\n4- Rename Matrix\n5- Move Cell\'s Focus</string>
+    <string name="htu_4">1- Back\n2- Save\n3- Select Rows or Columns</string>
+    <string name="htu_5">Note:- You can Enter Complex Expressions as nested as you want.</string>
 
     //for App Settings
     <string name="default_matrix_heading">Default Matrix Size</string>
     <string name="default_matrix_type">Default Matrix Type</string>
-    <string name="null_matrices">Null Matrices</string>
-    <string name="identity_matrices">Identity Matrices</string>
+    <string name="text_null_matrices">Null Matrices</string>
+    <string name="text_identity_matrices">Identity Matrices</string>
 
     //for Feedback Section
     <string name="text_report_bug">Bug</string>
