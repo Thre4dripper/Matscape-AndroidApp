@@ -306,6 +306,8 @@ public class ExpressionEvaluator {
         if (matrixIndex == -1) {
             evaluationErrorCode = Constant.ERROR_NO_MATRIX_FOUND;
             messageString = new SpannableString(context.getString(R.string.error_no_matrix_found, Name));
+            messageString.setSpan(new ForegroundColorSpan(Color.RED), 0, messageString.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             return null;
         }
         List<List<String>> receivedMatrix = MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();

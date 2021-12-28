@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -251,6 +252,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             //hiding hint layout
             if (MatrixCardsController.matrixCardCounter != 0)
                 mMatrixCardsHintLayout.setVisibility(View.GONE);
+
+            //updating result cards
+            ResultCardsController.HomeKeyboardInputControl(this,new EditText(this),null);
+
         } else if (addResultCardsButton.equals(view)) {
             ResultCardsController.addResultCards(this,
                     ResultCardsController.resultCardCounter,
@@ -285,6 +290,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             //showing hint layout
             if (MatrixCardsController.matrixCardCounter == 0)
                 new Handler(Looper.getMainLooper()).postDelayed(() -> mMatrixCardsHintLayout.setVisibility(View.VISIBLE), 200);
+
+            //updating result cards
+            ResultCardsController.HomeKeyboardInputControl(this,new EditText(this),null);
         }
     }
 
