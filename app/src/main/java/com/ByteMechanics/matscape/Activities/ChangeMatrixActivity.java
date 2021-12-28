@@ -3,6 +3,7 @@ package com.ByteMechanics.matscape.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.ByteMechanics.matscape.Constants.Constant;
+import com.ByteMechanics.matscape.Controllers.ResultCardsController;
 import com.ByteMechanics.matscape.Fragments.MatrixFragments.EditMatrixFragment;
 import com.ByteMechanics.matscape.Fragments.MatrixFragments.SubMatrixFragment;
 import com.ByteMechanics.matscape.R;
@@ -95,7 +97,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
      * ======================================= METHOD FOR HANDLING EDIT MATRIX BACK =======================================
      **/
     public void EditMatrixBack() {
-            //firstly Numpad will hide on back press
+        //firstly Numpad will hide on back press
         if (EditMatrixFragment.editNumpadCardView.getVisibility() == View.VISIBLE)
             EditMatrixFragment.editNumpadCardView.setVisibility(View.GONE);
 
@@ -125,6 +127,8 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
                 .setMessage("Save Changes")
                 .setPositiveButton("Yes", (dialogInterface, i) -> {
                     EditMatrixFragment.SaveMatrix();
+                    //updating result on matrix changes
+                    ResultCardsController.HomeKeyboardInputControl(this, new EditText(this), null);
                     ChangeMatrixActivity.super.onBackPressed();
                 })
                 .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
@@ -159,6 +163,8 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
                 .setMessage("Save Changes")
                 .setPositiveButton("Yes", (dialogInterface, i) -> {
                     SubMatrixFragment.SaveMatrix();
+                    //updating result on matrix changes
+                    ResultCardsController.HomeKeyboardInputControl(this, new EditText(this), null);
                     ChangeMatrixActivity.super.onBackPressed();
                 })
                 .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())

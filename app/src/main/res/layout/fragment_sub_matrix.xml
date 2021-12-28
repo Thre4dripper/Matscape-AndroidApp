@@ -10,7 +10,7 @@
         android:id="@+id/horizontalScrollView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="22dp"
         android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@+id/SubMatrixGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
@@ -466,5 +466,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="380dp" />
+        app:layout_constraintGuide_begin="400dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
