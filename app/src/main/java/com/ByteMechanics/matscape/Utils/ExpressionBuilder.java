@@ -174,14 +174,15 @@ public class ExpressionBuilder {
             transposeIndex = calculationString.indexOf("^", i);
             if (transposeIndex != -1) {
                 i += 2;
-
+                char currentChar;
                 //for detecting +,- and T in power
                 int flag1 = 0, flag2 = 0;
                 while (calculationString.charAt(i) != ')') {
+                    currentChar=calculationString.charAt(i);
 
-                    if ((calculationString.charAt(i) == '+' || calculationString.charAt(i) == '-'))
+                    if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/')
                         flag1 = 1;
-                    if (calculationString.charAt(i) == 'T') {
+                    if (currentChar == 'T') {
                         calculationString = calculationString.substring(0, i) + "|" + calculationString.substring(i + 1);
                         flag2 = 1;
                     }
@@ -199,7 +200,7 @@ public class ExpressionBuilder {
         Log.d(TAG, "CalculationString: " + calculationString);
 
         if (!calculationString.isEmpty() && RETURN_CODE == 0) {
-            RETURN_CODE = ExpressionChecker.finalExpressionCheck(context,calculationString, selectedCard);
+            RETURN_CODE = ExpressionChecker.finalExpressionCheck(context, calculationString, selectedCard);
         }
         //clearing result when expression is empty
         else {
@@ -211,14 +212,14 @@ public class ExpressionBuilder {
             ExpressionEvaluator.setResult(null, selectedCard);
 
         //setting message view based on returned code
-        setErrorMessage(context,selectedCard, RETURN_CODE);
+        setErrorMessage(context, selectedCard, RETURN_CODE);
     }
 
     /**
      * ============================ METHOD FOR SETTING ERROR MESSAGE IN RESULT CARD ===============================
      **/
-    public static void setErrorMessage(Context context,int selectedCard, int errorCode) {
-        SpannableString messageString=new SpannableString("");
+    public static void setErrorMessage(Context context, int selectedCard, int errorCode) {
+        SpannableString messageString = new SpannableString("");
 
         switch (errorCode) {
             case Constant.ERROR_EMPTY_BRACKETS:
@@ -240,7 +241,7 @@ public class ExpressionBuilder {
                 messageString = new SpannableString(context.getString(R.string.error_mistake_transpose));
                 break;
         }
-        if(errorCode!=0) {
+        if (errorCode != 0) {
             messageString.setSpan(new StyleSpan(Typeface.BOLD), 0, messageString.length(),
                     Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
