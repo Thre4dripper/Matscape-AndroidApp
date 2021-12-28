@@ -1,7 +1,6 @@
 package com.ByteMechanics.matscape.Controllers;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,8 +26,8 @@ public class MatrixCardsController {
     public static int matrixCardCounter = 0;
 
     //this list is accessed by edit matrix name spinner
-    public static List<String> remainingMatrixNamesList = new ArrayList<>();
-    public static List<String> matrixNamesList = new ArrayList<>();
+    public static List<String> remainingNamesList = new ArrayList<>();
+    public static List<String> NamesList = new ArrayList<>();
 
     /**
      * ===================================== CALLBACK FOR DRAGGING MATRIX CARDS ===========================================
@@ -49,7 +48,7 @@ public class MatrixCardsController {
             int toPosition = target.getAdapterPosition();
 
             Collections.swap(MatrixCardsController.matrixCardsList, fromPosition, toPosition);
-            Collections.swap(MatrixCardsController.matrixNamesList, fromPosition, toPosition);
+            Collections.swap(MatrixCardsController.NamesList, fromPosition, toPosition);
             mMatrixCardsRecyclerAdapter.notifyItemMoved(fromPosition, toPosition);
 
             return true;
@@ -100,16 +99,16 @@ public class MatrixCardsController {
                     }
             }
 
-            Collections.sort(remainingMatrixNamesList);
-            matrixCardsList.add(position, new MatrixCards(remainingMatrixNamesList.get(0),
+            Collections.sort(remainingNamesList);
+            matrixCardsList.add(position, new MatrixCards(remainingNamesList.get(0),
                     matrix,
                     rows,
                     columns,
                     matrixCardsRecyclerView.getHeight()
             ));
 
-            matrixNamesList.add(remainingMatrixNamesList.get(0));
-            remainingMatrixNamesList.remove(0);
+            NamesList.add(remainingNamesList.get(0));
+            remainingNamesList.remove(0);
 
             mMatrixCardsRecyclerAdapter.notifyItemInserted(position);
 
@@ -121,6 +120,6 @@ public class MatrixCardsController {
 
     public static void setMatrixNamesList() {
         for (int i = 0; i < 26; i++)
-            remainingMatrixNamesList.add(String.valueOf((char) (i + 65)));
+            remainingNamesList.add(String.valueOf((char) (i + 65)));
     }
 }

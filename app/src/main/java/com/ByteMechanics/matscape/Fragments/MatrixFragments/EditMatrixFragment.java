@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +37,11 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     //boolean for checking changed information before returning back
     public static boolean isEditMatrixBackSafe = true;
     public static CardView editNumpadCardView;
+    //matrix properties
     protected static int rows, columns;
     protected static int matrixCardIndex;
+    protected static List<String> namesListClone;
+    protected static List<String> remainingNamesListClone;
     protected static String currentMatrixName;
     //UI Elements
     static TextInputLayout[][] matrixFieldLayouts = new TextInputLayout[5][5];
@@ -86,6 +88,9 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixRows(rows);
         MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixColumns(columns);
         MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrix(matrix);
+
+        MatrixCardsController.remainingNamesList = new ArrayList<>(remainingNamesListClone);
+        MatrixCardsController.NamesList = new ArrayList<>(namesListClone);
 
         MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
     }
@@ -142,31 +147,20 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      **/
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        /*
-         * All Operations are working directly on Original Names List in MatrixCardsController
-         *
-         * 1 - Removed selected name from Names List
-         * 2 - Added previously selected name in Names List
-         * 3 - Sorted List Alphabetically
-         * 4 - Updated currentName Variable
-         * 5 - Updated Matrix Name in CardsList Too
-         * 6 - Notified Matrix Cards RecyclerAdapter to reflect back changes in the Recycler View
-         */
-        //TODO simplify this log
-        MatrixCardsController.matrixNamesList.remove(currentMatrixName);
-        MatrixCardsController.matrixNamesList.add(matrixCardIndex, MatrixCardsController.remainingMatrixNamesList.get(i));
+        //removed previous name from Names List
+        namesListClone.remove(currentMatrixName);
+        //added previous selected name into remaining names
+        remainingNamesListClone.add(currentMatrixName);
 
-        Log.d(TAG, "onItemClick: " + MatrixCardsController.matrixNamesList);
-        MatrixCardsController.remainingMatrixNamesList.remove(i);
-        MatrixCardsController.remainingMatrixNamesList.add(currentMatrixName);
+        //added selected name into Names List
+        namesListClone.add(matrixCardIndex, remainingNamesListClone.get(i));
+        //removed selected Name so that it must not be in remaining names
+        remainingNamesListClone.remove(i);
 
-        Collections.sort(MatrixCardsController.remainingMatrixNamesList);
+        Collections.sort(remainingNamesListClone);
 
+        //updating previous Name
         currentMatrixName = mNamesSpinner.getText().toString();
-
-        //TODO fix this bug of changing name even when back
-        MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixName(currentMatrixName);
-        MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
 
         //matrix name is changed
         isEditMatrixBackSafe = false;
@@ -407,10 +401,12 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
      **/
     public void setMatrixNameSpinner(int matrixPosition) {
 
+        remainingNamesListClone = new ArrayList<>(MatrixCardsController.remainingNamesList);
+        namesListClone = new ArrayList<>(MatrixCardsController.NamesList);
         currentMatrixName = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixName();
         mNamesSpinner.setText(currentMatrixName);
 
-        ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, MatrixCardsController.remainingMatrixNamesList);
+        ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, remainingNamesListClone);
         mNamesSpinner.setAdapter(namesAdapter);
         mNamesSpinner.setOnItemClickListener(this);
     }

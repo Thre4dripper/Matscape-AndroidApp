@@ -274,13 +274,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         if (position != RecyclerView.NO_POSITION) {
             MatrixCardsController.matrixCardsList.remove(position);
-            MatrixCardsController.matrixNamesList.remove(position);
-            MatrixCardsController.remainingMatrixNamesList.add(deletedName);
+            MatrixCardsController.NamesList.remove(position);
+            MatrixCardsController.remainingNamesList.add(deletedName);
             MatrixCardsController.matrixCardCounter--;
             MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemRemoved(position);
 
             //sorting Names List after adding 'deletedName' name from Matrix Cards
-            Collections.sort(MatrixCardsController.remainingMatrixNamesList);
+            Collections.sort(MatrixCardsController.remainingNamesList);
 
             //showing hint layout
             if (MatrixCardsController.matrixCardCounter == 0)
@@ -419,8 +419,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         //Reset Matrix Cards View Model
         MatrixCardsController.matrixCardsList.clear();
         MatrixCardsController.matrixCardCounter = 0;
-        MatrixCardsController.matrixNamesList.clear();
-        MatrixCardsController.remainingMatrixNamesList.clear();
+        MatrixCardsController.NamesList.clear();
+        MatrixCardsController.remainingNamesList.clear();
 
         //Reset Result Cards View Model
         ResultCardsController.resultCardsList.clear();
