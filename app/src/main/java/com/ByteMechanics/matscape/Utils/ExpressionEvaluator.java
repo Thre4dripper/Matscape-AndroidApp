@@ -7,7 +7,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -302,7 +301,7 @@ public class ExpressionEvaluator {
     @Nullable
     public static List<List<String>> getCurrentMatrix(Context context, Character Name) {
 
-        int matrixIndex = MatrixCardsController.matrixNamesList.indexOf(String.valueOf(Name));
+        int matrixIndex = MatrixCardsController.NamesList.indexOf(String.valueOf(Name));
         //receiving matrix by its index
         if (matrixIndex == -1) {
             evaluationErrorCode = Constant.ERROR_NO_MATRIX_FOUND;
@@ -312,7 +311,11 @@ public class ExpressionEvaluator {
         List<List<String>> receivedMatrix = MatrixCardsController.matrixCardsList.get(matrixIndex).getMatrix();
 
         //cloning original matrix, so that any changes doesn't reflect back
-        return new ArrayList<>(receivedMatrix);
+        List<List<String>> clone = new ArrayList<>();
+        for (int i = 0; i < receivedMatrix.size(); i++)
+            clone.add(new ArrayList<>(receivedMatrix.get(i)));
+
+        return clone;
     }
 
     /**
@@ -327,7 +330,7 @@ public class ExpressionEvaluator {
             ResultCardsController.resultCardsList.get(selectedCard).setMatrixRows(0);
             return;
         }
-        Log.d(TAG, "EvaluateExpression: " + result);
+
         boolean isResultValuesInt = true;
         int rows = result.size();
         int columns = result.get(0).size();
@@ -335,14 +338,12 @@ public class ExpressionEvaluator {
         //checking for result contains double value or not, Also rounding up to 2 decimal places
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                currentValue = Double.parseDouble(result.get(i).get(j));
-
-                //TODO implement precision change in settings
                 //rounding up to 2 decimal places
-                result.get(i).set(j, String.valueOf(Math.round(currentValue * 100.0) / 100.0));
+                currentValue = Math.round(Double.parseDouble(result.get(i).get(j)) * 100.0) / 100.0;
+                result.get(i).set(j, String.valueOf(currentValue));
 
-
-                //logic for checking number is in decimal or not
+                //logic for checking a number is in decimal or not
+                //rounded this value before for better checking
                 if (currentValue != Math.floor(currentValue)) {
                     isResultValuesInt = false;
                 }
