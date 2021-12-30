@@ -130,5 +130,10 @@
         so you don\'t have to go anywhere while doing Normal calculations also.
     </string>
     <string name="text_about_feature7"><b>Offline:</b> No Internet Required.</string>
-    <string name="TOS_PP">Terms of Service | Privacy Policy</string>
+
+    // Terms of Service and Privacy Policy
+    <string name="TOS"><a href="https://www.app-privacy-policy.com/live.php?token=CVPUJ3M1FCDyhgBH0PD7xnNUQWzUnsrq">
+        Terms of Service</a></string>
+    <string name="PP"><a href="https://www.freeprivacypolicy.com/live/c06dafb1-db5f-4343-a4f4-e818efda0520">
+        Privacy Policy</a></string>
 </resources>

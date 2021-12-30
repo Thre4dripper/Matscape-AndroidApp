@@ -93,9 +93,29 @@
                 style="@style/AboutTextViews"
                 android:text="Version - 0.0.1 (Alpha)" />
 
-            <TextView
-                style="@style/AboutTextViews"
-                android:text="@string/TOS_PP" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/AboutTnc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/TOS" />
+
+                <TextView
+                    android:id="@+id/AboutPP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:text="@string/PP" />
+            </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>
