@@ -41,9 +41,18 @@
         <item name="android:gravity">center</item>
     </style>
 
+    //for ChangeMatrix Material Fields Containers
+
+    <style name="ChangeMatrixFieldsContainer" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:hint">@string/hint_textInputLayout</item>
+    </style>
+    
     //for ChangeMatrix Matrix Fields
 
-    <style name="ChangeMatrixMaterialFields">
+    <style name="ChangeMatrixMaterialField">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">2dp</item>

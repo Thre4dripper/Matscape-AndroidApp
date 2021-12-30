@@ -26,6 +26,7 @@
     <string name="desc_sub_matrix">Create Sub matrix</string>
     <string name="text_tap">Tap</string>
     <string name="text_to_add_matrices">to Add Matrices</string>
+    <string name="total_matrices">Total Matrices : %d</string>
 
     //for result cards
     <string name="desc_drag_result">Result Card Drag Handle</string>

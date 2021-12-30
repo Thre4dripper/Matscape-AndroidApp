@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -56,8 +57,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     //for navigation drawer
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
+
+    //Home page direct Views
     private ImageView addMatrixCardsButton;
     private ImageView addResultCardsButton;
+    private TextView matricesCount;
 
     //for blocking back button for accidental clicks
     private boolean doubleBackToExitPressedOnce = false;
@@ -73,12 +77,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mToolbar = findViewById(R.id.Toolbar);
         addMatrixCardsButton = findViewById(R.id.addMatrixCardButton);
         addResultCardsButton = findViewById(R.id.addResultCardButton);
+        matricesCount=findViewById(R.id.MatricesCount);
         homeNumpadCardView = findViewById(R.id.HomeNumpadCardView);
         mMatrixCardsHintLayout = findViewById(R.id.MatrixCardsHintLayout);
 
         addMatrixCardsButton.setOnClickListener(this);
         addResultCardsButton.setOnClickListener(this);
 
+        matricesCount.setText(this.getString(R.string.total_matrices,MatrixCardsController.matrixCardCounter));
         InitNavigationDrawer();
 
         InitMatrixCardsRecyclerView();
@@ -257,6 +263,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             //updating result cards
             ResultCardsController.HomeKeyboardInputControl(this,new EditText(this),null);
 
+            //updating matrices count
+            matricesCount.setText(this.getString(R.string.total_matrices,MatrixCardsController.matrixCardCounter));
+
         } else if (addResultCardsButton.equals(view)) {
             ResultCardsController.addResultCards(this,
                     ResultCardsController.resultCardCounter,
@@ -294,6 +303,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             //updating result cards
             ResultCardsController.HomeKeyboardInputControl(this,new EditText(this),null);
+
+            //updating matrices count
+            matricesCount.setText(this.getString(R.string.total_matrices,MatrixCardsController.matrixCardCounter));
         }
     }
 
