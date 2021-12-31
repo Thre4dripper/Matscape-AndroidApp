@@ -1,5 +1,6 @@
 package com.ByteMechanics.matscape.Fragments.MatrixFragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -69,7 +70,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     /**
      * =============================================== METHOD FOR SAVE CHANGES ==================================================
      **/
-    public static void SaveMatrix() {
+    public static boolean SaveMatrix() {
         List<List<String>> matrix = new ArrayList<>();
 
         //getting matrix elements from textFields
@@ -78,10 +79,25 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
             for (int j = 0; j < columns; j++) {
 
                 //0 will be added i case of empty fields
-                if (!TextUtils.isEmpty(matrixFields[i][j].getText()))
-                    matrix.get(i).add(String.valueOf(matrixFields[i][j].getText()));
-                else
+                if (!TextUtils.isEmpty(matrixFields[i][j].getText())) {
+
+                    //checking valid entry in each cell
+                    if (isMatrixEntriesValid(Objects.requireNonNull(matrixFields[i][j].getText()).toString())) {
+                        matrix.get(i).add(String.valueOf(matrixFields[i][j].getText()));
+
+                        //resetting stroke color
+                        matrixFieldLayouts[i][j].setBoxStrokeColor(Color.BLACK);
+                    } else {
+                        //invalid entry prompts the user
+                        matrixFieldLayouts[i][j].setBoxStrokeColor(Color.RED);
+                        matrixFields[i][j].requestFocus();
+                        return false;
+                    }
+                } else {
+                    //resetting in case of empty fields
+                    matrixFieldLayouts[i][j].setBoxStrokeColor(Color.BLACK);
                     matrix.get(i).add("0");
+                }
             }
         }
 
@@ -94,6 +110,28 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         MatrixCardsController.NamesList = new ArrayList<>(namesListClone);
 
         MatrixCardsController.mMatrixCardsRecyclerAdapter.notifyItemChanged(matrixCardIndex);
+
+        return true;
+    }
+
+    /**
+     * ================================== METHOD FOR CHECKING VALIDITY OF MATRIX CELLS =====================================
+     **/
+    public static boolean isMatrixEntriesValid(@NonNull String str) {
+
+        boolean isValid = true;
+
+        //only '.' or '-' in the cell
+        if ((str.contains(".") || str.contains("-")) && str.length() == 1)
+            isValid = false;
+            //'.' should not be at last
+        else if (str.charAt(str.length() - 1) == '.')
+            isValid = false;
+            //'-' should be at start
+        else if (str.contains("-") && str.indexOf("-") != 0)
+            isValid = false;
+
+        return isValid;
     }
 
     /**

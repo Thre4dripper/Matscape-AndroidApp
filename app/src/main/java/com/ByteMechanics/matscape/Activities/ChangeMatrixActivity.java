@@ -126,10 +126,11 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         else new MaterialAlertDialogBuilder(this)
                 .setMessage("Save Changes")
                 .setPositiveButton("Yes", (dialogInterface, i) -> {
-                    EditMatrixFragment.SaveMatrix();
-                    //updating result on matrix changes
-                    ResultCardsController.HomeKeyboardInputControl(this, new EditText(this), null);
-                    ChangeMatrixActivity.super.onBackPressed();
+                    if(EditMatrixFragment.SaveMatrix()) {
+                        //updating result on matrix changes
+                        ResultCardsController.HomeKeyboardInputControl(this, new EditText(this), null);
+                        ChangeMatrixActivity.super.onBackPressed();
+                    }
                 })
                 .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
