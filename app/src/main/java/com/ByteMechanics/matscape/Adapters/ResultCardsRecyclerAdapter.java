@@ -218,7 +218,7 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
                 resultCardsInterface.copyResult(getAdapterPosition());
             else if (view == mAddResultMatrixButton)
                 resultCardsInterface.addResultMatrix(getAdapterPosition());
-            else if (view == mResultCardCL) {
+            else if (view == mResultCardCL || view==expressionField) {
                 resultCardsInterface.clickedCard(getAdapterPosition(), 0);
                 HomeActivity.homeNumpadCardView.setVisibility(View.VISIBLE);
                 //always focus selected card's field
