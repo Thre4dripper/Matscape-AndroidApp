@@ -73,6 +73,8 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
     public static boolean SaveMatrix() {
         List<List<String>> matrix = new ArrayList<>();
 
+        boolean isSaveSafe=true;
+
         //getting matrix elements from textFields
         for (int i = 0; i < rows; i++) {
             matrix.add(new ArrayList<>());
@@ -88,18 +90,25 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
                         //resetting stroke color
                         matrixFieldLayouts[i][j].setBoxStrokeColor(Color.BLACK);
                     } else {
-                        //invalid entry prompts the user
                         matrixFieldLayouts[i][j].setBoxStrokeColor(Color.RED);
-                        matrixFields[i][j].requestFocus();
-                        return false;
+
+                        //invalid entry prompts user and early cell gets preferred for focus
+                        if(isSaveSafe) {
+                            matrixFields[i][j].requestFocus();
+                            isSaveSafe = false;
+                        }
                     }
                 } else {
-                    //resetting in case of empty fields
+                    //resetting stroke color
                     matrixFieldLayouts[i][j].setBoxStrokeColor(Color.BLACK);
                     matrix.get(i).add("0");
                 }
             }
         }
+
+        //Invalid Entries occurred
+        if(!isSaveSafe)
+            return false;
 
         MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixName(currentMatrixName);
         MatrixCardsController.matrixCardsList.get(matrixCardIndex).setMatrixRows(rows);
