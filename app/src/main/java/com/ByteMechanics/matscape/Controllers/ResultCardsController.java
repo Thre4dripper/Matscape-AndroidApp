@@ -254,13 +254,13 @@ public class ResultCardsController {
             //handed all possible scenarios for better user experience
             if ((cursorPosition > 0 && Character.isDigit(expressionText.charAt(cursorPosition - 1))) ||
                     putMultiply(cursorPosition, expressionText, calculationString, calculationStringIndexList)) {
-                if (cursorPosition == expressionText.length())
+                if (cursorPosition == expressionText.length() || expressionText.charAt(cursorPosition)==')')
                     resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•()"));
                 else
                     resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "•("));
                 resultCardsList.get(selectedCard).setCursorPosition(cursorPosition + 2);
             } else {
-                if (cursorPosition == expressionText.length())
+                if (cursorPosition == expressionText.length() || expressionText.charAt(cursorPosition)==')')
                     resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "()"));
                 else
                     resultCardsList.get(selectedCard).setExpressionString(expressionText.insert(cursorPosition, "("));

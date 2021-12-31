@@ -119,7 +119,8 @@ public class ExpressionEvaluator {
                             stack.push(result);
                             break;
                         case '^':
-                            if (str2.size() == str2.get(0).size()) {
+                            //power for now sq matrices is allowed in case of transpose
+                            if (str1.get(0).get(0).equals("|") || str2.size() == str2.get(0).size()) {
                                 result = MatrixOperations.matrixPower(str2, str1.get(0).get(0));
                                 stack.push(result);
                             } else {
