@@ -173,7 +173,7 @@ public class ExpressionBuilder {
         for (int i = 0; i < calculationString.length(); i++) {
             transposeIndex = calculationString.indexOf("^", i);
             if (transposeIndex != -1) {
-                i += 2;
+                i += transposeIndex+2;
                 char currentChar;
                 //for detecting +,- and T in power
                 int flag1 = 0, flag2 = 0;
@@ -182,12 +182,12 @@ public class ExpressionBuilder {
 
                     if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/')
                         flag1 = 1;
-                    if (currentChar == 'T') {
+                    else if (currentChar == 'T') {
                         calculationString = calculationString.substring(0, i) + "|" + calculationString.substring(i + 1);
                         flag2 = 1;
                     }
 
-                    //if both '+','-' and 'T' are present in power then it is invalid transpose
+                    //if any of the four operators and 'T' are present in power, then it is invalid transpose
                     if (flag1 == 1 && flag2 == 1) {
                         RETURN_CODE = -5;
                         break;

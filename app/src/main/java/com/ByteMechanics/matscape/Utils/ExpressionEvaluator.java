@@ -38,7 +38,7 @@ public class ExpressionEvaluator {
         List<List<String>> number;
 
         //Evaluation will continue till errorCode remains '0'
-        for (int i = 0; i < postfixExpression.length() && evaluationErrorCode == 0; i++) {
+        for (int i = 0; i < postfixExpression.length() && isErrorCodeValid(evaluationErrorCode); i++) {
             currentChar = postfixExpression.charAt(i);
 
             if (Character.isDigit(currentChar) || currentChar == '.') {
@@ -284,8 +284,7 @@ public class ExpressionEvaluator {
         }
 
         //sending final result if there are no errors, warnings are allowed
-        if (evaluationErrorCode == 0 || evaluationErrorCode == Constant.WARNING_DIVISOR_AS_INVERSE
-                || evaluationErrorCode == Constant.WARNING_1X1_DETERMINANT) {
+        if (isErrorCodeValid(evaluationErrorCode)) {
             setResult(stack.pop(), selectedCard);
         }
         //error encountered
@@ -293,6 +292,14 @@ public class ExpressionEvaluator {
 
         //setting error message text based on result
         setErrorsAndWarnings(context, selectedCard);
+    }
+
+    /**
+     * ================================= METHOD FOR CHECKING PERMISSIBLE ERROR CODES ================================
+     **/
+    public static boolean isErrorCodeValid(int errorCode){
+        return errorCode==0 || errorCode==Constant.WARNING_1X1_DETERMINANT
+                || errorCode==Constant.WARNING_DIVISOR_AS_INVERSE;
     }
 
     /**
