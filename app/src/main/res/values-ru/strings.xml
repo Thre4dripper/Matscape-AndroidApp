@@ -39,7 +39,7 @@
     <string name="desc_sub_matrix">Создать подматрицу</string>
     <string name="text_tap">Кран</string>
     <string name="text_to_add_matrices">добавить матрицы</string>
-    <string name="total_matrices">Total Matrices : %d</string>
+    <string name="total_matrices">Всего матриц : %d</string>
 
     //for result cards
     <string name="desc_drag_result">Ручка перетаскивания карты результатов</string>
