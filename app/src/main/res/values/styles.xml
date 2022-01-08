@@ -41,9 +41,18 @@
         <item name="android:gravity">center</item>
     </style>
 
+    //for ChangeMatrix Material Fields Containers
+
+    <style name="ChangeMatrixFieldsContainer" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:hint">@string/hint_textInputLayout</item>
+    </style>
+    
     //for ChangeMatrix Matrix Fields
 
-    <style name="ChangeMatrixMaterialFields">
+    <style name="ChangeMatrixMaterialField">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">2dp</item>
@@ -74,7 +83,7 @@
     <style name="EditMatrixFragNumpadImageBtns">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@android:color/holo_blue_dark</item>
+        <item name="android:background">@color/light_blue_black</item>
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
@@ -123,7 +132,44 @@
         <item name="android:layout_marginStart">1dp</item>
         <item name="android:layout_marginEnd">1dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="backgroundTint">@color/black</item>
+        <item name="backgroundTint">#212121</item>
         <item name="android:padding">0px</item>
+    </style>
+
+    //for Material Sliders
+    <style name="MatrixDimensionsSliders">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:stepSize">1</item>
+        <item name="android:valueFrom">1</item>
+        <item name="android:valueTo">5</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="haloColor">@color/blue_black</item>
+        <item name="thumbColor">@color/blue_black</item>
+        <item name="trackColorActive">@color/blue_black</item>
+        <item name="trackColorInactive">@color/light_blue_black</item>
+        <item name="tickColor">@color/blue_black</item>
+    </style>
+
+    //for Settings Default Matrix Preview Bullets
+    <style name="DefaultMatrixPreviewBullets">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="srcCompat">@drawable/ic_nav_default_matrix_prev</item>
+        <item name="android:tint">@color/blue_black</item>
+    </style>
+
+    //for About TextViews
+    <style name="AboutTextViews">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.AppCompat.Medium</item>
     </style>
 </resources>

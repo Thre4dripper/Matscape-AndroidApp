@@ -21,6 +21,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/NavHeaderIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/NavigationActivityBack"
+        app:layout_constraintStart_toEndOf="@+id/NavigationActivityBack"
+        app:layout_constraintTop_toTopOf="@+id/NavigationActivityBack"
+        app:srcCompat="@drawable/ic_nav_settings"
+        android:contentDescription="@string/action_settings" />
+
+    <TextView
+        android:id="@+id/NavHeaderTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/blue_black"
+        app:layout_constraintBottom_toBottomOf="@+id/NavHeaderIcon"
+        app:layout_constraintStart_toEndOf="@+id/NavHeaderIcon"
+        app:layout_constraintTop_toTopOf="@+id/NavHeaderIcon" />
+
     <ImageView
         android:id="@+id/NavigationActivitySave"
         android:layout_width="40dp"

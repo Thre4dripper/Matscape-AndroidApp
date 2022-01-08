@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.MatrixFragment.SubMatrixFragment">
+    tools:context=".Fragments.MatrixFragments.SubMatrixFragment">
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="22dp"
         android:scrollbars="none"
-
         app:layout_constraintBottom_toTopOf="@+id/SubMatrixGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,71 +68,51 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout11"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField11"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout21"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField21"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout31"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField31"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout41"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField41"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout51"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField51"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -145,75 +124,55 @@
 
                 <CheckBox
                     android:id="@+id/SubMatrixCheckC2"
-                    style="@style/SubMatrixCheckBoxes"/>
+                    style="@style/SubMatrixCheckBoxes" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout12"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField12"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout22"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField22"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout32"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField32"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout42"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField42"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout52"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField52"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -229,71 +188,51 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout13"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField13"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout23"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField23"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout33"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField33"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout43"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField43"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout53"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField53"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -309,71 +248,51 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout14"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField14"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout24"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField24"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout34"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField34"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout44"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField44"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout54"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField54"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -385,75 +304,55 @@
 
                 <CheckBox
                     android:id="@+id/SubMatrixCheckC5"
-                    style="@style/SubMatrixCheckBoxes"/>
+                    style="@style/SubMatrixCheckBoxes" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout15"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField15"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout25"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField25"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout35"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField35"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout45"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField45"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/SubMatrixLayout55"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/hint_textInputLayout">
+                    style="@style/ChangeMatrixFieldsContainer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/SubMatrixField55"
-                        style="@style/ChangeMatrixMaterialFields" />
+                        style="@style/ChangeMatrixMaterialField" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -467,5 +366,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="380dp" />
+        app:layout_constraintGuide_begin="400dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

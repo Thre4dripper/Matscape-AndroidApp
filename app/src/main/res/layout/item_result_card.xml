@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:minHeight="60dp"
+    android:minHeight="80dp"
     android:id="@+id/ResultCardCL">
 
 
@@ -23,28 +23,33 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/ExpressionRecyclerView"
+    <EditText
+        android:id="@+id/ExpressionField"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/resultCardDragButton"
+        android:layout_marginTop="32dp"
+        android:background="@null"
+        android:hint="@string/hint_result_field"
+        android:importantForAutofill="no"
+        android:inputType="textNoSuggestions"
+        app:layout_constraintBottom_toBottomOf="@+id/AddResultMatrixButton"
         app:layout_constraintEnd_toStartOf="@+id/AddResultMatrixButton"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/resultCardDragButton"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/resultCardDragButton"
+        tools:ignore="LabelFor" />
 
     <TextView
         android:id="@+id/ResultCardMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/placeholder_result_msg"
-        android:textColor="#F44336"
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/ExpressionRecyclerView"
-        app:layout_constraintTop_toBottomOf="@+id/ExpressionRecyclerView" />
+        app:layout_constraintStart_toStartOf="@+id/ExpressionField"
+        app:layout_constraintTop_toBottomOf="@+id/ExpressionField" />
 
     <ImageView
         android:id="@+id/DeleteResultButton"
@@ -65,14 +70,15 @@
         android:id="@+id/cardView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/DeleteResultButton">
+        app:layout_constraintTop_toBottomOf="@+id/ExpressionField">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -99,24 +105,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView11"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView21"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView31"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView41"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView51"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
@@ -133,24 +139,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView12"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView22"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView32"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView42"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView52"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
@@ -167,24 +173,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView13"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView23"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView33"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView43"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView53"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
@@ -201,24 +207,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView14"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView24"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView34"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView44"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView54"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
@@ -235,24 +241,24 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView15"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView25"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView35"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView45"
+                    style="@style/MatrixCardsMatrixText" />
 
                 <TextView
-                    style="@style/MatrixCardsMatrixText"
-                    android:text="@string/placeholder_matrix_text" />
+                    android:id="@+id/ResultCardTextView55"
+                    style="@style/MatrixCardsMatrixText" />
 
             </LinearLayout>
 
@@ -261,7 +267,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_end="5dp" />
+                app:layout_constraintGuide_percent="0.90816325" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

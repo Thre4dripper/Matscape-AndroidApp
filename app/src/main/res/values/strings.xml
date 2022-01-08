@@ -1,7 +1,26 @@
 <resources>
     <string name="app_name" translatable="false">Matscape</string>
+    <string name="app_icon">App Icon</string>
 
-    //for homepage navigation drawer
+    //for dialog boxes
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="discard_changes">Discard Changes</string>
+    <string name="discard_feedback">Discard Feedback</string>
+    <string name="save_changes">Save Changes</string>
+
+    //for sliders
+    <string name="slider_rows">Rows: %.0f</string>
+    <string name="slider_columns">Columns: %.0f</string>
+
+    //for Toasts
+    <string name="toast_empty_result_card">Empty Result Card</string>
+    <string name="toast_home_back_safety">Press BACK again to exit</string>
+    <string name="toast_edit_matrix_numpad_msg">Press Back to Hide Numpad</string>
+    <string name="toast_settings_sq_matrices">Only Square Matrices can be selected as Identity Matrices</string>
+    <string name="toast_feedback_empty">Feedback Field is Empty</string>
+
+    //req Strings for homepage navigation drawer
     <string name="open" translatable="false">Open</string>
     <string name="close" translatable="false">Close</string>
 
@@ -14,16 +33,19 @@
     //home page imageViews content descriptions
     <string name="desc_add_matrix">Add Matrix</string>
     <string name="desc_add_result">Add Result Card</string>
-    <string name="desc_settings_result">Result Cards Settings</string>
+    <string name="desc_settings_result">Result Card Settings</string>
 
 
     //for matrix cards
-    <string name="placeholder_matrix_name">A</string>
-    <string name="placeholder_matrix_text">0</string>
+    <string name="placeholder_matrix_name" translatable="false">A</string>
+    <string name="placeholder_matrix_text" translatable="false">0</string>
     <string name="desc_delete_matrix">Delete matrix</string>
     <string name="desc_copy_matrix">Copy matrix</string>
     <string name="desc_edit_matrix">Edit matrix</string>
     <string name="desc_sub_matrix">Create Sub matrix</string>
+    <string name="text_tap">Tap</string>
+    <string name="text_to_add_matrices">to Add Matrices</string>
+    <string name="total_matrices">Total Matrices : %d</string>
 
     //for result cards
     <string name="desc_drag_result">Result Card Drag Handle</string>
@@ -31,16 +53,19 @@
     <string name="placeholder_result_msg">Message</string>
     <string name="desc_copy_result">Copy Result Card</string>
     <string name="desc_add_result_matrix">Add result card as new Matrix</string>
+    <string name="hint_result_field">Tap on Matrix Cards</string>
 
     //for ChangeMatrix Activity
     <string name="desc_back">Go Back</string>
     <string name="desc_save">Save Changes</string>
+    <string name="text_edit_matrix">Edit Matrix</string>
+    <string name="text_sub_matrix">Sub Matrix</string>
 
     //for EditMatrixFragment
-    <string name="hint_textInputLayout">0</string>
+    <string name="hint_textInputLayout" translatable="false">0</string>
     <string name="hint_spinner">Name</string>
-    <string name="text_plus">+</string>
-    <string name="text_minus">-</string>
+    <string name="text_plus" translatable="false">+</string>
+    <string name="text_minus" translatable="false">-</string>
     <string name="text_rows">Rows</string>
     <string name="text_columns">Columns</string>
 
@@ -51,39 +76,125 @@
     <string name="desc_edit_keyboard_focus_left">Move Focus LEFT</string>
 
     ////for HomePage Keyboard
-    <string name="home_keyboard_determinant">|A|</string>
-    <string name="home_keyboard_transpose">A<sup><small>T</small></sup></string>
-    <string name="home_keyboard_square">A<sup><small>2</small></sup></string>
-    <string name="home_keyboard_cube">A<sup><small>3</small></sup></string>
-    <string name="home_keyboard_nth_power">A<sup><small>n</small></sup></string>
-    <string name="home_keyboard_inverse">A<sup><small>-1</small></sup></string>
-    <string name="home_keyboard_trace">trc</string>
-    <string name="home_keyboard_adjoint">Adj</string>
-    <string name="home_keyboard_minors">minors</string>
-    <string name="home_keyboard_cofactors">Co-fac</string>
+    <string name="home_keyboard_determinant" translatable="false">|A|</string>
+    <string name="home_keyboard_transpose" translatable="false">A<sup><small>T</small></sup></string>
+    <string name="home_keyboard_square" translatable="false">A<sup><small>2</small></sup></string>
+    <string name="home_keyboard_cube" translatable="false">A<sup><small>3</small></sup></string>
+    <string name="home_keyboard_nth_power" translatable="false">A<sup><small>n</small></sup></string>
+    <string name="home_keyboard_inverse" translatable="false">A<sup><small>-1</small></sup></string>
+    <string name="home_keyboard_trace" translatable="false">Trc</string>
+    <string name="home_keyboard_adjoint" translatable="false">Adj</string>
+    <string name="home_keyboard_minors" translatable="false">Minors</string>
+    <string name="home_keyboard_cofactors" translatable="false">Co-fac</string>
 
-    <string name="home_numpad_multiply">X</string>
-    <string name="home_numpad_divide">÷</string>
-    <string name="home_numpad_add">+</string>
-    <string name="home_keyboard_bracket_open">(</string>
-    <string name="home_keyboard_bracket_close">)</string>
+    <string name="home_numpad_multiply" translatable="false">X</string>
+    <string name="home_numpad_divide" translatable="false">÷</string>
+    <string name="home_numpad_add" translatable="false">+</string>
+    <string name="home_keyboard_bracket_open" translatable="false">(</string>
+    <string name="home_keyboard_bracket_close" translatable="false">)</string>
 
     <string name="desc_move_cursor_left">Move Cursor Left</string>
     <string name="desc_move_cursor_right">Move Cursor Right</string>
 
     //for Both EditMatrixFragment and Home Numpad
-    <string name="numpad1">1</string>
-    <string name="numpad2">2</string>
-    <string name="numpad3">3</string>
-    <string name="numpad4">4</string>
-    <string name="numpad5">5</string>
-    <string name="numpad6">6</string>
-    <string name="numpad7">7</string>
-    <string name="numpad8">8</string>
-    <string name="numpad9">9</string>
-    <string name="numpad0">0</string>
-    <string name="numpadDot">.</string>
-    <string name="numpadMinus">‒</string>
+    <string name="numpad1" translatable="false">1</string>
+    <string name="numpad2" translatable="false">2</string>
+    <string name="numpad3" translatable="false">3</string>
+    <string name="numpad4" translatable="false">4</string>
+    <string name="numpad5" translatable="false">5</string>
+    <string name="numpad6" translatable="false">6</string>
+    <string name="numpad7" translatable="false">7</string>
+    <string name="numpad8" translatable="false">8</string>
+    <string name="numpad9" translatable="false">9</string>
+    <string name="numpad0" translatable="false">0</string>
+    <string name="numpadDot" translatable="false">.</string>
+    <string name="numpadMinus" translatable="false">‒</string>
     <string name="desc_keyboard_backspace">BackSpace</string>
 
+    //for How to Use Section
+    <string name="htu_1">1- Delete Matrix\n2- Copy Matrix\n3- Sub Matrix\n4- Edit Matrix\n5- Rearrange Matrix Cards</string>
+    <string name="htu_2">1- Add Result Card\n2- Add Result as Matrix\n3- Copy Card\n4- Delete Card\n5- Rearrange Result Cards</string>
+    <string name="htu_3">1- Back\n2- Save\n3- Resize Matrix\n4- Rename Matrix\n5- Move Cell\'s Focus</string>
+    <string name="htu_4">1- Back\n2- Save\n3- Select Rows or Columns</string>
+    <string name="htu_5">Note:- You can Enter Complex Expressions as nested as you want.</string>
+
+    //for App Settings
+    <string name="default_matrix_heading">Default Matrix Size</string>
+    <string name="default_matrix_type">Default Matrix Type</string>
+    <string name="text_null_matrices">Null Matrices</string>
+    <string name="text_identity_matrices">Identity Matrices</string>
+
+    //for Feedback Section
+    <string name="text_report_bug">Bug</string>
+    <string name="bug_encountered">Bug Encountered</string>
+    <string name="text_request_feature">Feature</string>
+    <string name="feature_req">Feature Request</string>
+    <string name="hint_feedback">Feedback</string>
+    <string name="text_empty_feedback_error">*Required</string>
+    <string name="text_OR">OR</string>
+    <string name="text_join_telegram">Join Telegram Group</string>
+    <string name="text_join">Join</string>
+
+    //for String Resources for Result cards Messages
+    //errors due to invalid expression
+    <string name="error_empty_brackets">Empty Brackets</string>
+    <string name="error_mistake_brackets">Bracket Mistake</string>
+    <string name="error_mistake_operator">Operator Mistake</string>
+    <string name="error_mistake_matrix">Matrix Mistake</string>
+    <string name="error_mistake_decimal">Decimal Mistake</string>
+    <string name="error_mistake_transpose">Error Calculating Transpose</string>
+
+    //errors due to logical mistakes
+    <string name="error_matrix_scalar_addition">Only Matrices can be Added in Matrices</string>
+    <string name="error_matrix_scalar_subtraction">Only Matrices can be Subtracted from Matrices</string>
+    <string name="error_incompatible_dimens">Matrices with Incompatible dimensions</string>
+    <string name="error_matrix_divide_singular">Considering Inverse of Divisor Matrix" +
+                        "\nSingular Matrices Do not Have Inverse</string>
+    <string name="warning_divisor_as_inverse">Considering Inverse of Divisor Matrix</string>
+    <string name="error_square_matrix_determinant">Only Square Matrices have a Determinant</string>
+    <string name="warning_1x1_determinant">Determinant of 1x1 matrix is element itself</string>
+    <string name="error_square_matrix_trace">Only Square Matrices have a Trace</string>
+    <string name="error_square_matrix_adjoint">Only Square Matrices have a Adjoint</string>
+    <string name="error_1x1_minor">1x1 Matrices do not have Minors</string>
+    <string name="error_square_matrix_minors">Only Square Matrices have a Minors</string>
+    <string name="error_1x1_cofactor">1x1 Matrices do not have Cofactors</string>
+    <string name="error_square_matrix_cofactors">Only Square Matrices have a Cofactors</string>
+    <string name="error_square_matrix_power">Power Only works on Square Matrices</string>
+    <string name="error_singular_matrix_inverse">Singular Matrices Do not Have Inverse</string>
+    <string name="error_no_matrix_found">Matrix \'%c\' does not Exist</string>
+
+    //for About Section
+    <string name="text_about_head_description">Description:-</string>
+    <string name="text_about_description"><b>Matscape</b> is a high performance Matrix Calculator.
+        It can Evaluate simple as well as complex nested Expressions.
+        It has the ability to store multiple matrices so you can work on several matrices at the same time.
+    </string>
+    <string name="text_about_head_features">Features:</string>
+    <string name="text_about_feature1"><b>Multiple Matrices:</b> You can work with Multiple Matrices from A to Z at the same time
+        with Matrices of any dimensions. The size of the displayed Matrix will depend on your input.
+    </string>
+    <string name="text_about_feature2"><b>Multiple Outputs:</b> You can enter as many expressions as you want without any limit.
+        And there is also no limit on how nested you want your expressions.
+        Just make sure you enter valid expressions.
+        In case you have entered something Wrong or Invalid ,
+        the result cards will automatically display a message based on your mistake for better understanding.
+    </string>
+    <string name="text_about_feature3"><b>Matrix Operations:</b> There are a variety of different Matrix Operations you can play with like
+        <b>Determinant</b>,<b>Transpose</b>, <b>Power</b>, <b>Trace</b>, <b>Adjoint</b>, <b>Inverse</b>
+        and many more coming in Future Updates.
+    </string>
+    <string name="text_about_feature4"><b>Matrix Navigation:</b> When entering Matrix values, you can easily navigate between them</string>
+    <string name="text_about_feature5"><b>Matrix Laws:</b> Matscape Calculator fully obeys each and every matrix law like
+        A[k]=kA[], A|k|=kⁿA||, Inv(A)A=AInv(A)=I
+    </string>
+    <string name="text_about_feature6"><b>Numerical Calculator:</b> Matscape also have an Inbuilt Numerical Calculator,
+        so you don\'t have to go anywhere while doing Normal calculations also.
+    </string>
+    <string name="text_about_feature7"><b>Offline:</b> No Internet Required.</string>
+
+    // Terms of Service and Privacy Policy
+    <string name="TOS"><a href="https://www.app-privacy-policy.com/live.php?token=CVPUJ3M1FCDyhgBH0PD7xnNUQWzUnsrq">
+        Terms of Service</a></string>
+    <string name="PP"><a href="https://www.freeprivacypolicy.com/live/c06dafb1-db5f-4343-a4f4-e818efda0520">
+        Privacy Policy</a></string>
 </resources>

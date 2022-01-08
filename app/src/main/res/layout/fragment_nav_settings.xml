@@ -1,13 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.NavigationFragments.SettingsFragment">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="settings Fragment" />
+        android:id="@+id/Heading1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/default_matrix_heading"
+        android:textColor="@color/blue_black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/SettingsGuideline1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Heading1">
+
+        <LinearLayout
+            style="@style/ChangeMatrixLinearLayouts"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev11"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev21"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev31"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev41"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev51"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/ChangeMatrixLinearLayouts"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev12"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev22"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev32"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev42"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev52"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/ChangeMatrixLinearLayouts"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev13"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev23"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev33"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev43"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev53"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/ChangeMatrixLinearLayouts"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev14"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev24"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev34"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev44"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev54"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/ChangeMatrixLinearLayouts"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev15"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev25"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev35"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev45"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/SettingsMatrixPrev55"
+                style="@style/DefaultMatrixPreviewBullets"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/NavRowSlider"
+        style="@style/MatrixDimensionsSliders"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/SettingsGuideline1" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/NavColumnSlider"
+        style="@style/MatrixDimensionsSliders"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/NavRowSlider" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/SettingsGuideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="264dp" />
+
+    <View
+        android:id="@+id/Heading1DividerHeading2"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/NavColumnSlider" />
+
+    <TextView
+        android:id="@+id/Heading2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/default_matrix_type"
+        android:textColor="@color/blue_black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Heading1DividerHeading2" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:checkedButton="@id/NullMatrixRadio"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Heading2">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/NullMatrixRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/text_null_matrices" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/IdentityMatrixRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/text_identity_matrices" />
+
+    </RadioGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
