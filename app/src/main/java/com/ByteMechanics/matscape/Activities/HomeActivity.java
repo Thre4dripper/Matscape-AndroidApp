@@ -42,7 +42,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         MatrixCardsRecyclerAdapter.MatrixCardsInterface,
         ResultCardsRecyclerAdapter.ResultCardsInterface {
 
-    //TODO extract string resources of Toasts and Dialogs
+    //completed all todos in development branch
     private static final String TAG = "HomeActivity";
     //for matrix cards recycler view
     public static RecyclerView mMatrixCardsRecyclerView;
