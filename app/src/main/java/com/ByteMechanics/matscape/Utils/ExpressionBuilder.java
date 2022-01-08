@@ -172,19 +172,18 @@ public class ExpressionBuilder {
         int transposeIndex;
         for (int i = 0; i < calculationString.length(); i++) {
             transposeIndex = calculationString.indexOf("^", i);
+            Log.d(TAG, "transposeIndex: "+transposeIndex);
             if (transposeIndex != -1) {
-                i += transposeIndex+2;
                 char currentChar;
                 //for detecting +,- and T in power
                 int flag1 = 0, flag2 = 0;
-                //TODO severe bug here
-                while (calculationString.charAt(i) != ')') {
-                    currentChar=calculationString.charAt(i);
+                while (calculationString.charAt(transposeIndex) != ')') {
+                    currentChar=calculationString.charAt(transposeIndex);
 
                     if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/')
                         flag1 = 1;
                     else if (currentChar == 'T') {
-                        calculationString = calculationString.substring(0, i) + "|" + calculationString.substring(i + 1);
+                        calculationString = calculationString.substring(0, transposeIndex) + "|" + calculationString.substring(transposeIndex + 1);
                         flag2 = 1;
                     }
 
@@ -194,6 +193,7 @@ public class ExpressionBuilder {
                         break;
                     }
                     i++;
+                    transposeIndex++;
                 }
             }
         }
