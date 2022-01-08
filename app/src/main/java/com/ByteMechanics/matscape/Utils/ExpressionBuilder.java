@@ -177,6 +177,7 @@ public class ExpressionBuilder {
                 char currentChar;
                 //for detecting +,- and T in power
                 int flag1 = 0, flag2 = 0;
+                //TODO severe bug here
                 while (calculationString.charAt(i) != ')') {
                     currentChar=calculationString.charAt(i);
 
