@@ -172,13 +172,13 @@ public class ExpressionBuilder {
         int transposeIndex;
         for (int i = 0; i < calculationString.length(); i++) {
             transposeIndex = calculationString.indexOf("^", i);
-            Log.d(TAG, "transposeIndex: "+transposeIndex);
+
             if (transposeIndex != -1) {
                 char currentChar;
                 //for detecting +,- and T in power
                 int flag1 = 0, flag2 = 0;
                 while (calculationString.charAt(transposeIndex) != ')') {
-                    currentChar=calculationString.charAt(transposeIndex);
+                    currentChar = calculationString.charAt(transposeIndex);
 
                     if (currentChar == '+' || currentChar == '-' || currentChar == '•' || currentChar == '/')
                         flag1 = 1;

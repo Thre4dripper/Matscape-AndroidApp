@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_icon">Значок приложения</string>
+
+    //for dialog boxes
+    <string name="yes">да</string>
+    <string name="no">Нет</string>
+    <string name="discard_changes">Отменить изменения</string>
+    <string name="discard_feedback">Отменить отзыв</string>
+    <string name="save_changes">Сохранить изменения</string>
+
+    //for sliders
+    <string name="slider_rows">Ряды: %.0f</string>
+    <string name="slider_columns">Столбцы: %.0f</string>
+
+    //for Toasts
+    <string name="toast_empty_result_card">Пустая карточка результатов</string>
+    <string name="toast_home_back_safety">Нажмите НАЗАД еще раз, чтобы выйти</string>
+    <string name="toast_edit_matrix_numpad_msg">Нажмите Назад, чтобы скрыть цифровую клавиатуру</string>
+    <string name="toast_settings_sq_matrices">Только квадратные матрицы могут быть выбраны в качестве идентификационных матриц.</string>
+    <string name="toast_feedback_empty">Поле обратной связи пусто</string>
 
     //for navigation menu items
     <string name="action_settings">Настройки</string>
@@ -69,8 +88,11 @@
 
     //for Feedback Section
     <string name="text_report_bug">Ошибка</string>
+    <string name="bug_encountered">Обнаружена ошибка</string>
     <string name="text_request_feature">Особенность</string>
+    <string name="feature_req">Запрос функции</string>
     <string name="hint_feedback">Обратная связь</string>
+    <string name="text_empty_feedback_error">*Необходимые</string>
     <string name="text_OR">ИЛИ</string>
     <string name="text_join_telegram">Присоединяйтесь к группе Telegram</string>
     <string name="text_join">Присоединиться</string>
@@ -104,37 +126,37 @@
     <string name="error_no_matrix_found">Матрица \'% c \' не существует</string>
 
     //for About Section
-    <string name="text_about_head_description">Description :</string>
-    <string name="text_about_description"><b>Matscape</b> is a high performance Matrix Calculator.
-        It can Evaluate simple as well as complex nested Expressions.
-        It has the ability to store multiple matrices so you can work on several matrices at the same time.
+    <string name="text_about_head_description">Описание:-</string>
+    <string name="text_about_description"><b>Matscape</b> представляет собой высокопроизводительный матричный калькулятор.
+        Он может оценивать как простые, так и сложные вложенные выражения.
+        Он имеет возможность хранить несколько матриц, поэтому вы можете работать с несколькими матрицами одновременно.
     </string>
-    <string name="text_about_head_features">Features:</string>
-    <string name="text_about_feature1"><b>Multiple Matrices:</b> You can work with Multiple Matrices from A to Z at the same time
-        with Matrices of any dimensions. The size of the displayed Matrix will depend on your input.
+    <string name="text_about_head_features">Функции:</string>
+    <string name="text_about_feature1"><b>Несколько матриц:</b> Вы можете работать с несколькими матрицами от А до Я одновременно.
+        с матрицами любой размерности. Размер отображаемой матрицы будет зависеть от вашего ввода.
     </string>
-    <string name="text_about_feature2"><b>Multiple Outputs:</b> You can enter as many expressions as you want without any limit.
-        And there is also no limit on how nested you want your expressions.
-        Just make sure you enter valid expressions.
-        In case you have entered something Wrong or Invalid ,
-        the result cards will automatically display a message based on your mistake for better understanding.
+    <string name="text_about_feature2"><b>Несколько выходов:</b> Вы можете ввести столько выражений, сколько хотите, без ограничений.
+        И также нет ограничений на то, насколько вложенными вы хотите, чтобы ваши выражения.
+        Просто убедитесь, что вы вводите допустимые выражения.
+        Если вы ввели что-то неправильное или неверное,
+        карточки результатов автоматически отображают сообщение, основанное на вашей ошибке, для лучшего понимания.
     </string>
-    <string name="text_about_feature3"><b>Matrix Operations:</b> There are a variety of different Matrix Operations you can play with like
-        <b>Determinant</b>,<b>Transpose</b>, <b>Power</b>, <b>Trace</b>, <b>Adjoint</b>, <b>Inverse</b>
-        and many more coming in Future Updates.
+    <string name="text_about_feature3"><b>Матричные операции:</b> Существует множество различных матричных операций, с которыми вы можете играть, например
+        <b>Определитель</b>,<b>Транспонирование</b>, <b>Степень</b>, <b>Трассировка</b>, <b>Примыкание</b>, <b>Обратное</b>
+        и многое другое появится в будущих обновлениях.
     </string>
-    <string name="text_about_feature4"><b>Matrix Navigation:</b> When entering Matrix values, you can easily navigate between them</string>
-    <string name="text_about_feature5"><b>Matrix Laws:</b> Matscape Calculator fully obeys each and every matrix law like
+    <string name="text_about_feature4"><b>Навигация по матрице:</b> при вводе значений матрицы вы можете легко перемещаться между ними.</string>
+    <string name="text_about_feature5"><b>Матричные законы:</b> Matscape Калькулятор полностью подчиняется каждому матричному закону, например
         A[k]=kA[], A|k|=kⁿA||, Inv(A)A=AInv(A)=I
     </string>
-    <string name="text_about_feature6"><b>Numerical Calculator:</b> Matscape also have an Inbuilt Numerical Calculator,
-        so you don\'t have to go anywhere while doing Normal calculations also.
+    <string name="text_about_feature6"><b>Числовой калькулятор:</b> Matscape также имеет встроенный числовой калькулятор,
+        поэтому вам не нужно никуда идти, выполняя обычные расчеты.
     </string>
-    <string name="text_about_feature7"><b>Offline:</b> No Internet Required.</string>
+    <string name="text_about_feature7"><b>Офлайн:</b> Интернет не требуется.</string>
 
     // Terms of Service and Privacy Policy
     <string name="TOS"><a href="https://www.app-privacy-policy.com/live.php?token=CVPUJ3M1FCDyhgBH0PD7xnNUQWzUnsrq">
-        Terms of Service</a></string>
+        Условия использования</a></string>
     <string name="PP"><a href="https://www.freeprivacypolicy.com/live/c06dafb1-db5f-4343-a4f4-e818efda0520">
-        Privacy Policy</a></string>
+       Политика конфиденциальности</a></string>
 </resources>

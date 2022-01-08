@@ -1,6 +1,24 @@
 <resources>
     <string name="app_name" translatable="false">Matscape</string>
-    <string name="app_icon" translatable="false">App Icon</string>
+    <string name="app_icon">App Icon</string>
+
+    //for dialog boxes
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="discard_changes">Discard Changes</string>
+    <string name="discard_feedback">Discard Feedback</string>
+    <string name="save_changes">Save Changes</string>
+
+    //for sliders
+    <string name="slider_rows">Rows: %.0f</string>
+    <string name="slider_columns">Columns: %.0f</string>
+
+    //for Toasts
+    <string name="toast_empty_result_card">Empty Result Card</string>
+    <string name="toast_home_back_safety">Press BACK again to exit</string>
+    <string name="toast_edit_matrix_numpad_msg">Press Back to Hide Numpad</string>
+    <string name="toast_settings_sq_matrices">Only Square Matrices can be selected as Identity Matrices</string>
+    <string name="toast_feedback_empty">Feedback Field is Empty</string>
 
     //req Strings for homepage navigation drawer
     <string name="open" translatable="false">Open</string>
@@ -108,8 +126,11 @@
 
     //for Feedback Section
     <string name="text_report_bug">Bug</string>
+    <string name="bug_encountered">Bug Encountered</string>
     <string name="text_request_feature">Feature</string>
+    <string name="feature_req">Feature Request</string>
     <string name="hint_feedback">Feedback</string>
+    <string name="text_empty_feedback_error">*Required</string>
     <string name="text_OR">OR</string>
     <string name="text_join_telegram">Join Telegram Group</string>
     <string name="text_join">Join</string>
@@ -143,7 +164,7 @@
     <string name="error_no_matrix_found">Matrix \'%c\' does not Exist</string>
 
     //for About Section
-    <string name="text_about_head_description">Description :</string>
+    <string name="text_about_head_description">Description:-</string>
     <string name="text_about_description"><b>Matscape</b> is a high performance Matrix Calculator.
         It can Evaluate simple as well as complex nested Expressions.
         It has the ability to store multiple matrices so you can work on several matrices at the same time.

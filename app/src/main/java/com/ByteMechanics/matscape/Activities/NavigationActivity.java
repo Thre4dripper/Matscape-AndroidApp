@@ -123,9 +123,9 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
 
             //then dialog box will display when something is changed, to prevent accidental back
         else new MaterialAlertDialogBuilder(this)
-                .setMessage("Discard Changes")
-                .setPositiveButton("Yes", (dialogInterface, i) -> NavigationActivity.super.onBackPressed())
-                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setMessage(this.getString(R.string.discard_changes))
+                .setPositiveButton(this.getString(R.string.yes), (dialogInterface, i) -> NavigationActivity.super.onBackPressed())
+                .setNegativeButton(this.getString(R.string.no), (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 
@@ -139,12 +139,12 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
         }
         //dialog box when something is changes to confirm changes
         else new MaterialAlertDialogBuilder(this)
-                .setMessage("Save Changes")
-                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                .setMessage(this.getString(R.string.save_changes))
+                .setPositiveButton(this.getString(R.string.yes), (dialogInterface, i) -> {
                     SettingsFragment.SaveSettings(this);
                     NavigationActivity.super.onBackPressed();
                 })
-                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setNegativeButton(this.getString(R.string.no), (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 
@@ -158,9 +158,9 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
 
             //then dialog box will display when something is changed, to prevent accidental back
         else new MaterialAlertDialogBuilder(this)
-                .setMessage("Discard Feedback")
-                .setPositiveButton("Yes", (dialogInterface, i) -> NavigationActivity.super.onBackPressed())
-                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setMessage(this.getString(R.string.discard_feedback))
+                .setPositiveButton(this.getString(R.string.yes), (dialogInterface, i) -> NavigationActivity.super.onBackPressed())
+                .setNegativeButton(this.getString(R.string.no), (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 }

@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -392,7 +393,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if (MatrixCardsController.matrixCardCounter != 0)
                 mMatrixCardsHintLayout.setVisibility(View.GONE);
         } else
-            Toast.makeText(this, "Empty Result Card", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_empty_result_card), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -403,11 +404,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if (clickedCard != ResultCardsController.selectedCard || from == 1) {
 
             //removing color from previous selected card
-            ResultCardsController.resultCardsList.get(ResultCardsController.selectedCard).setHighlightedColor("#FFFFFF");
+            ResultCardsController.resultCardsList.get(ResultCardsController.selectedCard).setHighlightedColor(
+                    "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.white))
+            );
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(ResultCardsController.selectedCard);
 
             //setting color to newly selected card
-            ResultCardsController.resultCardsList.get(clickedCard).setHighlightedColor("#2196F3");
+            ResultCardsController.resultCardsList.get(clickedCard).setHighlightedColor(
+                    "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.selected_card_color))
+                    );
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(clickedCard);
 
             ResultCardsController.selectedCard = clickedCard;
@@ -427,7 +432,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Press BACK again to exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_home_back_safety), Toast.LENGTH_SHORT).show();
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
         }

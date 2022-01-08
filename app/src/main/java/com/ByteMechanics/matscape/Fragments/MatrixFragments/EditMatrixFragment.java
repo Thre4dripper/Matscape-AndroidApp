@@ -34,7 +34,6 @@ import java.util.Objects;
 public class EditMatrixFragment extends Fragment implements View.OnFocusChangeListener,
         AdapterView.OnItemClickListener, Slider.OnChangeListener, View.OnClickListener {
 
-    //TODO fix only '.' and '-' in matrix field issue
     private static final String TAG = "EditMatrixFragment";
     //boolean for checking changed information before returning back
     public static boolean isEditMatrixBackSafe = true;
@@ -63,7 +62,7 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         //showing numpad after a delay and a message for numpad functionality
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             editNumpadCardView.setVisibility(View.VISIBLE);
-            Toast.makeText(requireContext(), "Press Back to Hide Numpad", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), requireContext().getString(R.string.toast_edit_matrix_numpad_msg), Toast.LENGTH_SHORT).show();
         }, 1500);
     }
 
@@ -466,8 +465,8 @@ public class EditMatrixFragment extends Fragment implements View.OnFocusChangeLi
         rows = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixRows();
         columns = MatrixCardsController.matrixCardsList.get(matrixPosition).getMatrixColumns();
 
-        mRowsSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Rows: %.0f", value));
-        mColumnsSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Columns: %.0f", value));
+        mRowsSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, requireContext().getString(R.string.slider_rows,value), value));
+        mColumnsSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, requireContext().getString(R.string.slider_columns,value), value));
 
         mRowsSlider.setValue(rows);
         mColumnsSlider.setValue(columns);

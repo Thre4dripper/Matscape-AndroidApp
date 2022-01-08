@@ -107,9 +107,9 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
 
             //then dialog box will display when something is changed, to prevent accidental back
         else new MaterialAlertDialogBuilder(this)
-                    .setMessage("Discard Changes")
-                    .setPositiveButton("Yes", (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
-                    .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                    .setMessage(this.getString(R.string.discard_changes))
+                    .setPositiveButton(this.getString(R.string.yes), (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
+                    .setNegativeButton(this.getString(R.string.no), (dialogInterface, i) -> dialogInterface.dismiss())
                     .show();
 
     }
@@ -124,15 +124,15 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         }
         //dialog box when something is changes to confirm changes
         else new MaterialAlertDialogBuilder(this)
-                .setMessage("Save Changes")
-                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                .setMessage(this.getString(R.string.save_changes))
+                .setPositiveButton(this.getString(R.string.yes), (dialogInterface, i) -> {
                     if(EditMatrixFragment.SaveMatrix()) {
                         //updating result on matrix changes
                         ResultCardsController.HomeKeyboardInputControl(this, new EditText(this), null);
                         ChangeMatrixActivity.super.onBackPressed();
                     }
                 })
-                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setNegativeButton(this.getString(R.string.no), (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 
@@ -145,9 +145,9 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         }
         //dialog box when something is changes to prevent accidental back
         else new MaterialAlertDialogBuilder(this)
-                .setMessage("Discard Changes")
-                .setPositiveButton("Yes", (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
-                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setMessage(this.getString(R.string.discard_changes))
+                .setPositiveButton(this.getString(R.string.yes), (dialogInterface, i) -> ChangeMatrixActivity.super.onBackPressed())
+                .setNegativeButton(this.getString(R.string.no), (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 
@@ -161,14 +161,14 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         }
         //dialog box when something is changes to confirm changes
         else new MaterialAlertDialogBuilder(this)
-                .setMessage("Save Changes")
-                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                .setMessage(this.getString(R.string.save_changes))
+                .setPositiveButton(this.getString(R.string.yes), (dialogInterface, i) -> {
                     SubMatrixFragment.SaveMatrix();
                     //updating result on matrix changes
                     ResultCardsController.HomeKeyboardInputControl(this, new EditText(this), null);
                     ChangeMatrixActivity.super.onBackPressed();
                 })
-                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setNegativeButton(this.getString(R.string.no), (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 }

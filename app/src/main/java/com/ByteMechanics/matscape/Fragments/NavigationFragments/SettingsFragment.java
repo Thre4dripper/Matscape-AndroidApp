@@ -98,7 +98,7 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
                 mNullMatrixRadio.setChecked(isNullSelected = true);
 
                 //message for the user
-                Toast.makeText(getContext(), "Only Square Matrices can be selected as Identity Matrices", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), requireContext().getString(R.string.toast_settings_sq_matrices), Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -143,8 +143,8 @@ public class SettingsFragment extends Fragment implements Slider.OnChangeListene
     public void setSliderLabels() {
 
 
-        mRowSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Rows: %.0f", value));
-        mColumnSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, "Columns: %.0f", value));
+        mRowSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, requireContext().getString(R.string.slider_rows,value), value));
+        mColumnSlider.setLabelFormatter(value -> String.format(Locale.ENGLISH, requireContext().getString(R.string.slider_columns,value), value));
 
         mRowSlider.setValue(rows);
         mColumnSlider.setValue(columns);

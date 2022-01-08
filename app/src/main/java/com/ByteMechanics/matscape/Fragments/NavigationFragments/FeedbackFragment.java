@@ -79,15 +79,15 @@ public class FeedbackFragment extends Fragment {
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"ijlalahmad845@gmail.com"});
 
             if (mBugRadio.isChecked())
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Bug Encountered");
+                intent.putExtra(Intent.EXTRA_SUBJECT, requireContext().getString(R.string.bug_encountered));
             else if (mFeatureRadio.isChecked())
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Feature Request");
+                intent.putExtra(Intent.EXTRA_SUBJECT, requireContext().getString(R.string.feature_req));
 
             intent.putExtra(Intent.EXTRA_TEXT, feedbackContent);
             startActivity(intent);
 
         } else
-            Toast.makeText(requireContext(), "Feedback Field is Empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), requireContext().getString(R.string.toast_feedback_empty), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -105,7 +105,7 @@ public class FeedbackFragment extends Fragment {
                 feedbackContent = charSequence.toString().trim();
 
                 if (feedbackContent.equals(""))
-                    mFeedbackLayout.setError("*Required");
+                    mFeedbackLayout.setError(requireContext().getString(R.string.text_empty_feedback_error));
                 else
                     mFeedbackLayout.setError(null);
             }
