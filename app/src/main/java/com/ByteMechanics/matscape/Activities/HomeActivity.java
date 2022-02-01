@@ -94,7 +94,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         InitHomeKeyboard();
 
         //preventing app from dark mode
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
     }
 
     /**

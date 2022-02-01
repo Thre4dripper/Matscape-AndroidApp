@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/result_card_bg_color"
     android:minHeight="80dp"
     android:id="@+id/ResultCardCL">
 
@@ -16,6 +16,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@color/result_card_bg_color"
         android:contentDescription="@string/desc_drag_result"
         android:src="@drawable/ic_result_card_drag"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -83,6 +84,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/result_card_mat_bg_color"
             android:padding="4dp">
 
             <androidx.constraintlayout.widget.Guideline

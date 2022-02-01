@@ -13,13 +13,16 @@
         <activity
             android:name="com.ByteMechanics.matscape.Activities.ChangeMatrixActivity"
             android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.ByteMechanics.matscape.Activities.NavigationActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name="com.ByteMechanics.matscape.Activities.HomeActivity"
             android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

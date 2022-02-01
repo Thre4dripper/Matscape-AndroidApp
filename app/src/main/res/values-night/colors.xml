@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    //dark mode colors
+    <color name="mat_card_bg_color">#282C34</color>
+    <color name="result_card_bg_color">#333842</color>
+    <color name="result_card_mat_bg_color">#282C34</color>
+    <color name="home_bg_color">#000000</color>
+    <color name="home_numpad_button_color">#AFAFAF</color>
+    <color name="home_numpad_bg_color">#3D424B</color>
+    <color name="home_numpad_mat_opr_bg_color">#4F5559</color>
+
+    <color name="home_divider_start_color">#1B1D23</color>
+    <color name="home_divider_end_color">#262930</color>
+</resources>

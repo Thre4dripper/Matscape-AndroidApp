@@ -37,6 +37,12 @@
         <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/layout/numpad_home.xml" value="0.23027166882276842" />
         <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/menu/home_navigation_drawer_menu.xml" value="0.21981981981981982" />
         <entry key="..\:/Projects/Android Studio Projects/Matscape/app/src/main/res/menu/menu_home_navigation_drawer.xml" value="0.21403508771929824" />
+        <entry key="app/src/main/res/drawable/grad_home_divider.xml" value="0.2555" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.2814814814814815" />
+        <entry key="app/src/main/res/layout/item_matrix_card.xml" value="0.3578125" />
+        <entry key="app/src/main/res/layout/item_result_card.xml" value="0.2814814814814815" />
+        <entry key="app/src/main/res/layout/numpad_edit_matrix.xml" value="0.3578125" />
+        <entry key="app/src/main/res/layout/numpad_home.xml" value="0.41228851291184326" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1905" />
       </map>
     </option>

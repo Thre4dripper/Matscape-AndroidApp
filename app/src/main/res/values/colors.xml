@@ -4,7 +4,19 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="blue_black">#263238</color>
-    <color name="light_blue_black">#90A4AE</color>
+    <color name="light_blue_black">#627077</color>
     <color name="selected_card_color">#2196F3</color>
     <color name="warning_color">#FFB74D</color>
+
+    //theme colors
+    <color name="mat_card_bg_color">#FFFFFF</color>
+    <color name="result_card_bg_color">#FFFFFF</color>
+    <color name="result_card_mat_bg_color">#FFFFFF</color>
+    <color name="home_bg_color">#FFFFFF</color>
+    <color name="home_numpad_button_color">#212121</color>
+    <color name="home_numpad_bg_color">#FFFFFF</color>
+    <color name="home_numpad_mat_opr_bg_color">#FFFFFF</color>
+
+    <color name="home_divider_start_color">#FFFFFF</color>
+    <color name="home_divider_end_color">#E0E0E0</color>
 </resources>
