@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/home_numpad_bg_color"
+    android:background="@color/num_pad_bg_color"
     android:baselineAligned="false"
     android:orientation="horizontal">
 

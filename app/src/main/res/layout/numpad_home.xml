@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/home_numpad_bg_color">
+    android:background="@color/num_pad_bg_color">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

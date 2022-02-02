@@ -17,7 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@color/mat_card_bg_color"
+        android:background="@color/matrix_card_bg_color"
         android:minWidth="150dp">
 
         <ImageView

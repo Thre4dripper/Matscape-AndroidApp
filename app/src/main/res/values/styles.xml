@@ -71,8 +71,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">2dp</item>
         <item name="android:layout_marginEnd">2dp</item>
-        <item name="background">@color/home_numpad_button_color</item>
-        <item name="android:textColor">@color/home_numpad_text_color</item>
+        <item name="background">@color/material_button_bg_color</item>
+        <item name="android:textColor">@color/persistent_white_text_color</item>
     </style>
 
     //for EditMatrixFragment Keypad Arrow CardViews
@@ -81,7 +81,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:layout_margin">4dp</item>
         <item name="cardCornerRadius">4dp</item>
-        <item name="android:backgroundTint">@color/home_numpad_mat_opr_bg_color</item>
+        <item name="android:backgroundTint">@color/card_view_button_bg_color</item>
     </style>
 
     //for EditMatrixFragment Keypad Arrow ImageViews
@@ -115,7 +115,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:padding">0dp</item>
         <item name="cardCornerRadius">5dp</item>
-        <item name="android:backgroundTint">@color/home_numpad_mat_opr_bg_color</item>
+        <item name="cardBackgroundColor">@color/card_view_button_bg_color</item>
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
@@ -127,7 +127,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColor">@color/home_numpad_mat_opr_text_color</item>
+        <item name="android:textColor">@color/dark_compatible_text_color</item>
         <item name="android:gravity">center</item>
     </style>
 
@@ -139,8 +139,8 @@
         <item name="android:layout_marginStart">1dp</item>
         <item name="android:layout_marginEnd">1dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:textColor">@color/home_numpad_text_color</item>
-        <item name="background">@color/home_numpad_button_color</item>
+        <item name="android:textColor">@color/persistent_white_text_color</item>
+        <item name="background">@color/material_button_bg_color</item>
         <item name="android:padding">0px</item>
     </style>
 
@@ -153,6 +153,7 @@
         <item name="android:valueTo">5</item>
         <item name="android:layout_marginEnd">16dp</item>
         <item name="android:layout_marginStart">16dp</item>
+        <item name="backgroundTint">@color/icon_color</item>
         <item name="haloColor">@color/icon_color</item>
         <item name="thumbColor">@color/icon_color</item>
         <item name="trackColorActive">@color/icon_color</item>

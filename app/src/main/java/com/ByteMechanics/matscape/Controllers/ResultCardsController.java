@@ -338,10 +338,10 @@ public class ResultCardsController {
         //Nth Power Button
         else if (view == HomeActivity.matOperationButtons[4] && HomeActivity.matOperationButtons[4] != null) {
             if (isNthPowerButtonPressed) {
-                HomeActivity.matOperationButtons[4].setCardBackgroundColor(Color.parseColor("#FFFFFF"));
+                HomeActivity.matOperationButtons[4].setCardBackgroundColor(context.getResources().getColor(R.color.card_view_button_bg_color));
                 isNthPowerButtonPressed = false;
             } else {
-                HomeActivity.matOperationButtons[4].setCardBackgroundColor(Color.parseColor("#B0BEC5"));
+                HomeActivity.matOperationButtons[4].setCardBackgroundColor(Color.parseColor("#78909C"));
                 isNthPowerButtonPressed = true;
             }
         }

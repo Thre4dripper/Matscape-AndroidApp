@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     //dark mode colors
-    <color name="mat_card_bg_color">#282C34</color>
+    <color name="matrix_card_bg_color">#282C34</color>
     <color name="result_card_bg_color">#333842</color>
-    <color name="result_card_mat_bg_color">#282C34</color>
-    <color name="home_bg_color">#000000</color>
-    <color name="home_numpad_button_color">#AFAFAF</color>
-    <color name="home_numpad_bg_color">#3D424B</color>
-    <color name="home_numpad_mat_opr_bg_color">#4F5559</color>
+    <color name="result_card_matrix_bg_color">#282C34</color>
+    <color name="activities_fragments_bg_color">#000000</color>
+    <color name="material_button_bg_color">#AFAFAF</color>
+    <color name="num_pad_bg_color">#3D424B</color>
+    <color name="card_view_button_bg_color">#4F5559</color>
 
     <color name="home_divider_start_color">#262932</color>
     <color name="home_divider_end_color">#3E424E</color>
 
     <color name="icon_color">#BEC4CD</color>
-    <color name="home_numpad_text_color">#ECEFF1</color>
-    <color name="home_numpad_mat_opr_text_color">#ECEFF1</color>
+    <color name="persistent_white_text_color">#ECEFF1</color>
+    <color name="dark_compatible_text_color">#ECEFF1</color>
 
-    <color name="fragment_bg_color">#000000</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#BEC4CD</color>
 </resources>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fragment_bg_color"
+    android:background="@color/activities_fragments_bg_color"
     tools:context=".Fragments.NavigationFragments.FeedbackFragment">
 
     <RadioGroup
@@ -78,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/text_OR"
-        android:textColor="@color/home_numpad_mat_opr_text_color"
+        android:textColor="@color/dark_compatible_text_color"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/FeedbackDivider1"
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/text_join_telegram"
-        android:textColor="@color/home_numpad_mat_opr_text_color"
+        android:textColor="@color/dark_compatible_text_color"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -118,7 +118,7 @@
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/blue_black"
         android:text="@string/text_join"
-        android:textColor="@color/home_numpad_text_color"
+        android:textColor="@color/persistent_white_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />

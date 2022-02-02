@@ -86,7 +86,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/result_card_mat_bg_color"
+            android:background="@color/result_card_matrix_bg_color"
             android:padding="4dp">
 
             <androidx.constraintlayout.widget.Guideline
