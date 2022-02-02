@@ -19,4 +19,6 @@
 
     <color name="home_divider_start_color">#FFFFFF</color>
     <color name="home_divider_end_color">#E0E0E0</color>
+
+    <color name="icon_color">#263238</color>
 </resources>

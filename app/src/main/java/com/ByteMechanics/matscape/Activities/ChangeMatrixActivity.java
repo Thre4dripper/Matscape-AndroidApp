@@ -51,7 +51,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         fragmentId = receivedIntent.getIntExtra(Constant.CHANGE_MATRIX_ACTIVITY_KEY, -1);
         int matrixCardIndex = receivedIntent.getIntExtra(Constant.MATRIX_CARD_POSITION_KEY, -1);
 
-        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.blue_black));
+        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.icon_color));
         Fragment fragment = new Fragment();
         switch (fragmentId) {
             case Constant.EDIT_MATRIX_FRAGMENT_ID:

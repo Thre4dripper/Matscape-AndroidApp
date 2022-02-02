@@ -9,6 +9,8 @@
     <color name="home_numpad_bg_color">#3D424B</color>
     <color name="home_numpad_mat_opr_bg_color">#4F5559</color>
 
-    <color name="home_divider_start_color">#1B1D23</color>
-    <color name="home_divider_end_color">#262930</color>
+    <color name="home_divider_start_color">#262932</color>
+    <color name="home_divider_end_color">#3E424E</color>
+
+    <color name="icon_color">#BEC4CD</color>
 </resources>

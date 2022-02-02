@@ -1,6 +1,9 @@
 package com.ByteMechanics.matscape.Activities;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -8,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
 import com.ByteMechanics.matscape.Constants.Constant;
@@ -46,7 +51,7 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
     public void setupFragments(@NonNull Intent receivedIntent) {
         fragmentId = receivedIntent.getIntExtra(Constant.NAVIGATION_FRAGMENT_KEY, -1);
 
-        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.blue_black));
+        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.icon_color));
         Fragment fragment = new Fragment();
         switch (fragmentId) {
             case Constant.NAV_SETTINGS_FRAGMENT_ID:

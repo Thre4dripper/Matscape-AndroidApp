@@ -21,7 +21,8 @@
         android:src="@drawable/ic_result_card_drag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/icon_color"/>
 
 
     <EditText
@@ -62,6 +63,7 @@
         android:clickable="true"
         android:contentDescription="@string/desc_delete_result"
         android:focusable="true"
+        app:tint="@color/icon_color"
         android:src="@drawable/ic_result_card_delete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -282,6 +284,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
+        app:tint="@color/icon_color"
         android:src="@drawable/ic_mat_card_copy"
         app:layout_constraintBottom_toBottomOf="@+id/DeleteResultButton"
         app:layout_constraintEnd_toStartOf="@+id/DeleteResultButton"
@@ -296,7 +299,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
-
+        app:tint="@color/icon_color"
         android:src="@drawable/ic_result_add_matrix"
         app:layout_constraintBottom_toBottomOf="@+id/DeleteResultButton"
         app:layout_constraintEnd_toStartOf="@+id/CopyResultButton"
