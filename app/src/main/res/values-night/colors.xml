@@ -13,4 +13,6 @@
     <color name="home_divider_end_color">#3E424E</color>
 
     <color name="icon_color">#BEC4CD</color>
+    <color name="home_numpad_text_color">#ECEFF1</color>
+    <color name="home_numpad_mat_opr_text_color">#ECEFF1</color>
 </resources>

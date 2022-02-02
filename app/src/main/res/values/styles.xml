@@ -122,6 +122,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/home_numpad_mat_opr_text_color</item>
         <item name="android:gravity">center</item>
     </style>
 
@@ -133,6 +134,7 @@
         <item name="android:layout_marginStart">1dp</item>
         <item name="android:layout_marginEnd">1dp</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/home_numpad_text_color</item>
         <item name="background">@color/home_numpad_button_color</item>
         <item name="android:padding">0px</item>
     </style>

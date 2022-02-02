@@ -21,4 +21,6 @@
     <color name="home_divider_end_color">#E0E0E0</color>
 
     <color name="icon_color">#263238</color>
+    <color name="home_numpad_text_color">#ECEFF1</color>
+    <color name="home_numpad_mat_opr_text_color">#000000</color>
 </resources>
