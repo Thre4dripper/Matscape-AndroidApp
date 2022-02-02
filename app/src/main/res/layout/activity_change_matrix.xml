@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/home_bg_color"
     tools:context=".Activities.ChangeMatrixActivity">
 
     <ImageView
@@ -36,7 +37,7 @@
         android:id="@+id/ChangeMatrixHeaderTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/blue_black"
+        android:textColor="@color/icon_color"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/ChangeMatrixHeaderIcon"

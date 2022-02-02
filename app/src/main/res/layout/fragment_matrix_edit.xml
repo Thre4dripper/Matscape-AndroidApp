@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/home_bg_color"
     tools:context=".Fragments.MatrixFragments.EditMatrixFragment">
 
     <HorizontalScrollView
@@ -313,7 +314,6 @@
         app:layout_constraintGuide_begin="350dp" />
 
     <com.google.android.material.textfield.TextInputLayout
-
         android:id="@+id/textInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="wrap_content"
@@ -321,6 +321,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:hint="@string/hint_spinner"
+        app:boxStrokeColor="@color/mtrl_textinput_default_box_stroke_color"
+        app:hintTextColor="@color/mtrl_textinput_default_box_stroke_color"
+        android:textColorHint="@color/mtrl_textinput_default_box_stroke_color"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/EditMatrixGuideLine">
@@ -330,6 +333,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"
+            android:textColor="@color/mtrl_textinput_default_box_stroke_color"
             tools:ignore="LabelFor" />
 
     </com.google.android.material.textfield.TextInputLayout>

@@ -15,7 +15,7 @@
     <color name="home_bg_color">#FFFFFF</color>
     <color name="home_numpad_button_color">#212121</color>
     <color name="home_numpad_bg_color">#FFFFFF</color>
-    <color name="home_numpad_mat_opr_bg_color">#FFFFFF</color>
+    <color name="home_numpad_mat_opr_bg_color">#CFD8DC</color>
 
     <color name="home_divider_start_color">#FFFFFF</color>
     <color name="home_divider_end_color">#E0E0E0</color>

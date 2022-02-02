@@ -55,6 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:gravity="top"
+            android:textColor="@color/mtrl_textinput_default_box_stroke_color"
             android:inputType="textMultiLine" />
 
     </com.google.android.material.textfield.TextInputLayout>

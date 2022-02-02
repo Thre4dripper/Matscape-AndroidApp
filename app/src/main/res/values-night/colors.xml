@@ -17,5 +17,5 @@
     <color name="home_numpad_mat_opr_text_color">#ECEFF1</color>
 
     <color name="fragment_bg_color">#000000</color>
-    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#B0BCE3</color>
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#BEC4CD</color>
 </resources>
