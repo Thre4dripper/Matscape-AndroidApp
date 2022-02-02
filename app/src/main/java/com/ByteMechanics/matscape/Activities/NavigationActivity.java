@@ -70,6 +70,7 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_feedback);
                 mHeaderTitle.setText(this.getString(R.string.action_feedback));
                 mSaveButton.setImageResource(R.drawable.ic_send);
+                mSaveButton.setColorFilter(this.getResources().getColor(R.color.icon_color));
                 break;
             case Constant.NAV_ABOUT_FRAGMENT_ID:
                 fragment = new AboutFragment();

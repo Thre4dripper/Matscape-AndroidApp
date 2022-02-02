@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fragment_bg_color"
     tools:context=".Activities.NavigationActivity">
 
     <ImageView
@@ -12,11 +13,11 @@
         android:layout_height="40dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
-        android:padding="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/desc_back"
         android:focusable="true"
+        android:padding="8dp"
         android:src="@drawable/ic_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,19 +27,19 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/action_settings"
         app:layout_constraintBottom_toBottomOf="@+id/NavigationActivityBack"
         app:layout_constraintStart_toEndOf="@+id/NavigationActivityBack"
         app:layout_constraintTop_toTopOf="@+id/NavigationActivityBack"
-        app:srcCompat="@drawable/ic_nav_settings"
-        android:contentDescription="@string/action_settings" />
+        app:srcCompat="@drawable/ic_nav_settings" />
 
     <TextView
         android:id="@+id/NavHeaderTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/icon_color"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/blue_black"
         app:layout_constraintBottom_toBottomOf="@+id/NavHeaderIcon"
         app:layout_constraintStart_toEndOf="@+id/NavHeaderIcon"
         app:layout_constraintTop_toTopOf="@+id/NavHeaderIcon" />
@@ -47,13 +48,13 @@
         android:id="@+id/NavigationActivitySave"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="4dp"
         android:layout_marginTop="8dp"
-        android:padding="8dp"
+        android:layout_marginEnd="4dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:contentDescription="@string/desc_save"
         android:focusable="true"
+        android:padding="8dp"
         android:src="@drawable/ic_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

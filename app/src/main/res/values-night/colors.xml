@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     //dark mode colors
     <color name="mat_card_bg_color">#282C34</color>
     <color name="result_card_bg_color">#333842</color>
@@ -15,4 +15,7 @@
     <color name="icon_color">#BEC4CD</color>
     <color name="home_numpad_text_color">#ECEFF1</color>
     <color name="home_numpad_mat_opr_text_color">#ECEFF1</color>
+
+    <color name="fragment_bg_color">#000000</color>
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#B0BCE3</color>
 </resources>

@@ -92,9 +92,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         InitResultCardsRecyclerView();
 
         InitHomeKeyboard();
-
-        //preventing app from dark mode
-        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
     }
 
     /**
