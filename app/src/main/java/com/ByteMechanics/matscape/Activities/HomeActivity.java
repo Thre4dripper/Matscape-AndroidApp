@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -78,14 +77,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mToolbar = findViewById(R.id.Toolbar);
         addMatrixCardsButton = findViewById(R.id.addMatrixCardButton);
         addResultCardsButton = findViewById(R.id.addResultCardButton);
-        matricesCount=findViewById(R.id.MatricesCount);
+        matricesCount = findViewById(R.id.MatricesCount);
         homeNumpadCardView = findViewById(R.id.HomeNumpadCardView);
         mMatrixCardsHintLayout = findViewById(R.id.MatrixCardsHintLayout);
 
         addMatrixCardsButton.setOnClickListener(this);
         addResultCardsButton.setOnClickListener(this);
 
-        matricesCount.setText(this.getString(R.string.total_matrices,MatrixCardsController.matrixCardCounter));
+        matricesCount.setText(this.getString(R.string.total_matrices, MatrixCardsController.matrixCardCounter));
         InitNavigationDrawer();
 
         InitMatrixCardsRecyclerView();
@@ -259,10 +258,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 mMatrixCardsHintLayout.setVisibility(View.GONE);
 
             //updating result cards
-            ResultCardsController.HomeKeyboardInputControl(this,new EditText(this),null);
+            ResultCardsController.HomeKeyboardInputControl(this, new EditText(this), null);
 
             //updating matrices count
-            matricesCount.setText(this.getString(R.string.total_matrices,MatrixCardsController.matrixCardCounter));
+            matricesCount.setText(this.getString(R.string.total_matrices, MatrixCardsController.matrixCardCounter));
 
         } else if (addResultCardsButton.equals(view)) {
             ResultCardsController.addResultCards(this,
@@ -300,10 +299,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 new Handler(Looper.getMainLooper()).postDelayed(() -> mMatrixCardsHintLayout.setVisibility(View.VISIBLE), 200);
 
             //updating result cards
-            ResultCardsController.HomeKeyboardInputControl(this,new EditText(this),null);
+            ResultCardsController.HomeKeyboardInputControl(this, new EditText(this), null);
 
             //updating matrices count
-            matricesCount.setText(this.getString(R.string.total_matrices,MatrixCardsController.matrixCardCounter));
+            matricesCount.setText(this.getString(R.string.total_matrices, MatrixCardsController.matrixCardCounter));
         }
     }
 
@@ -369,7 +368,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void copyResult(int position) {
         ResultCards resultCard = ResultCardsController.resultCardsList.get(position);
-        ResultCardsController.addResultCards(this,position + 1, resultCard, mResultCardsRecyclerView);
+        ResultCardsController.addResultCards(this, position + 1, resultCard, mResultCardsRecyclerView);
     }
 
     @Override
@@ -409,7 +408,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             //setting color to newly selected card
             ResultCardsController.resultCardsList.get(clickedCard).setHighlightedColor(
                     "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.selected_card_color))
-                    );
+            );
             ResultCardsController.mResultCardsRecyclerAdapter.notifyItemChanged(clickedCard);
 
             ResultCardsController.selectedCard = clickedCard;

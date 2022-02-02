@@ -321,10 +321,10 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:hint="@string/hint_spinner"
+        android:orientation="horizontal"
+        android:textColorHint="@color/mtrl_textinput_default_box_stroke_color"
         app:boxStrokeColor="@color/mtrl_textinput_default_box_stroke_color"
         app:hintTextColor="@color/mtrl_textinput_default_box_stroke_color"
-        android:textColorHint="@color/mtrl_textinput_default_box_stroke_color"
-        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/EditMatrixGuideLine">
 

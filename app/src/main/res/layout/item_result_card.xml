@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ResultCardCL"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/result_card_bg_color"
-    android:minHeight="80dp"
-    android:id="@+id/ResultCardCL">
+    android:minHeight="80dp">
 
 
     <ImageView
@@ -22,7 +22,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/icon_color"/>
+        app:tint="@color/custom_accent_color" />
 
 
     <EditText
@@ -30,8 +30,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
         android:background="@null"
         android:hint="@string/hint_result_field"
         android:importantForAutofill="no"
@@ -47,8 +47,8 @@
         android:id="@+id/ResultCardMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/placeholder_result_msg"
         android:layout_marginBottom="4dp"
+        android:text="@string/placeholder_result_msg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/ExpressionField"
         app:layout_constraintTop_toBottomOf="@+id/ExpressionField" />
@@ -63,22 +63,22 @@
         android:clickable="true"
         android:contentDescription="@string/desc_delete_result"
         android:focusable="true"
-        app:tint="@color/icon_color"
         android:src="@drawable/ic_result_card_delete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/custom_accent_color"
         tools:ignore="TouchTargetSizeCheck" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginTop="8dp"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ExpressionField">
@@ -283,13 +283,13 @@
         android:layout_marginEnd="12dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
+        android:contentDescription="@string/desc_copy_result"
         android:focusable="true"
-        app:tint="@color/icon_color"
         android:src="@drawable/ic_mat_card_copy"
         app:layout_constraintBottom_toBottomOf="@+id/DeleteResultButton"
         app:layout_constraintEnd_toStartOf="@+id/DeleteResultButton"
         app:layout_constraintTop_toTopOf="@+id/DeleteResultButton"
-        android:contentDescription="@string/desc_copy_result" />
+        app:tint="@color/custom_accent_color" />
 
     <ImageView
         android:id="@+id/AddResultMatrixButton"
@@ -298,12 +298,12 @@
         android:layout_marginEnd="12dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
+        android:contentDescription="@string/desc_add_result_matrix"
         android:focusable="true"
-        app:tint="@color/icon_color"
         android:src="@drawable/ic_result_add_matrix"
         app:layout_constraintBottom_toBottomOf="@+id/DeleteResultButton"
         app:layout_constraintEnd_toStartOf="@+id/CopyResultButton"
         app:layout_constraintTop_toTopOf="@+id/DeleteResultButton"
-        android:contentDescription="@string/desc_add_result_matrix" />
+        app:tint="@color/custom_accent_color" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

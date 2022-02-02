@@ -9,6 +9,7 @@
     <color name="warning_color">#FFB74D</color>
 
     //theme colors
+    //bg colors
     <color name="matrix_card_bg_color">#FFFFFF</color>
     <color name="result_card_bg_color">#FFFFFF</color>
     <color name="result_card_matrix_bg_color">#ECEFF1</color>
@@ -17,11 +18,17 @@
     <color name="num_pad_bg_color">#ECEFF1</color>
     <color name="card_view_button_bg_color">#CFD8DC</color>
 
+    //home screen toolbox (divider) colors
     <color name="home_divider_start_color">#FFFFFF</color>
     <color name="home_divider_end_color">#E0E0E0</color>
 
-    <color name="icon_color">#263238</color>
+    //icons, dividers, certain views colors
+    <color name="custom_accent_color">#263238</color>
+
+    //text colors
     <color name="persistent_white_text_color">#ECEFF1</color>
     <color name="dark_compatible_text_color">#000000</color>
+
+    //material text input layout stroke color
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#263238</color>
 </resources>

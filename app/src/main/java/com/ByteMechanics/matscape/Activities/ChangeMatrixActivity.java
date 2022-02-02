@@ -51,7 +51,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         fragmentId = receivedIntent.getIntExtra(Constant.CHANGE_MATRIX_ACTIVITY_KEY, -1);
         int matrixCardIndex = receivedIntent.getIntExtra(Constant.MATRIX_CARD_POSITION_KEY, -1);
 
-        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.icon_color));
+        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.custom_accent_color));
         Fragment fragment = new Fragment();
         switch (fragmentId) {
             case Constant.EDIT_MATRIX_FRAGMENT_ID:
@@ -126,7 +126,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         else new MaterialAlertDialogBuilder(this)
                 .setMessage(this.getString(R.string.save_changes))
                 .setPositiveButton(this.getString(R.string.yes), (dialogInterface, i) -> {
-                    if(EditMatrixFragment.SaveMatrix()) {
+                    if (EditMatrixFragment.SaveMatrix()) {
                         //updating result on matrix changes
                         ResultCardsController.HomeKeyboardInputControl(this, new EditText(this), null);
                         ChangeMatrixActivity.super.onBackPressed();

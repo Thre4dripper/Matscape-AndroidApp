@@ -34,8 +34,8 @@
             android:src="@drawable/ic_home_add_matrix"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck"
-            app:tint="@color/icon_color" />
+            app:tint="@color/custom_accent_color"
+            tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/MatrixCardsRecyclerView"
@@ -74,7 +74,7 @@
                 android:layout_marginEnd="4dp"
                 android:contentDescription="@string/desc_add_matrix"
                 app:srcCompat="@drawable/ic_home_add_matrix"
-                app:tint="@color/icon_color" />
+                app:tint="@color/custom_accent_color" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -107,9 +107,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:elevation="12dp"
             android:text="@string/total_matrices"
             android:textStyle="bold"
-            android:elevation="12dp"
             app:layout_constraintBottom_toBottomOf="@+id/cardView"
             app:layout_constraintEnd_toEndOf="@+id/cardView"
             app:layout_constraintTop_toTopOf="@+id/cardView" />

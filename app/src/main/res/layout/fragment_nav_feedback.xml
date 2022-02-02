@@ -55,8 +55,8 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:gravity="top"
-            android:textColor="@color/mtrl_textinput_default_box_stroke_color"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:textColor="@color/mtrl_textinput_default_box_stroke_color" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,7 +65,7 @@
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_margin="8dp"
-        android:background="@color/icon_color"
+        android:background="@color/custom_accent_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/FeedbackDividerText"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +91,7 @@
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_margin="8dp"
-        android:background="@color/icon_color"
+        android:background="@color/custom_accent_color"
         app:layout_constraintBottom_toBottomOf="@+id/FeedbackDividerText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/FeedbackDividerText"

@@ -12,7 +12,7 @@
     <color name="home_divider_start_color">#262932</color>
     <color name="home_divider_end_color">#3E424E</color>
 
-    <color name="icon_color">#BEC4CD</color>
+    <color name="custom_accent_color">#BEC4CD</color>
     <color name="persistent_white_text_color">#ECEFF1</color>
     <color name="dark_compatible_text_color">#ECEFF1</color>
 
