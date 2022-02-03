@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_htu"
@@ -20,4 +21,10 @@
         android:id="@+id/action_about"
         android:icon="@drawable/ic_nav_about"
         android:title="@string/action_about" />
+
+    <item
+        android:id="@+id/action_dark_switch"
+        android:icon="@drawable/ic_nav_theme"
+        android:title="@string/action_dark_mode"
+        />
 </menu>

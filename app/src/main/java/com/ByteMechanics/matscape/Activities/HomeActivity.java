@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -12,8 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -29,11 +32,13 @@ import com.ByteMechanics.matscape.Adapters.ResultCardsRecyclerAdapter;
 import com.ByteMechanics.matscape.Constants.Constant;
 import com.ByteMechanics.matscape.Controllers.MatrixCardsController;
 import com.ByteMechanics.matscape.Controllers.ResultCardsController;
+import com.ByteMechanics.matscape.Preferences.Preferences;
 import com.ByteMechanics.matscape.R;
 import com.ByteMechanics.matscape.models.MatrixCards;
 import com.ByteMechanics.matscape.models.ResultCards;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.Collections;
 
@@ -104,6 +109,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
 
+        //Handling dark theme menu item
+        setDarkThemeMenuItem(mNavigationView.getMenu().findItem(R.id.action_dark_switch));
+
         mNavigationView.setNavigationItemSelectedListener(item -> {
             int navMenuItemId = item.getItemId();
             if (navMenuItemId == R.id.action_settings) {
@@ -128,10 +136,42 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             }
 
-            mDrawerLayout.closeDrawer(GravityCompat.START);
+            //clicking on Dark Theme menu item doesn't closed the nav drawer
+            if (navMenuItemId != R.id.action_dark_switch)
+                mDrawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
 
+    }
+
+    /**
+     * ======================================= METHOD FOR HANDLING DARK THEME MENU ITEM ==================================
+     **/
+    public void setDarkThemeMenuItem(@NonNull MenuItem menuItem) {
+        menuItem.setActionView(new SwitchMaterial(this));
+
+        SwitchMaterial switchMaterial = (SwitchMaterial) menuItem.getActionView();
+
+        //getting last saved state of dark theme
+        boolean isDarkEnabled = Preferences.getThemeState(this);
+
+        //applying changes
+        switchMaterial.setChecked(isDarkEnabled);
+        if (isDarkEnabled)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        //click listener for dark theme switch
+        switchMaterial.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b)
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            else
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+            //saving theme state in Shared Preferences
+            Preferences.saveThemeState(this, b);
+        });
     }
 
     /**
@@ -152,7 +192,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mMatrixCardsRecyclerView.setAdapter(MatrixCardsController.mMatrixCardsRecyclerAdapter);
         matrixCardsTouchHelper.attachToRecyclerView(mMatrixCardsRecyclerView);
 
-        MatrixCardsController.setMatrixNamesList();
+
+        if (MatrixCardsController.matrixCardCounter != 0) {
+            mMatrixCardsHintLayout.setVisibility(View.GONE);
+        } else {
+            MatrixCardsController.setMatrixNamesList();
+        }
     }
 
     /**
@@ -432,21 +477,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        //Reset Matrix Cards View Model
-        MatrixCardsController.matrixCardsList.clear();
-        MatrixCardsController.matrixCardCounter = 0;
-        MatrixCardsController.NamesList.clear();
-        MatrixCardsController.remainingNamesList.clear();
-
-        //Reset Result Cards View Model
-        ResultCardsController.resultCardsList.clear();
-        ResultCardsController.resultCardCounter = ResultCardsController.selectedCard = 0;
-        ResultCardsController.isNthPowerButtonPressed = false;
     }
 }

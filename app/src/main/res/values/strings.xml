@@ -29,6 +29,7 @@
     <string name="action_htu">How to Use</string>
     <string name="action_feedback">Feedback</string>
     <string name="action_about">About</string>
+    <string name="action_dark_mode">Dark Mode</string>
 
     //home page imageViews content descriptions
     <string name="desc_add_matrix">Add Matrix</string>
