@@ -1,6 +1,7 @@
 package com.ByteMechanics.matscape.Activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -88,6 +89,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         addMatrixCardsButton.setOnClickListener(this);
         addResultCardsButton.setOnClickListener(this);
+
+        //tooltip messages for home icons
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            addMatrixCardsButton.setTooltipText("Add Matrices");
+            addResultCardsButton.setTooltipText("Add Result Cards");
+        }
 
         matricesCount.setText(this.getString(R.string.total_matrices, MatrixCardsController.matrixCardCounter));
         InitNavigationDrawer();

@@ -1,6 +1,7 @@
 package com.ByteMechanics.matscape.Activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -38,6 +39,12 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
 
         mBackButton.setOnClickListener(this);
         mSaveButton.setOnClickListener(this);
+
+        //tooltip message for change matrix fragment icons
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mBackButton.setTooltipText("Back");
+            mSaveButton.setTooltipText("Save");
+        }
 
         Intent receivedIntent = getIntent();
         setupFragments(receivedIntent);

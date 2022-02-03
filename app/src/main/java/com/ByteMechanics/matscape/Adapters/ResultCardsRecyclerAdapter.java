@@ -3,6 +3,7 @@ package com.ByteMechanics.matscape.Adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
@@ -194,6 +195,13 @@ public class ResultCardsRecyclerAdapter extends RecyclerView.Adapter<ResultCards
             mDeleteButton.setOnClickListener(this);
             mCopyButton.setOnClickListener(this);
             mAddResultMatrixButton.setOnClickListener(this);
+
+            //tooltip messages for result card icons
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mDeleteButton.setTooltipText("Delete Result");
+                mCopyButton.setTooltipText("Copy Result");
+                mAddResultMatrixButton.setTooltipText("Add Matrix");
+            }
         }
 
         /**

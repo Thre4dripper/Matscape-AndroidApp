@@ -2,6 +2,7 @@ package com.ByteMechanics.matscape.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,6 +161,13 @@ public class MatrixCardsRecyclerAdapter extends RecyclerView.Adapter<MatrixCards
 
             mDragButton = itemView.findViewById(R.id.MatrixCardDragButton);
 
+            //tooltip messages for matrix card icons
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mDeleteButton.setTooltipText("Delete Matrix");
+                mCopyButton.setTooltipText("Copy Matrix");
+                mSubMatrixButton.setTooltipText("Sub Matrix");
+                mEditButton.setTooltipText("Edit Matrix");
+            }
         }
 
         @Override

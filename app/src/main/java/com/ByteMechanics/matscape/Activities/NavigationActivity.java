@@ -1,6 +1,7 @@
 package com.ByteMechanics.matscape.Activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -39,6 +40,12 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
         mBackButton.setOnClickListener(this);
         mSaveButton.setOnClickListener(this);
 
+        //tooltip message for navigation fragment icons
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mBackButton.setTooltipText("Back");
+            mSaveButton.setTooltipText("Save");
+        }
+
         Intent receivedIntent = getIntent();
         setupFragments(receivedIntent);
     }
@@ -66,6 +73,10 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
                 mHeaderTitle.setText(this.getString(R.string.action_feedback));
                 mSaveButton.setImageResource(R.drawable.ic_send);
                 mSaveButton.setColorFilter(this.getResources().getColor(R.color.custom_accent_color));
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    mSaveButton.setTooltipText("Send Feedback");
+                }
                 break;
             case Constant.NAV_ABOUT_FRAGMENT_ID:
                 fragment = new AboutFragment();
