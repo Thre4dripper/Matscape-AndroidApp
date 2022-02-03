@@ -192,12 +192,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mMatrixCardsRecyclerView.setAdapter(MatrixCardsController.mMatrixCardsRecyclerAdapter);
         matrixCardsTouchHelper.attachToRecyclerView(mMatrixCardsRecyclerView);
 
-
-        if (MatrixCardsController.matrixCardCounter != 0) {
-            mMatrixCardsHintLayout.setVisibility(View.GONE);
-        } else {
+        //names only be added if there aren't any
+        if(MatrixCardsController.remainingNamesList.size()==0)
             MatrixCardsController.setMatrixNamesList();
-        }
+
+        if (MatrixCardsController.matrixCardCounter != 0)
+            mMatrixCardsHintLayout.setVisibility(View.GONE);
     }
 
     /**
