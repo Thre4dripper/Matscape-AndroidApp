@@ -200,7 +200,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         matrixCardsTouchHelper.attachToRecyclerView(mMatrixCardsRecyclerView);
 
         //names only be added if there aren't any
-        if(MatrixCardsController.remainingNamesList.size()==0)
+        if (MatrixCardsController.remainingNamesList.size() == 0)
             MatrixCardsController.setMatrixNamesList();
 
         if (MatrixCardsController.matrixCardCounter != 0)

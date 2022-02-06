@@ -49,9 +49,9 @@
         <entry key="app/src/main/res/layout/fragment_sub_matrix.xml" value="0.3572916666666667" />
         <entry key="app/src/main/res/layout/header_navigation_drawer.xml" value="0.3572916666666667" />
         <entry key="app/src/main/res/layout/item_matrix_card.xml" value="0.29444444444444445" />
-        <entry key="app/src/main/res/layout/item_result_card.xml" value="0.2814814814814815" />
+        <entry key="app/src/main/res/layout/item_result_card.xml" value="0.25092592592592594" />
         <entry key="app/src/main/res/layout/numpad_edit_matrix.xml" value="0.2935185185185185" />
-        <entry key="app/src/main/res/layout/numpad_home.xml" value="0.2570965125709651" />
+        <entry key="app/src/main/res/layout/numpad_home.xml" value="0.22753988245172124" />
         <entry key="app/src/main/res/menu/menu_home_navigation_drawer.xml" value="0.1" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1905" />
       </map>

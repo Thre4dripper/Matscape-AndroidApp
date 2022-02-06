@@ -88,7 +88,7 @@
     <string name="home_keyboard_minors" translatable="false">Minors</string>
     <string name="home_keyboard_cofactors" translatable="false">Co-fac</string>
 
-    <string name="home_numpad_multiply" translatable="false">X</string>
+    <string name="home_numpad_multiply" translatable="false">x</string>
     <string name="home_numpad_divide" translatable="false">÷</string>
     <string name="home_numpad_add" translatable="false">+</string>
     <string name="home_keyboard_bracket_open" translatable="false">(</string>
