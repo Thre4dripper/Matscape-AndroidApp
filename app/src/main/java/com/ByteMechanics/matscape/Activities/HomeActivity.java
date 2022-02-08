@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,10 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -33,7 +30,6 @@ import com.ByteMechanics.matscape.Adapters.ResultCardsRecyclerAdapter;
 import com.ByteMechanics.matscape.Constants.Constant;
 import com.ByteMechanics.matscape.Controllers.MatrixCardsController;
 import com.ByteMechanics.matscape.Controllers.ResultCardsController;
-import com.ByteMechanics.matscape.Preferences.Preferences;
 import com.ByteMechanics.matscape.R;
 import com.ByteMechanics.matscape.models.MatrixCards;
 import com.ByteMechanics.matscape.models.ResultCards;
@@ -117,7 +113,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mToggle.syncState();
 
         //Handling dark theme menu item
-        setDarkThemeMenuItem(mNavigationView.getMenu().findItem(R.id.action_dark_switch));
+        SwitchMaterial switchMaterial = NavigationActivity.setDarkThemeMenuItem(
+                this,
+                mNavigationView.getMenu().findItem(R.id.action_dark_switch));
 
         mNavigationView.setNavigationItemSelectedListener(item -> {
             int navMenuItemId = item.getItemId();
@@ -141,6 +139,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra(Constant.NAVIGATION_FRAGMENT_KEY, Constant.NAV_ABOUT_FRAGMENT_ID);
                 startActivity(intent);
 
+            } else if (navMenuItemId == R.id.action_dark_switch) {
+                switchMaterial.setChecked(!switchMaterial.isChecked());
             }
 
             //clicking on Dark Theme menu item doesn't closed the nav drawer
@@ -149,36 +149,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             return true;
         });
 
-    }
-
-    /**
-     * ======================================= METHOD FOR HANDLING DARK THEME MENU ITEM ==================================
-     **/
-    public void setDarkThemeMenuItem(@NonNull MenuItem menuItem) {
-        menuItem.setActionView(new SwitchMaterial(this));
-
-        SwitchMaterial switchMaterial = (SwitchMaterial) menuItem.getActionView();
-
-        //getting last saved state of dark theme
-        boolean isDarkEnabled = Preferences.getThemeState(this);
-
-        //applying changes
-        switchMaterial.setChecked(isDarkEnabled);
-        if (isDarkEnabled)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        else
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
-        //click listener for dark theme switch
-        switchMaterial.setOnCheckedChangeListener((compoundButton, b) -> {
-            if (b)
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            else
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
-            //saving theme state in Shared Preferences
-            Preferences.saveThemeState(this, b);
-        });
     }
 
     /**

@@ -1,14 +1,17 @@
 package com.ByteMechanics.matscape.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.ByteMechanics.matscape.Constants.Constant;
@@ -16,8 +19,10 @@ import com.ByteMechanics.matscape.Fragments.NavigationFragments.AboutFragment;
 import com.ByteMechanics.matscape.Fragments.NavigationFragments.FeedbackFragment;
 import com.ByteMechanics.matscape.Fragments.NavigationFragments.HTUFragment;
 import com.ByteMechanics.matscape.Fragments.NavigationFragments.SettingsFragment;
+import com.ByteMechanics.matscape.Preferences.Preferences;
 import com.ByteMechanics.matscape.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class NavigationActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -123,6 +128,40 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onBackPressed() {
         onClick(mBackButton);
+    }
+
+
+    /**
+     * ======================================= METHOD FOR HANDLING DARK THEME MENU ITEM ==================================
+     **/
+    @NonNull
+    public static SwitchMaterial setDarkThemeMenuItem(Context context, @NonNull MenuItem menuItem) {
+        menuItem.setActionView(new SwitchMaterial(context));
+
+        SwitchMaterial switchMaterial = (SwitchMaterial) menuItem.getActionView();
+
+        //getting last saved state of dark theme
+        boolean isDarkEnabled = Preferences.getThemeState(context);
+
+        //applying changes
+        switchMaterial.setChecked(isDarkEnabled);
+        if (isDarkEnabled)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        //click listener for dark theme switch
+        switchMaterial.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b)
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            else
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+            //saving theme state in Shared Preferences
+            Preferences.saveThemeState(context, b);
+        });
+
+        return switchMaterial;
     }
 
     /**
