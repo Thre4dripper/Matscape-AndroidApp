@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -297,9 +298,9 @@ public class ExpressionEvaluator {
     /**
      * ================================= METHOD FOR CHECKING PERMISSIBLE ERROR CODES ================================
      **/
-    public static boolean isErrorCodeValid(int errorCode){
-        return errorCode==0 || errorCode==Constant.WARNING_1X1_DETERMINANT
-                || errorCode==Constant.WARNING_DIVISOR_AS_INVERSE;
+    public static boolean isErrorCodeValid(int errorCode) {
+        return errorCode == 0 || errorCode == Constant.WARNING_1X1_DETERMINANT
+                || errorCode == Constant.WARNING_DIVISOR_AS_INVERSE;
     }
 
     /**

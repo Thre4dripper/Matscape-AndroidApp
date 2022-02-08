@@ -1,6 +1,7 @@
 package com.ByteMechanics.matscape.Controllers;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -107,7 +108,7 @@ public class MatrixCardsController {
                     matrixCardsRecyclerView.getHeight()
             ));
 
-            NamesList.add(remainingNamesList.get(0));
+            NamesList.add(position, remainingNamesList.get(0));
             remainingNamesList.remove(0);
 
             mMatrixCardsRecyclerAdapter.notifyItemInserted(position);
