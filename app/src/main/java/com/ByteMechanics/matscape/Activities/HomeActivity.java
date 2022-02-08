@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         MatrixCardsRecyclerAdapter.MatrixCardsInterface,
         ResultCardsRecyclerAdapter.ResultCardsInterface {
 
-    //continued from 1.0.1
+    //continued from 1.0.2
     private static final String TAG = "HomeActivity";
     //for matrix cards recycler view
     public static RecyclerView mMatrixCardsRecyclerView;
