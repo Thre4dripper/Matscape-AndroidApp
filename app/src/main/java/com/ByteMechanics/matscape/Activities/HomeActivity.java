@@ -21,7 +21,6 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -100,10 +99,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         addResultCardsButton.setOnClickListener(this);
 
         //tooltip messages for home icons
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            addMatrixCardsButton.setTooltipText("Add Matrices");
-            addResultCardsButton.setTooltipText("Add Result Cards");
-        }
+        addMatrixCardsButton.setTooltipText("Add Matrices");
+        addResultCardsButton.setTooltipText("Add Result Cards");
 
         matricesCount.setText(this.getString(R.string.total_matrices, MatrixCardsController.matrixCardCounter));
         InitNavigationDrawer();
@@ -183,7 +180,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         matrixCardsTouchHelper.attachToRecyclerView(mMatrixCardsRecyclerView);
 
         //names only be added if there aren't any
-        if (MatrixCardsController.remainingNamesList.size() == 0)
+        if (MatrixCardsController.remainingNamesList.isEmpty())
             MatrixCardsController.setMatrixNamesList();
 
         if (MatrixCardsController.matrixCardCounter != 0)
@@ -385,7 +382,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             else if (position == ResultCardsController.selectedCard) {
 
                 //when selected card removed is last card prev card gets selected, && size>0
-                if (position == ResultCardsController.resultCardsList.size() && ResultCardsController.resultCardsList.size() != 0) {
+                if (position == ResultCardsController.resultCardsList.size() && !ResultCardsController.resultCardsList.isEmpty()) {
                     ResultCardsController.selectedCard--;
                     clickedCard(ResultCardsController.selectedCard, 1);
                 }
