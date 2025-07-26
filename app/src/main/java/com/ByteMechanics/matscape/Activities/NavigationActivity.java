@@ -6,12 +6,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.ByteMechanics.matscape.Constants.Constant;
@@ -35,6 +38,17 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+        View rootView = findViewById(R.id.NavigationActivityLayout);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            int top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            params.topMargin = top;
+            params.bottomMargin = bottom;
+            v.setLayoutParams(params);
+            return insets;
+        });
 
         mBackButton = findViewById(R.id.NavigationActivityBack);
         mSaveButton = findViewById(R.id.NavigationActivitySave);
