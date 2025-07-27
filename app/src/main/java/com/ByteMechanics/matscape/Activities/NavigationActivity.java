@@ -2,16 +2,18 @@ package com.ByteMechanics.matscape.Activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.ByteMechanics.matscape.Constants.Constant;
@@ -36,6 +38,17 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
+        View rootView = findViewById(R.id.NavigationActivityLayout);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            int top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            params.topMargin = top;
+            params.bottomMargin = bottom;
+            v.setLayoutParams(params);
+            return insets;
+        });
+
         mBackButton = findViewById(R.id.NavigationActivityBack);
         mSaveButton = findViewById(R.id.NavigationActivitySave);
 
@@ -46,10 +59,8 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
         mSaveButton.setOnClickListener(this);
 
         //tooltip message for navigation fragment icons
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mBackButton.setTooltipText("Back");
-            mSaveButton.setTooltipText("Save");
-        }
+        mBackButton.setTooltipText("Back");
+        mSaveButton.setTooltipText("Save");
 
         Intent receivedIntent = getIntent();
         setupFragments(receivedIntent);
@@ -58,7 +69,7 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
     public void setupFragments(@NonNull Intent receivedIntent) {
         fragmentId = receivedIntent.getIntExtra(Constant.NAVIGATION_FRAGMENT_KEY, -1);
 
-        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.custom_accent_color));
+        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.custom_accent_color,null));
         Fragment fragment = new Fragment();
         switch (fragmentId) {
             case Constant.NAV_SETTINGS_FRAGMENT_ID:
@@ -77,11 +88,9 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
                 mHeaderIcon.setImageResource(R.drawable.ic_nav_feedback);
                 mHeaderTitle.setText(this.getString(R.string.action_feedback));
                 mSaveButton.setImageResource(R.drawable.ic_send);
-                mSaveButton.setColorFilter(this.getResources().getColor(R.color.custom_accent_color));
+                mSaveButton.setColorFilter(this.getResources().getColor(R.color.custom_accent_color,null));
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    mSaveButton.setTooltipText("Send Feedback");
-                }
+                mSaveButton.setTooltipText("Send Feedback");
                 break;
             case Constant.NAV_ABOUT_FRAGMENT_ID:
                 fragment = new AboutFragment();
@@ -144,6 +153,7 @@ public class NavigationActivity extends AppCompatActivity implements View.OnClic
         boolean isDarkEnabled = Preferences.getThemeState(context);
 
         //applying changes
+        assert switchMaterial != null;
         switchMaterial.setChecked(isDarkEnabled);
         if (isDarkEnabled)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);

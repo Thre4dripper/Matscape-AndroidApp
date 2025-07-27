@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,6 +20,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -74,6 +77,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        View rootView = findViewById(R.id.DrawerLayout);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            int top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            params.topMargin = top;
+            params.bottomMargin = bottom;
+            v.setLayoutParams(params);
+            return insets;
+        });
 
         mToolbar = findViewById(R.id.Toolbar);
         addMatrixCardsButton = findViewById(R.id.addMatrixCardButton);
@@ -86,10 +99,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         addResultCardsButton.setOnClickListener(this);
 
         //tooltip messages for home icons
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            addMatrixCardsButton.setTooltipText("Add Matrices");
-            addResultCardsButton.setTooltipText("Add Result Cards");
-        }
+        addMatrixCardsButton.setTooltipText("Add Matrices");
+        addResultCardsButton.setTooltipText("Add Result Cards");
 
         matricesCount.setText(this.getString(R.string.total_matrices, MatrixCardsController.matrixCardCounter));
         InitNavigationDrawer();
@@ -169,7 +180,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         matrixCardsTouchHelper.attachToRecyclerView(mMatrixCardsRecyclerView);
 
         //names only be added if there aren't any
-        if (MatrixCardsController.remainingNamesList.size() == 0)
+        if (MatrixCardsController.remainingNamesList.isEmpty())
             MatrixCardsController.setMatrixNamesList();
 
         if (MatrixCardsController.matrixCardCounter != 0)
@@ -371,7 +382,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             else if (position == ResultCardsController.selectedCard) {
 
                 //when selected card removed is last card prev card gets selected, && size>0
-                if (position == ResultCardsController.resultCardsList.size() && ResultCardsController.resultCardsList.size() != 0) {
+                if (position == ResultCardsController.resultCardsList.size() && !ResultCardsController.resultCardsList.isEmpty()) {
                     ResultCardsController.selectedCard--;
                     clickedCard(ResultCardsController.selectedCard, 1);
                 }

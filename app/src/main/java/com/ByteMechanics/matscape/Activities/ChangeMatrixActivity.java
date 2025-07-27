@@ -1,15 +1,17 @@
 package com.ByteMechanics.matscape.Activities;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.ByteMechanics.matscape.Constants.Constant;
@@ -30,6 +32,16 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_matrix);
+        View rootView = findViewById(R.id.ChangeMatrixActivityLayout);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            int top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            params.topMargin = top;
+            params.bottomMargin = bottom;
+            v.setLayoutParams(params);
+            return insets;
+        });
 
         mBackButton = findViewById(R.id.ChangeMatrixActivityBack);
         mSaveButton = findViewById(R.id.ChangeMatrixActivitySave);
@@ -41,10 +53,8 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         mSaveButton.setOnClickListener(this);
 
         //tooltip message for change matrix fragment icons
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mBackButton.setTooltipText("Back");
-            mSaveButton.setTooltipText("Save");
-        }
+        mBackButton.setTooltipText("Back");
+        mSaveButton.setTooltipText("Save");
 
         Intent receivedIntent = getIntent();
         setupFragments(receivedIntent);
@@ -58,7 +68,7 @@ public class ChangeMatrixActivity extends AppCompatActivity implements View.OnCl
         fragmentId = receivedIntent.getIntExtra(Constant.CHANGE_MATRIX_ACTIVITY_KEY, -1);
         int matrixCardIndex = receivedIntent.getIntExtra(Constant.MATRIX_CARD_POSITION_KEY, -1);
 
-        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.custom_accent_color));
+        mHeaderIcon.setColorFilter(this.getResources().getColor(R.color.custom_accent_color, null));
         Fragment fragment = new Fragment();
         switch (fragmentId) {
             case Constant.EDIT_MATRIX_FRAGMENT_ID:
