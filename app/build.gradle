@@ -10,15 +10,55 @@ android {
         minSdk 29
         targetSdk 36
         versionCode 6
-        versionName "1.0.4"
+        versionName "1.0"
 
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def variantName = variant.name
+            if (output.outputFileName != null && output.outputFileName.toString().endsWith('.apk')) {
+                output.outputFileName = "app-${variantName}.apk"
+            }
+        }
+    }
+
+    signingConfigs {
+        release {
+            def localProps = new Properties()
+            def localPropsFile = rootProject.file("local.properties")
+            if (localPropsFile.exists()) {
+                localProps.load(localPropsFile.newDataInputStream())
+            }
+
+            def getEnvOrLocalProp = { key ->
+                System.getenv(key) ?: localProps.getProperty(key)
+            }
+
+            def keystorePath = getEnvOrLocalProp("RELEASE_KEYSTORE_PATH") ?: file("./keystore.jks")
+            if (keystorePath != null) {
+                storeFile file(keystorePath)
+                storePassword getEnvOrLocalProp("RELEASE_STORE_PASSWORD")
+                keyAlias getEnvOrLocalProp("RELEASE_KEY_ALIAS")
+                keyPassword getEnvOrLocalProp("RELEASE_KEY_PASSWORD")
+            } else {
+                println("⚠️ RELEASE_KEYSTORE_PATH is missing — skipping release signing")
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            versionNameSuffix "-debug"
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
