@@ -77,9 +77,9 @@ jobs:
         run: |
           VERSION_CODE=$(grep -oP 'versionCode\s+\K\d+' app/build.gradle)
           VERSION_NAME=$(grep -oP 'versionName\s+"\K[^"]+' app/build.gradle)
-          echo "Bumping version from $VERSION_NAME ($VERSION_CODE) to 1.0-${{ job.outputs.short_sha }}"
+          echo "Bumping version from $VERSION_NAME ($VERSION_CODE) to 1.0-${{ needs.setup.outputs.short_sha }}"
           sed -i "s/versionCode $VERSION_CODE/versionCode $((VERSION_CODE + 1))/" app/build.gradle
-          sed -i "s/versionName \"$VERSION_NAME\"/versionName \"1.0-${GITHUB_SHA::7}\"/" app/build.gradle
+          sed -i "s/versionName \"$VERSION_NAME\"/versionName \"1.0-${{ needs.setup.outputs.short_sha }}\"/" app/build.gradle
 
       - name: Build AAB with Gradle
         run: ./gradlew bundleRelease
@@ -87,7 +87,7 @@ jobs:
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
+          name: release
           path: app/build/outputs/bundle/release/app-release.aab
           retention-days: 1
 
@@ -102,7 +102,7 @@ jobs:
       - name: Download AAB
         uses: actions/download-artifact@v4
         with:
-          name: app-release
+          name: release
 
       - name: Push to Play Store
         uses: r0adkll/upload-google-play@v1
@@ -112,6 +112,6 @@ jobs:
           releaseFiles: app-release.aab
           track: production
           status: completed
-          releaseName: Release ${{ job.outputs.short_sha }}
+          releaseName: Release ${{ needs.setup.outputs.short_sha }}
           whatsNewDirectory: whats-new/
 
