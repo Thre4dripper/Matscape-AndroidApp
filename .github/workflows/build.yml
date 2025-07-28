@@ -32,7 +32,7 @@ jobs:
 
       - name: Create play-services.json
         run: |
-          echo "${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}" > app/play-services.json
+          echo "${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}" | base64 -d > app/play-services.json
 
       - name: Upload config files
         uses: actions/upload-artifact@v4
@@ -114,14 +114,23 @@ jobs:
       - name: cat json file
         run: cat app/play-services.json
 
-#      - name: Push to Play Store
-#        uses: r0adkll/upload-google-play@v1
-#        with:
-#          serviceAccountJson: app/play-services.json
-#          packageName: com.ByteMechanics.matscape
-#          releaseFiles: app/build/outputs/bundle/release/app-release.aab
-#          track: production
-#          status: completed
-#          releaseName: Release ${{ needs.setup.outputs.short_sha }}
-#          whatsNewDirectory: whats-new/
+      - name: Validate Play Store JSON
+        run: |
+          if [ ! -f app/play-services.json ]; then
+            echo "play-services.json not found!"
+            exit 1
+          fi
+          echo "play-services.json exists."
+          jq . app/play-services.json
+
+      - name: Push to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: app/play-services.json
+          packageName: com.ByteMechanics.matscape
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          track: production
+          status: completed
+          releaseName: Release ${{ needs.setup.outputs.short_sha }}
+          whatsNewDirectory: whats-new/
 
