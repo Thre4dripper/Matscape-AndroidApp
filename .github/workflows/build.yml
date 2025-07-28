@@ -111,17 +111,17 @@ jobs:
           name: release
           path: ./app
 
-      - name: List files recursively
-        run: ls -R
+      - name: cat json file
+        run: cat app/play-services.json
 
-      - name: Push to Play Store
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: com.ByteMechanics.matscape
-          releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          track: production
-          status: completed
-          releaseName: Release ${{ needs.setup.outputs.short_sha }}
-          whatsNewDirectory: whats-new/
+#      - name: Push to Play Store
+#        uses: r0adkll/upload-google-play@v1
+#        with:
+#          serviceAccountJson: app/play-services.json
+#          packageName: com.ByteMechanics.matscape
+#          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+#          track: production
+#          status: completed
+#          releaseName: Release ${{ needs.setup.outputs.short_sha }}
+#          whatsNewDirectory: whats-new/
 
