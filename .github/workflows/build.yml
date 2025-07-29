@@ -289,7 +289,7 @@ jobs:
       - name: Generate New Tag
         id: generate_new_tag
         run: |
-          echo "new_tag=1.0-${{ needs.publish.outputs.version_name }}" >> $GITHUB_OUTPUT
+          echo "new_tag=${{ needs.publish.outputs.version_name }}" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
@@ -299,9 +299,7 @@ jobs:
         with:
           tag_name: ${{ steps.generate_new_tag.outputs.new_tag }}
           name: "Release ${{ steps.generate_new_tag.outputs.new_tag }}"
-          body: |
-            ## What's Changed
-            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.get_last_tag.outputs.last_tag }}...${{ steps.generate_new_tag.outputs.new_tag }}
+          generate_release_notes: true
           draft: false
           prerelease: false
           files: |
