@@ -8,6 +8,11 @@ on:
       - '**/README.md'
       - '**/LICENSE'
       - '**/CONTRIBUTING.md'
+      - '.github/**'
+      - '.gitignore'
+      - '.editorconfig'
+      - '.vscode/**'
+      - '.idea/**'
   workflow_dispatch:
 
 concurrency:
@@ -251,6 +256,12 @@ jobs:
         run: |
           version_name=$(grep -oP 'versionName\s+"\K[^"]+' app/build.gradle)
           echo "version_name=$version_name" >> $GITHUB_OUTPUT
+
+      - name: Create Whats New
+        run: |
+          mkdir -p whats-new
+          echo "Bug fixes and improvements" > whats-new/whatsnew-en-US
+          echo "Исправления ошибок и улучшения" > whats-new/whatsnew-ru-RU
 
       - name: Upload to Play Store
         uses: r0adkll/upload-google-play@v1
