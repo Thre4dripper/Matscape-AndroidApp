@@ -68,16 +68,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-
       - name: Install Google API Client
-        run: |
-          cd .github/scripts
-          pip install -r requirements.txt
+        run: pip install google-api-python-client google-auth google-auth-oauthlib google-auth-httplib2
 
       - name: Download config files
         uses: actions/download-artifact@v4
@@ -126,14 +118,6 @@ jobs:
           fetch-depth: 0
           ref: main
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-
       - uses: actions/setup-java@v4
         with:
           distribution: 'oracle'
@@ -179,14 +163,6 @@ jobs:
           fetch-depth: 0
           ref: main
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-
       - uses: actions/setup-java@v4
         with:
           distribution: 'oracle'
@@ -227,6 +203,8 @@ jobs:
     outputs:
       short_sha: ${{ needs.version-check.outputs.short_sha }}
       version_code: ${{ needs.version-check.outputs.version_code }}
+      new_code: ${{ steps.bump.outputs.new_code }}
+      new_name: ${{ steps.bump.outputs.new_name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -236,6 +214,7 @@ jobs:
           token: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Bump versionCode and versionName
+        id: bump
         run: |
           local_code=$(grep -oP 'versionCode\s+\K\d+' app/build.gradle)
           local_name=$(grep -oP 'versionName\s+"\K[^"]+' app/build.gradle)
@@ -250,13 +229,17 @@ jobs:
           
           sed -i "s/versionCode $local_code/versionCode $new_code/" app/build.gradle
           sed -i "s/versionName \"$local_name\"/versionName \"$new_name\"/" app/build.gradle
+          echo "new_code=$new_code" >> $GITHUB_OUTPUT
+          echo "new_name=$new_name" >> $GITHUB_OUTPUT
 
       - name: Commit and push
         run: |
+          new_code=${{ steps.bump.outputs.new_code }}
+          new_name=${{ steps.bump.outputs.new_name }}
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add app/build.gradle
-          git commit -m "chore: bump version code and name to $new_code $new_name"
+          git commit -m "chore: bump version code to $new_code and version name to $new_name"
           git push
 
   publish:
