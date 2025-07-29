@@ -23,13 +23,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     name: Setup
-    outputs:
-      short_sha: ${{ steps.sha.outputs.sha }}
     steps:
-      - name: Get short SHA
-        id: sha
-        run: echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-
       - name: Create keystore
         run: |
           mkdir -p app
@@ -54,7 +48,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should_build: ${{ steps.decision.outputs.should_build }}
-      short_sha: ${{ needs.setup.outputs.short_sha }}
       version_code: ${{ steps.remote.outputs.versionCode }}
     steps:
       - name: Checkout code
@@ -109,8 +102,6 @@ jobs:
     if: needs.version-check.outputs.should_build == 'true'
     name: Build APK
     runs-on: ubuntu-latest
-    outputs:
-      short_sha: ${{ needs.version-check.outputs.short_sha }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -154,8 +145,6 @@ jobs:
     if: needs.version-check.outputs.should_build == 'true'
     name: Build AAB
     runs-on: ubuntu-latest
-    outputs:
-      short_sha: ${{ needs.version-check.outputs.short_sha }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -200,11 +189,6 @@ jobs:
     if: needs.version-check.outputs.should_build == 'false'
     runs-on: ubuntu-latest
     name: Update Version
-    outputs:
-      short_sha: ${{ needs.version-check.outputs.short_sha }}
-      version_code: ${{ needs.version-check.outputs.version_code }}
-      new_code: ${{ steps.bump.outputs.new_code }}
-      new_name: ${{ steps.bump.outputs.new_name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -212,6 +196,10 @@ jobs:
           fetch-depth: 0
           ref: main
           token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Get short SHA
+        id: sha
+        run: echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Bump versionCode and versionName
         id: bump
@@ -225,7 +213,7 @@ jobs:
             new_code=$((new_code + 1))
           done
           
-          new_name="1.0-${{ needs.version-check.outputs.short_sha }}"
+          new_name="1.0-${{ steps.sha.outputs.sha }}"
           
           sed -i "s/versionCode $local_code/versionCode $new_code/" app/build.gradle
           sed -i "s/versionName \"$local_name\"/versionName \"$new_name\"/" app/build.gradle
@@ -247,7 +235,7 @@ jobs:
     needs: [ build-apk, build-aab ]
     runs-on: ubuntu-latest
     outputs:
-      short_sha: ${{ needs.build-aab.outputs.short_sha }}
+      version_name: ${{ steps.get_version_name.outputs.version_name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -258,8 +246,11 @@ jobs:
           name: aab-release
           path: ./app
 
-      - name: List files (debug)
-        run: ls -R
+      - name: Get Version Name
+        id: get_version_name
+        run: |
+          version_name=$(grep -oP 'versionName\s+"\K[^"]+' app/build.gradle)
+          echo "version_name=$version_name" >> $GITHUB_OUTPUT
 
       - name: Upload to Play Store
         uses: r0adkll/upload-google-play@v1
@@ -269,7 +260,7 @@ jobs:
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           track: production
           status: completed
-          releaseName: Release 1.0-${{ needs.build-aab.outputs.short_sha }}
+          releaseName: Release ${{ steps.get_version_name.outputs.version_name }}
           whatsNewDirectory: whats-new/
 
   release:
@@ -298,7 +289,7 @@ jobs:
       - name: Generate New Tag
         id: generate_new_tag
         run: |
-          echo "new_tag=1.0-${{ needs.publish.outputs.short_sha }}" >> $GITHUB_OUTPUT
+          echo "new_tag=1.0-${{ needs.publish.outputs.version_name }}" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
