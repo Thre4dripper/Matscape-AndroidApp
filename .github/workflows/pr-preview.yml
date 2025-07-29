@@ -230,38 +230,97 @@ jobs:
       - name: Create draft release
         id: create_release
         if: ${{ needs.build-debug.result == 'success' || needs.build-release.result == 'success' }}
-        uses: actions/create-release@v1
+        uses: actions/github-script@v7
         with:
-          tag_name: pr-preview/${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}
-          release_name: "PR Preview #${{ steps.pr_info.outputs.pr_number }}"
-          draft: true
-          prerelease: true
-          body: |
-            Preview build for PR #${{ steps.pr_info.outputs.pr_number }}
+          script: |
+            const tagName = `pr-preview/${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}`;
+            const releaseName = `PR Preview #${{ steps.pr_info.outputs.pr_number }}`;
+            const releaseBody = `Preview build for PR #${{ steps.pr_info.outputs.pr_number }}
             - Commit: ${{ steps.pr_info.outputs.short_sha }}
             - [View PR](${{ github.event.pull_request.html_url }})
             - [View Changes](https://github.com/${{ github.repository }}/compare/${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }})
 
-            **This preview will be automatically deleted when the PR is closed**
-          token: ${{ secrets.GITHUB_TOKEN }}
+            **This preview will be automatically deleted when the PR is closed**`;
+
+            try {
+              const { data: release } = await github.rest.repos.createRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: tagName,
+                name: releaseName,
+                body: releaseBody,
+                draft: true,
+                prerelease: true,
+                make_latest: false
+              });
+
+              core.setOutput('id', release.id);
+              core.setOutput('upload_url', release.upload_url);
+              core.setOutput('html_url', release.html_url);
+              
+              console.log(`Created draft release: ${release.html_url}`);
+              return release.id;
+            } catch (error) {
+              console.error(`Failed to create release: ${error.message}`);
+              core.setFailed(`Failed to create release: ${error.message}`);
+              throw error;
+            }
 
       - name: Upload Debug APK to Release
         if: ${{ needs.build-debug.result == 'success' && steps.create_release.outputs.id }}
-        uses: actions/upload-release-asset@v1
+        uses: actions/github-script@v7
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./debug/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk
-          asset_name: matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk
-          asset_content_type: application/vnd.android.package-archive
+          script: |
+            const fs = require('fs');
+            const releaseId = '${{ steps.create_release.outputs.id }}';
+            const assetPath = './debug/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk';
+            const assetName = 'matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk';
+
+            if (fs.existsSync(assetPath)) {
+              console.log(`Uploading debug APK: ${assetName}`);
+              
+              const fileContent = fs.readFileSync(assetPath);
+              
+              const { data: asset } = await github.rest.repos.uploadReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: releaseId,
+                name: assetName,
+                data: fileContent
+              });
+              
+              console.log(`Debug APK uploaded: ${asset.browser_download_url}`);
+            } else {
+              console.log(`Debug APK not found at: ${assetPath}`);
+            }
 
       - name: Upload Release APK to Release
         if: ${{ needs.build-release.result == 'success' && steps.create_release.outputs.id }}
-        uses: actions/upload-release-asset@v1
+        uses: actions/github-script@v7
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk
-          asset_name: matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk
-          asset_content_type: application/vnd.android.package-archive
+          script: |
+            const fs = require('fs');
+            const releaseId = '${{ steps.create_release.outputs.id }}';
+            const assetPath = './release/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk';
+            const assetName = 'matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk';
+
+            if (fs.existsSync(assetPath)) {
+              console.log(`Uploading release APK: ${assetName}`);
+              
+              const fileContent = fs.readFileSync(assetPath);
+              
+              const { data: asset } = await github.rest.repos.uploadReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: releaseId,
+                name: assetName,
+                data: fileContent
+              });
+              
+              console.log(`Release APK uploaded: ${asset.browser_download_url}`);
+            } else {
+              console.log(`Release APK not found at: ${assetPath}`);
+            }
 
       - name: Create PR comment
         uses: actions/github-script@v7
