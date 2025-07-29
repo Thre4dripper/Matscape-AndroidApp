@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write # Changed from read to write
   pull-requests: write
   checks: write
 
@@ -230,97 +230,42 @@ jobs:
       - name: Create draft release
         id: create_release
         if: ${{ needs.build-debug.result == 'success' || needs.build-release.result == 'success' }}
-        uses: actions/github-script@v7
+        uses: softprops/action-gh-release@v2
         with:
-          script: |
-            const tagName = `pr-preview/${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}`;
-            const releaseName = `PR Preview #${{ steps.pr_info.outputs.pr_number }}`;
-            const releaseBody = `Preview build for PR #${{ steps.pr_info.outputs.pr_number }}
+          tag_name: pr-preview/${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}
+          name: PR Preview #${{ steps.pr_info.outputs.pr_number }}
+          body: |
+            Preview build for PR #${{ steps.pr_info.outputs.pr_number }}
             - Commit: ${{ steps.pr_info.outputs.short_sha }}
             - [View PR](${{ github.event.pull_request.html_url }})
             - [View Changes](https://github.com/${{ github.repository }}/compare/${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }})
 
-            **This preview will be automatically deleted when the PR is closed**`;
-
-            try {
-              const { data: release } = await github.rest.repos.createRelease({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                tag_name: tagName,
-                name: releaseName,
-                body: releaseBody,
-                draft: true,
-                prerelease: true,
-                make_latest: false
-              });
-
-              core.setOutput('id', release.id);
-              core.setOutput('upload_url', release.upload_url);
-              core.setOutput('html_url', release.html_url);
-              
-              console.log(`Created draft release: ${release.html_url}`);
-              return release.id;
-            } catch (error) {
-              console.error(`Failed to create release: ${error.message}`);
-              core.setFailed(`Failed to create release: ${error.message}`);
-              throw error;
-            }
+            **This preview will be automatically deleted when the PR is closed**
+          draft: true
+          prerelease: true
+          files: |
+            ./debug/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk
+            ./release/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Debug APK to Release
         if: ${{ needs.build-debug.result == 'success' && steps.create_release.outputs.id }}
-        uses: actions/github-script@v7
+        uses: actions/upload-release-asset@v1
         with:
-          script: |
-            const fs = require('fs');
-            const releaseId = '${{ steps.create_release.outputs.id }}';
-            const assetPath = './debug/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk';
-            const assetName = 'matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk';
-
-            if (fs.existsSync(assetPath)) {
-              console.log(`Uploading debug APK: ${assetName}`);
-              
-              const fileContent = fs.readFileSync(assetPath);
-              
-              const { data: asset } = await github.rest.repos.uploadReleaseAsset({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                release_id: releaseId,
-                name: assetName,
-                data: fileContent
-              });
-              
-              console.log(`Debug APK uploaded: ${asset.browser_download_url}`);
-            } else {
-              console.log(`Debug APK not found at: ${assetPath}`);
-            }
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./debug/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk
+          asset_name: matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk
+          asset_content_type: application/vnd.android.package-archive
 
       - name: Upload Release APK to Release
         if: ${{ needs.build-release.result == 'success' && steps.create_release.outputs.id }}
-        uses: actions/github-script@v7
+        uses: actions/upload-release-asset@v1
         with:
-          script: |
-            const fs = require('fs');
-            const releaseId = '${{ steps.create_release.outputs.id }}';
-            const assetPath = './release/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk';
-            const assetName = 'matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk';
-
-            if (fs.existsSync(assetPath)) {
-              console.log(`Uploading release APK: ${assetName}`);
-              
-              const fileContent = fs.readFileSync(assetPath);
-              
-              const { data: asset } = await github.rest.repos.uploadReleaseAsset({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                release_id: releaseId,
-                name: assetName,
-                data: fileContent
-              });
-              
-              console.log(`Release APK uploaded: ${asset.browser_download_url}`);
-            } else {
-              console.log(`Release APK not found at: ${assetPath}`);
-            }
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk
+          asset_name: matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk
+          asset_content_type: application/vnd.android.package-archive
 
       - name: Create PR comment
         uses: actions/github-script@v7
@@ -333,88 +278,88 @@ jobs:
             const debugStatus = "${{ needs.build-debug.result }}" === "success" ? "✅" : "❌";
             const releaseStatus = "${{ needs.build-release.result }}" === "success" ? "✅" : "❌";
 
-            // Construct download URLs
-            const encodedTag = encodeURIComponent(`pr-preview/${pr_number}-${short_sha}`);
+            // Get the release URL from the create_release step
+            const releaseUrl = "${{ steps.create_release.outputs.url }}";
 
             let downloadLinks = "";
 
             if ("${{ needs.build-debug.result }}" === "success") {
-              const debugUrl = `https://github.com/${{ github.repository }}/releases/download/${encodedTag}/matscape-pr${pr_number}-${short_sha}-debug.apk`;
+              const debugUrl = `https://github.com/${{ github.repository }}/releases/download/pr-preview%2F${pr_number}-${short_sha}/matscape-pr${pr_number}-${short_sha}-debug.apk`;
               downloadLinks += `
-              📱 **Debug APK** (${debug_size || 'Unknown size'})
+            📱 **Debug APK** (${debug_size || 'Unknown size'})
 
-              [![Download Debug APK](https://img.shields.io/badge/Download-Debug%20APK-blue?style=for-the-badge&logo=android)](${debugUrl})
+            [![Download Debug APK](https://img.shields.io/badge/Download-Debug%20APK-blue?style=for-the-badge&logo=android)](${debugUrl})
 
-              `;
-                      }
+            `;
+                        }
 
-                      if ("${{ needs.build-release.result }}" === "success") {
-                          const releaseUrl = `https://github.com/${{ github.repository }}/releases/download/${encodedTag}/matscape-pr${pr_number}-${short_sha}-release.apk`;
-                          downloadLinks += `
-              🚀 **Release APK** (${release_size || 'Unknown size'})
+                        if ("${{ needs.build-release.result }}" === "success") {
+                        const releaseUrl = `https://github.com/${{ github.repository }}/releases/download/pr-preview%2F${pr_number}-${short_sha}/matscape-pr${pr_number}-${short_sha}-release.apk`;
+                        downloadLinks += `
+            🚀 **Release APK** (${release_size || 'Unknown size'})
 
-              [![Download Release APK](https://img.shields.io/badge/Download-Release%20APK-green?style=for-the-badge&logo=android)](${releaseUrl})
+            [![Download Release APK](https://img.shields.io/badge/Download-Release%20APK-green?style=for-the-badge&logo=android)](${releaseUrl})
 
-              `;
-                      }
+            `;
+                        }
 
-                      const body = `## 📦 PR Preview Build Results
+                        const body = `## 📦 PR Preview Build Results
 
-              ${message}
+            ${message}
 
-              **Build Details:**
-              - 🔨 Debug Build: ${debugStatus}
-              - 🚀 Release Build: ${releaseStatus}
-              - 📝 Commit: \`${short_sha}\`
-              - 🔢 PR: #${pr_number}
+            **Build Details:**
+            - 🔨 Debug Build: ${debugStatus}
+            - 🚀 Release Build: ${releaseStatus}
+            - 📝 Commit: \`${short_sha}\`
+            - 🔢 PR: #${pr_number}
 
-              ## 📥 Direct Downloads
+            ## 📥 Direct Downloads
 
-              ${downloadLinks}
+            ${downloadLinks}
 
-              **Preview Notes:**
-              - This preview will be automatically deleted when the PR is closed
-              - APKs have special versioning to avoid conflicts with production builds
-              - [View full release](https://github.com/${{ github.repository }}/releases/tag/${encodedTag})
+            **Preview Notes:**
+            - This preview will be automatically deleted when the PR is closed
+            - APKs have special versioning to avoid conflicts with production builds
+            - [View full release](${releaseUrl})
 
-              **🧪 Testing Notes:**
-              - **Debug APK**: Includes debugging info, larger file size, easier to debug
-              - **Release APK**: Optimized for production, smaller file size, final performance
+            **🧪 Testing Notes:**
+            - **Debug APK**: Includes debugging info, larger file size, easier to debug
+            - **Release APK**: Optimized for production, smaller file size, final performance
 
-              **📱 Installation:**
-              1. Click the download button above
-              2. Enable "Install from unknown sources" on your Android device
-              3. Install the downloaded APK
-              4. Test the changes and provide feedback!
+            **📱 Installation:**
+            1. Click the download button above
+            2. Enable "Install from unknown sources" on your Android device
+            3. Install the downloaded APK
+            4. Test the changes and provide feedback!
 
-              ---
+            ---
 
-              🤖 *This comment was automatically generated by the PR Preview workflow*`;
+            🤖 *This comment was automatically generated by the PR Preview workflow*`;
 
-                      // Try to update existing comment or create new one
-                      const { data: comments } = await github.rest.issues.listComments({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          issue_number: pr_number,
-                      });
+                        // Try to update existing comment or create new one
+                        const { data: comments } = await github.rest.issues.listComments({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        issue_number: pr_number,
+                        });
 
-                      const botComment = comments.find(comment => 
-                          comment.user.type === 'Bot' && 
-                          comment.body.includes('📦 PR Preview Build Results')
-                      );
+                        const botComment = comments.find(comment => 
+                        comment.user.type === 'Bot' && 
+                        comment.body.includes('📦 PR Preview Build Results')
+                        );
 
-                      if (botComment) {
-                          await github.rest.issues.updateComment({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          comment_id: botComment.id,
-                          body: body
-                          });
-                      } else {
-                          await github.rest.issues.createComment({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          issue_number: pr_number,
-                          body: body
-                          });
-                      }
+                        if (botComment) {
+                        await github.rest.issues.updateComment({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            comment_id: botComment.id,
+                            body: body
+                        });
+                        } else {
+                        await github.rest.issues.createComment({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            issue_number: pr_number,
+                            body: body
+                        });
+                        }
