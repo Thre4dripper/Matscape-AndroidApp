@@ -61,7 +61,7 @@ Matscape is a powerful, feature-rich matrix calculator designed for students, en
 ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
 │    Matrix A     │  │    Matrix B     │  │    Matrix C     │
 │  [ 1  2  3 ]    │  │  [ 4  5 ]       │  │  [ 7  8  9 ]    │
-│  [ 4  5  6 ]    │  │  [ 6  7 ]       │  │  [10 11 12]     │
+│  [ 4  5  6 ]    │  │  [ 6  7 ]       │  │  [10  11 12]    │
 └─────────────────┘  └─────────────────┘  └─────────────────┘
      🔄 📝 📋 🗑️       🔄 📝 📋 🗑️       🔄 📝 📋 🗑️
 ```
@@ -190,25 +190,25 @@ Example: det(A) + B² • C^T - 3•A
 ┌─────────────────────────────────────────┐
 │                Frontend                 │
 ├─────────────────────────────────────────┤
-│ • Material Design Components           │
+│ • Material Design Components            │
 │ • RecyclerView with ItemTouchHelper     │
-│ • Fragment-based Architecture          │
-│ • Custom Views & Layouts               │
+│ • Fragment-based Architecture           │
+│ • Custom Views & Layouts                │
 └─────────────────────────────────────────┘
 ┌─────────────────────────────────────────┐
 │              Core Engine                │
 ├─────────────────────────────────────────┤
-│ • Expression Parser & Evaluator        │
-│ • Matrix Operations Library            │
-│ • Error Handling System                │
-│ • State Management                     │
+│ • Expression Parser & Evaluator         │
+│ • Matrix Operations Library             │
+│ • Error Handling System                 │
+│ • State Management                      │
 └─────────────────────────────────────────┘
 ┌─────────────────────────────────────────┐
 │               Data Layer                │
 ├─────────────────────────────────────────┤
-│ • SharedPreferences Storage            │
-│ • Model Classes (MatrixCards, etc.)    │
-│ • Preference Management               │
+│ • SharedPreferences Storage             │
+│ • Model Classes (MatrixCards, etc.)     │
+│ • Preference Management                 │
 └─────────────────────────────────────────┘
 ```
 
@@ -299,7 +299,7 @@ The app provides comprehensive error detection:
 
 ### 📋 **Prerequisites**
 
-- **📱 Android Device**: API level 21+ (Android 5.0+)
+- **📱 Android Device**: API level 29+ (Android 9.0+)
 - **💾 Storage**: 15MB free space
 - **🔋 Battery**: Standard app usage
 
@@ -441,7 +441,7 @@ cd Matscape-AndroidApp
 
 ```gradle
 // UI Components
-implementation 'com.google.android.material:material:1.8.0'
+implementation 'com.google.android.material:material:1.12.0'
 implementation 'androidx.recyclerview:recyclerview:1.3.0'
 
 // Architecture
@@ -604,7 +604,7 @@ SOFTWARE.
 
 ### 🏢 **Development Team**
 
-- **👨‍💻 Developer**: Byte Mechanics Team
+- **👨‍💻 Developer**: Byte Mechanics Team, Which is me :D
 - **🎨 UI/UX Design**: Material Design principles
 - **🧮 Mathematics**: Linear algebra experts
 - **🔧 Testing**: Quality assurance team
@@ -671,7 +671,7 @@ SOFTWARE.
 [![GitHub stars](https://img.shields.io/github/stars/Thre4dripper/Matscape-AndroidApp?style=social)](https://github.com/Thre4dripper/Matscape-AndroidApp/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/Thre4dripper/Matscape-AndroidApp?style=social)](https://github.com/Thre4dripper/Matscape-AndroidApp/network)
 
-**Made with ❤️ by Byte Mechanics**
+**Made with ❤️ by Byte Mechanics (Ijlal Ahmad)**
 
 _Transforming matrix calculations one operation at a time_
 
