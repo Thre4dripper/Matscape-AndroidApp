@@ -232,13 +232,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add app/build.gradle
-          git commit -m "chore: bump version"
+          git commit -m "chore: bump version code and name to $new_code $new_name"
           git push
 
   publish:
     name: Publish to Play Store
     needs: [ build-apk, build-aab ]
     runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ needs.build-aab.outputs.short_sha }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -289,7 +291,7 @@ jobs:
       - name: Generate New Tag
         id: generate_new_tag
         run: |
-          echo "new_tag=1.0-${{ needs.setup.outputs.short_sha }}" >> $GITHUB_OUTPUT
+          echo "new_tag=1.0-${{ needs.publish.outputs.short_sha }}" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
@@ -305,4 +307,4 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            app/build/outputs/apk/release/app-release.apk
+            app/app-release.apk
