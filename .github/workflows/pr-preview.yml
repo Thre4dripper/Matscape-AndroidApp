@@ -1,0 +1,333 @@
+name: PR Preview Build
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    name: Setup Keystore
+    steps:
+      - name: Create keystore for release builds
+        run: |
+          mkdir -p app
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
+
+      - name: Upload keystore
+        uses: actions/upload-artifact@v4
+        with:
+          name: keystore-file
+          path: app/keystore.jks
+          retention-days: 1
+
+  build-debug:
+    runs-on: ubuntu-latest
+    name: Build Debug APK
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "oracle"
+          java-version: "17"
+          cache: gradle
+
+      - name: Get PR info
+        id: pr_info
+        run: |
+          echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "pr_title=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
+          echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Update version for PR
+        run: |
+          # Get current version info
+          current_code=$(grep -oP 'versionCode\s+\K\d+' app/build.gradle)
+          current_name=$(grep -oP 'versionName\s+"\K[^"]+' app/build.gradle)
+
+          # Create PR-specific version
+          pr_version_code=$((current_code + 9000 + ${{ steps.pr_info.outputs.pr_number }}))
+          pr_version_name="$current_name-PR${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}"
+
+          # Update build.gradle
+          sed -i "s/versionCode $current_code/versionCode $pr_version_code/" app/build.gradle
+          sed -i "s/versionName \"$current_name\"/versionName \"$pr_version_name\"/" app/build.gradle
+
+          echo "Updated version to: $pr_version_name ($pr_version_code)"
+
+      - name: Build Debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Rename debug APK
+        run: |
+          pr_num=${{ steps.pr_info.outputs.pr_number }}
+          sha=${{ steps.pr_info.outputs.short_sha }}
+          mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/matscape-pr${pr_num}-${sha}-debug.apk
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk-pr${{ steps.pr_info.outputs.pr_number }}
+          path: app/build/outputs/apk/debug/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk
+          retention-days: 30
+
+  build-release:
+    needs: setup
+    runs-on: ubuntu-latest
+    name: Build Release APK
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "oracle"
+          java-version: "17"
+          cache: gradle
+
+      - name: Download keystore
+        uses: actions/download-artifact@v4
+        with:
+          name: keystore-file
+          path: ./app
+
+      - name: Get PR info
+        id: pr_info
+        run: |
+          echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "pr_title=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
+          echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Update version for PR
+        run: |
+          # Get current version info
+          current_code=$(grep -oP 'versionCode\s+\K\d+' app/build.gradle)
+          current_name=$(grep -oP 'versionName\s+"\K[^"]+' app/build.gradle)
+
+          # Create PR-specific version
+          pr_version_code=$((current_code + 9000 + ${{ steps.pr_info.outputs.pr_number }}))
+          pr_version_name="$current_name-PR${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}"
+
+          # Update build.gradle
+          sed -i "s/versionCode $current_code/versionCode $pr_version_code/" app/build.gradle
+          sed -i "s/versionName \"$current_name\"/versionName \"$pr_version_name\"/" app/build.gradle
+
+          echo "Updated version to: $pr_version_name ($pr_version_code)"
+
+      - name: Export signing environment variables
+        run: |
+          echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> $GITHUB_ENV
+          echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Build Release APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Rename release APK
+        run: |
+          pr_num=${{ steps.pr_info.outputs.pr_number }}
+          sha=${{ steps.pr_info.outputs.short_sha }}
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/matscape-pr${pr_num}-${sha}-release.apk
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk-pr${{ steps.pr_info.outputs.pr_number }}
+          path: app/build/outputs/apk/release/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk
+          retention-days: 30
+
+  comment-pr:
+    needs: [build-debug, build-release]
+    runs-on: ubuntu-latest
+    name: Comment on PR
+    if: always()
+    steps:
+      - name: Get PR info
+        id: pr_info
+        run: |
+          echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Check build status
+        id: build_status
+        run: |
+          debug_status="${{ needs.build-debug.result }}"
+          release_status="${{ needs.build-release.result }}"
+
+          if [[ "$debug_status" == "success" && "$release_status" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "message=✅ Both debug and release APKs built successfully!" >> $GITHUB_OUTPUT
+          elif [[ "$debug_status" == "success" || "$release_status" == "success" ]]; then
+            echo "status=partial" >> $GITHUB_OUTPUT
+            echo "message=⚠️ Partial build success. Check individual job results." >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "message=❌ Build failed. Please check the workflow logs." >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download debug APK (if available)
+        if: needs.build-debug.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: debug-apk-pr${{ steps.pr_info.outputs.pr_number }}
+          path: ./debug
+        continue-on-error: true
+
+      - name: Download release APK (if available)
+        if: needs.build-release.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk-pr${{ steps.pr_info.outputs.pr_number }}
+          path: ./release
+        continue-on-error: true
+
+      - name: Get APK info
+        id: apk_info
+        run: |
+          debug_size=""
+          release_size=""
+
+          if [ -f "./debug/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk" ]; then
+            debug_size=$(ls -lh "./debug/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-debug.apk" | awk '{print $5}')
+          fi
+
+          if [ -f "./release/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk" ]; then
+            release_size=$(ls -lh "./release/matscape-pr${{ steps.pr_info.outputs.pr_number }}-${{ steps.pr_info.outputs.short_sha }}-release.apk" | awk '{print $5}')
+          fi
+
+          echo "debug_size=$debug_size" >> $GITHUB_OUTPUT
+          echo "release_size=$release_size" >> $GITHUB_OUTPUT
+
+      - name: Create PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { pr_number, short_sha } = ${{ toJson(steps.pr_info.outputs) }};
+            const { status, message } = ${{ toJson(steps.build_status.outputs) }};
+            const { debug_size, release_size } = ${{ toJson(steps.apk_info.outputs) }};
+
+            const debugStatus = "${{ needs.build-debug.result }}" === "success" ? "✅" : "❌";
+            const releaseStatus = "${{ needs.build-release.result }}" === "success" ? "✅" : "❌";
+
+            // Get workflow run artifacts for direct download links
+            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId
+            });
+
+            let downloadLinks = "";
+
+            if ("${{ needs.build-debug.result }}" === "success") {
+              const debugArtifact = artifacts.artifacts.find(artifact => 
+                artifact.name === `debug-apk-pr${pr_number}`
+              );
+              
+              if (debugArtifact) {
+                downloadLinks += `
+            📱 **Debug APK** (${debug_size || 'Unknown size'})
+
+            [![Download Debug APK](https://img.shields.io/badge/Download-Debug%20APK-blue?style=for-the-badge&logo=android)](https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/debug-apk-pr${pr_number})
+
+            `;
+              }
+            }
+
+            if ("${{ needs.build-release.result }}" === "success") {
+              const releaseArtifact = artifacts.artifacts.find(artifact => 
+                artifact.name === `release-apk-pr${pr_number}`
+              );
+              
+              if (releaseArtifact) {
+                downloadLinks += `
+            🚀 **Release APK** (${release_size || 'Unknown size'})
+
+            [![Download Release APK](https://img.shields.io/badge/Download-Release%20APK-green?style=for-the-badge&logo=android)](https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/release-apk-pr${pr_number})
+
+            `;
+              }
+            }
+
+            const body = `## 📦 PR Preview Build Results
+
+            ${message}
+
+            **Build Details:**
+            - 🔨 Debug Build: ${debugStatus}
+            - 🚀 Release Build: ${releaseStatus}
+            - 📝 Commit: \`${short_sha}\`
+            - 🔢 PR: #${pr_number}
+
+            ## 📥 Direct Downloads
+
+            ${downloadLinks}
+
+            **🧪 Testing Notes:**
+            - **Debug APK**: Includes debugging info, larger file size, easier to debug
+            - **Release APK**: Optimized for production, smaller file size, final performance
+            - Both APKs have special PR version numbers to avoid conflicts with production
+            - APK names: \`matscape-pr${pr_number}-${short_sha}-[debug/release].apk\`
+
+            **📱 Installation:**
+            1. Click the download button above
+            2. Enable "Install from unknown sources" on your Android device
+            3. Install the downloaded APK
+            4. Test the changes and provide feedback!
+
+            ---
+
+            🤖 *This comment was automatically generated by the PR Preview workflow*`;
+
+            // Try to update existing comment or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr_number,
+            });
+
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('📦 PR Preview Build Results')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr_number,
+                body: body
+              });
+            }
