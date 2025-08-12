@@ -1,0 +1,133 @@
+name: PR Cleanup
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to clean up (optional - will use all closed PRs if not specified)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  cleanup-draft-releases:
+    runs-on: ubuntu-latest
+    name: Cleanup Draft Releases
+    steps:
+      - name: Get PR info
+        id: pr_info
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ github.event.inputs.pr_number }}" ]; then
+            echo "pr_number=${{ github.event.inputs.pr_number }}" >> $GITHUB_OUTPUT
+            echo "manual_cleanup=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+            echo "manual_cleanup=false" >> $GITHUB_OUTPUT
+          else
+            echo "manual_cleanup=true" >> $GITHUB_OUTPUT
+            echo "pr_number=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Clean up draft releases for specific PR
+        if: steps.pr_info.outputs.pr_number != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ steps.pr_info.outputs.pr_number }}"
+          echo "🧹 Cleaning up draft releases for PR #$pr_number"
+
+          # Get all releases
+          releases=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+
+          # Find and delete draft releases for this PR
+          echo "$releases" | jq -r --arg pr "pr-$pr_number-" '.[] | select(.draft == true and (.tag_name | startswith($pr))) | .id' | while read release_id; do
+            if [ -n "$release_id" ]; then
+              echo "🗑️ Deleting draft release with ID: $release_id"
+              
+              # Get the tag name first
+              tag_name=$(echo "$releases" | jq -r --arg id "$release_id" '.[] | select(.id == ($id | tonumber)) | .tag_name')
+              
+              # Delete the release
+              curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
+              
+              # Delete the tag
+              if [ -n "$tag_name" ]; then
+                echo "🏷️ Deleting tag: $tag_name"
+                curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  "https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$tag_name" 2>/dev/null || true
+              fi
+            fi
+          done
+
+          echo "✅ Cleanup completed for PR #$pr_number"
+
+      - name: Clean up all orphaned draft releases
+        if: steps.pr_info.outputs.pr_number == ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🧹 Cleaning up all orphaned PR draft releases"
+
+          # Get all releases
+          releases=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+
+          # Get all open PRs
+          open_prs=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls?state=open&per_page=100" | jq -r '.[].number')
+
+          # Find draft releases that start with "pr-" and check if PR is still open
+          echo "$releases" | jq -r '.[] | select(.draft == true and (.tag_name | startswith("pr-"))) | {id, tag_name}' | while read -r release_info; do
+            if [ -n "$release_info" ] && [ "$release_info" != "null" ]; then
+              release_id=$(echo "$release_info" | jq -r '.id')
+              tag_name=$(echo "$release_info" | jq -r '.tag_name')
+              
+              # Extract PR number from tag (format: pr-123-abc1234)
+              pr_num=$(echo "$tag_name" | sed -n 's/^pr-\([0-9]\+\)-.*/\1/p')
+              
+              if [ -n "$pr_num" ]; then
+                # Check if this PR is still open
+                if ! echo "$open_prs" | grep -q "^$pr_num$"; then
+                  echo "🗑️ Deleting orphaned draft release for closed PR #$pr_num (ID: $release_id, Tag: $tag_name)"
+                  
+                  # Delete the release
+                  curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" \
+                    -H "Accept: application/vnd.github+json" \
+                    "https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
+                  
+                  # Delete the tag
+                  curl -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" \
+                    -H "Accept: application/vnd.github+json" \
+                    "https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$tag_name" 2>/dev/null || true
+                else
+                  echo "⏩ Skipping draft release for open PR #$pr_num"
+                fi
+              fi
+            fi
+          done
+
+          echo "✅ Cleanup completed for all orphaned draft releases"
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.pr_info.outputs.manual_cleanup }}" == "true" ]; then
+            if [ -n "${{ steps.pr_info.outputs.pr_number }}" ]; then
+              echo "🎯 Manual cleanup completed for PR #${{ steps.pr_info.outputs.pr_number }}"
+            else
+              echo "🧹 Manual cleanup completed for all orphaned draft releases"
+            fi
+          else
+            echo "🎯 Automatic cleanup completed for closed PR #${{ steps.pr_info.outputs.pr_number }}"
+          fi
