@@ -1,0 +1,382 @@
+name: PR Preview Build
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [ opened, synchronize, reopened ]
+  workflow_dispatch:
+
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: write
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    name: Setup
+    steps:
+      - name: Create keystore
+        run: |
+          mkdir -p app
+          echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
+
+      - name: Create play-services.json
+        run: |
+          echo "${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}" | base64 -d > app/play-services.json
+
+      - name: Upload config files
+        uses: actions/upload-artifact@v4
+        with:
+          name: config-files
+          path: |
+            app/keystore.jks
+            app/play-services.json
+          retention-days: 1
+
+  build-debug:
+    runs-on: ubuntu-latest
+    name: Build Debug APK
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "oracle"
+          java-version: "17"
+          cache: gradle
+
+      - name: Update Version for Debug Build
+        run: |
+          # Get Current Version Info
+          current_code=$(grep -oP 'versionCode\s+\K\d+' app/build.gradle)
+          current_name=$(grep -oP 'versionName\s+"\K[^"]+' app/build.gradle)
+          
+          # Create PR-Specific Version
+          pr_version_code=$((current_code + 9000 + ${{ github.event.pull_request.number }}))
+          pr_version_name="${current_name}-PR-#${{ github.event.pull_request.number }}"
+          
+          # Update build.gradle
+          sed -i "s/versionCode $current_code/versionCode $pr_version_code/" app/build.gradle
+          sed -i "s/versionName \"$current_name\"/versionName \"$pr_version_name\"/" app/build.gradle
+          
+          echo "Updated to versionCode: $pr_version_code, versionName: $pr_version_name"
+
+      - name: Assemble Debug APK
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean
+          ./gradlew assembleDebug
+
+      - name: Rename Debug APK
+        run: |
+          app_name=$(grep -oP 'applicationId\s+"\K[^"]+' app/build.gradle | awk -F. '{print $NF}')
+          pr_number=${{ github.event.pull_request.number }}
+          mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/"${app_name}-PR-${pr_number}-debug.apk"
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+
+  build-release:
+    runs-on: ubuntu-latest
+    name: Build Release APK
+    needs: setup
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Download config files
+        uses: actions/download-artifact@v5
+        with:
+          name: config-files
+          path: ./app
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "oracle"
+          java-version: "17"
+          cache: gradle
+
+      - name: Export signing env vars
+        run: |
+          echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> $GITHUB_ENV
+          echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Update Version for Release Build
+        run: |
+          # Get Current Version Info
+          current_code=$(grep -oP 'versionCode\s+\K\d+' app/build.gradle)
+          current_name=$(grep -oP 'versionName\s+"\K[^"]+' app/build.gradle)
+          
+          # Create PR-Specific Version
+          pr_version_code=$((current_code + 9000 + ${{ github.event.pull_request.number }}))
+          pr_version_name="${current_name}-PR-#${{ github.event.pull_request.number }}"
+          
+          # Update build.gradle
+          sed -i "s/versionCode $current_code/versionCode $pr_version_code/" app/build.gradle
+          sed -i "s/versionName \"$current_name\"/versionName \"$pr_version_name\"/" app/build.gradle
+          
+          echo "Updated to versionCode: $pr_version_code, versionName: $pr_version_name"
+
+      - name: Assemble Release APK
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean
+          ./gradlew assembleRelease
+
+      - name: Rename Release APK
+        run: |
+          app_name=$(grep -oP 'applicationId\s+"\K[^"]+' app/build.gradle | awk -F. '{print $NF}')
+          pr_number=${{ github.event.pull_request.number }}
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/"${app_name}-PR-${pr_number}-release.apk"
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: app/build/outputs/apk/release/*.apk
+
+  draft-release:
+    runs-on: ubuntu-latest
+    name: Create Draft Release
+    needs: [ build-debug, build-release ]
+    steps:
+      - name: Download Debug APK
+        uses: actions/download-artifact@v5
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug
+
+      - name: Download Release APK
+        uses: actions/download-artifact@v5
+        with:
+          name: release-apk
+          path: app/build/outputs/apk/release
+
+      - name: Get Previous Draft Release
+        id: get_release
+        run: |
+          search_tag=PR-${{ github.event.pull_request.number }}
+          
+          echo "Searching for previous draft release with tag: $search_tag_name"
+
+          # Use GitHub CLI to find the previous draft release
+          previous_release=$(
+            gh release list --repo ${{ github.repository }} --json tagName \
+                --jq ".[] | select(.tagName == \"$search_tag\") | .tagName" || echo ""
+          )
+            echo "previous_release=$previous_release" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove Previous Draft Release
+        if: steps.get_release.outputs.previous_release != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          previous_release=${{ steps.get_release.outputs.previous_release }}
+          echo "Deleting previous draft release: $previous_release"
+          gh release delete "$previous_release" --yes --repo ${{ github.repository }} || echo "No previous draft release found"
+
+      - name: Create New Draft Release
+        id: create_release
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          pr_title="${{ github.event.pull_request.title }}"
+          pr_body="${{ github.event.pull_request.body }}"
+          tag_name="PR-${pr_number}"  # Creating a unique tag name
+          
+          # Create the draft release
+          gh release create "$tag_name" \
+          app/build/outputs/apk/debug/*.apk \
+          app/build/outputs/apk/release/*.apk \
+          --repo ${{ github.repository }} \
+          --title "$pr_title" \
+          --notes "$pr_body" \
+          --draft \
+          --target "${{ github.event.pull_request.head.sha }}" \
+          --generate-notes
+          
+          release_url=$(gh release view "$tag_name" --json url --jq '.url' --repo ${{ github.repository }})
+          
+          echo "Created draft release url: $release_url"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  comment-pr:
+    runs-on: ubuntu-latest
+    name: Comment on PR with APK Links
+    needs: draft-release
+    steps:
+      - name: Get Release Assets Info
+        id: release_assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag_name="PR-${{ github.event.pull_request.number }}"
+          
+          # Get release info with assets
+          release_data=$(gh release view "$tag_name" --json assets,url --repo ${{ github.repository }})
+          draft_release_url=$(echo "$release_data" | jq -r '.url')
+          
+          debug_apk_url=""
+          debug_apk_size=""
+          release_apk_url=""
+          release_apk_size=""
+          
+          if [ -n "$release_data" ]; then
+            debug_asset=$(echo "$release_data" | jq -r '.assets[] | select(.name | contains("debug"))')
+            release_asset=$(echo "$release_data" | jq -r '.assets[] | select(.name | contains("release"))')
+          
+            if [ -n "$debug_asset" ]; then
+              debug_apk_url=$(echo "$debug_asset" | jq -r '.url')
+              debug_apk_size=$(echo "$debug_asset" | jq -r '.size')
+            fi
+          
+            if [ -n "$release_asset" ]; then
+              release_apk_url=$(echo "$release_asset" | jq -r '.url')
+              release_apk_size=$(echo "$release_asset" | jq -r '.size')
+            fi
+          fi
+          
+          echo "debug_url=$debug_apk_url" >> $GITHUB_OUTPUT
+          echo "debug_size=$debug_apk_size" >> $GITHUB_OUTPUT
+          echo "release_url=$release_apk_url" >> $GITHUB_OUTPUT
+          echo "release_size=$release_apk_size" >> $GITHUB_OUTPUT
+          echo "draft_release_url=$draft_release_url" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR with APK Links
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr_number = context.payload.pull_request.number;
+            const short_sha = context.payload.pull_request.head.sha.substring(0, 7);
+
+            const debugStatus = '${{ needs.build-debug.result }}' === 'success' ? '✅' : '❌';
+            const releaseStatus = '${{ needs.build-release.result }}' === 'success' ? '✅' : '❌';
+
+            const debugUrl = '${{ steps.release_assets.outputs.debug_url }}';
+            const releaseUrl = '${{ steps.release_assets.outputs.release_url }}';
+            const debugSize = '${{ steps.release_assets.outputs.debug_size }}';
+            const releaseSize = '${{ steps.release_assets.outputs.release_size }}';
+            const draftReleaseUrl = '${{ steps.release_assets.outputs.draft_release_url }}';
+
+            // Format file size
+            function formatSize(size) {
+              if (!size || size <= 0) return 'N/A';
+              const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+              let unitIndex = 0;
+              while (size >= 1024 && unitIndex < units.length - 1) {
+                size /= 1024;
+                unitIndex++;
+              }
+              return `${size.toFixed(2)} ${units[unitIndex]}`;
+            }
+
+            let downloadLinks = '';
+
+            if (debugUrl && debugUrl !== '') {
+              downloadLinks += `
+            📱 **Debug APK** (${formatSize(debugSize)})
+
+            [📥 Download Debug APK](${debugUrl})
+
+            *Direct download - no ZIP extraction needed*
+            `;
+            } else if ("${{ needs.build-debug.result }}" === "success") {
+              downloadLinks += `
+            📱 **Debug APK**
+
+            ❌ Debug APK upload failed. Check workflow logs.
+            `;
+            }
+
+            if (releaseUrl && releaseUrl !== '') {
+              downloadLinks += `
+            🚀 **Release APK** (${formatSize(releaseSize)})
+
+            [📥 Download Release APK](${releaseUrl})
+
+            *Direct download - no ZIP extraction needed*
+            `;
+            } else if ("${{ needs.build-release.result }}" === "success") {
+              downloadLinks += `
+            🚀 **Release APK**
+
+            ❌ Release APK upload failed. Check workflow logs.
+            `;
+            }
+
+            const body = `## 📦 PR Preview Build Results
+
+            **Build Details:**
+            - 🔨 Debug Build: ${debugStatus}
+            - 🚀 Release Build: ${releaseStatus}
+            - 📝 Commit: \`${short_sha}\`
+            - 🔢 PR: #${pr_number}
+
+            ## 📥 Direct Downloads
+
+            ${downloadLinks}
+
+            ${draftReleaseUrl && draftReleaseUrl !== 'null' ? `🔗 **[View All Files in Draft Release](${draftReleaseUrl})**` : ''}
+
+            **🧪 Testing Notes:**
+            - **Debug APK**: Includes debugging info, larger file size, easier to debug
+            - **Release APK**: Optimized for production, smaller file size, final performance
+            - Both APKs have special PR version numbers to avoid conflicts with production
+
+            **📱 Installation:**
+            1. Click the download link above for direct APK download
+            2. Enable "Install from unknown sources" on your Android device
+            3. Install the downloaded APK
+            4. Test the changes and provide feedback!
+
+            **Note:** These downloads are stored in a draft release and will remain available until the PR is merged/closed
+
+            ---
+
+            🤖 *This comment was automatically generated by the PR Preview workflow*`;
+
+            // Try to update existing comment or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr_number
+            });
+
+            const existingComment = comments.find(comment => comment.body.includes('PR Preview Build Results'));
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr_number,
+                body: body
+              });
+            }
