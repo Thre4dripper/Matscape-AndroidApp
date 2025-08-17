@@ -154,10 +154,48 @@ jobs:
           name: release-apk
           path: app/build/outputs/apk/release/*.apk
 
+  check-draft-release:
+    runs-on: ubuntu-latest
+    name: Check Existing Draft Release
+    needs: [ build-debug, build-release ]
+    outputs:
+      previous_release: ${{ steps.get_release.outputs.previous_release }}
+    steps:
+      - name: Get Previous Draft Release
+        id: get_release
+        run: |
+          search_tag=PR-${{ github.event.pull_request.number }}
+          
+          echo "Searching for previous draft release with tag: $search_tag"
+
+          # Use GitHub CLI to find the previous draft release
+          previous_release=$(
+            gh release list --repo ${{ github.repository }} --json tagName \
+                --jq ".[] | select(.tagName == \"$search_tag\") | .tagName" || echo ""
+          )
+            echo "previous_release=$previous_release" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  remove-previous-draft:
+    runs-on: ubuntu-latest
+    name: Remove Previous Draft Release
+    needs: check-draft-release
+    if: needs.check-draft-release.outputs.previous_release != ''
+    steps:
+      - name: Delete Previous Draft Release
+        run: |
+          previous_release=${{ needs.check-draft-release.outputs.previous_release }}
+          echo "Deleting previous draft release: $previous_release"
+          gh release delete "$previous_release" --yes --repo ${{ github.repository }} || echo "No previous draft release found"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   draft-release:
     runs-on: ubuntu-latest
     name: Create Draft Release
-    needs: [ build-debug, build-release ]
+    needs: check-draft-release
+    if: always()
     steps:
       - name: Download Debug APK
         uses: actions/download-artifact@v5
@@ -170,31 +208,6 @@ jobs:
         with:
           name: release-apk
           path: app/build/outputs/apk/release
-
-      - name: Get Previous Draft Release
-        id: get_release
-        run: |
-          search_tag=PR-${{ github.event.pull_request.number }}
-          
-          echo "Searching for previous draft release with tag: $search_tag_name"
-
-          # Use GitHub CLI to find the previous draft release
-          previous_release=$(
-            gh release list --repo ${{ github.repository }} --json tagName \
-                --jq ".[] | select(.tagName == \"$search_tag\") | .tagName" || echo ""
-          )
-            echo "previous_release=$previous_release" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Remove Previous Draft Release
-        if: steps.get_release.outputs.previous_release != ''
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          previous_release=${{ steps.get_release.outputs.previous_release }}
-          echo "Deleting previous draft release: $previous_release"
-          gh release delete "$previous_release" --yes --repo ${{ github.repository }} || echo "No previous draft release found"
 
       - name: Create New Draft Release
         id: create_release
@@ -223,7 +236,7 @@ jobs:
 
   comment-pr:
     runs-on: ubuntu-latest
-    name: Comment on PR with APK Links
+    name: Comment on PR
     needs: draft-release
     steps:
       - name: Get Release Assets Info
