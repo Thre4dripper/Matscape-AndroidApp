@@ -42,6 +42,7 @@ jobs:
   build-debug:
     runs-on: ubuntu-latest
     name: Build Debug APK
+    needs: setup
     steps:
       - name: Checkout PR code
         uses: actions/checkout@v5
@@ -49,12 +50,24 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
+      - name: Download config files
+        uses: actions/download-artifact@v5
+        with:
+          name: config-files
+          path: ./app
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: "oracle"
           java-version: "17"
           cache: gradle
+
+      - name: Export signing env vars
+        run: |
+          echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> $GITHUB_ENV
+          echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Update Version for Debug Build
         run: |
@@ -89,6 +102,7 @@ jobs:
         with:
           name: debug-apk
           path: app/build/outputs/apk/debug/*.apk
+          retention-days: 1
 
   build-release:
     runs-on: ubuntu-latest
@@ -153,47 +167,54 @@ jobs:
         with:
           name: release-apk
           path: app/build/outputs/apk/release/*.apk
+          retention-days: 1
 
   check-draft-release:
     runs-on: ubuntu-latest
     name: Check Existing Draft Release
     needs: [ build-debug, build-release ]
     outputs:
-      previous_release: ${{ steps.get_release.outputs.previous_release }}
+      old_release_id: ${{ steps.get_release_id.outputs.old_release_id }}
     steps:
       - name: Get Previous Draft Release
-        id: get_release
+        id: get_release_id
         run: |
           search_tag=PR-${{ github.event.pull_request.number }}
           
           echo "Searching for previous draft release with tag: $search_tag"
-
-          # Use GitHub CLI to find the previous draft release
-          previous_release=$(
-            gh release list --repo ${{ github.repository }} --json tagName \
-                --jq ".[] | select(.tagName == \"$search_tag\") | .tagName" || echo ""
-          )
-            echo "previous_release=$previous_release" >> $GITHUB_OUTPUT
+          
+          # Use GitHub CLI to find the previous draft release id
+          old_release_id=$(gh release view "$search_tag" --json id --repo ${{ github.repository }} --jq '.id' || echo "")
+          
+          echo "old_release_id=$old_release_id" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   remove-previous-draft:
     runs-on: ubuntu-latest
-    name: Remove Previous Draft Release
+    name: Remove Old Draft Release
     needs: check-draft-release
-    if: needs.check-draft-release.outputs.previous_release != ''
+    if: needs.check-draft-release.outputs.old_release_id != ''
     steps:
       - name: Delete Previous Draft Release
-        run: |
-          previous_release=${{ needs.check-draft-release.outputs.previous_release }}
-          echo "Deleting previous draft release: $previous_release"
-          gh release delete "$previous_release" --yes --repo ${{ github.repository }} || echo "No previous draft release found"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          old_release_id=${{ needs.check-draft-release.outputs.old_release_id }}
+          echo "Deleting previous draft release with ID: $old_release_id"
+          
+          # Use GitHub CLI to delete the old draft release
+          gh api \
+            -X DELETE \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/releases/$old_release_id || echo "No previous draft release found to delete"
+          
+          echo "Previous draft release deleted successfully"
 
   draft-release:
     runs-on: ubuntu-latest
-    name: Create Draft Release
+    name: Create New Draft Release
     needs: check-draft-release
     if: always()
     steps:
@@ -213,8 +234,6 @@ jobs:
         id: create_release
         run: |
           pr_number=${{ github.event.pull_request.number }}
-          pr_title="${{ github.event.pull_request.title }}"
-          pr_body="${{ github.event.pull_request.body }}"
           tag_name="PR-${pr_number}"  # Creating a unique tag name
           
           # Create the draft release
@@ -222,8 +241,8 @@ jobs:
           app/build/outputs/apk/debug/*.apk \
           app/build/outputs/apk/release/*.apk \
           --repo ${{ github.repository }} \
-          --title "$pr_title" \
-          --notes "$pr_body" \
+          --title "Draft Release for PR #${pr_number}" \
+          --notes "This is a draft release for PR #${pr_number}. It contains the debug and release APKs for testing." \
           --draft \
           --target "${{ github.event.pull_request.head.sha }}" \
           --generate-notes
