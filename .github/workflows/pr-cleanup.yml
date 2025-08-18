@@ -1,0 +1,215 @@
+name: PR Cleanup
+
+on:
+  pull_request:
+    types: [ closed ]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to clean up (optional - will use all closed PRs if not specified)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: read
+  actions: write
+
+jobs:
+  determine-pr:
+    runs-on: ubuntu-latest
+    name: Determine PR Number
+    outputs:
+      pr_number: ${{ steps.get_pr_number.outputs.pr_number }}
+    steps:
+      - name: Set PR Number
+        id: get_pr_number
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            pr_number="${{ github.event.inputs.pr_number }}"
+          else
+            pr_number="${{ github.event.pull_request.number }}"
+          fi
+          
+          echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+
+  stop-preview-workflows:
+    runs-on: ubuntu-latest
+    name: Stop Preview Workflows
+    needs: determine-pr
+    steps:
+      - name: Get PR Details
+        id: get_pr_details
+        run: |
+          pr_number=${{ needs.determine-pr.outputs.pr_number }}
+          echo "Fetching details for PR #$pr_number"
+
+          pr_details=$(curl -L \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$pr_number")
+
+          head_sha=$(echo "$pr_details" | jq -r '.head.sha')
+          head_branch=$(echo "$pr_details" | jq -r '.head.ref')
+          pr_state=$(echo "$pr_details" | jq -r '.state')
+          
+          if [ "$pr_state" != "closed" ]; then
+              echo "PR #$pr_number is not closed. Exiting."
+              exit 0
+          fi
+          
+          echo "=== PR Details ==="
+          echo "PR Number: $pr_number"
+          echo "Head SHA: $head_sha"
+          echo "Head Branch: $head_branch"
+          echo "PR State: $pr_state"
+          
+          echo "head_sha=$head_sha" >> $GITHUB_OUTPUT
+          echo "head_branch=$head_branch" >> $GITHUB_OUTPUT
+          echo "Fetched PR #$pr_number details successfully"
+
+      - name: Get Workflow ID for pr-preview.yml
+        id: get_workflow_id
+        run: |
+          workflow_data=$(curl -L \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/workflows")
+          
+          workflow_id=$(echo "$workflow_data" | jq -r '.workflows[] | select(.path == ".github/workflows/pr-preview.yml") | .id')
+
+          echo "Workflow ID for pr-preview.yml: $workflow_id"
+          if [ -z "$workflow_id" ]; then
+            echo "Workflow ID for pr-preview.yml not found."
+            exit 1
+          fi
+          
+          echo "workflow_id=$workflow_id" >> $GITHUB_OUTPUT
+
+      - name: Fetch running/queued workflow runs
+        id: get_workflow_runs
+        run: |
+          workflow_id=${{ steps.get_workflow_id.outputs.workflow_id }}
+          pr_number=${{ needs.determine-pr.outputs.pr_number }}
+          head_sha=${{ steps.get_pr_details.outputs.head_sha }}
+          head_branch=${{ steps.get_pr_details.outputs.head_branch }}
+          
+          # Get all running and queued workflow runs for the specified PR
+          echo "Fetching running and queued workflow runs for PR #$pr_number"
+          runs_data_in_progress=$(curl -L \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?head_sha=$head_sha&branch=$head_branch&status=in_progress&per_page=100")
+          
+          runs_count_in_progress=$(echo "$runs_data_in_progress" | jq '.workflow_runs | length')
+          echo "Found $runs_count_in_progress running workflow runs for PR #$pr_number"
+          
+          # Get all queued workflow runs for the specified PR
+          echo "Fetching queued workflow runs for PR #$pr_number"
+          runs_data_queued=$(curl -L \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?head_sha=$head_sha&branch=$head_branch&status=queued&per_page=100")
+          
+          runs_count_queued=$(echo "$runs_data_queued" | jq '.workflow_runs | length')
+          echo "Found $runs_count_queued queued workflow runs for PR #$pr_number"
+          
+          # Combine both running and queued runs data
+          runs_data=$(echo "$runs_data_in_progress" "$runs_data_queued" | jq -s '.[0].workflow_runs + .[1].workflow_runs')
+          total_runs_count=$(echo $runs_count_in_progress + $runs_count_queued | bc)
+          echo "Total running and queued workflow runs for PR #$pr_number: $total_runs_count"
+          
+          if [ "$total_runs_count" -eq 0 ]; then
+            echo "No running or queued workflow runs found for PR #$pr_number."
+            exit 0
+          fi
+          
+          run_ids=$(echo "$runs_data" | jq -r '.[].id')
+          
+          echo "run_ids=$run_ids" >> $GITHUB_OUTPUT
+
+      - name: Cancel Running and Queued Workflow Runs
+        run: |
+          run_ids=${{ steps.get_workflow_runs.outputs.run_ids }}
+          if [ -z "$run_ids" ]; then
+                echo "No running or queued workflow runs to cancel."
+                exit 0
+          fi
+          
+          pr_number=${{ needs.determine-pr.outputs.pr_number }}
+
+          echo "Cancelling running and queued workflow runs for PR #$pr_number"
+               
+          for run_id in $run_ids; do
+              echo "Cancelling workflow run ID: $run_id"
+              response=$(curl -L \
+              -X POST \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/runs/$run_id/cancel")
+        
+              status_code=$(echo "$response" | jq -r '.status')
+              if [ -z "$status_code" ] || [ "$status_code" == "null" ]; then
+                  echo "Workflow run cancelled successfully: $run_id"
+              else
+                  echo "Error cancelling workflow run ID: $run_id"
+                  echo "Response: $response"
+                  exit 1
+              fi
+          done
+          
+          echo "All running and queued workflow runs for PR #$pr_number have been cancelled successfully"
+
+  check-draft-release:
+    runs-on: ubuntu-latest
+    name: Check Existing Draft Release(s)
+    needs: determine-pr
+    outputs:
+      old_release_ids: ${{ steps.get_release_id.outputs.old_release_ids }}
+    steps:
+      - name: Get Previous Draft Release(s)
+        id: get_release_id
+        run: |
+          pr_number=${{ needs.determine-pr.outputs.pr_number }}
+          search_tag="PR-${pr_number}"
+
+          echo "Searching for previous draft release with tag: $search_tag"
+
+          old_release_ids=$(curl -L \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/releases" \
+            | jq --arg search_tag "$search_tag" '[.[] | select(.tag_name == $search_tag) | .id] | @json' -r
+          )
+
+          echo "old_release_ids=$old_release_ids" >> $GITHUB_OUTPUT
+          echo "Found release IDs: $old_release_ids"
+
+  remove-previous-draft:
+    runs-on: ubuntu-latest
+    name: Remove Old Draft Release(s)
+    needs: check-draft-release
+    if: needs.check-draft-release.outputs.old_release_ids != '[]'
+    steps:
+      - name: Delete Previous Draft Release
+        run: |
+          old_release_ids=${{ needs.check-draft-release.outputs.old_release_ids }}
+          echo "Deleting previous draft releases with ID: $old_release_ids"
+
+          for old_release_id in $(echo "$old_release_ids" | jq -r '.[]'); do
+            echo "Deleting release ID: $old_release_id"
+            curl -L \
+              -X DELETE \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/${{ github.repository }}/releases/$old_release_id
+          done
+
+          echo "Previous draft releases deleted successfully"
