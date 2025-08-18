@@ -242,7 +242,9 @@ jobs:
         with:
           tag_name: "PR-${{ github.event.pull_request.number }}"
           name: "Draft Release for PR #${{ github.event.pull_request.number }}"
-          body: "This is a draft release for PR #${{ github.event.pull_request.number }}. It contains the debug and release APKs for testing."
+          body: "This is a draft release for PR #${{ github.event.pull_request.number }}. 
+          \n - It contains the debug and release APKs for testing. 
+          \n - It will be updated with new APKs on each commit to the PR and will be deleted when the PR is merged or closed."
           draft: true
           prerelease: false
           files: |
@@ -253,7 +255,7 @@ jobs:
   comment-pr:
     runs-on: ubuntu-latest
     name: Comment on PR
-    needs: [ build-debug, build-release, draft-release]
+    needs: [ build-debug, build-release, draft-release ]
     steps:
       - name: Get Release Assets Info
         id: release_assets
@@ -385,6 +387,10 @@ jobs:
             ${downloadButtons}
 
             ### Draft Release
+            
+            > - Draft releases will automatically update with new APKs on each PR commit
+            > - Draft release related to this PR will be deleted when the PR is merged or closed
+            
             ${draftReleaseUrl && draftReleaseUrl !== 'null' ? `<div align="left"><a href="${draftReleaseUrl}"><img src="https://img.shields.io/badge/🔗%20View%20All%20Files-Draft%20Release-red?style=for-the-badge&logo=github&logoColor=white" alt="View Draft Release"/></a></div>` : ''}
 
             ---
