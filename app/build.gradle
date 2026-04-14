@@ -9,8 +9,8 @@ android {
         applicationId "com.ByteMechanics.matscape"
         minSdk 29
         targetSdk 36
-        versionCode 13
-        versionName "1.0-2a08a75"
+        versionCode 14
+        versionName "1.0-5f50e9d"
 
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
