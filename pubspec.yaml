@@ -1,0 +1,23 @@
+name: matscape
+description: "Matscape — matrix calculator"
+publish_to: 'none'
+
+# v1 (native Android) shipped up to build 21, so v2 continues from 22.
+version: 2.0.0+22
+
+environment:
+  sdk: ^3.14.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  material_ui: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  # No Material icon font: the app draws its own icons.
+  uses-material-design: false
