@@ -20,6 +20,21 @@ lives on the `main` branch history.
 - Inspector with properties and step-by-step determinant, inverse and RREF
 - Everything is calculated on the device; nothing is sent anywhere
 
+## One app, every screen
+
+The layout follows the window size and, on foldables, how the device is
+folded (`lib/ui/layout.dart`):
+
+| Layout | When | What you get |
+| --- | --- | --- |
+| Compact | Phones, closed foldables | Single column, keypad at the bottom |
+| Landscape | A phone on its side | Results on the left, keypad on the right |
+| Medium | Small tablets (600px and wider) | Sidebar with navigation and matrices, workspace beside it |
+| Expanded | Large tablets (1000px and wider) | Sidebar, workspace and a live inspector; two keypad pages when there is room |
+| Book | Foldable opened flat | Workspace on one side of the fold, inspector on the other |
+| Tabletop | Foldable half-open on a desk | Results above the fold, full-height keypad below |
+| Glance | Small cover screens | Read-only latest results |
+
 ## Project layout
 
 ```
