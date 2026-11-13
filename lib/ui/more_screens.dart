@@ -186,6 +186,31 @@ class _WorkspacesScreenState extends State<WorkspacesScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 24),
+          const GroupTitle('Samples'),
+          _paragraph(
+            context,
+            'Matscape comes with a sample workspace for each topic. If you '
+            'deleted some, you can bring them back. Your own workspaces '
+            'are not touched.',
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Btn(
+              'Restore samples',
+              icon: MIcon.folder,
+              expand: false,
+              onTap: () {
+                final n = state.restoreSamples();
+                showToast(
+                  context,
+                  n == 0
+                      ? 'All the samples are already here'
+                      : 'Restored $n sample workspace${n == 1 ? '' : 's'}',
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

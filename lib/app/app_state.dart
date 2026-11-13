@@ -457,6 +457,21 @@ class AppState extends ChangeNotifier {
     return true;
   }
 
+  /// Puts back the sample workspaces that are no longer in the list
+  /// (matched by name). Returns how many were added.
+  int restoreSamples() {
+    final have = {for (final w in workspaces) w.name};
+    final missing = [
+      for (final w in seedWorkspaces())
+        if (!have.contains(w.name)) w,
+    ];
+    if (missing.isEmpty) return 0;
+    workspaces.addAll(missing);
+    _persist();
+    notifyListeners();
+    return missing.length;
+  }
+
   /* ---------- settings ---------- */
 
   void updateSettings(void Function(Settings s) change) {
