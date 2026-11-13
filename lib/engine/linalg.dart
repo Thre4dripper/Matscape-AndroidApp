@@ -269,3 +269,96 @@ Mat adjugate(Mat a) {
   return transpose(cofactorM(a));
 }
 
+/* ---------- decompositions ---------- */
+
+class QrResult {
+  QrResult(this.q, this.r);
+  final Mat q, r;
+}
+
+/// Householder QR with a non-negative diagonal on R.
+QrResult qr(Mat a) {
+  final m = a.rows, n = a.cols, r = copyData(a), q = eye(m).data;
+  for (var k = 0; k < math.min(m - 1, n); k++) {
+    final x = [for (var i = k; i < m; i++) r[i][k]];
+    final nx = vnorm(x);
+    if (nx < 1e-14) continue;
+    final alpha = -(x[0] >= 0 ? 1 : -1) * nx;
+    final v = List<double>.of(x);
+    v[0] -= alpha;
+    final nv = vnorm(v);
+    if (nv < 1e-14) continue;
+    for (var i = 0; i < v.length; i++) {
+      v[i] /= nv;
+    }
+    for (var j = 0; j < n; j++) {
+      var s = 0.0;
+      for (var i = 0; i < v.length; i++) {
+        s += v[i] * r[k + i][j];
+      }
+      for (var i = 0; i < v.length; i++) {
+        r[k + i][j] -= 2 * v[i] * s;
+      }
+    }
+    for (var i = 0; i < m; i++) {
+      var s = 0.0;
+      for (var t = 0; t < v.length; t++) {
+        s += q[i][k + t] * v[t];
+      }
+      for (var t = 0; t < v.length; t++) {
+        q[i][k + t] -= 2 * s * v[t];
+      }
+    }
+  }
+  for (var k = 0; k < math.min(m, n); k++) {
+    if (r[k][k] < 0) {
+      for (var j = 0; j < n; j++) {
+        r[k][j] = -r[k][j];
+      }
+      for (var i = 0; i < m; i++) {
+        q[i][k] = -q[i][k];
+      }
+    }
+  }
+  for (var i = 0; i < m; i++) {
+    for (var j = 0; j < math.min(i, n); j++) {
+      r[i][j] = 0;
+    }
+  }
+  return QrResult(cleanM(Mat(q)), cleanM(Mat(r)));
+}
+
+bool isSymmetric(Mat a) =>
+    a.rows == a.cols && approxEq(a, transpose(a), tolFor(a, 1e-9));
+
+Mat cholesky(Mat a) {
+  needSquare(a, 'Cholesky');
+  if (!isSymmetric(a)) {
+    throw MathError(
+      'Cholesky needs a symmetric matrix',
+      '${a.label ?? 'This matrix'} isn’t symmetric. Try lu(…) or qr(…) instead.',
+    );
+  }
+  final n = a.rows, l = zeros(n, n).data, tol = tolFor(a, 1e-12);
+  for (var i = 0; i < n; i++) {
+    for (var j = 0; j <= i; j++) {
+      var s = a.data[i][j];
+      for (var k = 0; k < j; k++) {
+        s -= l[i][k] * l[j][k];
+      }
+      if (i == j) {
+        if (s <= tol) {
+          throw MathError(
+            'Cholesky needs a positive definite matrix',
+            'At least one eigenvalue is zero or negative.',
+          );
+        }
+        l[i][i] = math.sqrt(s);
+      } else {
+        l[i][j] = s / l[j][j];
+      }
+    }
+  }
+  return Mat(l);
+}
+
