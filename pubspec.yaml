@@ -12,6 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
   material_ui: ^1.1.0
+  # Pure-Dart SVG path parser, used to draw the app's own icon set.
+  path_parsing: ^1.1.0
 
 dev_dependencies:
   flutter_test:
