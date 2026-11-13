@@ -716,36 +716,63 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
   /// expression lines.
   Widget _content(BuildContext context, AppState state, _Rail rail) {
     final pal = context.pal, ws = state.ws;
-    return SingleChildScrollView(
+    return CustomScrollView(
       controller: _scroll,
-      padding: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (rail != _Rail.none) ...[
-            SectionHead(
-              'Matrices',
-              action: TextBtn('New', icon: MIcon.plus, onTap: _newMatrix),
-            ),
-            _matrixRail(context, state, chips: rail == _Rail.chips),
-            const SizedBox(height: 8),
-          ],
-          SectionHead(
-            'Expressions',
-            action: TextBtn(
-              'History',
-              icon: MIcon.clock,
-              onTap: () => _go('history'),
-            ),
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (rail != _Rail.none) ...[
+                SectionHead(
+                  'Matrices',
+                  action: TextBtn('New', icon: MIcon.plus, onTap: _newMatrix),
+                ),
+                _matrixRail(context, state, chips: rail == _Rail.chips),
+                const SizedBox(height: 8),
+              ],
+              SectionHead(
+                'Expressions',
+                action: TextBtn(
+                  'History',
+                  icon: MIcon.clock,
+                  onTap: () => _go('history'),
+                ),
+              ),
+              Container(height: 1, color: pal.line),
+            ],
           ),
-          Container(height: 1, color: pal.line),
-          for (var i = 0; i < ws.lines.length; i++)
-            _line(context, state, ws.lines[i], i),
-          _addLineRow(context),
-        ],
-      ),
+        ),
+        // Lines can be dragged by their numbered strip to reorder them.
+        SliverReorderableList(
+          itemCount: ws.lines.length,
+          itemBuilder: (context, i) => _line(context, state, ws.lines[i], i),
+          onReorderItem: state.moveLine,
+          proxyDecorator: (child, _, _) => _lifted(child, 0),
+        ),
+        SliverToBoxAdapter(child: _addLineRow(context)),
+        const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
+      ],
     );
   }
+
+  /// How a line or matrix card looks while it is being dragged.
+  Widget _lifted(Widget child, double radius) => Material(
+    type: MaterialType.transparency,
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(radius),
+        boxShadow: [
+          BoxShadow(
+            color: context.pal.sheetShadow,
+            offset: const Offset(0, 6),
+            blurRadius: 18,
+          ),
+        ],
+      ),
+      child: child,
+    ),
+  );
 
   Widget _matrixRail(
     BuildContext context,
@@ -797,27 +824,48 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
             top: 0,
             bottom: 0,
             width: 40,
-            child: AnimatedContainer(
-              duration: Motion.fast,
-              padding: const EdgeInsets.only(top: 14),
-              alignment: Alignment.topCenter,
-              decoration: BoxDecoration(
-                color: active ? pal.accent : pal.surface2,
-                border: Border(
-                  right: BorderSide(color: active ? pal.accent : pal.line),
-                  bottom: error
-                      ? BorderSide(color: pal.danger, width: 3)
-                      : BorderSide.none,
-                ),
-              ),
-              child: ExcludeSemantics(
-                child: Text(
-                  '${i + 1}',
-                  style: TextStyle(
-                    fontSize: Fs.cap,
-                    fontWeight: FontWeight.w600,
-                    height: 1.4,
-                    color: active ? pal.onAccent : pal.ink3,
+            // The whole strip is the handle for dragging the line up or down.
+            child: ReorderableDragStartListener(
+              index: i,
+              child: Semantics(
+                label: 'Line ${i + 1}. Drag to reorder',
+                container: true,
+                excludeSemantics: true,
+                child: AnimatedContainer(
+                  duration: Motion.fast,
+                  padding: const EdgeInsets.only(top: 14),
+                  alignment: Alignment.topCenter,
+                  decoration: BoxDecoration(
+                    color: active ? pal.accent : pal.surface2,
+                    border: Border(
+                      right: BorderSide(color: active ? pal.accent : pal.line),
+                      bottom: error
+                          ? BorderSide(color: pal.danger, width: 3)
+                          : BorderSide.none,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${i + 1}',
+                        style: TextStyle(
+                          fontSize: Fs.cap,
+                          fontWeight: FontWeight.w600,
+                          height: 1.4,
+                          color: active ? pal.onAccent : pal.ink3,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Opacity(
+                        opacity: .6,
+                        child: Ico(
+                          MIcon.grip,
+                          size: 14,
+                          color: active ? pal.onAccent : pal.ink3,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

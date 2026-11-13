@@ -144,9 +144,10 @@ void main() {
     // Line 2 (C⁻¹) is a matrix result with an Inspect action.
     await tester.dragUntilVisible(
       find.text('Inspect').first,
-      find.byType(SingleChildScrollView).first,
+      find.byType(CustomScrollView).first,
       const Offset(0, -200),
     );
+    await tester.pump();
     await tester.tap(find.text('Inspect').first);
     await tester.pumpAndSettle();
     expect(find.text('Line 2'), findsOneWidget);
