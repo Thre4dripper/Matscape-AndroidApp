@@ -899,3 +899,100 @@ Mat solve(Mat a, Mat b, void Function(String) warn) {
   return x;
 }
 
+/* ---------- inspector ---------- */
+
+class MatProp {
+  MatProp(this.key, this.label, this.value);
+  final String key, label;
+  final bool value;
+}
+
+List<MatProp> properties(Mat a) {
+  final sq = a.rows == a.cols, t = tolFor(a, 1e-9), out = <MatProp>[];
+  void add(String key, String label, bool value) =>
+      out.add(MatProp(key, label, value));
+  add('square', 'Square', sq);
+  if (!sq) return out;
+  final tr = transpose(a), id = eye(a.rows), a2 = mulM(a, a);
+  final tri = isTriangular(a), sym = approxEq(a, tr, t);
+  add('symmetric', 'Symmetric', sym);
+  add('skew', 'Skew-symmetric', approxEq(a, scaleM(tr, -1), t));
+  add('diagonal', 'Diagonal', tri.up && tri.low);
+  add('upper', 'Upper triangular', tri.up);
+  add('lower', 'Lower triangular', tri.low);
+  add('identity', 'Identity', approxEq(a, id, t));
+  add('invertible', 'Invertible', det(a).abs() > t);
+  add('orthogonal', 'Orthogonal', approxEq(mulM(tr, a), id, 1e-9));
+  add('idempotent', 'Idempotent', approxEq(a2, a, t));
+  add('involutory', 'Involutory', approxEq(a2, id, t));
+  add('nilpotent', 'Nilpotent', maxAbs(matPow(a, a.rows)) <= t * 10);
+  var pd = false;
+  if (sym) {
+    final vals = jacobi(a).values;
+    pd = vals.reduce(math.min) > t;
+  }
+  add('posdef', 'Positive definite', pd);
+  return out;
+}
+
+class StepsResult {
+  StepsResult(
+    this.start,
+    this.steps,
+    this.result,
+    this.summary, {
+    this.aug,
+    this.note,
+  });
+  final Mat start;
+  final List<RowStep> steps;
+  final Mat result;
+  final String summary;
+
+  /// Column where the augmented half starts, when there is one.
+  final int? aug;
+  final String? note;
+}
+
+StepsResult stepsRref(Mat a) {
+  final r = rrefCore(a, hand: true);
+  return StepsResult(a, r.steps, r.r, 'Rank ${r.pivots.length}');
+}
+
+final _negOrFrac = RegExp(r'[−/]');
+
+StepsResult stepsDet(Mat a) {
+  needSquare(a, 'The determinant');
+  final r = rrefCore(a, hand: true, upperOnly: true);
+  final n = a.rows, u = r.r, sign = r.swaps.isOdd ? -1.0 : 1.0;
+  var d = sign;
+  final diag = <String>[];
+  for (var i = 0; i < n; i++) {
+    d *= u.data[i][i];
+    final p = plain(u.data[i][i]);
+    diag.add(_negOrFrac.hasMatch(p) ? '($p)' : p);
+  }
+  final lead = r.swaps > 0 && sign < 0 ? '−' : '';
+  final summary = 'det = $lead${diag.join(' · ')} = ${plain(cleanNum(d))}';
+  final note = r.swaps > 0
+      ? '${r.swaps} row swap${r.swaps > 1 ? 's' : ''} flip the sign ${r.swaps.isOdd ? 'once' : 'back'}. Adding multiples of rows doesn’t change det.'
+      : 'Adding multiples of one row to another doesn’t change the determinant.';
+  return StepsResult(a, r.steps, u, summary, note: note);
+}
+
+StepsResult stepsInverse(Mat a) {
+  needSquare(a, 'The inverse');
+  final n = a.rows, id = eye(n).data;
+  final aug = Mat([
+    for (var i = 0; i < n; i++) [...a.data[i], ...id[i]],
+  ]);
+  final r = rrefCore(aug, hand: true, augAt: n);
+  final ok = r.pivots.length == n;
+  return StepsResult(
+    aug,
+    r.steps,
+    r.r,
+    ok ? 'The right half is now the inverse.' : 'The left half can’t become I — this matrix is singular, so there’s no inverse.',
+    aug: n,
+  );
+}
