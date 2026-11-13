@@ -202,26 +202,81 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     return KeyEventResult.handled;
   }
 
-  void _focusLine(String id, {bool atEnd = true}) {
+  /// Makes [id] the active line, puts the caret in it and scrolls it into
+  /// view. [delay] holds the scroll back until a closing screen is out of
+  /// the way, so the movement can be seen.
+  void _focusLine(
+    String id, {
+    bool atEnd = true,
+    Duration delay = Duration.zero,
+  }) {
     setState(() => _activeId = id);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final node = _focus[id], c = _ctl[id];
-      if (!mounted || node == null || c == null) return;
-      node.requestFocus();
-      if (atEnd) {
-        c.selection = TextSelection.collapsed(offset: c.text.length);
+      if (!mounted) return;
+      void focus() {
+        final node = _focus[id], c = _ctl[id];
+        if (!mounted || node == null || c == null) return;
+        node.requestFocus();
+        if (atEnd) {
+          c.selection = TextSelection.collapsed(offset: c.text.length);
+        }
       }
-      final ctx = _lineKeys[id]?.currentContext;
-      if (ctx != null) {
-        Scrollable.ensureVisible(
-          ctx,
-          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-          duration: Motion.base,
-          curve: Motion.easeOut,
-        );
-      }
+
+      // A line far off-screen isn't built yet; it gets its caret once the
+      // scroll has brought it into being.
+      final built = _lineKeys[id]?.currentContext != null;
+      if (built) focus();
+      _reveal(id, delay: delay).then((_) {
+        if (!built) focus();
+      });
     });
   }
+
+  /// Counts calls to [_reveal], so that only the latest one moves the list.
+  int _revealCall = 0;
+
+  /// Scrolls smoothly until line [id] is fully on screen. Does nothing if
+  /// it already is. A later call takes over from an earlier one.
+  Future<void> _reveal(String id, {Duration delay = Duration.zero}) async {
+    final call = ++_revealCall;
+    bool stale() => call != _revealCall || !mounted || !_scroll.hasClients;
+    if (delay > Duration.zero) await Future<void>.delayed(delay);
+    for (var pass = 0; pass < 3; pass++) {
+      if (stale()) return;
+      final ctx = _lineKeys[id]?.currentContext;
+      if (ctx != null) {
+        // Below the view: bring its end up. Above it: bring its start down.
+        for (final policy in const [
+          ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+          ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+        ]) {
+          if (stale() || !ctx.mounted) return;
+          await Scrollable.ensureVisible(
+            ctx,
+            alignmentPolicy: policy,
+            duration: Motion.slow,
+            curve: Motion.easeOut,
+          );
+        }
+        return;
+      }
+      // Not built yet: head for roughly the right place, then look again.
+      final lines = _state.ws.lines;
+      final idx = lines.indexWhere((l) => l.id == id);
+      if (idx < 0) return;
+      await _scroll.animateTo(
+        _scroll.position.maxScrollExtent * (idx + 1) / lines.length,
+        duration: Motion.slow,
+        curve: Motion.easeOut,
+      );
+      if (stale()) return;
+      await WidgetsBinding.instance.endOfFrame;
+    }
+  }
+
+  /// How long to wait before scrolling after another screen closes.
+  Duration get _afterClose =>
+      _info.pushesScreens ? const Duration(milliseconds: 250) : Duration.zero;
 
   /// The field the keypad types into; creates a line if there is none.
   TextEditingController _target() {
@@ -282,6 +337,8 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
   void insertText(String text, {int back = 0}) {
     edit.insertText(_target(), text, back: back);
     _typed();
+    // Show where it went: the line may be scrolled out of view.
+    if (_activeId != null) _reveal(_activeId!, delay: _afterClose);
     showToast(
       context,
       'Inserted ${text.replaceFirst(RegExp(r'\(\)$'), '( )').trim()}',
@@ -301,7 +358,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
       line = state.addLine(afterId: lines.isEmpty ? null : lines.last.id);
     }
     state.setLineText(line.id, text);
-    _focusLine(line.id);
+    _focusLine(line.id, delay: _afterClose);
   }
 
   @override
