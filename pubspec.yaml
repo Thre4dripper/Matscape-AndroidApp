@@ -21,3 +21,9 @@ dev_dependencies:
 flutter:
   # No Material icon font: the app draws its own icons.
   uses-material-design: false
+  fonts:
+    - family: STIXTwoText
+      fonts:
+        - asset: assets/fonts/STIXTwoText.ttf
+        - asset: assets/fonts/STIXTwoText-Italic.ttf
+          style: italic
