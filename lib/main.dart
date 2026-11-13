@@ -9,8 +9,6 @@ import 'ui/workspace_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // The keypad layout is designed for portrait (v1 was portrait-only too).
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final state = AppState(FileStorage());
   await state.load();
   runApp(MatscapeApp(state: state));
