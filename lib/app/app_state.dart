@@ -415,4 +415,52 @@ class AppState extends ChangeNotifier {
     _changed();
     return resized;
   }
+
+  /* ---------- workspaces ---------- */
+
+  void renameWorkspace(String name) {
+    final n = name.trim();
+    ws.name = n.isEmpty ? 'Untitled workspace' : n;
+    _persist();
+    notifyListeners();
+  }
+
+  void openWorkspace(String id) {
+    currentId = id;
+    _changed(touch: false);
+  }
+
+  Workspace newWorkspace() {
+    final s = settings;
+    final w = Workspace(
+      name: 'Untitled workspace ${workspaces.length + 1}',
+      updated: DateTime.now().millisecondsSinceEpoch,
+      matrices: [
+        MatrixModel(
+          name: 'A',
+          cells: fillCells(s.defRows, s.defCols, s.defIdentity),
+        ),
+      ],
+      lines: [LineModel('')],
+    );
+    workspaces.insert(0, w);
+    openWorkspace(w.id);
+    return w;
+  }
+
+  /// Deletes a workspace; the last one can't be removed.
+  bool deleteWorkspace(String id) {
+    if (workspaces.length == 1) return false;
+    workspaces.removeWhere((w) => w.id == id);
+    if (currentId == id) currentId = workspaces.first.id;
+    _changed(touch: false);
+    return true;
+  }
+
+  /* ---------- settings ---------- */
+
+  void updateSettings(void Function(Settings s) change) {
+    change(settings);
+    _changed(touch: false);
+  }
 }
