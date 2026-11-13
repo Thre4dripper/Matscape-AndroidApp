@@ -326,11 +326,15 @@ class _MatrixEditorState extends State<_MatrixEditor> {
       _strip(context),
       Expanded(child: _pad(context, m, fill: true)),
     ];
-    // Everything stacked, as tall as it needs to be.
+    // Everything stacked. The grid always takes the height of four rows
+    // (less on a short screen) and scrolls inside it, so adding or removing
+    // rows never moves the controls around it.
     List<Widget> stacked() => [
       _head(context, m),
       _dims(context, state, m, res),
-      Flexible(child: _grid(context, state, m)),
+      Flexible(
+        child: SizedBox(height: _gridHeight, child: _grid(context, state, m)),
+      ),
       _entryRow(context, state, m),
       _message(context, state, m),
       _strip(context),
@@ -652,6 +656,9 @@ class _MatrixEditorState extends State<_MatrixEditor> {
       ),
     );
   }
+
+  /// Four rows of cells, the gaps between them and the padding around.
+  static const _gridHeight = 4 * 44.0 + 3 * 6.0 + 16;
 
   Widget _grid(BuildContext context, AppState state, MatrixModel m) {
     final pal = context.pal, deg = state.settings.degrees;
