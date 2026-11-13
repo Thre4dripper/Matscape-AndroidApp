@@ -111,12 +111,11 @@ class _WorkspacesScreenState extends State<WorkspacesScreen> {
                       Expanded(
                         child: RowTap(
                           onTap: () {
-                            final nav = Navigator.of(context);
                             if (w.id != state.currentId) {
                               state.openWorkspace(w.id);
                               showToast(context, 'Opened ${w.name}');
                             }
-                            nav.pop();
+                            closeSub(context);
                           },
                           child: Row(
                             children: [
@@ -180,10 +179,9 @@ class _WorkspacesScreenState extends State<WorkspacesScreen> {
                 icon: MIcon.plus,
                 kind: BtnKind.primary,
                 onTap: () {
-                  final nav = Navigator.of(context);
                   state.newWorkspace();
                   showToast(context, 'New workspace created');
-                  nav.pop();
+                  closeSub(context);
                 },
               ),
             ],
@@ -258,7 +256,7 @@ class HistoryScreen extends StatelessWidget {
                   for (final h in items)
                     RowTap(
                       onTap: () {
-                        Navigator.of(context).pop();
+                        closeSub(context);
                         host.addLineWith(h.text);
                         showToast(context, 'Added from history');
                       },
@@ -511,7 +509,7 @@ class HelpScreen extends StatelessWidget {
                       vertical: 8,
                     ),
                     onTap: () {
-                      Navigator.of(context).pop();
+                      closeSub(context);
                       host.addLineWith(text);
                       showToast(context, 'Example added');
                     },

@@ -498,7 +498,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           RowTap(
                             minHeight: 0,
                             onTap: () {
-                              Navigator.of(context).pop();
+                              closeSub(context);
                               widget.host.insertText(o.ins, back: o.back);
                             },
                             child: Column(
