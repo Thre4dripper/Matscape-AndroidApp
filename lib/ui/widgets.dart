@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 
 import 'icons.dart';
@@ -685,4 +687,162 @@ class ErrorNote extends StatelessWidget {
       ],
     );
   }
+}
+
+/* ---------- toast and confirm ---------- */
+
+OverlayEntry? _toastEntry;
+Timer? _toastTimer;
+
+/// Brief pill message at the top of the screen.
+void showToast(BuildContext context, String message) {
+  final overlay = Navigator.of(context, rootNavigator: true).overlay;
+  if (overlay == null) return;
+  _toastTimer?.cancel();
+  _toastEntry?.remove();
+  final entry = OverlayEntry(
+    builder: (context) {
+      final pal = context.pal;
+      return Positioned(
+        top: MediaQuery.paddingOf(context).top + 8,
+        left: 24,
+        right: 24,
+        child: IgnorePointer(
+          child: Center(
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: 1),
+              duration: Motion.base,
+              curve: Motion.easeOut,
+              builder: (_, t, child) => Opacity(
+                opacity: t,
+                child: Transform.translate(
+                  offset: Offset(0, -8 * (1 - t)),
+                  child: child,
+                ),
+              ),
+              child: Semantics(
+                liveRegion: true,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: pal.ink,
+                    borderRadius: BorderRadius.circular(999),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x33000000),
+                        offset: Offset(0, 8),
+                        blurRadius: 24,
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: pal.bg,
+                      fontSize: Fs.sm,
+                      fontWeight: FontWeight.w500,
+                      height: 1.35,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+  _toastEntry = entry;
+  overlay.insert(entry);
+  _toastTimer = Timer(const Duration(milliseconds: 2200), () {
+    entry.remove();
+    if (_toastEntry == entry) _toastEntry = null;
+  });
+}
+
+/// Centered confirmation card. Resolves to true when confirmed.
+Future<bool> confirmDialog(
+  BuildContext context, {
+  required String title,
+  required String body,
+  required String ok,
+  bool danger = true,
+}) async {
+  final pal = context.pal;
+  final result = await showGeneralDialog<bool>(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: 'Cancel',
+    barrierColor: pal.scrim,
+    transitionDuration: Motion.base,
+    transitionBuilder: (_, anim, _, child) {
+      final t = CurvedAnimation(parent: anim, curve: Motion.easeOut);
+      return FadeTransition(
+        opacity: t,
+        child: ScaleTransition(
+          scale: Tween(begin: .97, end: 1.0).animate(t),
+          child: child,
+        ),
+      );
+    },
+    pageBuilder: (context, _, _) => Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.all(20),
+        constraints: const BoxConstraints(maxWidth: 420),
+        decoration: BoxDecoration(
+          color: pal.surface,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x47000000),
+              offset: Offset(0, 16),
+              blurRadius: 48,
+            ),
+          ],
+        ),
+        child: DefaultTextStyle(
+          style: Theme.of(context).textTheme.bodyLarge!
+              .copyWith(color: pal.ink),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: Fs.lg,
+                  fontWeight: FontWeight.w700,
+                  height: 1.35,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                body,
+                style: TextStyle(fontSize: Fs.sm, height: 1.5, color: pal.ink2),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Btn('Cancel', onTap: () => Navigator.of(context).pop(false)),
+                  const SizedBox(width: 8),
+                  Btn(
+                    ok,
+                    kind: danger ? BtnKind.danger : BtnKind.primary,
+                    onTap: () => Navigator.of(context).pop(true),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+  return result ?? false;
 }
