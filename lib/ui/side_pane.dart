@@ -101,12 +101,20 @@ class SidePane extends StatelessWidget {
                       runSpacing: gap,
                       children: [
                         for (final m in ws.matrices)
-                          MatrixCard(
-                            model: m,
-                            eval: state.matResults[m.id],
-                            fmt: state.fmt,
+                          _DragCard(
+                            key: ValueKey(m.id),
+                            state: state,
+                            id: m.id,
+                            name: m.name,
                             width: cardW,
-                            onTap: () => onEditMatrix(m.id),
+                            builder: (handle) => MatrixCard(
+                              model: m,
+                              eval: state.matResults[m.id],
+                              fmt: state.fmt,
+                              width: cardW,
+                              onTap: () => onEditMatrix(m.id),
+                              handle: handle,
+                            ),
                           ),
                         NewMatrixCard(width: cardW, onTap: onNewMatrix),
                       ],
@@ -116,6 +124,98 @@ class SidePane extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A matrix card in the sidebar's grid that can be dragged to another
+/// card's place, by its handle or by holding the card. The cards shuffle as
+/// it passes over them, so what you see while dragging is the order you get.
+class _DragCard extends StatefulWidget {
+  const _DragCard({
+    super.key,
+    required this.state,
+    required this.id,
+    required this.name,
+    required this.width,
+    required this.builder,
+  });
+  final AppState state;
+  final String id, name;
+  final double width;
+
+  /// Builds the card around the given drag handle.
+  final Widget Function(Widget handle) builder;
+
+  @override
+  State<_DragCard> createState() => _DragCardState();
+}
+
+class _DragCardState extends State<_DragCard> {
+  bool _dragging = false;
+
+  void _set(bool v) {
+    if (mounted && _dragging != v) setState(() => _dragging = v);
+  }
+
+  /// The card as it looks under the finger. [offset] lines it up with the
+  /// card it came from when the drag started on the handle.
+  Widget _floating(Offset offset) => Transform.translate(
+    offset: offset,
+    child: Material(
+      type: MaterialType.transparency,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: context.pal.sheetShadow,
+              offset: const Offset(0, 6),
+              blurRadius: 18,
+            ),
+          ],
+        ),
+        child: widget.builder(const Grip()),
+      ),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final w = widget;
+    // The handle starts a drag at once; the card itself after a hold.
+    final handle = Draggable<String>(
+      data: w.id,
+      // The handle sits 2px in from the card's top right corner.
+      feedback: _floating(Offset(-(w.width - 34), -2)),
+      onDragStarted: () => _set(true),
+      onDragEnd: (_) => _set(false),
+      child: Semantics(
+        label: 'Drag to reorder matrix ${w.name}',
+        container: true,
+        child: const Grip(),
+      ),
+    );
+    return LongPressDraggable<String>(
+      data: w.id,
+      delay: const Duration(milliseconds: 350),
+      feedback: _floating(Offset.zero),
+      onDragStarted: () => _set(true),
+      onDragEnd: (_) => _set(false),
+      child: DragTarget<String>(
+        onWillAcceptWithDetails: (d) {
+          final mats = w.state.ws.matrices;
+          final from = mats.indexWhere((m) => m.id == d.data);
+          final to = mats.indexWhere((m) => m.id == w.id);
+          if (from >= 0 && to >= 0) w.state.moveMatrix(from, to);
+          return true;
+        },
+        builder: (_, _, _) => AnimatedOpacity(
+          duration: Motion.fast,
+          opacity: _dragging ? .3 : 1,
+          child: w.builder(handle),
         ),
       ),
     );

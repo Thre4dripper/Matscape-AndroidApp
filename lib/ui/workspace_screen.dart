@@ -782,25 +782,54 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     final mats = state.ws.matrices;
     return SizedBox(
       height: chips ? 46 : 136,
-      child: ListView.separated(
+      child: CustomScrollView(
         controller: _rail,
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
-        itemCount: mats.length + 1,
-        separatorBuilder: (_, _) => const SizedBox(width: 10),
-        itemBuilder: (context, i) {
-          if (i == mats.length) {
-            return NewMatrixCard(onTap: _newMatrix, chip: chips);
-          }
-          final m = mats[i];
-          return MatrixCard(
-            model: m,
-            eval: state.matResults[m.id],
-            fmt: state.fmt,
-            chip: chips,
-            onTap: () => openEditor(m.id),
-          );
-        },
+        slivers: [
+          // Drag a card by its handle, or hold the card and then drag.
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 2, 0, 2),
+            sliver: SliverReorderableList(
+              itemCount: mats.length,
+              itemBuilder: (context, i) {
+                final m = mats[i];
+                return Padding(
+                  key: ValueKey(m.id),
+                  padding: const EdgeInsets.only(right: 10),
+                  child: ReorderableDelayedDragStartListener(
+                    index: i,
+                    child: MatrixCard(
+                      model: m,
+                      eval: state.matResults[m.id],
+                      fmt: state.fmt,
+                      chip: chips,
+                      onTap: () => openEditor(m.id),
+                      handle: ReorderableDragStartListener(
+                        index: i,
+                        child: Semantics(
+                          label: 'Drag to reorder matrix ${m.name}',
+                          container: true,
+                          child: Grip(
+                            width: chips ? 26 : 32,
+                            height: chips ? 40 : 32,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              onReorderItem: state.moveMatrix,
+              proxyDecorator: (child, _, _) => _lifted(child, 16),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(0, 2, 16, 2),
+            sliver: SliverToBoxAdapter(
+              child: NewMatrixCard(onTap: _newMatrix, chip: chips),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -20,6 +20,7 @@ class MatrixCard extends StatelessWidget {
     required this.onTap,
     this.width = 132,
     this.chip = false,
+    this.handle,
   });
 
   final MatrixModel model;
@@ -28,6 +29,11 @@ class MatrixCard extends StatelessWidget {
   final VoidCallback onTap;
   final double width;
   final bool chip;
+
+  /// A drag handle (usually a [Grip] wrapped in something that starts a
+  /// drag). It sits on top of the card, at the top right, or at the left of
+  /// a chip, and is not part of the area that opens the editor.
+  final Widget? handle;
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +58,14 @@ class MatrixCard extends StatelessWidget {
       border: Border.all(color: ok ? pal.line : pal.danger),
       borderRadius: BorderRadius.circular(16),
     );
-    return Pressable(
+    final card = Pressable(
       onTap: onTap,
       label:
           'Matrix ${m.name}, ${m.rows} by ${m.cols}${ok ? '' : ', has an entry to fix'}. Edit',
       scale: .98,
       builder: (_, _) => chip
           ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: EdgeInsets.fromLTRB(handle == null ? 12 : 30, 8, 12, 8),
               decoration: decoration,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -99,6 +105,16 @@ class MatrixCard extends StatelessWidget {
                 ],
               ),
             ),
+    );
+    if (handle == null) return card;
+    return Stack(
+      children: [
+        card,
+        if (chip)
+          Positioned(left: 2, top: 0, bottom: 0, child: Center(child: handle))
+        else
+          Positioned(top: 2, right: 2, child: handle!),
+      ],
     );
   }
 }

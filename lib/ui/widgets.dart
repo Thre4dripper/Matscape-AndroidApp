@@ -228,6 +228,23 @@ class Btn extends StatelessWidget {
   }
 }
 
+/// The six-dot handle that says "drag me". The caller wraps it in
+/// whatever starts the drag.
+class Grip extends StatelessWidget {
+  const Grip({super.key, this.width = 32, this.height = 32});
+  final double width, height;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: width,
+    height: height,
+    // Transparent, so the whole box takes the touch, not just the dots.
+    color: const Color(0x00000000),
+    alignment: Alignment.center,
+    child: Ico(MIcon.grip, size: 16, color: context.pal.ink3),
+  );
+}
+
 /* ---------- segmented control, stepper, chip ---------- */
 
 class Seg<T> extends StatelessWidget {
