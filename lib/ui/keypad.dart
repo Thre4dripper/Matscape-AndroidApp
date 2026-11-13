@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:material_ui/material_ui.dart';
 
 import 'icons.dart';
@@ -286,7 +288,7 @@ class KeyLabel extends StatelessWidget {
   }
 }
 
-/// The workspace keypad: page tabs, matrix-name rail and a 7-column grid.
+/// The workspace keypad: page tabs, matrix-name rail and the key grid.
 class Keypad extends StatelessWidget {
   const Keypad({
     super.key,
@@ -302,6 +304,13 @@ class Keypad extends StatelessWidget {
     required this.onEnter,
     required this.onAngle,
     required this.onNewMatrix,
+    this.fill = false,
+    this.dual = false,
+    this.collapsible = true,
+    this.topBorder = true,
+    this.hPad = 8,
+    this.rowHeight = 44,
+    this.topInset = 0,
   });
 
   final String page;
@@ -313,60 +322,87 @@ class Keypad extends StatelessWidget {
   final VoidCallback onBackspace, onEnter, onAngle, onNewMatrix;
   final ValueChanged<int> onMove;
 
-  static const _gap = 6.0, _rowH = 44.0;
+  /// Stretch the key rows to use all the height on offer (tabletop, landscape).
+  final bool fill;
+
+  /// Show the number pad and one function page side by side.
+  final bool dual;
+
+  /// Whether the keypad can be hidden.
+  final bool collapsible;
+  final bool topBorder;
+  final double hPad, rowHeight;
+
+  /// Extra space above the keys, for when the keypad reaches the top of
+  /// the screen (status bar).
+  final double topInset;
+
+  static const _gap = 6.0, _minRow = 36.0;
 
   @override
   Widget build(BuildContext context) {
     final pal = context.pal;
+    final showKeys = !collapsed || !collapsible;
+    // With two pages on screen the number pad is always there, so its tab
+    // goes away and the second slot shows one of the other pages.
+    final shown = dual && page == 'num' ? 'mat' : page;
     return Container(
       padding: EdgeInsets.fromLTRB(
-        8,
-        4,
-        8,
+        hPad,
+        (fill ? 8 : 4) + topInset,
+        hPad,
         8 + MediaQuery.paddingOf(context).bottom,
       ),
       decoration: BoxDecoration(
         color: pal.surface2,
-        border: Border(top: BorderSide(color: pal.line)),
+        border: topBorder ? Border(top: BorderSide(color: pal.line)) : null,
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
         children: [
           Row(
             children: [
-              // Tabs keep their natural size and only shrink on very narrow screens.
+              // Tabs keep their natural size; they only shrink on very
+              // narrow screens.
               Expanded(
-                child: collapsed
-                    ? const SizedBox.shrink()
-                    : FittedBox(
+                child: showKeys
+                    ? FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
-                        child: _tabs(context),
-                      ),
+                        child: _tabs(context, shown),
+                      )
+                    : const SizedBox.shrink(),
               ),
-              if (collapsed)
-                TextBtn('Show keypad', icon: MIcon.up, onTap: onToggleCollapsed)
-              else
-                IconBtn(
-                  MIcon.down,
-                  label: 'Hide keypad',
-                  onTap: onToggleCollapsed,
-                ),
+              if (collapsible)
+                collapsed
+                    ? TextBtn(
+                        'Show keypad',
+                        icon: MIcon.up,
+                        onTap: onToggleCollapsed,
+                      )
+                    : IconBtn(
+                        MIcon.down,
+                        label: 'Hide keypad',
+                        onTap: onToggleCollapsed,
+                      ),
             ],
           ),
-          if (!collapsed) ...[
+          if (showKeys) ...[
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: _namesRow(context),
             ),
-            _grid(context),
+            if (fill)
+              Expanded(child: _keys(context, shown))
+            else
+              _keys(context, shown),
           ],
         ],
       ),
     );
   }
 
-  Widget _tabs(BuildContext context) {
+  Widget _tabs(BuildContext context, String shown) {
     final pal = context.pal;
     return Container(
       padding: const EdgeInsets.all(3),
@@ -378,41 +414,42 @@ class Keypad extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           for (final p in keypadPages)
-            Pressable(
-              onTap: () => onPage(p.id),
-              selected: p.id == page,
-              builder: (_, _) {
-                final on = p.id == page;
-                return AnimatedContainer(
-                  duration: Motion.fast,
-                  height: 34,
-                  margin: const EdgeInsets.symmetric(horizontal: 1),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: on ? pal.surface : null,
-                    borderRadius: BorderRadius.circular(9),
-                    boxShadow: on
-                        ? [
-                            BoxShadow(
-                              color: pal.keyShadow,
-                              offset: const Offset(0, 1),
-                              blurRadius: 2,
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: Text(
-                    p.label,
-                    style: TextStyle(
-                      fontSize: Fs.sm,
-                      fontWeight: FontWeight.w600,
-                      color: on ? pal.ink : pal.ink2,
+            if (!(dual && p.id == 'num'))
+              Pressable(
+                onTap: () => onPage(p.id),
+                selected: p.id == shown,
+                builder: (_, _) {
+                  final on = p.id == shown;
+                  return AnimatedContainer(
+                    duration: Motion.fast,
+                    height: 34,
+                    margin: const EdgeInsets.symmetric(horizontal: 1),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: on ? pal.surface : null,
+                      borderRadius: BorderRadius.circular(9),
+                      boxShadow: on
+                          ? [
+                              BoxShadow(
+                                color: pal.keyShadow,
+                                offset: const Offset(0, 1),
+                                blurRadius: 2,
+                              ),
+                            ]
+                          : null,
                     ),
-                  ),
-                );
-              },
-            ),
+                    child: Text(
+                      p.label,
+                      style: TextStyle(
+                        fontSize: Fs.sm,
+                        fontWeight: FontWeight.w600,
+                        color: on ? pal.ink : pal.ink2,
+                      ),
+                    ),
+                  );
+                },
+              ),
         ],
       ),
     );
@@ -438,6 +475,16 @@ class Keypad extends StatelessWidget {
           borderRadius: BorderRadius.circular(999),
         ),
         child: child,
+      ),
+    );
+    Widget arrow(MIcon icon, String label, int delta) => SizedBox(
+      width: 48,
+      height: 40,
+      child: KeyCap(
+        kind: KeyKind.util,
+        label: label,
+        onTap: () => onMove(delta),
+        child: Ico(icon),
       ),
     );
     return Row(
@@ -490,27 +537,9 @@ class Keypad extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 4),
-        SizedBox(
-          width: 48,
-          height: 40,
-          child: KeyCap(
-            kind: KeyKind.util,
-            label: 'Move cursor left',
-            onTap: () => onMove(-1),
-            child: const Ico(MIcon.left),
-          ),
-        ),
+        arrow(MIcon.left, 'Move cursor left', -1),
         const SizedBox(width: 4),
-        SizedBox(
-          width: 48,
-          height: 40,
-          child: KeyCap(
-            kind: KeyKind.util,
-            label: 'Move cursor right',
-            onTap: () => onMove(1),
-            child: const Ico(MIcon.right),
-          ),
-        ),
+        arrow(MIcon.right, 'Move cursor right', 1),
       ],
     );
   }
@@ -529,65 +558,113 @@ class Keypad extends StatelessWidget {
       label:
           'Angle unit: ${degrees ? 'degrees' : 'radians'}. Switch to ${degrees ? 'radians' : 'degrees'}',
       onTap: onAngle,
-      child: Text.rich(
-        TextSpan(
-          style: const TextStyle(fontSize: 13, height: 1),
-          children: [
-            part('RAD', !degrees),
-            TextSpan(
-              text: ' · ',
-              style: TextStyle(color: pal.ink3),
-            ),
-            part('DEG', degrees),
-          ],
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text.rich(
+          TextSpan(
+            style: const TextStyle(fontSize: 13, height: 1),
+            children: [
+              part('RAD', !degrees),
+              TextSpan(
+                text: ' · ',
+                style: TextStyle(color: pal.ink3),
+              ),
+              part('DEG', degrees),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _grid(BuildContext context) {
-    final rows = keypadPages.firstWhere((p) => p.id == page).rows;
-    Widget tall(Widget child) =>
-        SizedBox(height: _rowH * 2 + _gap, child: child);
+  List<List<KeyDef>> _rows(String id) =>
+      keypadPages.firstWhere((p) => p.id == id).rows;
+
+  Widget _keys(BuildContext context, String shown) {
     return LayoutBuilder(
       builder: (context, c) {
-        final w = (c.maxWidth - 6 * _gap) / 7;
+        final rowH = fill && c.maxHeight.isFinite
+            ? math.max(_minRow, (c.maxHeight - 3 * _gap) / 4)
+            : rowHeight;
+        final Widget grid = dual
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 6,
+                    child: Semantics(
+                      container: true,
+                      label: 'Numbers',
+                      child: _grid(context, _rows('num'), rowH, util: false),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    flex: 7,
+                    child: _grid(context, _rows(shown), rowH, util: true),
+                  ),
+                ],
+              )
+            : _grid(context, _rows(shown), rowH, util: true);
+        // On a very short screen the rows stop shrinking at their minimum
+        // and the grid is clipped rather than overflowing.
+        return fill
+            ? SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: grid,
+              )
+            : grid;
+      },
+    );
+  }
+
+  /// One page of keys; [util] adds the backspace / enter column.
+  Widget _grid(
+    BuildContext context,
+    List<List<KeyDef>> rows,
+    double rowH, {
+    required bool util,
+  }) {
+    Widget tall(Widget child) =>
+        SizedBox(height: rowH * 2 + _gap, child: child);
+    return LayoutBuilder(
+      builder: (context, c) {
+        final w = util
+            ? (c.maxWidth - 6 * _gap) / 7
+            : (c.maxWidth - 5 * _gap) / 6;
+        final keys = Column(
+          children: [
+            for (var r = 0; r < rows.length; r++) ...[
+              if (r > 0) const SizedBox(height: _gap),
+              SizedBox(
+                height: rowH,
+                child: Row(
+                  children: [
+                    for (var k = 0; k < rows[r].length; k++) ...[
+                      if (k > 0) const SizedBox(width: _gap),
+                      if (identical(rows[r][k], angleToggle))
+                        SizedBox(width: w * 2 + _gap, child: _angleKey(context))
+                      else
+                        SizedBox(
+                          width: w,
+                          child: KeyCap.def(
+                            rows[r][k],
+                            onTap: () =>
+                                onInsert(rows[r][k].ins, rows[r][k].back),
+                          ),
+                        ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ],
+        );
+        if (!util) return keys;
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                children: [
-                  for (var r = 0; r < rows.length; r++) ...[
-                    if (r > 0) const SizedBox(height: _gap),
-                    SizedBox(
-                      height: _rowH,
-                      child: Row(
-                        children: [
-                          for (var k = 0; k < rows[r].length; k++) ...[
-                            if (k > 0) const SizedBox(width: _gap),
-                            if (identical(rows[r][k], angleToggle))
-                              SizedBox(
-                                width: w * 2 + _gap,
-                                child: _angleKey(context),
-                              )
-                            else
-                              SizedBox(
-                                width: w,
-                                child: KeyCap.def(
-                                  rows[r][k],
-                                  onTap: () =>
-                                      onInsert(rows[r][k].ins, rows[r][k].back),
-                                ),
-                              ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
+            Expanded(child: keys),
             const SizedBox(width: _gap),
             SizedBox(
               width: w,
