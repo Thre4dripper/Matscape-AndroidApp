@@ -12,8 +12,8 @@ android {
         applicationId = "com.ByteMechanics.matscape"
         minSdk = 29
         targetSdk = 37
-        versionCode = 20
-        versionName = "1.0-dc1d072"
+        versionCode = 21
+        versionName = "1.0-1b91a5c"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
