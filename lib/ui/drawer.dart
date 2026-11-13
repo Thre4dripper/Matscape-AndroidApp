@@ -5,7 +5,16 @@ import 'package:material_ui/material_ui.dart';
 import 'icons.dart';
 import 'theme.dart';
 import 'widgets.dart';
-import 'workspace_screen.dart' show Wordmark;
+
+/// Destinations outside the workspace: (route name, icon, label). Shown in
+/// the side menu on phones and in the sidebar on tablets.
+const navItems = [
+  ('workspaces', MIcon.folder, 'Workspaces'),
+  ('history', MIcon.clock, 'History'),
+  ('library', MIcon.book, 'Operations library'),
+  ('settings', MIcon.sliders, 'Settings'),
+  ('help', MIcon.help, 'Help & tips'),
+];
 
 /// Side menu: where everything outside the workspace lives.
 class MenuDrawer extends StatelessWidget {
@@ -16,14 +25,6 @@ class MenuDrawer extends StatelessWidget {
   });
   final String workspaceName;
   final ValueChanged<String> onNavigate;
-
-  static const _items = [
-    ('workspaces', MIcon.folder, 'Workspaces'),
-    ('history', MIcon.clock, 'History'),
-    ('library', MIcon.book, 'Operations library'),
-    ('settings', MIcon.sliders, 'Settings'),
-    ('help', MIcon.help, 'Help & tips'),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class MenuDrawer extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(8),
               children: [
-                for (final (to, icon, label) in _items)
+                for (final (to, icon, label) in navItems)
                   RowTap(
                     onTap: () => onNavigate(to),
                     minHeight: 48,

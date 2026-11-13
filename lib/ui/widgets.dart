@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 
 import 'icons.dart';
+import 'layout.dart';
 import 'theme.dart';
 
 /* ---------- press feedback ---------- */
@@ -462,6 +463,70 @@ class CardBox extends StatelessWidget {
   }
 }
 
+/// Small-caps section heading with an action on the right.
+class SectionHead extends StatelessWidget {
+  const SectionHead(this.title, {super.key, required this.action});
+  final String title;
+  final Widget action;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 12, 4, 8),
+    child: Row(
+      children: [
+        Expanded(
+          child: Semantics(
+            header: true,
+            child: Text(
+              title.toUpperCase(),
+              style: TextStyle(
+                fontSize: Fs.cap,
+                fontWeight: FontWeight.w600,
+                letterSpacing: .96,
+                height: 1.3,
+                color: context.pal.ink3,
+              ),
+            ),
+          ),
+        ),
+        action,
+      ],
+    ),
+  );
+}
+
+/// The "Matscape" wordmark.
+class Wordmark extends StatelessWidget {
+  const Wordmark({super.key, this.size = Fs.xl});
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = mathStyle(
+      context,
+      size: size,
+      weight: FontWeight.w600,
+      height: 1.15,
+    );
+    return Text.rich(
+      TextSpan(
+        style: st.copyWith(letterSpacing: -size * .01),
+        children: [
+          const TextSpan(text: 'Mat'),
+          TextSpan(
+            text: 'scape',
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              color: context.pal.accent,
+            ),
+          ),
+        ],
+      ),
+      semanticsLabel: 'Matscape',
+    );
+  }
+}
+
 /// Children separated by hairlines, as in the design's `.list`.
 class DividedColumn extends StatelessWidget {
   const DividedColumn({super.key, required this.children});
@@ -514,7 +579,43 @@ class RowTap extends StatelessWidget {
   );
 }
 
-/// Sub-screen frame: back button, centred serif title, optional action.
+/// How a screen such as the library is being shown when it is not pushed
+/// full-screen: replacing the workspace column, or in the detail pane.
+enum PaneKind { column, detail }
+
+/// Tells screens they live inside a pane, and how to close themselves.
+class PaneScope extends InheritedWidget {
+  const PaneScope({
+    super.key,
+    required this.kind,
+    required this.onClose,
+    required super.child,
+  });
+  final PaneKind kind;
+
+  /// Null when there is nothing to go back to (the always-on inspector).
+  final VoidCallback? onClose;
+
+  static PaneScope? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<PaneScope>();
+
+  @override
+  bool updateShouldNotify(PaneScope old) =>
+      old.kind != kind || (old.onClose == null) != (onClose == null);
+}
+
+/// Closes the current screen, whether it was pushed or sits in a pane.
+void closeSub(BuildContext context) {
+  final scope = context.getInheritedWidgetOfExactType<PaneScope>();
+  if (scope == null) {
+    Navigator.of(context).pop();
+  } else {
+    scope.onClose?.call();
+  }
+}
+
+/// Screen frame: a bar with back/close, a serif title and an optional
+/// action. Adapts to being pushed full-screen or embedded in a pane.
 class SubScreen extends StatelessWidget {
   const SubScreen({
     super.key,
@@ -529,53 +630,65 @@ class SubScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pal = context.pal;
-    return Scaffold(
-      backgroundColor: pal.bg,
-      body: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.fromLTRB(
-              8,
-              MediaQuery.paddingOf(context).top + 4,
-              8,
-              8,
-            ),
-            decoration: BoxDecoration(
-              color: pal.bg,
-              border: Border(bottom: BorderSide(color: pal.line)),
-            ),
-            child: Row(
-              children: [
-                IconBtn(
-                  MIcon.back,
-                  label: 'Back',
-                  onTap: () => Navigator.of(context).maybePop(),
-                ),
-                Expanded(
+    final scope = PaneScope.maybeOf(context);
+    final detail = scope?.kind == PaneKind.detail;
+    final top = MediaQuery.paddingOf(context).top;
+    final Widget? leading;
+    if (detail) {
+      leading = scope!.onClose == null
+          ? null
+          : IconBtn(MIcon.close, label: 'Close panel', onTap: scope.onClose);
+    } else {
+      leading = IconBtn(
+        MIcon.back,
+        label: scope == null ? 'Back' : 'Back to workspace',
+        onTap: scope == null
+            ? () => Navigator.of(context).maybePop()
+            : scope.onClose,
+      );
+    }
+    final body = Column(
+      children: [
+        Container(
+          constraints: BoxConstraints(minHeight: detail ? top + 56 : 0),
+          padding: EdgeInsets.fromLTRB(8, top + 4, 8, 8),
+          decoration: BoxDecoration(
+            color: pal.bg,
+            border: Border(bottom: BorderSide(color: pal.line)),
+          ),
+          child: Row(
+            children: [
+              ?leading,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: detail ? 8 : 0),
                   child: Semantics(
                     header: true,
                     child: Text(
                       title,
-                      textAlign: TextAlign.center,
+                      textAlign: detail ? TextAlign.left : TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: mathStyle(
                         context,
-                        size: Fs.xl,
+                        size: detail ? Fs.lg : Fs.xl,
                         weight: FontWeight.w600,
                         height: 1.2,
                       ),
                     ),
                   ),
                 ),
-                action ?? const SizedBox(width: 44, height: 44),
-              ],
-            ),
+              ),
+              action ?? SizedBox(width: detail ? 0 : 44, height: 44),
+            ],
           ),
-          Expanded(child: child),
-        ],
-      ),
+        ),
+        Expanded(child: child),
+      ],
     );
+    return scope == null
+        ? Scaffold(backgroundColor: pal.bg, body: body)
+        : Material(color: pal.bg, child: body);
   }
 }
 
@@ -703,10 +816,12 @@ void showToast(BuildContext context, String message) {
   final entry = OverlayEntry(
     builder: (context) {
       final pal = context.pal;
+      final area = LayoutInfo.of(context)
+          .overlayRect(MediaQuery.sizeOf(context));
       return Positioned(
         top: MediaQuery.paddingOf(context).top + 8,
-        left: 24,
-        right: 24,
+        left: area.left + 24,
+        width: area.width - 48,
         child: IgnorePointer(
           child: Center(
             child: TweenAnimationBuilder<double>(
@@ -774,6 +889,7 @@ Future<bool> confirmDialog(
   bool danger = true,
 }) async {
   final pal = context.pal;
+  final area = LayoutInfo.of(context).overlayRect(MediaQuery.sizeOf(context));
   final result = await showGeneralDialog<bool>(
     context: context,
     barrierDismissible: true,
@@ -790,7 +906,8 @@ Future<bool> confirmDialog(
         ),
       );
     },
-    pageBuilder: (context, _, _) => Center(
+    pageBuilder: (context, _, _) => FoldAwareCenter(
+      area: area,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24),
         padding: const EdgeInsets.all(20),
