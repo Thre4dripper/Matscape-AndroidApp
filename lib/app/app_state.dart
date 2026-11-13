@@ -39,6 +39,7 @@ class AppState extends ChangeNotifier {
   Map<String, EvalResult> lineResults = {};
 
   Timer? _saveTimer;
+  final _rng = math.Random();
 
   Workspace get ws => workspaces.firstWhere((w) => w.id == currentId);
 
@@ -275,5 +276,143 @@ class AppState extends ChangeNotifier {
     history = [];
     _persist();
     notifyListeners();
+  }
+
+  /* ---------- matrices ---------- */
+
+  MatrixModel? matrixById(String id) {
+    for (final m in ws.matrices) {
+      if (m.id == id) return m;
+    }
+    return null;
+  }
+
+  /// First unused letter, or null when all 25 are taken.
+  String? freeName() {
+    final used = {for (final m in ws.matrices) m.name};
+    for (final l in ws.lines) {
+      final a = splitAssignment(l.text);
+      if (a != null) used.add(a.name);
+    }
+    for (final c in matrixLetters.split('')) {
+      if (!used.contains(c)) return c;
+    }
+    return null;
+  }
+
+  /// Letters the matrix [m] could be renamed to (its own included).
+  List<String> namesFor(MatrixModel m) {
+    final used = {for (final x in ws.matrices) x.name};
+    return [
+      for (final c in matrixLetters.split(''))
+        if (c == m.name || !used.contains(c)) c,
+    ];
+  }
+
+  static List<List<String>> fillCells(int r, int c, bool identity) => [
+    for (var i = 0; i < r; i++)
+      [for (var j = 0; j < c; j++) identity && i == j ? '1' : '0'],
+  ];
+
+  MatrixModel? createMatrix(List<List<String>> cells) {
+    final name = freeName();
+    if (name == null) return null;
+    final m = MatrixModel(name: name, cells: cells);
+    ws.matrices.add(m);
+    _changed();
+    return m;
+  }
+
+  MatrixModel? newMatrix() => createMatrix(
+    fillCells(settings.defRows, settings.defCols, settings.defIdentity),
+  );
+
+  MatrixModel? saveValueAsMatrix(Mat v) => createMatrix([
+    for (final r in v.data) [for (final x in r) cellText(x)],
+  ]);
+
+  MatrixModel? duplicateMatrix(MatrixModel m) =>
+      createMatrix([for (final r in m.cells) List<String>.of(r)]);
+
+  void deleteMatrix(String id) {
+    ws.matrices.removeWhere((m) => m.id == id);
+    _changed();
+  }
+
+  /// Renames a matrix; returns true when some line still uses the old name.
+  bool renameMatrix(MatrixModel m, String name) {
+    final old = m.name;
+    m.name = name;
+    _changed();
+    final re = RegExp('(^|[^A-Za-z])$old([^A-Za-z]|\$)');
+    return ws.lines.any((l) => re.hasMatch(l.text));
+  }
+
+  void setCell(MatrixModel m, int i, int j, String text) {
+    if (m.cells[i][j] == text) return;
+    m.cells[i][j] = text;
+    _changed();
+  }
+
+  void resizeMatrix(MatrixModel m, {int? rows, int? cols}) {
+    final r = (rows ?? m.rows).clamp(1, maxMatrixSize);
+    final c = (cols ?? m.cols).clamp(1, maxMatrixSize);
+    final id = settings.defIdentity;
+    m.cells = [
+      for (var i = 0; i < r; i++)
+        [
+          for (var j = 0; j < c; j++)
+            i < m.rows && j < m.cols
+                ? m.cells[i][j]
+                : (id && i == j ? '1' : '0'),
+        ],
+    ];
+    _changed();
+  }
+
+  /// Fills a matrix from a preset. Returns true if the size had to change.
+  bool presetMatrix(MatrixModel m, String preset) {
+    String rnd() => '${_rng.nextInt(19) - 9}'.replaceFirst('-', '−');
+    var r = m.rows, c = m.cols, resized = false;
+    switch (preset) {
+      case 'rotation':
+        if (!(r == c && (r == 2 || r == 3))) {
+          r = c = 2;
+          resized = true;
+        }
+        m.cells = r == 2
+            ? [
+                ['cos(30°)', '−sin(30°)'],
+                ['sin(30°)', 'cos(30°)'],
+              ]
+            : [
+                ['cos(30°)', '−sin(30°)', '0'],
+                ['sin(30°)', 'cos(30°)', '0'],
+                ['0', '0', '1'],
+              ];
+      case 'symmetric':
+        final g = fillCells(r, c, false);
+        for (var i = 0; i < r; i++) {
+          for (var j = 0; j < c; j++) {
+            g[i][j] = j < i && i < c ? g[j][i] : rnd();
+          }
+        }
+        m.cells = g;
+      default:
+        m.cells = [
+          for (var i = 0; i < r; i++)
+            [
+              for (var j = 0; j < c; j++)
+                switch (preset) {
+                  'identity' => i == j ? '1' : '0',
+                  'random' => rnd(),
+                  'diagonal' => i == j ? '${1 + _rng.nextInt(9)}' : '0',
+                  _ => '0',
+                },
+            ],
+        ];
+    }
+    _changed();
+    return resized;
   }
 }
