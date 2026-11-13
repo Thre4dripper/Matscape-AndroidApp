@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Matrix brackets around four cells: the Matscape mark, from brand/icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <group
+        android:pivotX="512"
+        android:pivotY="512"
+        android:scaleX="0.78"
+        android:scaleY="0.78">
+        <path
+            android:pathData="M338,262H262V762H338"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="60"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M686,262H762V762H686"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="60"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path android:fillColor="#FFFFFF" android:pathData="M372,342h90a30,30 0 0 1 30,30v90a30,30 0 0 1 -30,30h-90a30,30 0 0 1 -30,-30v-90a30,30 0 0 1 30,-30z" />
+        <path android:fillColor="#FFFFFF" android:fillAlpha="0.26" android:pathData="M562,342h90a30,30 0 0 1 30,30v90a30,30 0 0 1 -30,30h-90a30,30 0 0 1 -30,-30v-90a30,30 0 0 1 30,-30z" />
+        <path android:fillColor="#FFFFFF" android:fillAlpha="0.26" android:pathData="M372,532h90a30,30 0 0 1 30,30v90a30,30 0 0 1 -30,30h-90a30,30 0 0 1 -30,-30v-90a30,30 0 0 1 30,-30z" />
+        <path android:fillColor="#FFFFFF" android:pathData="M562,532h90a30,30 0 0 1 30,30v90a30,30 0 0 1 -30,30h-90a30,30 0 0 1 -30,-30v-90a30,30 0 0 1 30,-30z" />
+    </group>
+</vector>
