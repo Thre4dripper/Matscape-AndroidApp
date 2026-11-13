@@ -7,6 +7,8 @@ import 'dart:math' as math;
 import 'format.dart';
 import 'types.dart';
 
+const double _ln2 = math.ln2;
+
 /* ---------- elimination ---------- */
 
 class LuResult {
@@ -716,5 +718,184 @@ Mat pinv(Mat a) {
   final tol = 1e-10 * math.max(1.0, r.sigma.isEmpty ? 0.0 : r.sigma[0]);
   final sp = mapM(r.s, (x, i, j) => i == j && x > tol ? 1 / x : 0);
   return cleanM(mulM(mulM(transpose(r.vt), sp), transpose(r.u)));
+}
+
+/* ---------- norms ---------- */
+
+double frob(Mat a) {
+  var s = 0.0;
+  for (final r in a.data) {
+    for (final x in r) {
+      s += x * x;
+    }
+  }
+  return math.sqrt(s);
+}
+
+double norm1(Mat a) {
+  var best = 0.0;
+  for (var j = 0; j < a.cols; j++) {
+    var s = 0.0;
+    for (final r in a.data) {
+      s += r[j].abs();
+    }
+    best = math.max(best, s);
+  }
+  return best;
+}
+
+double normInf(Mat a) {
+  var best = 0.0;
+  for (final r in a.data) {
+    var s = 0.0;
+    for (final x in r) {
+      s += x.abs();
+    }
+    best = math.max(best, s);
+  }
+  return best;
+}
+
+double norm2(Mat a) {
+  final s = svd(a).sigma;
+  return s.isEmpty ? 0 : s[0];
+}
+
+double cond(Mat a) {
+  final s = svd(a).sigma;
+  final mn = s.last;
+  return mn < 1e-12 * math.max(1.0, s[0]) ? double.infinity : s[0] / mn;
+}
+
+/* ---------- matrix functions ---------- */
+
+Mat matPow(Mat a, int k) {
+  needSquare(a, 'Matrix powers');
+  if (k < 0) {
+    a = inverse(a);
+    k = -k;
+  }
+  var r = eye(a.rows), b = a;
+  while (k > 0) {
+    if (k & 1 == 1) r = mulM(r, b);
+    k >>= 1;
+    if (k > 0) b = mulM(b, b);
+  }
+  return r;
+}
+
+int _scalingSteps(Mat a, int extra) {
+  final l = (math.log(math.max(normInf(a), 1e-16)) / _ln2).ceil() + extra;
+  return math.max(0, l);
+}
+
+/// Matrix exponential by scaling and squaring.
+Mat expm(Mat a) {
+  needSquare(a, 'expm');
+  final s = _scalingSteps(a, 1);
+  final x = scaleM(a, 1 / math.pow(2, s));
+  var t = eye(a.rows), e = eye(a.rows);
+  for (var k = 1; k <= 20; k++) {
+    t = scaleM(mulM(t, x), 1 / k);
+    e = addM(e, t);
+  }
+  for (var i = 0; i < s; i++) {
+    e = mulM(e, e);
+  }
+  return e;
+}
+
+({Mat sin, Mat cos}) sincosm(Mat a) {
+  needSquare(a, 'Matrix trig');
+  final n = a.rows, id = eye(n), s = _scalingSteps(a, 2);
+  final x = scaleM(a, 1 / math.pow(2, s)), x2 = mulM(x, x);
+  var sn = zeros(n, n), cs = zeros(n, n), termS = x, termC = id;
+  for (var k = 0; k < 14; k++) {
+    sn = addM(sn, termS);
+    cs = addM(cs, termC);
+    termS = scaleM(mulM(termS, x2), -1 / ((2 * k + 2) * (2 * k + 3)));
+    termC = scaleM(mulM(termC, x2), -1 / ((2 * k + 1) * (2 * k + 2)));
+  }
+  // Double-angle formulas undo the scaling.
+  for (var i = 0; i < s; i++) {
+    final s2 = scaleM(mulM(sn, cs), 2);
+    cs = addM(scaleM(mulM(cs, cs), 2), id, -1);
+    sn = s2;
+  }
+  return (sin: sn, cos: cs);
+}
+
+/// Principal square root (Denman–Beavers iteration).
+Mat sqrtm(Mat a) {
+  needSquare(a, 'sqrtm');
+  var y = a, z = eye(a.rows);
+  try {
+    for (var k = 0; k < 60; k++) {
+      final yn = scaleM(addM(y, inverse(z)), 0.5);
+      final zn = scaleM(addM(z, inverse(y)), 0.5);
+      final diff = maxAbs(addM(yn, y, -1));
+      y = yn;
+      z = zn;
+      if (diff < 1e-13) break;
+    }
+  } on MathError {
+    throw MathError(
+      'This matrix has no real square root',
+      'sqrtm needs a matrix with no zero or negative eigenvalues.',
+    );
+  }
+  if (!approxEq(mulM(y, y), a, tolFor(a, 1e-6))) {
+    throw MathError(
+      'This matrix has no real square root',
+      'sqrtm needs a matrix with no negative eigenvalues.',
+    );
+  }
+  return y;
+}
+
+Mat kron(Mat a, Mat b) {
+  final r = zeros(a.rows * b.rows, a.cols * b.cols);
+  for (var i = 0; i < a.rows; i++) {
+    for (var j = 0; j < a.cols; j++) {
+      for (var k = 0; k < b.rows; k++) {
+        for (var l = 0; l < b.cols; l++) {
+          r.data[i * b.rows + k][j * b.cols + l] = a.data[i][j] * b.data[k][l];
+        }
+      }
+    }
+  }
+  return r;
+}
+
+/// Solves Ax = b; warns through [warn] when there are free variables.
+Mat solve(Mat a, Mat b, void Function(String) warn) {
+  if (a.rows != b.rows) {
+    throw MathError(
+      'Can’t solve: ${desc(a)} and ${desc(b)} have different numbers of rows',
+    );
+  }
+  if (a.rows == a.cols && det(a).abs() > tolFor(a, 1e-10)) {
+    return mulM(inverse(a), b);
+  }
+  final aug = Mat([
+    for (var i = 0; i < a.rows; i++) [...a.data[i], ...b.data[i]],
+  ]);
+  final res = rrefCore(aug);
+  if (res.pivots.any((p) => p >= a.cols)) {
+    throw MathError(
+      'This system has no solution',
+      'The equations contradict each other. Try pinv(A)·b for a least-squares fit.',
+    );
+  }
+  final x = zeros(a.cols, b.cols);
+  for (var row = 0; row < res.pivots.length; row++) {
+    for (var j = 0; j < b.cols; j++) {
+      x.data[res.pivots[row]][j] = res.r.data[row][a.cols + j];
+    }
+  }
+  warn(
+    'Infinitely many solutions — showing the one with every free variable set to 0. Add null(A) for the rest.',
+  );
+  return x;
 }
 
