@@ -18,6 +18,10 @@ lives on the `main` branch history.
 - LU, QR, Cholesky and SVD decompositions, pseudo-inverse, norms, condition number
 - Matrix functions: `expm`, `sinm`, `cosm`, `sqrtm`
 - Inspector with properties and step-by-step determinant, inverse and RREF
+- An operations library with a page for each operation: what it means, how
+  to write it, worked examples and a button to try them
+- Twelve sample workspaces, one per topic, and a tour on first launch
+- Matrices and expressions can be dragged into a different order
 - Everything is calculated on the device; nothing is sent anywhere
 
 ## One app, every screen
@@ -42,7 +46,8 @@ lib/
   engine/   Math engine — pure Dart, shared by both platforms
   app/      Data model, app state and storage
   ui/       Screens and widgets
-test/       Engine tests, parity tests against the design prototype, app tests
+test/       Engine tests, parity tests against the design prototype, app tests,
+            and checks that every sample workspace and library example works
 ```
 
 The engine has no Flutter dependency: `lib/engine/engine.dart` is the whole
@@ -59,9 +64,37 @@ flutter run
 Release builds:
 
 ```bash
-flutter build appbundle --release
-flutter build ipa --release
+flutter build appbundle --release --obfuscate --split-debug-info=build/symbols
+flutter build ipa --release --obfuscate --split-debug-info=build/symbols
 ```
+
+`--obfuscate --split-debug-info` makes the compiled Dart code about a fifth
+smaller. Keep the `build/symbols` folder of each release you ship: it is what
+turns a crash's stack trace back into readable names
+(`flutter symbolize -i trace.txt -d build/symbols/app.android-arm64.symbols`).
+
+For a single APK to sideload, build one per CPU type instead of one that
+carries all three:
+
+```bash
+flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/symbols
+```
+
+## App size
+
+A phone downloads about 8 MB from Google Play. About 5.4 MB of that is the
+Flutter engine, which every Flutter app carries; the rest is the app's own
+code, the fonts (0.5 MB) and the Android runtime glue.
+
+- Maths is set in STIX Two Text, bundled in full so matrices look the same
+  on every device. The symbols that font lacks (√, ≤, →, ⋯ …) come from
+  `STIXTwoMath-Symbols.otf`, a subset of STIX Two Math made with Flutter's
+  `font-subset` tool (`bin/cache/artifacts/engine/<host>/font-subset` in
+  the Flutter SDK). Superscript letters, such as the T of a transpose, are
+  in no STIX font; they come from `NotoSerif-Superscripts.ttf`, cut from
+  Noto Serif the same way.
+- Icons are drawn from path data, so no icon font is bundled.
+- The launcher icon's background is an XML gradient, not an image.
 
 Android release signing reads `RELEASE_KEYSTORE_PATH`, `RELEASE_STORE_PASSWORD`,
 `RELEASE_KEY_ALIAS` and `RELEASE_KEY_PASSWORD` from the environment or from
@@ -70,5 +103,6 @@ debug key.
 
 ## Licence
 
-See [LICENSE](LICENSE). The bundled STIX Two Text fonts are under the SIL Open
-Font License (`assets/fonts/OFL.txt`).
+See [LICENSE](LICENSE). The bundled STIX Two fonts and the Noto Serif superscripts
+are under the SIL Open Font License (`assets/fonts/OFL.txt` and
+`assets/fonts/OFL-NotoSerif.txt`).
