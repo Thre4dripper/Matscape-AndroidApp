@@ -251,6 +251,17 @@ class AppState extends ChangeNotifier {
     return w.lines[math.max(0, idx - 1)].id;
   }
 
+  /// Moves the line at [from] so it ends up at index [to].
+  void moveLine(int from, int to) => _move(ws.lines, from, to);
+
+  void _move<T>(List<T> list, int from, int to) {
+    if (from < 0 || from >= list.length) return;
+    to = to.clamp(0, list.length - 1);
+    if (from == to) return;
+    list.insert(to, list.removeAt(from));
+    _changed();
+  }
+
   /// Records a finished line in history.
   void commitLine(String id) {
     final l = lineById(id), res = lineResults[id];
@@ -338,6 +349,9 @@ class AppState extends ChangeNotifier {
     ws.matrices.removeWhere((m) => m.id == id);
     _changed();
   }
+
+  /// Moves the matrix at [from] so it ends up at index [to].
+  void moveMatrix(int from, int to) => _move(ws.matrices, from, to);
 
   /// Renames a matrix; returns true when some line still uses the old name.
   bool renameMatrix(MatrixModel m, String name) {
