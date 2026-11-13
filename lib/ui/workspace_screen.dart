@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -5,49 +7,38 @@ import '../app/app_state.dart';
 import '../app/models.dart';
 import '../engine/engine.dart';
 import 'drawer.dart';
+import 'glance.dart';
 import 'icons.dart';
 import 'inspector_screen.dart';
 import 'keypad.dart';
+import 'layout.dart';
 import 'library_screen.dart';
 import 'math_view.dart';
+import 'matrix_card.dart';
 import 'matrix_editor.dart';
 import 'more_screens.dart';
 import 'scope.dart';
+import 'side_pane.dart';
 import 'text_edit.dart' as edit;
 import 'theme.dart';
 import 'widgets.dart';
 
-class Wordmark extends StatelessWidget {
-  const Wordmark({super.key, this.size = Fs.xl});
-  final double size;
+/// A screen opened from the workspace: one of the menu destinations, or
+/// the inspector for a specific matrix.
+class _Screen {
+  const _Screen(this.name, [this.inspect]);
+  final String name;
+  final InspectTarget? inspect;
 
-  @override
-  Widget build(BuildContext context) {
-    final st = mathStyle(
-      context,
-      size: size,
-      weight: FontWeight.w600,
-      height: 1.15,
-    );
-    return Text.rich(
-      TextSpan(
-        style: st.copyWith(letterSpacing: -size * .01),
-        children: [
-          const TextSpan(text: 'Mat'),
-          TextSpan(
-            text: 'scape',
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              color: context.pal.accent,
-            ),
-          ),
-        ],
-      ),
-      semanticsLabel: 'Matscape',
-    );
-  }
+  String get key =>
+      '$name/${inspect?.matrixId}/${inspect?.lineId}/${inspect?.part}';
 }
 
+/// How the matrices are listed above the expressions.
+enum _Rail { cards, chips, none }
+
+/// The app's home: the workspace, arranged for whatever window and fold
+/// posture it finds itself in (see [AppLayout]).
 class WorkspaceScreen extends StatefulWidget {
   const WorkspaceScreen({super.key});
 
@@ -69,6 +60,14 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
   String _page = 'num';
   bool _collapsed = false;
   bool _raised = false;
+
+  LayoutInfo _info = const LayoutInfo(AppLayout.compact);
+
+  /// The screen shown in a pane (layouts that don't push full-screen).
+  _Screen? _pane;
+
+  /// Screens currently pushed full-screen on top of the workspace.
+  int _pushed = 0;
 
   AppState get _state => AppScope.read(context);
 
@@ -129,6 +128,23 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     if (_activeId != null && !ids.contains(_activeId)) {
       _activeId = ws.lines.isEmpty ? null : ws.lines.last.id;
     }
+  }
+
+  /// Reacts to the window being resized, rotated, folded or unfolded.
+  void _applyLayout(LayoutInfo info) {
+    final old = _info;
+    if (old == info) return;
+    _info = info;
+    if (old.layout == info.layout) return;
+    // A screen can't carry over between "pushed full-screen" and "in a
+    // pane", or between panes that sit in different places.
+    if (info.pushesScreens || old.hasDetail != info.hasDetail) _pane = null;
+    if (!info.pushesScreens && _pushed > 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.of(context).popUntil((r) => r.isFirst);
+      });
+    }
+    if (!info.pushesScreens) _collapsed = false;
   }
 
   FocusNode _makeFocus(String id) {
@@ -273,8 +289,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
       showMatrixEditor(context, matrixId: matrixId, host: this);
 
   @override
-  void openInspector(InspectTarget target) =>
-      _push(InspectorScreen(target: target, host: this));
+  void openInspector(InspectTarget target) => _open(_Screen('inspect', target));
 
   @override
   void saveAsMatrix(Mat value) {
@@ -304,112 +319,363 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     }
   }
 
-  void _push(Widget screen) {
-    FocusManager.instance.primaryFocus?.unfocus();
-    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => screen));
+  /* ---------- screens ---------- */
+
+  Widget _screenFor(_Screen s) => switch (s.name) {
+    'workspaces' => const WorkspacesScreen(),
+    'history' => HistoryScreen(host: this),
+    'library' => LibraryScreen(host: this),
+    'settings' => const SettingsScreen(),
+    'help' => HelpScreen(host: this),
+    _ => InspectorScreen(target: s.inspect, host: this),
+  };
+
+  /// Opens a screen: pushed full-screen on phones, in a pane elsewhere.
+  void _open(_Screen s) {
+    if (_info.pushesScreens) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      _pushed++;
+      Navigator.of(context)
+          .push(MaterialPageRoute<void>(builder: (_) => _screenFor(s)))
+          .whenComplete(() => _pushed--);
+    } else {
+      setState(() => _pane = s);
+    }
   }
 
-  void _go(String to) {
-    switch (to) {
-      case 'workspaces':
-        _push(const WorkspacesScreen());
-      case 'history':
-        _push(HistoryScreen(host: this));
-      case 'library':
-        _push(LibraryScreen(host: this));
-      case 'settings':
-        _push(const SettingsScreen());
-      case 'help':
-        _push(HelpScreen(host: this));
+  void _go(String to) => _open(_Screen(to));
+
+  void _closePane() => setState(() => _pane = null);
+
+  /// What the always-on inspector shows: the active line if it gives a
+  /// matrix, else the latest line that does, else the first valid matrix.
+  InspectTarget? _autoInspect(AppState state) {
+    bool matrixLike(String? id) {
+      final r = id == null ? null : state.lineResults[id];
+      return r != null && r.ok && (r.value is Mat || r.value is MultiVal);
     }
+
+    if (matrixLike(_activeId)) return InspectTarget.line(_activeId!);
+    for (final l in state.ws.lines.reversed) {
+      if (matrixLike(l.id)) return InspectTarget.line(l.id);
+    }
+    for (final m in state.ws.matrices) {
+      if (state.matResults[m.id]?.ok ?? false) {
+        return InspectTarget.matrix(m.id);
+      }
+    }
+    return null;
   }
 
   /* ---------- build ---------- */
 
   @override
   Widget build(BuildContext context) {
-    final state = AppScope.of(context), pal = context.pal, ws = state.ws;
+    final state = AppScope.of(context), pal = context.pal;
+    final info = LayoutInfo.of(context);
     _sync(state);
-    return Scaffold(
-      key: _scaffold,
-      backgroundColor: pal.bg,
-      drawerScrimColor: pal.scrim,
-      drawer: MenuDrawer(
-        workspaceName: ws.name,
-        onNavigate: (to) {
-          _scaffold.currentState?.closeDrawer();
-          _go(to);
-        },
-      ),
-      body: Column(
-        children: [
-          _topBar(context, ws),
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _scroll,
-              padding: const EdgeInsets.only(bottom: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _sectionHead(
-                    'Matrices',
-                    TextBtn('New', icon: MIcon.plus, onTap: _newMatrix),
-                  ),
-                  _matrixRail(context, state),
-                  const SizedBox(height: 8),
-                  _sectionHead(
-                    'Expressions',
-                    TextBtn(
-                      'History',
-                      icon: MIcon.clock,
-                      onTap: () => _go('history'),
-                    ),
-                  ),
-                  Container(height: 1, color: pal.line),
-                  for (var i = 0; i < ws.lines.length; i++)
-                    _line(context, state, ws.lines[i], i),
-                  _addLineRow(context),
-                ],
+    _applyLayout(info);
+    final size = MediaQuery.sizeOf(context);
+
+    final Widget body;
+    switch (info.layout) {
+      case AppLayout.glance:
+        body = GlanceView(state: state);
+
+      case AppLayout.compact:
+        body = _withDrawer(
+          state,
+          Column(
+            children: [
+              _topBar(context, state.ws),
+              Expanded(child: _content(context, state, _Rail.cards)),
+              _keypad(context, state, rowHeight: size.height < 600 ? 38 : 44),
+            ],
+          ),
+        );
+
+      case AppLayout.landscape:
+        // A phone on its side: results on the left, keypad on the right.
+        body = _withDrawer(
+          state,
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    _topBar(context, state.ws),
+                    Expanded(child: _content(context, state, _Rail.chips)),
+                  ],
+                ),
+              ),
+              Container(width: 1, color: pal.line),
+              SizedBox(
+                width: math.min(420, size.width * .5),
+                child: _keypad(
+                  context,
+                  state,
+                  fill: true,
+                  topInset: MediaQuery.paddingOf(context).top,
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case AppLayout.medium:
+        body = Row(
+          children: [
+            _side(state),
+            Expanded(
+              child: _pane == null
+                  ? _mainColumn(context, state)
+                  : _embedded(PaneKind.column),
+            ),
+          ],
+        );
+
+      case AppLayout.expanded:
+        final detailW = LayoutInfo.detailWidth(size.width);
+        final mainW = size.width - sideWidth - detailW;
+        body = Row(
+          children: [
+            _side(state),
+            Expanded(
+              child: _mainColumn(
+                context,
+                state,
+                dual: mainW >= dualKeypadWidth,
+                hPad: 16,
               ),
             ),
-          ),
-          Keypad(
-            page: _page,
-            collapsed: _collapsed,
-            degrees: state.settings.degrees,
-            names: [for (final m in ws.matrices) m.name],
-            onPage: (p) => setState(() => _page = p),
-            onToggleCollapsed: () => setState(() => _collapsed = !_collapsed),
-            onInsert: (text, back) {
-              edit.insertText(_target(), text, back: back);
-              _typed();
-            },
-            onBackspace: () {
-              edit.backspace(_target());
-              _typed();
-            },
-            onMove: (d) => edit.moveCaret(_target(), d),
-            onEnter: () {
-              _target();
-              _commit(_activeId!);
-            },
-            onAngle: () {
-              state.updateSettings((s) => s.degrees = !s.degrees);
-              showToast(
-                context,
-                'Angles in ${state.settings.degrees ? 'degrees' : 'radians'}',
-              );
-            },
-            onNewMatrix: _newMatrix,
-          ),
-        ],
+            Container(
+              width: detailW,
+              decoration: BoxDecoration(
+                border: Border(left: BorderSide(color: pal.line)),
+              ),
+              child: _detail(state),
+            ),
+          ],
+        );
+
+      case AppLayout.book:
+        // Workspace left of the fold, inspector right of it.
+        body = Row(
+          children: [
+            SizedBox(
+              width: info.fold.left,
+              child: _withDrawer(
+                state,
+                Column(
+                  children: [
+                    _topBar(context, state.ws),
+                    Expanded(child: _content(context, state, _Rail.cards)),
+                    _keypad(context, state),
+                  ],
+                ),
+              ),
+            ),
+            _Hinge(width: info.fold.width),
+            Expanded(child: _detail(state)),
+          ],
+        );
+
+      case AppLayout.tabletop:
+        // Results above the fold, a full-height keypad below it.
+        body = Column(
+          children: [
+            SizedBox(
+              height: info.fold.top,
+              child: MediaQuery.removePadding(
+                context: context,
+                removeBottom: true,
+                child: _pane == null
+                    ? _withDrawer(
+                        state,
+                        Column(
+                          children: [
+                            _topBar(context, state.ws),
+                            Expanded(
+                              child: _content(context, state, _Rail.chips),
+                            ),
+                          ],
+                        ),
+                      )
+                    : _embedded(PaneKind.column),
+              ),
+            ),
+            _Hinge(height: info.fold.height),
+            Expanded(
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: _keypad(context, state, fill: true),
+              ),
+            ),
+          ],
+        );
+    }
+
+    return Scaffold(
+      backgroundColor: pal.bg,
+      body: SafeArea(top: false, bottom: false, child: body),
+    );
+  }
+
+  /// Wraps a pane in the scaffold that owns the side menu, so the menu and
+  /// its scrim stay inside that pane.
+  Widget _withDrawer(AppState state, Widget child) => Scaffold(
+    key: _scaffold,
+    backgroundColor: context.pal.bg,
+    drawerScrimColor: context.pal.scrim,
+    drawer: MenuDrawer(
+      workspaceName: state.ws.name,
+      onNavigate: (to) {
+        _scaffold.currentState?.closeDrawer();
+        _go(to);
+      },
+    ),
+    body: child,
+  );
+
+  Widget _side(AppState state) => SidePane(
+    state: state,
+    current: _pane?.name,
+    onNavigate: _go,
+    onNewMatrix: _newMatrix,
+    onEditMatrix: openEditor,
+  );
+
+  /// Workspace column of the sidebar layouts: matrices live in the sidebar.
+  Widget _mainColumn(
+    BuildContext context,
+    AppState state, {
+    bool dual = false,
+    double hPad = 8,
+  }) => Column(
+    children: [
+      _topBar(context, state.ws, side: true),
+      Expanded(child: _content(context, state, _Rail.none)),
+      _keypad(context, state, dual: dual, hPad: hPad),
+    ],
+  );
+
+  /// A screen shown in place of the workspace column.
+  Widget _embedded(PaneKind kind) {
+    final s = _pane!;
+    return PaneScope(
+      kind: kind,
+      onClose: _closePane,
+      child: _Entering(key: ValueKey(s.key), child: _screenFor(s)),
+    );
+  }
+
+  /// The detail pane: an opened screen, or the inspector following along.
+  Widget _detail(AppState state) {
+    if (_pane != null) return _embedded(PaneKind.detail);
+    return PaneScope(
+      kind: PaneKind.detail,
+      onClose: null,
+      child: InspectorScreen(
+        target: _autoInspect(state),
+        host: this,
+        auto: true,
       ),
     );
   }
 
-  Widget _topBar(BuildContext context, Workspace ws) {
+  Widget _keypad(
+    BuildContext context,
+    AppState state, {
+    bool fill = false,
+    bool dual = false,
+    double hPad = 8,
+    double rowHeight = 44,
+    double topInset = 0,
+  }) => Keypad(
+    page: _page,
+    collapsed: _collapsed,
+    degrees: state.settings.degrees,
+    names: [for (final m in state.ws.matrices) m.name],
+    fill: fill,
+    dual: dual,
+    collapsible: !fill,
+    topBorder: !fill,
+    hPad: hPad,
+    rowHeight: rowHeight,
+    topInset: topInset,
+    onPage: (p) => setState(() => _page = p),
+    onToggleCollapsed: () => setState(() => _collapsed = !_collapsed),
+    onInsert: (text, back) {
+      edit.insertText(_target(), text, back: back);
+      _typed();
+    },
+    onBackspace: () {
+      edit.backspace(_target());
+      _typed();
+    },
+    onMove: (d) => edit.moveCaret(_target(), d),
+    onEnter: () {
+      _target();
+      _commit(_activeId!);
+    },
+    onAngle: () {
+      state.updateSettings((s) => s.degrees = !s.degrees);
+      showToast(
+        context,
+        'Angles in ${state.settings.degrees ? 'degrees' : 'radians'}',
+      );
+    },
+    onNewMatrix: _newMatrix,
+  );
+
+  /// Top bar. With a sidebar ([side]) the menu button and wordmark move
+  /// there and the workspace name becomes the title.
+  Widget _topBar(BuildContext context, Workspace ws, {bool side = false}) {
     final pal = context.pal;
+    final title = Pressable(
+      onTap: () => _go('workspaces'),
+      label: 'Switch workspace. Current: ${ws.name}',
+      builder: (_, down) => AnimatedContainer(
+        duration: Motion.fast,
+        padding: EdgeInsets.symmetric(horizontal: side ? 12 : 8, vertical: 4),
+        alignment: side ? Alignment.centerLeft : null,
+        decoration: BoxDecoration(
+          color: down ? pal.surface2 : null,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: side
+            ? Text(
+                ws.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: mathStyle(
+                  context,
+                  size: Fs.xl,
+                  weight: FontWeight.w600,
+                  height: 1.25,
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Wordmark(),
+                  Text(
+                    ws.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: Fs.cap,
+                      height: 1.35,
+                      color: pal.ink3,
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
     return Container(
+      constraints: const BoxConstraints(minHeight: 56),
       padding: EdgeInsets.fromLTRB(
         8,
         MediaQuery.paddingOf(context).top + 4,
@@ -426,44 +692,16 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
       ),
       child: Row(
         children: [
-          IconBtn(
-            MIcon.menu,
-            label: 'Open menu',
-            onTap: () {
-              FocusManager.instance.primaryFocus?.unfocus();
-              _scaffold.currentState?.openDrawer();
-            },
-          ),
-          Expanded(
-            child: Pressable(
-              onTap: () => _go('workspaces'),
-              label: 'Switch workspace. Current: ${ws.name}',
-              builder: (_, down) => AnimatedContainer(
-                duration: Motion.fast,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: down ? pal.surface2 : null,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Wordmark(),
-                    Text(
-                      ws.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: Fs.cap,
-                        height: 1.35,
-                        color: pal.ink3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+          if (!side)
+            IconBtn(
+              MIcon.menu,
+              label: 'Open menu',
+              onTap: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                _scaffold.currentState?.openDrawer();
+              },
             ),
-          ),
+          Expanded(child: title),
           IconBtn(
             MIcon.book,
             label: 'Operations library',
@@ -474,34 +712,49 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     );
   }
 
-  Widget _sectionHead(String title, Widget action) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 12, 4, 8),
-    child: Row(
-      children: [
-        Expanded(
-          child: Semantics(
-            header: true,
-            child: Text(
-              title.toUpperCase(),
-              style: TextStyle(
-                fontSize: Fs.cap,
-                fontWeight: FontWeight.w600,
-                letterSpacing: .96,
-                height: 1.3,
-                color: context.pal.ink3,
-              ),
+  /// The scrolling part: matrices (unless they're in the sidebar) and the
+  /// expression lines.
+  Widget _content(BuildContext context, AppState state, _Rail rail) {
+    final pal = context.pal, ws = state.ws;
+    return SingleChildScrollView(
+      controller: _scroll,
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (rail != _Rail.none) ...[
+            SectionHead(
+              'Matrices',
+              action: TextBtn('New', icon: MIcon.plus, onTap: _newMatrix),
+            ),
+            _matrixRail(context, state, chips: rail == _Rail.chips),
+            const SizedBox(height: 8),
+          ],
+          SectionHead(
+            'Expressions',
+            action: TextBtn(
+              'History',
+              icon: MIcon.clock,
+              onTap: () => _go('history'),
             ),
           ),
-        ),
-        action,
-      ],
-    ),
-  );
+          Container(height: 1, color: pal.line),
+          for (var i = 0; i < ws.lines.length; i++)
+            _line(context, state, ws.lines[i], i),
+          _addLineRow(context),
+        ],
+      ),
+    );
+  }
 
-  Widget _matrixRail(BuildContext context, AppState state) {
-    final pal = context.pal, mats = state.ws.matrices;
+  Widget _matrixRail(
+    BuildContext context,
+    AppState state, {
+    required bool chips,
+  }) {
+    final mats = state.ws.matrices;
     return SizedBox(
-      height: 136,
+      height: chips ? 46 : 136,
       child: ListView.separated(
         controller: _rail,
         scrollDirection: Axis.horizontal,
@@ -510,118 +763,15 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
         separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, i) {
           if (i == mats.length) {
-            return Pressable(
-              onTap: _newMatrix,
-              label: 'New matrix',
-              scale: .98,
-              builder: (_, _) => CustomPaint(
-                painter: _DashedBorder(pal.lineStrong),
-                child: Container(
-                  width: 132,
-                  decoration: BoxDecoration(
-                    color: pal.surface,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Ico(MIcon.plus, size: 22, color: pal.accentInk),
-                      const SizedBox(height: 8),
-                      Text(
-                        'New matrix',
-                        style: TextStyle(
-                          fontSize: Fs.sm,
-                          fontWeight: FontWeight.w600,
-                          color: pal.accentInk,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
+            return NewMatrixCard(onTap: _newMatrix, chip: chips);
           }
-          final m = mats[i], res = state.matResults[m.id];
-          final ok = res != null && res.ok;
-          return Pressable(
+          final m = mats[i];
+          return MatrixCard(
+            model: m,
+            eval: state.matResults[m.id],
+            fmt: state.fmt,
+            chip: chips,
             onTap: () => openEditor(m.id),
-            label:
-                'Matrix ${m.name}, ${m.rows} by ${m.cols}${ok ? '' : ', has an entry to fix'}. Edit',
-            scale: .98,
-            builder: (_, _) => Container(
-              width: 132,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: pal.surface,
-                border: Border.all(color: ok ? pal.line : pal.danger),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    m.name,
-                    style: mathStyle(
-                      context,
-                      size: Fs.xl,
-                      weight: FontWeight.w600,
-                      italic: true,
-                      height: 1.1,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${m.rows}×${m.cols}',
-                    style: TextStyle(
-                      fontSize: Fs.cap,
-                      height: 1.3,
-                      color: pal.ink3,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: ok
-                          ? FittedBox(
-                              fit: BoxFit.scaleDown,
-                              alignment: Alignment.bottomLeft,
-                              child: MatrixView.preview(
-                                res.value!,
-                                state.fmt,
-                                color: pal.ink,
-                              ),
-                            )
-                          : Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: pal.dangerSoft,
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Ico(MIcon.alert, size: 12, color: pal.danger),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'Fix entry',
-                                    style: TextStyle(
-                                      fontSize: Fs.cap,
-                                      fontWeight: FontWeight.w600,
-                                      color: pal.danger,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           );
         },
       ),
@@ -1011,27 +1161,44 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
   }
 }
 
-class _DashedBorder extends CustomPainter {
-  _DashedBorder(this.color);
-  final Color color;
+/// The strip over a fold: nothing interactive is ever placed on it.
+class _Hinge extends StatelessWidget {
+  const _Hinge({this.width, this.height});
+  final double? width, height;
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final rr = RRect.fromRectAndRadius(
-      (Offset.zero & size).deflate(.5),
-      const Radius.circular(16),
+  Widget build(BuildContext context) {
+    final pal = context.pal;
+    return ExcludeSemantics(
+      child: Container(
+        width: width,
+        height: height,
+        color: pal.surface2,
+        alignment: Alignment.center,
+        child: Container(
+          width: width == null ? null : 1,
+          height: height == null ? null : 1,
+          color: pal.lineStrong,
+        ),
+      ),
     );
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1
-      ..color = color;
-    for (final metric in (Path()..addRRect(rr)).computeMetrics()) {
-      for (var d = 0.0; d < metric.length; d += 7) {
-        canvas.drawPath(metric.extractPath(d, d + 4), paint);
-      }
-    }
   }
+}
+
+/// Fades and slides a screen in when it appears in a pane.
+class _Entering extends StatelessWidget {
+  const _Entering({super.key, required this.child});
+  final Widget child;
 
   @override
-  bool shouldRepaint(_DashedBorder old) => old.color != color;
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
+    tween: Tween(begin: 0, end: 1),
+    duration: Motion.base,
+    curve: Motion.easeOut,
+    builder: (_, t, child) => Opacity(
+      opacity: t,
+      child: Transform.translate(offset: Offset(24 * (1 - t), 0), child: child),
+    ),
+    child: child,
+  );
 }
