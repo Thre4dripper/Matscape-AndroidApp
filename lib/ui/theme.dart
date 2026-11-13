@@ -121,6 +121,10 @@ extension PaletteContext on BuildContext {
 /// Font for anything mathematical: expressions, results, matrix names.
 const mathFont = 'STIXTwoText';
 
+/// Symbols the text font lacks come from here rather than from whatever
+/// the device has, so maths looks the same everywhere.
+const mathFallback = ['STIXTwoMath', 'NotoSerifSuperscripts'];
+
 /// Type scale.
 abstract final class Fs {
   static const cap = 12.0;
@@ -150,6 +154,7 @@ TextStyle mathStyle(
   double height = 1.35,
 }) => TextStyle(
   fontFamily: mathFont,
+  fontFamilyFallback: mathFallback,
   fontSize: size,
   fontWeight: weight,
   fontStyle: italic ? FontStyle.italic : FontStyle.normal,

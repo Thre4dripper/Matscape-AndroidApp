@@ -29,3 +29,13 @@ flutter:
         - asset: assets/fonts/STIXTwoText.ttf
         - asset: assets/fonts/STIXTwoText-Italic.ttf
           style: italic
+    # The maths symbols STIX Two Text doesn't have (√, ≤, →, ⋯ …), taken
+    # from STIX Two Math so they look the same on every device.
+    - family: STIXTwoMath
+      fonts:
+        - asset: assets/fonts/STIXTwoMath-Symbols.otf
+    # Superscript letters such as the T of a transpose, which no STIX font
+    # has. Taken from Noto Serif.
+    - family: NotoSerifSuperscripts
+      fonts:
+        - asset: assets/fonts/NotoSerif-Superscripts.ttf
