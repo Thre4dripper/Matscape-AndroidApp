@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 
@@ -22,6 +23,7 @@ class MatEval {
 
 const matrixLetters = 'ABCDEFGHJKLMNOPQRSTUVWXYZ';
 const maxMatrixSize = 8;
+const _historyLimit = 60;
 
 /// All app data plus the evaluated results for the open workspace.
 class AppState extends ChangeNotifier {
@@ -204,5 +206,74 @@ class AppState extends ChangeNotifier {
     if (v is double) return numText(v);
     if (v is Mat) return matText(v);
     return resultSummary(v);
+  }
+
+  /* ---------- lines ---------- */
+
+  LineModel? lineById(String id) {
+    for (final l in ws.lines) {
+      if (l.id == id) return l;
+    }
+    return null;
+  }
+
+  void setLineText(String id, String text) {
+    final l = lineById(id);
+    if (l == null || l.text == text) return;
+    l.text = text;
+    _changed();
+  }
+
+  /// Inserts a line after [afterId] (or at the end) and returns it.
+  LineModel addLine({String? afterId, String text = ''}) {
+    final w = ws, l = LineModel(text);
+    final idx = afterId == null
+        ? w.lines.length - 1
+        : w.lines.indexWhere((x) => x.id == afterId);
+    w.lines.insert(idx + 1, l);
+    _changed();
+    return l;
+  }
+
+  /// Removes a line and returns the id of the line to focus next. The last
+  /// remaining line is cleared instead of removed.
+  String deleteLine(String id) {
+    final w = ws, idx = w.lines.indexWhere((l) => l.id == id);
+    if (idx < 0) return w.lines.first.id;
+    if (w.lines.length == 1) {
+      w.lines[0].text = '';
+      _changed();
+      return w.lines[0].id;
+    }
+    w.lines.removeAt(idx);
+    _changed();
+    return w.lines[math.max(0, idx - 1)].id;
+  }
+
+  /// Records a finished line in history.
+  void commitLine(String id) {
+    final l = lineById(id), res = lineResults[id];
+    if (l == null || l.text.trim().isEmpty || res == null || !res.ok) return;
+    if (history.isEmpty || history.first.text != l.text) {
+      history.insert(
+        0,
+        HistoryItem(
+          l.text,
+          resultSummary(res.value!),
+          DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
+      if (history.length > _historyLimit) {
+        history.removeRange(_historyLimit, history.length);
+      }
+      _persist();
+      notifyListeners();
+    }
+  }
+
+  void clearHistory() {
+    history = [];
+    _persist();
+    notifyListeners();
   }
 }
