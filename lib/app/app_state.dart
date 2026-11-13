@@ -35,6 +35,9 @@ class AppState extends ChangeNotifier {
   List<HistoryItem> history = [];
   String currentId = '';
 
+  /// False until the first-launch tutorial has been shown.
+  bool tutorialSeen = false;
+
   Map<String, MatEval> matResults = {};
   Map<String, EvalResult> lineResults = {};
 
@@ -60,6 +63,7 @@ class AppState extends ChangeNotifier {
         ];
         settings.load(j['settings'] as Map<String, dynamic>? ?? const {});
         currentId = j['currentId'] as String? ?? '';
+        tutorialSeen = j['tutorialSeen'] as bool? ?? false;
       }
     } catch (_) {
       // Unreadable data: start fresh rather than fail to launch.
@@ -90,6 +94,7 @@ class AppState extends ChangeNotifier {
           'history': history,
           'settings': settings,
           'currentId': currentId,
+          'tutorialSeen': tutorialSeen,
         }),
       );
     } catch (_) {
@@ -484,6 +489,14 @@ class AppState extends ChangeNotifier {
     _persist();
     notifyListeners();
     return missing.length;
+  }
+
+  /* ---------- tutorial ---------- */
+
+  void markTutorialSeen() {
+    if (tutorialSeen) return;
+    tutorialSeen = true;
+    _persist();
   }
 
   /* ---------- settings ---------- */

@@ -5,6 +5,7 @@ import 'icons.dart';
 import 'library_screen.dart' show FieldLabel, InputBox;
 import 'scope.dart';
 import 'theme.dart';
+import 'tutorial_screen.dart';
 import 'widgets.dart';
 
 const _months = [
@@ -521,6 +522,24 @@ class HelpScreen extends StatelessWidget {
             context,
             'Tap Inspect on any matrix result for its properties, eigenvalues, norms, step-by-step row reduction and decompositions.',
           ),
+          _paragraph(
+            context,
+            'To change the order, drag a matrix card by the dots in its corner, or drag an expression by the numbered strip on its left.',
+          ),
+          _paragraph(
+            context,
+            'The operations library (the book icon) explains every operation on its own page, with examples you can try. The sample workspaces, under Workspaces, cover one topic each.',
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Btn(
+              'Take the tour again',
+              icon: MIcon.eye,
+              expand: false,
+              onTap: () => TutorialScreen.show(context),
+            ),
+          ),
+          const SizedBox(height: 12),
           const SizedBox(height: 8),
           const GroupTitle('Try these'),
           CardBox(

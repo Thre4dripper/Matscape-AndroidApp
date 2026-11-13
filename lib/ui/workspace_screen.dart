@@ -21,6 +21,7 @@ import 'scope.dart';
 import 'side_pane.dart';
 import 'text_edit.dart' as edit;
 import 'theme.dart';
+import 'tutorial_screen.dart';
 import 'widgets.dart';
 
 /// A screen opened from the workspace: one of the menu destinations, or
@@ -69,6 +70,8 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
   /// Screens currently pushed full-screen on top of the workspace.
   int _pushed = 0;
 
+  bool _tourOpen = false;
+
   AppState get _state => AppScope.read(context);
 
   @override
@@ -77,6 +80,20 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     _scroll.addListener(() {
       final raised = _scroll.offset > 4;
       if (raised != _raised) setState(() => _raised = raised);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowTour());
+  }
+
+  /// Shows the tour the first time the app is opened. A cover screen is too
+  /// small for it, so there it waits until the phone is unfolded.
+  void _maybeShowTour() {
+    if (!mounted || _tourOpen) return;
+    final state = _state;
+    if (state.tutorialSeen || _info.layout == AppLayout.glance) return;
+    _tourOpen = true;
+    TutorialScreen.show(context).whenComplete(() {
+      _tourOpen = false;
+      state.markTutorialSeen();
     });
   }
 
@@ -136,6 +153,9 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     if (old == info) return;
     _info = info;
     if (old.layout == info.layout) return;
+    if (old.layout == AppLayout.glance) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowTour());
+    }
     // A screen can't carry over between "pushed full-screen" and "in a
     // pane", or between panes that sit in different places.
     if (info.pushesScreens || old.hasDetail != info.hasDetail) _pane = null;

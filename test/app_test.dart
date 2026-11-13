@@ -12,6 +12,8 @@ Future<AppState> _launch(WidgetTester tester, [MemoryStorage? storage]) async {
   addTearDown(tester.view.reset);
   final state = AppState(storage ?? MemoryStorage());
   await state.load();
+  // The first-launch tour has its own tests (tour_test.dart).
+  state.tutorialSeen = true;
   await tester.pumpWidget(MatscapeApp(state: state));
   await tester.pumpAndSettle();
   // Let the debounced save finish before the test ends.

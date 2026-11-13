@@ -55,6 +55,7 @@ Future<AppState> _launch(
   addTearDown(tester.view.reset);
   final state = AppState(MemoryStorage());
   await state.load();
+  state.tutorialSeen = true;
   addTearDown(state.flush);
   await tester.pumpWidget(MatscapeApp(key: UniqueKey(), state: state));
   await tester.pumpAndSettle();
@@ -323,14 +324,14 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Help & tips').last);
       await tester.pumpAndSettle();
-      expect(find.text('Try these'.toUpperCase()), findsOneWidget);
+      expect(find.text('How it works'.toUpperCase()), findsOneWidget);
 
       // Open the foldable: the pushed screen closes, panes appear.
       tester.view.physicalSize = const Size(744, 840);
       tester.view.displayFeatures = [_fold(744, 840, vertical: true)];
       await tester.pumpAndSettle();
       expect(find.byType(InspectorScreen), findsOneWidget);
-      expect(find.text('Try these'.toUpperCase()), findsNothing);
+      expect(find.text('How it works'.toUpperCase()), findsNothing);
 
       // Fold it again: back to a single column, nothing left over.
       tester.view.physicalSize = const Size(368, 850);
