@@ -14,10 +14,20 @@ import 'widgets.dart';
 
 /// Everything about one matrix: properties, eigenvalues, norms,
 /// step-by-step row reduction and decompositions.
+///
+/// With [auto] it is the always-on inspector of wide layouts: it follows
+/// whatever the workspace is working on, and [target] may be null when
+/// there is nothing to show yet.
 class InspectorScreen extends StatefulWidget {
-  const InspectorScreen({super.key, required this.target, required this.host});
-  final InspectTarget target;
+  const InspectorScreen({
+    super.key,
+    required this.target,
+    required this.host,
+    this.auto = false,
+  });
+  final InspectTarget? target;
   final WorkspaceHost host;
+  final bool auto;
 
   @override
   State<InspectorScreen> createState() => _InspectorScreenState();
@@ -38,6 +48,21 @@ class _InspectorScreenState extends State<InspectorScreen> {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context), t = widget.target;
+    if (t == null) {
+      return const SubScreen(
+        title: 'Inspector',
+        child: SubScroll(
+          children: [
+            EmptyState(
+              icon: MIcon.eye,
+              title: 'Nothing to inspect yet',
+              body: 'Write an expression that gives a matrix, or create a matrix. Its properties, eigenvalues and steps appear here.',
+            ),
+          ],
+        ),
+      );
+    }
+    final prefix = widget.auto ? 'Inspector · ' : '';
     var title = 'Matrix', error = '';
     Mat? value;
     MatrixModel? model;
@@ -47,7 +72,7 @@ class _InspectorScreenState extends State<InspectorScreen> {
       if (model == null) {
         error = 'This matrix no longer exists.';
       } else {
-        title = 'Matrix ${model.name}';
+        title = '${prefix}Matrix ${model.name}';
         if (r != null && r.ok) {
           value = r.value;
         } else if (r != null) {
@@ -64,7 +89,7 @@ class _InspectorScreenState extends State<InspectorScreen> {
         v = part?.value;
         if (part != null) label = ' · ${part.label}';
       }
-      title = 'Line ${idx + 1}$label';
+      title = '${prefix}Line ${idx + 1}$label';
       if (v is Mat) {
         value = v;
       } else {
@@ -86,7 +111,14 @@ class _InspectorScreenState extends State<InspectorScreen> {
         ),
       );
     }
-    return SubScreen(title: title, child: _body(context, state, value, model));
+    return SubScreen(
+      title: title,
+      // A different matrix starts scrolled to the top again.
+      child: KeyedSubtree(
+        key: ValueKey('${t.matrixId}/${t.lineId}/${t.part}'),
+        child: _body(context, state, value, model),
+      ),
+    );
   }
 
   Widget _body(
@@ -381,7 +413,7 @@ class _InspectorScreenState extends State<InspectorScreen> {
                     icon: MIcon.edit,
                     onTap: () {
                       final id = model.id;
-                      Navigator.of(context).pop();
+                      closeSub(context);
                       widget.host.openEditor(id);
                     },
                   ),
@@ -392,7 +424,7 @@ class _InspectorScreenState extends State<InspectorScreen> {
                     kind: BtnKind.primary,
                     onTap: () {
                       final name = model.name;
-                      Navigator.of(context).pop();
+                      closeSub(context);
                       widget.host.addLineWith(name);
                     },
                   ),
