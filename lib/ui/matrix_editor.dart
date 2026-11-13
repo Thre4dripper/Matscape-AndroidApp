@@ -8,35 +8,92 @@ import '../app/models.dart';
 import '../engine/engine.dart';
 import 'icons.dart';
 import 'keypad.dart';
+import 'layout.dart';
 import 'math_view.dart';
 import 'scope.dart';
 import 'text_edit.dart' as edit;
 import 'theme.dart';
 import 'widgets.dart';
 
-/// Opens the matrix editor as a bottom sheet.
+/// Opens the matrix editor.
 ///
-/// Entries are typed with the sheet's own keypad, so the system keyboard
-/// never opens and the matrix stays visible while typing.
+/// Entries are typed with the editor's own keypad, so the system keyboard
+/// never opens and the matrix stays visible while typing. How it is shown
+/// follows the layout: a bottom sheet on phones, a centred dialog on
+/// tablets, one side of the fold on a book-style foldable, and split
+/// around the fold (or left/right on a short, wide screen) otherwise.
 Future<void> showMatrixEditor(
   BuildContext context, {
   required String matrixId,
   required WorkspaceHost host,
 }) {
-  final pal = context.pal;
   FocusManager.instance.primaryFocus?.unfocus();
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    backgroundColor: pal.surface,
-    barrierColor: pal.scrim,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    clipBehavior: Clip.antiAlias,
-    builder: (_) => _MatrixEditor(matrixId: matrixId, host: host),
+  return Navigator.of(context).push(
+    _EditorRoute(matrixId: matrixId, host: host, scrim: context.pal.scrim),
   );
+}
+
+/// A popup route of our own rather than a dialog route: Flutter confines
+/// dialogs to one side of a fold and hides the fold from them, but the
+/// editor needs to see it to split itself around it.
+class _EditorRoute extends PopupRoute<void> {
+  _EditorRoute({
+    required this.matrixId,
+    required this.host,
+    required this.scrim,
+  });
+  final String matrixId;
+  final WorkspaceHost host;
+  final Color scrim;
+
+  @override
+  Color get barrierColor => scrim;
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  String get barrierLabel => 'Close editor';
+
+  @override
+  Duration get transitionDuration => Motion.slow;
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> _,
+    Animation<double> _,
+  ) => _MatrixEditor(matrixId: matrixId, host: host);
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> _,
+    Widget child,
+  ) {
+    final t = CurvedAnimation(
+      parent: animation,
+      curve: Motion.easeOut,
+      reverseCurve: Motion.easeIn,
+    );
+    return switch (LayoutInfo.of(context).layout) {
+      AppLayout.compact ||
+      AppLayout.book ||
+      AppLayout.glance => SlideTransition(
+        position: Tween(begin: const Offset(0, 1), end: Offset.zero).animate(t),
+        child: child,
+      ),
+      AppLayout.medium || AppLayout.expanded => FadeTransition(
+        opacity: t,
+        child: ScaleTransition(
+          scale: Tween(begin: .98, end: 1.0).animate(t),
+          child: child,
+        ),
+      ),
+      _ => FadeTransition(opacity: t, child: child),
+    };
+  }
 }
 
 const _fnKeys = [
@@ -79,6 +136,9 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   final _selKey = GlobalKey();
   int _i = 0, _j = 0;
   bool _fill = false;
+
+  /// How far the sheet has been dragged down.
+  double _drag = 0;
   bool _loaded = false;
 
   AppState get _state => AppScope.read(context);
@@ -189,10 +249,12 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   Future<void> _rename() async {
     final m = _m;
     if (m == null) return;
+    final area = LayoutInfo.of(context).overlayRect(MediaQuery.sizeOf(context));
     final name = await showDialog<String>(
       context: context,
       barrierColor: context.pal.scrim,
-      builder: (_) => _NameDialog(current: m.name, names: _state.namesFor(m)),
+      builder: (_) =>
+          _NameDialog(area: area, current: m.name, names: _state.namesFor(m)),
     );
     if (name == null || name == m.name || !mounted) return;
     final old = m.name;
@@ -246,33 +308,178 @@ class _MatrixEditorState extends State<_MatrixEditor> {
     final m = state.matrixById(widget.matrixId);
     if (m == null) return const SizedBox.shrink();
     final res = state.matResults[m.id];
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: 8 + MediaQuery.paddingOf(context).bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 36,
-            height: 5,
-            margin: const EdgeInsets.only(top: 8, bottom: 2),
-            decoration: BoxDecoration(
-              color: pal.lineStrong,
-              borderRadius: BorderRadius.circular(999),
+    final info = LayoutInfo.of(context);
+    final mq = MediaQuery.of(context), size = mq.size, pad = mq.padding;
+
+    // Matrix on one side, its keypad on the other (of a fold, or of a
+    // short wide screen).
+    List<Widget> matrixSide() => [
+      _head(context, m),
+      _dims(context, state, m, res),
+      Expanded(child: _grid(context, state, m)),
+      _entryRow(context, state, m),
+      _message(context, state, m),
+      const SizedBox(height: 8),
+    ];
+    List<Widget> keypadSide() => [
+      const SizedBox(height: 8),
+      _strip(context),
+      Expanded(child: _pad(context, m, fill: true)),
+    ];
+    // Everything stacked, as tall as it needs to be.
+    List<Widget> stacked() => [
+      _head(context, m),
+      _dims(context, state, m, res),
+      Flexible(child: _grid(context, state, m)),
+      _entryRow(context, state, m),
+      _message(context, state, m),
+      _strip(context),
+      _pad(context, m),
+    ];
+
+    switch (info.layout) {
+      case AppLayout.tabletop:
+        return Material(
+          color: pal.surface,
+          child: Column(
+            children: [
+              SizedBox(
+                height: info.fold.top,
+                child: Padding(
+                  padding: EdgeInsets.only(top: pad.top),
+                  child: Column(children: matrixSide()),
+                ),
+              ),
+              SizedBox(height: info.fold.height),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 8 + pad.bottom),
+                  child: Column(children: keypadSide()),
+                ),
+              ),
+            ],
+          ),
+        );
+      case AppLayout.landscape:
+        return Material(
+          color: pal.surface,
+          child: SafeArea(
+            child: Row(
+              children: [
+                Expanded(child: Column(children: matrixSide())),
+                Container(width: 1, color: pal.line),
+                SizedBox(
+                  width: math.min(380, size.width * .46),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Column(children: keypadSide()),
+                  ),
+                ),
+              ],
             ),
           ),
-          _head(context, m),
-          _dims(context, state, m, res),
-          Flexible(child: _grid(context, state, m)),
-          _entryRow(context, state, m),
-          _message(context, state, m),
-          _strip(context),
-          _pad(context, m),
-        ],
-      ),
-    );
+        );
+      case AppLayout.medium || AppLayout.expanded:
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: math.min(560, size.width - 48),
+              maxHeight: size.height - pad.vertical - 48,
+            ),
+            child: _panel(
+              radius: BorderRadius.circular(20),
+              shadow: const BoxShadow(
+                color: Color(0x47000000),
+                offset: Offset(0, 24),
+                blurRadius: 64,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: stacked(),
+                ),
+              ),
+            ),
+          ),
+        );
+      case AppLayout.compact || AppLayout.book || AppLayout.glance:
+        // A bottom sheet; on a book-style foldable it stays left of the fold.
+        return Align(
+          alignment: Alignment.bottomLeft,
+          child: Transform.translate(
+            offset: Offset(0, _drag),
+            child: SizedBox(
+              width: info.layout == AppLayout.book
+                  ? info.fold.left
+                  : size.width,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: size.height - pad.top - 8,
+                ),
+                child: _panel(
+                  radius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  shadow: BoxShadow(
+                    color: pal.sheetShadow,
+                    offset: const Offset(0, -8),
+                    blurRadius: 32,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 8 + pad.bottom),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [_grabber(context), ...stacked()],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+    }
   }
+
+  Widget _panel({
+    required Widget child,
+    required BorderRadius radius,
+    required BoxShadow shadow,
+  }) => DecoratedBox(
+    decoration: BoxDecoration(borderRadius: radius, boxShadow: [shadow]),
+    child: Material(
+      color: context.pal.surface,
+      borderRadius: radius,
+      clipBehavior: Clip.antiAlias,
+      child: child,
+    ),
+  );
+
+  /// The sheet's handle: drag it down to dismiss.
+  Widget _grabber(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onVerticalDragUpdate: (d) =>
+        setState(() => _drag = math.max(0, _drag + d.delta.dy)),
+    onVerticalDragEnd: (d) {
+      if (_drag > 90 || (d.primaryVelocity ?? 0) > 700) {
+        Navigator.of(context).pop();
+      } else {
+        setState(() => _drag = 0);
+      }
+    },
+    child: SizedBox(
+      height: 22,
+      width: double.infinity,
+      child: Center(
+        child: Container(
+          width: 36,
+          height: 5,
+          decoration: BoxDecoration(
+            color: context.pal.lineStrong,
+            borderRadius: BorderRadius.circular(999),
+          ),
+        ),
+      ),
+    ),
+  );
 
   Widget _head(BuildContext context, MatrixModel m) {
     final pal = context.pal;
@@ -384,14 +591,23 @@ class _MatrixEditorState extends State<_MatrixEditor> {
     AppState state,
     MatrixModel m,
     MatEval? res,
-  ) {
+  ) => LayoutBuilder(
+    builder: (context, c) =>
+        _dimsRow(context, state, m, res, narrow: c.maxWidth < 380),
+  );
+
+  Widget _dimsRow(
+    BuildContext context,
+    AppState state,
+    MatrixModel m,
+    MatEval? res, {
+    required bool narrow,
+  }) {
     final pal = context.pal;
     var detText = '';
     if (res != null && res.ok && m.rows == m.cols) {
       detText = 'det ${state.numText(det(res.value!))}';
     }
-    // On narrow phones the steppers tighten up so the determinant still fits.
-    final narrow = MediaQuery.sizeOf(context).width < 380;
     Widget dim(String label, int v, ValueChanged<int> onChanged) => Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -691,7 +907,8 @@ class _MatrixEditorState extends State<_MatrixEditor> {
     );
   }
 
-  Widget _pad(BuildContext context, MatrixModel m) {
+  /// The number pad; with [fill] its rows share all the height on offer.
+  Widget _pad(BuildContext context, MatrixModel m, {bool fill = false}) {
     final pal = context.pal;
     final last = _i == m.rows - 1 && _j == m.cols - 1;
     Widget d(String n) => KeyCap(
@@ -757,6 +974,15 @@ class _MatrixEditorState extends State<_MatrixEditor> {
         ),
       ],
     ];
+    Widget padRow(List<Widget> keys) => Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var k = 0; k < keys.length; k++) ...[
+          if (k > 0) const SizedBox(width: 6),
+          Expanded(child: keys[k]),
+        ],
+      ],
+    );
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
@@ -768,17 +994,10 @@ class _MatrixEditorState extends State<_MatrixEditor> {
         children: [
           for (var r = 0; r < rows.length; r++) ...[
             if (r > 0) const SizedBox(height: 6),
-            SizedBox(
-              height: 46,
-              child: Row(
-                children: [
-                  for (var k = 0; k < rows[r].length; k++) ...[
-                    if (k > 0) const SizedBox(width: 6),
-                    Expanded(child: rows[r][k]),
-                  ],
-                ],
-              ),
-            ),
+            if (fill)
+              Expanded(child: padRow(rows[r]))
+            else
+              SizedBox(height: 46, child: padRow(rows[r])),
           ],
         ],
       ),
@@ -788,14 +1007,20 @@ class _MatrixEditorState extends State<_MatrixEditor> {
 
 /// Letter picker for renaming a matrix.
 class _NameDialog extends StatelessWidget {
-  const _NameDialog({required this.current, required this.names});
+  const _NameDialog({
+    required this.area,
+    required this.current,
+    required this.names,
+  });
+  final Rect area;
   final String current;
   final List<String> names;
 
   @override
   Widget build(BuildContext context) {
     final pal = context.pal;
-    return Center(
+    return FoldAwareCenter(
+      area: area,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24),
         padding: const EdgeInsets.all(20),
