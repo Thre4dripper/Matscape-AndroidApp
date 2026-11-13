@@ -102,7 +102,7 @@ class MenuDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              'Matscape 2.0 · ByteMechanics',
+              'Matscape · ByteMechanics',
               style: TextStyle(fontSize: Fs.cap, color: pal.ink3),
             ),
           ),

@@ -473,7 +473,7 @@ class SettingsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: _paragraph(
                     context,
-                    'Matscape 2.0 for iOS and Android. Made by ByteMechanics. Everything is calculated on your device; nothing is sent anywhere.',
+                    'Matscape for iOS and Android. Made by ByteMechanics. Everything is calculated on your device; nothing is sent anywhere.',
                     bottom: 0,
                   ),
                 ),
