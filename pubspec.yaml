@@ -2,8 +2,12 @@ name: matscape
 description: "Matscape — matrix calculator"
 publish_to: 'none'
 
-# v1 (native Android) shipped up to build 21, so v2 continues from 22.
-version: 2.0.0+22
+# Versions are year.quarter.counter. The counter starts at the month of the
+# quarter (November is 2026.4.2) and goes up by one with every release in
+# that quarter, manual or automated. The build number is the same thing as
+# one whole number: year, quarter, two-digit counter (2026.4.2 → 2026402).
+# It must always be higher than the last one uploaded to the stores.
+version: 2026.4.2+2026402
 
 environment:
   sdk: ^3.14.0

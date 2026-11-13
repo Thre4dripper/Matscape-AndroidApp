@@ -80,6 +80,14 @@ carries all three:
 flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/symbols
 ```
 
+## Versions
+
+Releases are numbered `year.quarter.counter`, for example `2026.4.2`. The
+counter starts at the month of the quarter and goes up by one with every
+release in that quarter, manual or automated. The build number in
+`pubspec.yaml` is the same version as one whole number — year, quarter,
+two-digit counter — so `2026.4.2` is build `2026402`.
+
 ## App size
 
 A phone downloads about 8 MB from Google Play. About 5.4 MB of that is the
