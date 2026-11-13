@@ -295,3 +295,267 @@ class HistoryScreen extends StatelessWidget {
     );
   }
 }
+
+/* ---------- settings ---------- */
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final state = AppScope.of(context), s = state.settings;
+
+    Widget row(
+      String title, {
+      String? sub,
+      Widget? below,
+      Widget? trailing,
+    }) => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _rowTitle(context, title),
+                    if (sub != null) _rowSub(context, sub),
+                  ],
+                ),
+              ),
+              if (trailing != null) ...[const SizedBox(width: 12), trailing],
+            ],
+          ),
+          if (below != null) ...[const SizedBox(height: 8), below],
+        ],
+      ),
+    );
+
+    Widget stepper(
+      String label,
+      int value,
+      int min,
+      int max,
+      void Function(int v) set,
+    ) => StepperBox(
+      value: value,
+      min: min,
+      max: max,
+      label: label,
+      onChanged: (v) => state.updateSettings((_) => set(v)),
+    );
+
+    Widget group(String title, List<Widget> rows) => Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          GroupTitle(title),
+          CardBox(child: DividedColumn(children: rows)),
+        ],
+      ),
+    );
+
+    return SubScreen(
+      title: 'Settings',
+      child: SubScroll(
+        children: [
+          group('Appearance', [
+            row(
+              'Theme',
+              below: Seg<String>(
+                options: const [
+                  ('system', 'System'),
+                  ('light', 'Light'),
+                  ('dark', 'Dark'),
+                ],
+                value: s.theme,
+                onChanged: (v) => state.updateSettings((s) => s.theme = v),
+              ),
+            ),
+          ]),
+          group('Results', [
+            row(
+              'Angle unit',
+              sub: 'Used by sin, cos, tan and their inverses. Add ° to any number to force degrees.',
+              below: Seg<bool>(
+                options: const [(false, 'Radians'), (true, 'Degrees')],
+                value: s.degrees,
+                onChanged: (v) => state.updateSettings((s) => s.degrees = v),
+              ),
+            ),
+            row(
+              'Number format',
+              sub: 'Exact shows fractions, square roots and π where it can.',
+              below: Seg<bool>(
+                options: const [(true, 'Exact'), (false, 'Decimal')],
+                value: s.exact,
+                onChanged: (v) => state.updateSettings((s) => s.exact = v),
+              ),
+            ),
+            row(
+              'Decimal places',
+              sub: 'For values that aren’t exact.',
+              trailing: stepper(
+                'decimal places',
+                s.precision,
+                2,
+                10,
+                (v) => s.precision = v,
+              ),
+            ),
+          ]),
+          group('New matrices', [
+            row(
+              'Rows',
+              trailing: stepper(
+                'default rows',
+                s.defRows,
+                1,
+                maxMatrixSize,
+                (v) => s.defRows = v,
+              ),
+            ),
+            row(
+              'Columns',
+              trailing: stepper(
+                'default columns',
+                s.defCols,
+                1,
+                maxMatrixSize,
+                (v) => s.defCols = v,
+              ),
+            ),
+            row(
+              'Start with',
+              below: Seg<bool>(
+                options: const [(false, 'Zeros'), (true, 'Identity')],
+                value: s.defIdentity,
+                onChanged: (v) =>
+                    state.updateSettings((s) => s.defIdentity = v),
+              ),
+            ),
+          ]),
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const GroupTitle('About'),
+                CardBox(
+                  padding: const EdgeInsets.all(16),
+                  child: _paragraph(
+                    context,
+                    'Matscape 2.0 for iOS and Android. Made by ByteMechanics. Everything is calculated on your device; nothing is sent anywhere.',
+                    bottom: 0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/* ---------- help ---------- */
+
+class HelpScreen extends StatelessWidget {
+  const HelpScreen({super.key, required this.host});
+  final WorkspaceHost host;
+
+  static const _tries = [
+    ('[1, 2; 3, 4]⁻¹', 'Inline matrix and inverse'),
+    ('det([2, 1; 1, 3] − 2I)', 'Bare I takes the size it needs'),
+    ('eig([0, −1; 1, 0])', 'Complex eigenvalues'),
+    ('sin(30°)·I(2)', 'Trig with degrees'),
+    ('expm([0, −π; π, 0])', 'Matrix exponential'),
+    ('solve([2, 1; 1, 3], [3; 5])', 'Solve a linear system'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final pal = context.pal;
+    return SubScreen(
+      title: 'Help & tips',
+      child: SubScroll(
+        children: [
+          const SizedBox(height: 8),
+          const GroupTitle('How it works'),
+          _paragraph(
+            context,
+            'Keep matrices at the top and write expressions underneath — every line recalculates as you type. Tap a matrix card to edit its entries; entries can be expressions too, like sin(π/6) or 2√3.',
+          ),
+          _paragraph(
+            context,
+            'Press Enter to move to a new line. Name a result with “=” (for example M = A·B) and use M in later lines.',
+          ),
+          _paragraph(
+            context,
+            'Tap Inspect on any matrix result for its properties, eigenvalues, norms, step-by-step row reduction and decompositions.',
+          ),
+          const SizedBox(height: 8),
+          const GroupTitle('Try these'),
+          CardBox(
+            child: DividedColumn(
+              children: [
+                for (final (text, caption) in _tries)
+                  RowTap(
+                    minHeight: 52,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      host.addLineWith(text);
+                      showToast(context, 'Example added');
+                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                text,
+                                style: mathStyle(context, size: Fs.lg),
+                              ),
+                              _rowSub(context, caption),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Add',
+                          style: TextStyle(
+                            fontSize: Fs.cap,
+                            fontWeight: FontWeight.w600,
+                            color: pal.accentInk,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          const GroupTitle('Keyboard shortcuts'),
+          CardBox(
+            padding: const EdgeInsets.all(16),
+            child: _paragraph(
+              context,
+              'On a hardware keyboard you can type directly: * for ·, \' for transpose, ^-1 for the inverse. Enter adds a line, Backspace on an empty line removes it, ↑ and ↓ move between lines.',
+              bottom: 0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
