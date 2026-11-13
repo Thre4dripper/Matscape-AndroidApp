@@ -268,13 +268,13 @@ class HistoryScreen extends StatelessWidget {
             const EmptyState(
               icon: MIcon.clock,
               title: 'No history yet',
-              body: 'Press Enter on any expression and it will be saved here for quick reuse.',
+              body: 'Write an expression and move on to another line — it will be saved here for quick reuse.',
             )
           else ...[
             const SizedBox(height: 8),
             _paragraph(
               context,
-              'Press Enter on a line to keep it here. Tap an entry to add it as a new line.',
+              'Expressions you finish are kept here, most recent first. Tap one to add it as a new line.',
             ),
             CardBox(
               child: DividedColumn(

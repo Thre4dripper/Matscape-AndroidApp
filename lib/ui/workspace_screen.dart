@@ -172,6 +172,8 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     node.addListener(() {
       if (!node.hasFocus || !mounted) return;
       if (_activeId != id || _collapsed) {
+        // Moving to another line finishes the one being left.
+        if (_activeId != id) _recordActive();
         setState(() {
           _activeId = id;
           _collapsed = false;
@@ -278,6 +280,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
   Duration get _afterClose =>
       _info.pushesScreens ? const Duration(milliseconds: 250) : Duration.zero;
 
+  /// Puts the line being worked on into history, if it has a result.
+  void _recordActive() {
+    final id = _activeId;
+    if (id != null) _state.commitLine(id);
+  }
+
   /// The field the keypad types into; creates a line if there is none.
   TextEditingController _target() {
     final state = _state;
@@ -358,6 +366,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
       line = state.addLine(afterId: lines.isEmpty ? null : lines.last.id);
     }
     state.setLineText(line.id, text);
+    state.commitLine(line.id);
     _focusLine(line.id, delay: _afterClose);
   }
 
@@ -409,6 +418,8 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
 
   /// Opens a screen: pushed full-screen on phones, in a pane elsewhere.
   void _open(_Screen s) {
+    // Whatever was being typed counts as finished, so History has it.
+    _recordActive();
     if (_info.pushesScreens) {
       FocusManager.instance.primaryFocus?.unfocus();
       _pushed++;

@@ -267,25 +267,27 @@ class AppState extends ChangeNotifier {
     _changed();
   }
 
-  /// Records a finished line in history.
+  /// Records a finished line in history: most recent first, each
+  /// expression once. Lines without a result are not kept.
   void commitLine(String id) {
     final l = lineById(id), res = lineResults[id];
     if (l == null || l.text.trim().isEmpty || res == null || !res.ok) return;
-    if (history.isEmpty || history.first.text != l.text) {
-      history.insert(
-        0,
-        HistoryItem(
-          l.text,
-          resultSummary(res.value!),
-          DateTime.now().millisecondsSinceEpoch,
-        ),
-      );
-      if (history.length > _historyLimit) {
-        history.removeRange(_historyLimit, history.length);
-      }
-      _persist();
-      notifyListeners();
+    final summary = resultSummary(res.value!);
+    if (history.isNotEmpty &&
+        history.first.text == l.text &&
+        history.first.summary == summary) {
+      return;
     }
+    history.removeWhere((h) => h.text == l.text);
+    history.insert(
+      0,
+      HistoryItem(l.text, summary, DateTime.now().millisecondsSinceEpoch),
+    );
+    if (history.length > _historyLimit) {
+      history.removeRange(_historyLimit, history.length);
+    }
+    _persist();
+    notifyListeners();
   }
 
   void clearHistory() {
