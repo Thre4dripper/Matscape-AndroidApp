@@ -622,10 +622,17 @@ class SubScreen extends StatelessWidget {
     required this.title,
     required this.child,
     this.action,
+    this.onBack,
+    this.backLabel = 'Back',
   });
   final String title;
   final Widget child;
   final Widget? action;
+
+  /// When set, the bar shows a back arrow that calls this instead of
+  /// closing the screen (for a page opened inside the screen).
+  final VoidCallback? onBack;
+  final String backLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -634,7 +641,9 @@ class SubScreen extends StatelessWidget {
     final detail = scope?.kind == PaneKind.detail;
     final top = MediaQuery.paddingOf(context).top;
     final Widget? leading;
-    if (detail) {
+    if (onBack != null) {
+      leading = IconBtn(MIcon.back, label: backLabel, onTap: onBack);
+    } else if (detail) {
       leading = scope!.onClose == null
           ? null
           : IconBtn(MIcon.close, label: 'Close panel', onTap: scope.onClose);

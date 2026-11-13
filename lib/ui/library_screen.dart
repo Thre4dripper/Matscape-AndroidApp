@@ -1,394 +1,17 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../app/app_state.dart' show matrixLetters;
+import '../engine/engine.dart';
 import 'icons.dart';
+import 'library_data.dart';
+import 'math_view.dart';
 import 'scope.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
-class _Op {
-  const _Op(
-    this.group,
-    this.syntax,
-    this.ins,
-    this.back,
-    this.desc, [
-    this.keywords = '',
-  ]);
-  final String group, syntax, ins, desc, keywords;
-  final int back;
-
-  String get haystack => '$syntax $desc $keywords $group'.toLowerCase();
-}
-
-const _ops = [
-  _Op(
-    'Basics',
-    'A + B,  A − B',
-    '+',
-    0,
-    'Add or subtract matrices of the same size',
-  ),
-  _Op(
-    'Basics',
-    'kA',
-    '·',
-    0,
-    'Scale every entry by a number',
-    'scalar multiply',
-  ),
-  _Op(
-    'Basics',
-    'AB  or  A·B',
-    '·',
-    0,
-    'Matrix product — columns of A must match rows of B',
-    'multiply product',
-  ),
-  _Op(
-    'Basics',
-    'A / B',
-    '/',
-    0,
-    'Right division, worked out as A·B⁻¹',
-    'divide division',
-  ),
-  _Op('Basics', 'Aᵀ', 'ᵀ', 0, 'Transpose — rows become columns', 'transpose'),
-  _Op(
-    'Basics',
-    'A⁻¹',
-    '⁻¹',
-    0,
-    'Inverse of a square, non-singular matrix',
-    'inverse',
-  ),
-  _Op(
-    'Basics',
-    'Aⁿ',
-    '^',
-    0,
-    'Whole-number powers; negative powers use the inverse',
-    'power exponent',
-  ),
-  _Op(
-    'Basics',
-    'A ∘ B',
-    '∘',
-    0,
-    'Entrywise (Hadamard) product',
-    'hadamard elementwise',
-  ),
-  _Op(
-    'Basics',
-    '[1, 2; 3, 4]',
-    '[]',
-    1,
-    'Write a matrix inline — “,” between entries, “;” between rows',
-    'literal inline',
-  ),
-  _Op(
-    'Basics',
-    'k = 3',
-    'k = ',
-    0,
-    'Name a value and reuse it in other lines',
-    'variable assign name',
-  ),
-  _Op(
-    'Measures',
-    'det(A)  or  |A|',
-    'det()',
-    1,
-    'Determinant of a square matrix',
-    'determinant',
-  ),
-  _Op('Measures', 'tr(A)', 'tr()', 1, 'Trace — sum of the diagonal', 'trace'),
-  _Op(
-    'Measures',
-    'rank(A)',
-    'rank()',
-    1,
-    'Number of independent rows or columns',
-  ),
-  _Op('Measures', 'norm(A)', 'norm()', 1, 'Frobenius norm', 'magnitude'),
-  _Op(
-    'Measures',
-    'norm1(A),  norminf(A)',
-    'norm1()',
-    1,
-    'Largest column sum, largest row sum',
-  ),
-  _Op(
-    'Measures',
-    'norm2(A)',
-    'norm2()',
-    1,
-    'Spectral norm — the largest singular value',
-  ),
-  _Op(
-    'Measures',
-    'cond(A)',
-    'cond()',
-    1,
-    'Condition number — how sensitive A is to rounding',
-    'condition',
-  ),
-  _Op(
-    'Build',
-    'I(n)',
-    'I()',
-    1,
-    'n×n identity. Bare I adapts to its neighbour: A − 2I',
-    'identity',
-  ),
-  _Op(
-    'Build',
-    'zeros(m, n),  ones(m, n)',
-    'zeros()',
-    1,
-    'Matrix of zeros or ones',
-  ),
-  _Op(
-    'Build',
-    'diag(v)',
-    'diag()',
-    1,
-    'Diagonal matrix from a vector, or the diagonal of a matrix',
-  ),
-  _Op(
-    'Build',
-    'aug(A, B)',
-    'aug()',
-    1,
-    'Place B to the right of A',
-    'augment concatenate',
-  ),
-  _Op(
-    'Build',
-    'sub(A, i, j)',
-    'sub()',
-    1,
-    'Submatrix without row i and column j',
-    'submatrix',
-  ),
-  _Op(
-    'Build',
-    'row(A, i),  column(A, j)',
-    'row()',
-    1,
-    'Pull out one row or one column',
-  ),
-  _Op('Build', 'kron(A, B)', 'kron()', 1, 'Kronecker product', 'tensor'),
-  _Op('Cofactors', 'minors(A)', 'minors()', 1, 'Matrix of minors'),
-  _Op('Cofactors', 'cof(A)', 'cof()', 1, 'Cofactor matrix', 'cofactor'),
-  _Op(
-    'Cofactors',
-    'adj(A)',
-    'adj()',
-    1,
-    'Adjugate (classical adjoint)',
-    'adjoint adjugate',
-  ),
-  _Op(
-    'Systems',
-    'rref(A)',
-    'rref()',
-    1,
-    'Reduced row echelon form — with steps in Inspect',
-    'echelon gauss jordan',
-  ),
-  _Op(
-    'Systems',
-    'solve(A, b)',
-    'solve()',
-    1,
-    'Solve Ax = b, including systems with free variables',
-    'equation linear system',
-  ),
-  _Op(
-    'Systems',
-    'null(A)',
-    'null()',
-    1,
-    'Basis for the null space (kernel)',
-    'kernel nullspace',
-  ),
-  _Op(
-    'Systems',
-    'colsp(A)',
-    'colsp()',
-    1,
-    'Basis for the column space (range)',
-    'range column space',
-  ),
-  _Op(
-    'Systems',
-    'pinv(A)',
-    'pinv()',
-    1,
-    'Moore–Penrose pseudo-inverse',
-    'pseudo inverse least squares',
-  ),
-  _Op(
-    'Systems',
-    'dot(u, v),  cross(u, v)',
-    'dot()',
-    1,
-    'Dot product; cross product of 3-vectors',
-    'vector',
-  ),
-  _Op(
-    'Decompose',
-    'lu(A)',
-    'lu()',
-    1,
-    'PA = LU with partial pivoting',
-    'lu decomposition factorization',
-  ),
-  _Op(
-    'Decompose',
-    'qr(A)',
-    'qr()',
-    1,
-    'A = QR, Q orthogonal and R upper triangular',
-    'qr decomposition',
-  ),
-  _Op(
-    'Decompose',
-    'chol(A)',
-    'chol()',
-    1,
-    'A = LLᵀ for symmetric positive definite A',
-    'cholesky',
-  ),
-  _Op(
-    'Decompose',
-    'svd(A)',
-    'svd()',
-    1,
-    'A = UΣVᵀ, singular value decomposition',
-    'singular',
-  ),
-  _Op(
-    'Eigen',
-    'eig(A)',
-    'eig()',
-    1,
-    'Eigenvalues, including complex ones',
-    'eigenvalue spectrum',
-  ),
-  _Op(
-    'Eigen',
-    'eigvec(A)',
-    'eigvec()',
-    1,
-    'Eigenvectors grouped by eigenvalue',
-    'eigenvector',
-  ),
-  _Op(
-    'Eigen',
-    'charpoly(A)',
-    'charpoly()',
-    1,
-    'Characteristic polynomial det(λI − A)',
-    'characteristic polynomial',
-  ),
-  _Op(
-    'Matrix functions',
-    'expm(A)',
-    'expm()',
-    1,
-    'Matrix exponential eᴬ',
-    'exponential',
-  ),
-  _Op(
-    'Matrix functions',
-    'sinm(A),  cosm(A)',
-    'sinm()',
-    1,
-    'Matrix sine and cosine',
-    'trig',
-  ),
-  _Op(
-    'Matrix functions',
-    'sqrtm(A)  or  A^0.5',
-    'sqrtm()',
-    1,
-    'Principal matrix square root',
-    'root',
-  ),
-  _Op(
-    'Trig & scalar',
-    'sin, cos, tan',
-    'sin()',
-    1,
-    'On a matrix, these apply to every entry',
-    'trigonometry',
-  ),
-  _Op(
-    'Trig & scalar',
-    'sec, csc, cot',
-    'sec()',
-    1,
-    'Reciprocal trig functions',
-    'trigonometry',
-  ),
-  _Op(
-    'Trig & scalar',
-    'asin, acos, atan',
-    'asin()',
-    1,
-    'Inverse trig — answers follow the RAD/DEG setting',
-    'arcsin arccos arctan inverse trigonometry',
-  ),
-  _Op(
-    'Trig & scalar',
-    'sinh, cosh, tanh',
-    'sinh()',
-    1,
-    'Hyperbolic functions',
-    'hyperbolic',
-  ),
-  _Op(
-    'Trig & scalar',
-    'sin(30°)',
-    '°',
-    0,
-    'Mark any angle in degrees, whatever the setting',
-    'degree angle',
-  ),
-  _Op(
-    'Trig & scalar',
-    'ln, log, exp',
-    'ln()',
-    1,
-    'Natural log, log base 10, eˣ',
-    'logarithm',
-  ),
-  _Op(
-    'Trig & scalar',
-    '√x,  ∛x,  n!',
-    '√',
-    0,
-    'Roots and factorial',
-    'sqrt root factorial',
-  ),
-  _Op(
-    'Trig & scalar',
-    'abs, round, floor, ceil, mod',
-    'abs()',
-    1,
-    'Rounding and remainders',
-    'absolute modulo',
-  ),
-];
-
-final _groups = [
-  'All',
-  ...{for (final o in _ops) o.group},
-];
-
-/// Searchable list of every operation; tapping one types it into the
-/// active line.
+/// The operations library: a searchable list of everything the app can
+/// calculate. Tapping an entry opens a page that explains it, with worked
+/// examples and a button to try them in the workspace.
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key, required this.host});
   final WorkspaceHost host;
@@ -402,6 +25,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
   final _queryFocus = FocusNode();
   String _group = 'All';
 
+  /// The entry whose page is open, if any.
+  Op? _open;
+
   @override
   void dispose() {
     _query.dispose();
@@ -409,8 +35,40 @@ class _LibraryScreenState extends State<LibraryScreen> {
     super.dispose();
   }
 
+  void _show(Op? op) {
+    _queryFocus.unfocus();
+    setState(() => _open = op);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final open = _open;
+    return PopScope(
+      // The system back button returns to the list before leaving it.
+      canPop: open == null,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _show(null);
+      },
+      child: SubScreen(
+        title: 'Operations',
+        onBack: open == null ? null : () => _show(null),
+        backLabel: 'Back to operations',
+        // The list stays alive underneath, so it keeps its scroll position.
+        child: IndexedStack(
+          index: open == null ? 0 : 1,
+          children: [
+            ExcludeFocus(excluding: open != null, child: _list(context)),
+            if (open == null)
+              const SizedBox.shrink()
+            else
+              _OpPage(key: ValueKey(open), op: open, host: widget.host),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _list(BuildContext context) {
     final pal = context.pal;
     final tokens = _query.text
         .trim()
@@ -419,115 +77,590 @@ class _LibraryScreenState extends State<LibraryScreen> {
         .where((t) => t.isNotEmpty)
         .toList();
     final items = [
-      for (final o in _ops)
+      for (final o in ops)
         if ((_group == 'All' || o.group == _group) &&
             tokens.every(o.haystack.contains))
           o,
     ];
     final groups = {for (final o in items) o.group};
 
-    return SubScreen(
-      title: 'Operations',
-      child: ListView(
-        padding: EdgeInsets.fromLTRB(
-          0,
-          8,
-          0,
-          32 + MediaQuery.paddingOf(context).bottom,
+    return ListView(
+      padding: EdgeInsets.fromLTRB(
+        0,
+        8,
+        0,
+        32 + MediaQuery.paddingOf(context).bottom,
+      ),
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const FieldLabel('Search operations'),
+              InputBox(
+                icon: MIcon.search,
+                controller: _query,
+                focusNode: _queryFocus,
+                hint: 'inverse, eigen, sin…',
+                onChanged: (_) => setState(() {}),
+              ),
+            ],
+          ),
         ),
-        children: [
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 40,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+            itemCount: opGroups.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder: (_, i) => ChipBtn(
+              opGroups[i],
+              on: opGroups[i] == _group,
+              onTap: () => setState(() => _group = opGroups[i]),
+            ),
+          ),
+        ),
+        if (items.isEmpty)
+          EmptyState(
+            icon: MIcon.search,
+            title: 'No operations match “${_query.text}”',
+            body: 'Try a shorter word like “inv”, “eig” or “trig”, or clear the filter.',
+            action: Btn(
+              'Clear search',
+              expand: false,
+              onTap: () {
+                setState(() {
+                  _query.clear();
+                  _group = 'All';
+                });
+                _queryFocus.requestFocus();
+              },
+            ),
+          ),
+        for (final g in groups)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const FieldLabel('Search operations'),
-                InputBox(
-                  icon: MIcon.search,
-                  controller: _query,
-                  focusNode: _queryFocus,
-                  hint: 'inverse, eigen, sin…',
-                  onChanged: (_) => setState(() {}),
+                GroupTitle(g),
+                CardBox(
+                  child: DividedColumn(
+                    children: [
+                      for (final o in items.where((o) => o.group == g))
+                        RowTap(
+                          minHeight: 0,
+                          label: '${o.title}. ${o.desc}. Open',
+                          onTap: () => _show(o),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      o.syntax,
+                                      style: mathStyle(context, size: Fs.lg),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      o.desc,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        height: 1.45,
+                                        color: pal.ink2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Ico(MIcon.chev, size: 18, color: pal.ink3),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 40,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-              itemCount: _groups.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 8),
-              itemBuilder: (_, i) => ChipBtn(
-                _groups[i],
-                on: _groups[i] == _group,
-                onTap: () => setState(() => _group = _groups[i]),
+      ],
+    );
+  }
+}
+
+/* ---------- one operation's page ---------- */
+
+/// A worked example, ready to show.
+class _Example {
+  _Example(this.inline, this.named, this.given, this.result);
+
+  /// As typed in one line, with matrices written in square brackets.
+  final String inline;
+
+  /// The same expression with each of those matrices given a letter, the
+  /// way it reads when the matrices are saved in the workspace.
+  final String named;
+
+  /// The letters this example introduces, with their matrices.
+  final List<(String, Mat)> given;
+  final EvalResult result;
+}
+
+final _inlineMatrix = RegExp(r'\[[^\[\]]*\]');
+
+class _OpPage extends StatelessWidget {
+  const _OpPage({super.key, required this.op, required this.host});
+  final Op op;
+  final WorkspaceHost host;
+
+  /// Works the examples out in order; a name set by one is available to
+  /// the next, as in a workspace. Inline matrices are given the letters
+  /// A, B, C … so each example can also be shown with named matrices.
+  List<_Example> _run(bool degrees) {
+    EvalResult eval(String text, Map<String, Object> vars) =>
+        evaluate(text, vars: vars, degrees: degrees, matrixNames: const {});
+
+    final vars = <String, Object>{};
+    // Letters the examples already use for something else stay free.
+    final taken = op.examples.join().replaceAll(_inlineMatrix, '');
+    final letters = [
+      for (final c in matrixLetters.split(''))
+        if (!taken.contains(c)) c,
+    ];
+    final named = <String, String>{};
+
+    return [
+      for (final text in op.examples)
+        () {
+          final given = <(String, Mat)>[];
+          var shown = text;
+          if (!op.inlineOnly) {
+            shown = text.replaceAllMapped(_inlineMatrix, (m) {
+              final src = m[0]!;
+              var letter = named[src];
+              if (letter == null) {
+                final v = eval(src, const {}).value;
+                if (v is! Mat || named.length >= letters.length) return src;
+                letter = named[src] = letters[named.length];
+                given.add((letter, v));
+              }
+              return letter;
+            });
+          }
+          final r = eval(text, vars);
+          final v = r.value;
+          if (r.ok && r.assign != null && (v is Mat || v is double)) {
+            vars[r.assign!] = v!;
+          }
+          return _Example(text, shown, given, r);
+        }(),
+    ];
+  }
+
+  void _try(BuildContext context) {
+    closeSub(context);
+    for (final e in op.examples) {
+      host.addLineWith(e);
+    }
+    showToast(
+      context,
+      op.examples.length == 1
+          ? 'Example added to your workspace'
+          : '${op.examples.length} examples added to your workspace',
+    );
+  }
+
+  void _insert(BuildContext context) {
+    closeSub(context);
+    host.insertText(op.ins, back: op.back);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = AppScope.of(context), pal = context.pal;
+    final results = _run(state.settings.degrees);
+    final sample = state.workspaces
+        .where((w) => w.name == op.sampleName)
+        .firstOrNull;
+    final insLabel = op.ins.replaceFirst(RegExp(r'\(\)$'), '( )').trim();
+    final body = TextStyle(fontSize: 15, height: 1.6, color: pal.ink2);
+
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+            children: [
+              GroupTitle(op.group),
+              Semantics(
+                header: true,
+                child: Text(
+                  op.title,
+                  style: mathStyle(
+                    context,
+                    size: Fs.xxl,
+                    weight: FontWeight.w600,
+                    height: 1.2,
+                  ),
+                ),
               ),
-            ),
-          ),
-          if (items.isEmpty)
-            EmptyState(
-              icon: MIcon.search,
-              title: 'No operations match “${_query.text}”',
-              body: 'Try a shorter word like “inv”, “eig” or “trig”, or clear the filter.',
-              action: Btn(
-                'Clear search',
-                expand: false,
-                onTap: () {
-                  setState(() {
-                    _query.clear();
-                    _group = 'All';
-                  });
-                  _queryFocus.requestFocus();
-                },
+              const SizedBox(height: 16),
+              CardBox(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'How to write it',
+                      style: TextStyle(fontSize: Fs.cap, color: pal.ink3),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(op.syntax, style: mathStyle(context, size: Fs.xl)),
+                  ],
+                ),
               ),
-            ),
-          for (final g in groups)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  GroupTitle(g),
-                  CardBox(
-                    child: DividedColumn(
+              const SizedBox(height: 16),
+              ..._paragraphs(op.about, body),
+              for (final (heading, text) in op.more) ...[
+                const SizedBox(height: 12),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    heading,
+                    style: TextStyle(
+                      fontSize: Fs.body,
+                      fontWeight: FontWeight.w700,
+                      height: 1.4,
+                      color: pal.ink,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                ..._paragraphs(text, body),
+              ],
+              const SizedBox(height: 12),
+              GroupTitle(results.length == 1 ? 'Example' : 'Examples'),
+              CardBox(
+                child: DividedColumn(
+                  children: [
+                    for (final e in results)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                        child: _ExampleView(e, state.fmt),
+                      ),
+                  ],
+                ),
+              ),
+              if (op.notes.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                const GroupTitle('Good to know'),
+                for (final n in op.notes)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        for (final o in items.where((o) => o.group == g))
-                          RowTap(
-                            minHeight: 0,
-                            onTap: () {
-                              closeSub(context);
-                              widget.host.insertText(o.ins, back: o.back);
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  o.syntax,
-                                  style: mathStyle(context, size: Fs.lg),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  o.desc,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    height: 1.45,
-                                    color: pal.ink2,
-                                  ),
-                                ),
-                              ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, right: 10),
+                          child: Container(
+                            width: 5,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: pal.ink3,
+                              shape: BoxShape.circle,
                             ),
                           ),
+                        ),
+                        Expanded(child: Text(n, style: body)),
                       ],
                     ),
                   ),
-                ],
+              ],
+              if (sample != null) ...[
+                const SizedBox(height: 16),
+                const GroupTitle('More to explore'),
+                CardBox(
+                  child: RowTap(
+                    onTap: () {
+                      state.openWorkspace(sample.id);
+                      closeSub(context);
+                      showToast(context, 'Opened ${sample.name}');
+                    },
+                    child: Row(
+                      children: [
+                        Ico(MIcon.folder, size: 20, color: pal.ink2),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                sample.name,
+                                style: TextStyle(
+                                  fontSize: Fs.body,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.35,
+                                  color: pal.ink,
+                                ),
+                              ),
+                              Text(
+                                'Sample workspace on this topic',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  height: 1.4,
+                                  color: pal.ink3,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Ico(MIcon.chev, size: 18, color: pal.ink3),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        // Actions stay in reach however long the page is.
+        Container(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            12,
+            16,
+            12 + MediaQuery.paddingOf(context).bottom,
+          ),
+          decoration: BoxDecoration(
+            color: pal.bg,
+            border: Border(top: BorderSide(color: pal.line)),
+          ),
+          child: Row(
+            children: [
+              Btn('Insert $insLabel', onTap: () => _insert(context)),
+              const SizedBox(width: 8),
+              Btn(
+                'Try it out',
+                icon: MIcon.plus,
+                kind: BtnKind.primary,
+                onTap: () => _try(context),
               ),
-            ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Text split into paragraphs at blank lines.
+List<Widget> _paragraphs(String text, TextStyle style) => [
+  for (final p in text.split('\n\n'))
+    Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(p, style: style),
+    ),
+];
+
+/// One example: the matrices it uses, drawn properly; the expression
+/// written with their names; the answer; and the same thing as it is typed
+/// in one line.
+class _ExampleView extends StatelessWidget {
+  const _ExampleView(this.example, this.fmt);
+  final _Example example;
+  final NumFmt fmt;
+
+  @override
+  Widget build(BuildContext context) {
+    final pal = context.pal, e = example;
+    final caption = TextStyle(fontSize: Fs.cap, height: 1.4, color: pal.ink3);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (e.given.isNotEmpty) ...[
+          Wrap(
+            spacing: 20,
+            runSpacing: 10,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              for (final (letter, m) in e.given)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      letter,
+                      style: mathStyle(context, size: Fs.lg, italic: true),
+                    ),
+                    Text(
+                      '  =  ',
+                      style: mathStyle(context, size: Fs.lg, color: pal.ink3),
+                    ),
+                    Flexible(
+                      child: HScroll(
+                        child: MatrixView(m, fmt, fontSize: 17, gap: 14),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
         ],
+        HScroll(
+          child: Text(
+            e.named,
+            softWrap: false,
+            style: mathStyle(context, size: Fs.lg),
+          ),
+        ),
+        const SizedBox(height: 4),
+        _ExampleResult(e.result, fmt),
+        if (e.named != e.inline) ...[
+          const SizedBox(height: 10),
+          Text('Typed in one line', style: caption),
+          const SizedBox(height: 2),
+          Text(
+            e.inline,
+            style: mathStyle(context, size: Fs.sm, color: pal.ink2),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// The answer to an example, typeset like a result in the workspace.
+class _ExampleResult extends StatelessWidget {
+  const _ExampleResult(this.res, this.fmt);
+  final EvalResult res;
+  final NumFmt fmt;
+
+  @override
+  Widget build(BuildContext context) {
+    final pal = context.pal, st = mathStyle(context);
+    if (!res.ok) return ErrorNote(res.error ?? 'No result', hint: res.hint);
+    final v = res.value!;
+    final eq = Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Text(
+        '=',
+        style: mathStyle(context, size: Fs.lg, color: pal.ink3),
       ),
+    );
+    Widget caption(String text) => Text(
+      text,
+      style: TextStyle(fontSize: Fs.cap, height: 1.4, color: pal.ink3),
+    );
+
+    final parts = <Widget>[];
+    if (v is double) {
+      parts.add(
+        HScroll(
+          child: Row(
+            children: [
+              eq,
+              NumText(v, fmt, style: st),
+            ],
+          ),
+        ),
+      );
+    } else if (v is Mat) {
+      parts.add(HScroll(child: Row(children: [eq, MatrixView(v, fmt)])));
+    } else if (v is ListVal) {
+      parts.add(
+        Wrap(
+          spacing: 14,
+          runSpacing: 6,
+          children: [
+            for (var i = 0; i < v.items.length; i++)
+              Text.rich(
+                TextSpan(
+                  style: st,
+                  children: [
+                    const TextSpan(
+                      text: 'λ',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                    sub('${i + 1}', st),
+                    const TextSpan(text: ' = '),
+                    ...complexSpans(v.items[i], fmt, st),
+                  ],
+                ),
+                softWrap: false,
+              ),
+          ],
+        ),
+      );
+    } else if (v is MultiVal) {
+      if (v.relation != null) {
+        parts.add(
+          Text(
+            v.relation!,
+            style: mathStyle(context, size: Fs.sm, color: pal.ink3),
+          ),
+        );
+      }
+      // Each part stays whole; parts that don't fit move to the next row.
+      parts.add(
+        Wrap(
+          spacing: 20,
+          runSpacing: 10,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            for (final p in v.parts)
+              HScroll(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      p.label,
+                      style: mathStyle(context, size: Fs.lg, italic: true),
+                    ),
+                    const SizedBox(width: 8),
+                    // Labels such as "λ = 5" already carry their sign.
+                    if (!p.label.contains('=')) eq,
+                    MatrixView(p.value, fmt),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      );
+    } else if (v is PolyVal) {
+      parts.add(
+        HScroll(
+          child: Row(
+            children: [
+              eq,
+              Text.rich(
+                TextSpan(children: polySpans(v.coeffs, fmt, st), style: st),
+                softWrap: false,
+              ),
+            ],
+          ),
+        ),
+      );
+    } else if (v is TextVal) {
+      parts.add(Text(v.text, style: TextStyle(fontSize: 13, color: pal.ink3)));
+    }
+    if (res.assign != null) parts.add(caption('Saved as ${res.assign}'));
+    for (final w in res.warnings) {
+      parts.add(caption(w));
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < parts.length; i++) ...[
+          if (i > 0) const SizedBox(height: 4),
+          parts[i],
+        ],
+      ],
     );
   }
 }
