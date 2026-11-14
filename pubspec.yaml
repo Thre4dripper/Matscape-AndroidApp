@@ -7,7 +7,7 @@ publish_to: 'none'
 # that quarter, manual or automated. The build number is the same thing as
 # one whole number: year, quarter, two-digit counter (2026.4.2 → 2026402).
 # It must always be higher than the last one uploaded to the stores.
-version: 2026.4.2+2026402
+version: 2026.4.3+2026403
 
 environment:
   sdk: ^3.14.0
