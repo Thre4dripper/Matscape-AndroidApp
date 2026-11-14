@@ -101,6 +101,13 @@ symbol left unconverted).
   device's edits go out a few seconds after a pause and on leaving. "Live"
   (per device, off by default) also looks every 30 seconds while open.
 
+## Site
+
+`site/` is the public home page, privacy policy and support page, published
+to GitHub Pages by `.github/workflows/pages.yml`. Google's sign-in consent
+screen and both stores link to it. Plain HTML and CSS, in the app's colours,
+with a Latin-only copy of the brand font.
+
 ## Design
 
 `design/` is the design project (Open Design, which is compatible with
