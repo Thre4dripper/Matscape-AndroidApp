@@ -144,12 +144,17 @@ class TextBtn extends StatelessWidget {
               Ico(icon!, size: 18, color: pal.accentInk),
               const SizedBox(width: 6),
             ],
-            Text(
-              text,
-              style: TextStyle(
-                color: pal.accentInk,
-                fontWeight: FontWeight.w600,
-                fontSize: compact ? 13 : Fs.sm,
+            // Shortens instead of overflowing where there is little room.
+            Flexible(
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: pal.accentInk,
+                  fontWeight: FontWeight.w600,
+                  fontSize: compact ? 13 : Fs.sm,
+                ),
               ),
             ),
           ],
