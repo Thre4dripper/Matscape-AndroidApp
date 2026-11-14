@@ -4,43 +4,273 @@
 <meta charset="utf-8">
 <meta name="google-site-verification" content="y4455ut0V9I8i4IpUAcSdYsP-NjCoLk1VfBcMKDZ-kE">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Matscape: matrix calculator</title>
-<meta name="description" content="A matrix calculator that works like a page of notes, with exact answers and the working shown step by step.">
+<title>Matscape: Matrix Calculator with Step-by-Step Solutions</title>
+<meta name="description" content="Matscape is a matrix calculator for Android that works like a page of notes: exact answers set like a textbook, every step worked out, eigenvalues, SVD and more. No account, no ads.">
+<link rel="canonical" href="https://thre4dripper.github.io/Matscape-AndroidApp/">
+<meta name="theme-color" content="#101a4a">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Matscape">
+<meta property="og:title" content="Matscape: every matrix tool, one elegant workspace">
+<meta property="og:description" content="A matrix calculator with exact answers and the working shown step by step. Determinants, inverses, eigenvalues, LU, QR, SVD and more.">
+<meta property="og:url" content="https://thre4dripper.github.io/Matscape-AndroidApp/">
+<meta property="og:image" content="https://thre4dripper.github.io/Matscape-AndroidApp/media/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Matscape on a tablet: matrices at the top, expressions with typeset answers below.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="sitemap" type="application/xml" href="sitemap.xml">
+<link rel="preload" href="fonts/STIXTwoText.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://thre4dripper.github.io/Matscape-AndroidApp/#site",
+      "url": "https://thre4dripper.github.io/Matscape-AndroidApp/",
+      "name": "Matscape",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "MobileApplication",
+      "name": "Matscape: Matrix Calculator",
+      "operatingSystem": "Android",
+      "applicationCategory": "EducationalApplication",
+      "description": "A matrix calculator that works like a page of notes, with exact answers and the working shown step by step.",
+      "url": "https://thre4dripper.github.io/Matscape-AndroidApp/",
+      "downloadUrl": "https://play.google.com/store/apps/details?id=com.ByteMechanics.matscape",
+      "image": "https://thre4dripper.github.io/Matscape-AndroidApp/media/og.jpg",
+      "screenshot": [
+        "https://thre4dripper.github.io/Matscape-AndroidApp/media/phone-01-workspace.jpg",
+        "https://thre4dripper.github.io/Matscape-AndroidApp/media/phone-04-step-by-step.jpg",
+        "https://thre4dripper.github.io/Matscape-AndroidApp/media/phone-03-inspector.jpg"
+      ],
+      "author": { "@type": "Organization", "name": "ByteMechanics" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Does Matscape show the steps?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Tap Steps under any result to see how it was reached, one operation at a time. For many operations you can choose the method, for example cofactor expansion or row reduction for a determinant." } },
+        { "@type": "Question", "name": "Are the answers exact?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Matscape keeps fractions, square roots and multiples of pi exact where it can, and switches to decimals when you prefer." } },
+        { "@type": "Question", "name": "Do I need an account or an internet connection?", "acceptedAnswer": { "@type": "Answer", "text": "No. Everything is calculated on your device and the app works offline. Backup and sync to your own Google Drive is optional." } },
+        { "@type": "Question", "name": "Can I copy results into LaTeX?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Results and whole step-by-step solutions copy as LaTeX, ready to paste into a paper or notes." } },
+        { "@type": "Question", "name": "Does it work on tablets and foldables?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Matscape has a layout for phones held upright or sideways, tablets with the inspector beside your work, and book-style and flip foldables, including tabletop posture." } },
+        { "@type": "Question", "name": "Is Matscape on iPhone and iPad?", "acceptedAnswer": { "@type": "Answer", "text": "Matscape is coming to the App Store. It is available on Google Play now." } }
+      ]
+    }
+  ]
+}
+</script>
 </head>
-<body>
+<body class="home">
+<a class="skip" href="#main">Skip to content</a>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="./"><img src="icon.svg" alt=""><span class="wordmark">Mat<i>scape</i></span></a>
+    <a class="brand" href="./" aria-label="Matscape home"><img src="icon.svg" alt="" width="32" height="32"><span class="wordmark">Mat<i>scape</i></span></a>
     <nav aria-label="Site">
-      <a href="./" aria-current="page">Home</a>
+      <a href="#features">Features</a>
+      <a href="#screens">Screenshots</a>
+      <a href="#faq">FAQ</a>
       <a href="support.html">Support</a>
-      <a href="privacy.html">Privacy</a>
     </nav>
   </div>
 </header>
-<main class="wrap">
-<h1>Every matrix tool.<br><i>One elegant workspace.</i></h1>
-<p class="lead">Matscape is a matrix calculator that works like a page of notes. Keep your matrices at the top, write expressions underneath, and every answer updates as you type, set like a textbook.</p>
-<div class="buttons">
-  <a class="button" href="https://play.google.com/store/apps/details?id=com.ByteMechanics.matscape">Get it on Google Play</a>
-  <a class="button plain" aria-disabled="true">App Store: coming soon</a>
-</div>
-<ul class="features">
-  <li><b>Every step, worked out</b>Tap Steps under any result to see how it was reached, one operation at a time, with a choice of method: cofactors or row reduction, Gauss–Jordan or the adjugate, elimination or Cramer’s rule.</li>
-  <li><b>Exact answers</b>Fractions, square roots and multiples of π instead of long decimals, and decimals whenever you prefer.</li>
-  <li><b>Every operation</b>Determinant, inverse, rank, RREF, eigenvalues and eigenvectors, LU, QR, Cholesky and SVD, matrix exponentials and more.</li>
-  <li><b>Phones, tablets and foldables</b>A layout for each screen, from a phone on its side to a tablet with the inspector beside your work.</li>
-  <li><b>Your data stays yours</b>No account, no ads, no tracking. Optional backup goes to your own Google Drive.</li>
-  <li><b>Copy as LaTeX</b>Results and whole solutions paste straight into a paper or notes.</li>
-</ul>
+
+<main id="main">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Matrix calculator for Android</p>
+      <h1>Every matrix tool.<br><i>One elegant workspace.</i></h1>
+      <p class="lead">Matrices at the top, expressions underneath, and every answer set like a textbook as you type. Tap Steps under any result and see exactly how it was worked out.</p>
+      <div class="buttons">
+        <a class="button store" href="https://play.google.com/store/apps/details?id=com.ByteMechanics.matscape">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          <span><small>Get it on</small>Google Play</span>
+        </a>
+        <a class="button ghost" href="#film">
+          <svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+          Watch the film
+        </a>
+      </div>
+      <p class="trust">No account · No ads · No tracking · iPhone and iPad coming soon</p>
+    </div>
+    <div class="hero-device">
+      <div class="device">
+        <video class="loop" autoplay muted loop playsinline preload="metadata" poster="media/hero-iphone-poster.jpg" width="440" height="954" aria-label="Matscape on a phone: writing expressions, choosing a method for the steps, and the operations library.">
+          <source src="media/hero-iphone.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="section">
+  <div class="wrap">
+    <h2 class="section-title">Built for the way you <i>actually</i> work</h2>
+    <p class="section-lead">Write it like you would on paper. Matscape keeps every line live, exact and explained.</p>
+    <ul class="features">
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6h10.5M9.5 12h10.5M9.5 18h10.5M4 6h1.5M4 12h1.5M4 18h1.5"/></svg>
+        <h3>Every step, worked out</h3>
+        <p>See how each result was reached, one operation at a time, and choose the method: cofactors or row reduction, Gauss–Jordan or the adjugate, elimination or Cramer's rule.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M7 5v4M5 7h4M15 17h4"/></svg>
+        <h3>Exact answers</h3>
+        <p>Fractions, square roots and multiples of π instead of long decimals, set like a textbook. Decimals whenever you prefer.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+        <h3>Inspect any matrix</h3>
+        <p>One tap shows its properties, determinant, rank, norms, eigenvalues and decompositions, right beside your work on a tablet.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16"/></svg>
+        <h3>A keypad made for matrices</h3>
+        <p>Matrix names, functions and brackets one tap away, and no system keyboard covering what you are writing.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h11v11H9zM5 15H4V4h11v1"/></svg>
+        <h3>Copy as LaTeX</h3>
+        <p>Results and whole step-by-step solutions copy as LaTeX, ready for a paper, an assignment or your notes.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .5-7.97A6 6 0 0 0 6.4 9.1 4.75 4.75 0 0 0 7 18.5z"/></svg>
+        <h3>Yours on every device</h3>
+        <p>Optional backup and sync through your own Google Drive keeps your workspaces on your phone and tablet. No account with us.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="section showcase">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow dark">Step by step</p>
+      <h2>Choose your method.<br><i>Follow every line.</i></h2>
+      <p>Matscape doesn't just give the answer. It shows the working the way a teacher would: which row was swapped, which minor was taken, where every number came from. Open any step to see the arithmetic behind it.</p>
+      <p>Built for students checking homework and for anyone who wants to trust the result.</p>
+    </div>
+    <picture>
+      <source srcset="media/steps-wide.avif" type="image/avif">
+      <img src="media/steps-wide.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Matscape's step-by-step view of a determinant, with cofactor expansion and row reduction to choose from and the working for each minor.">
+    </picture>
+  </div>
+</section>
+
+<section id="film" class="section film">
+  <div class="wrap">
+    <h2 class="section-title">See it in <i>40 seconds</i></h2>
+    <div class="film-frame">
+      <video controls preload="none" playsinline poster="media/promo-poster.jpg" width="1280" height="720">
+        <source src="media/promo.mp4" type="video/mp4">
+        Your browser can't play this video. <a href="media/promo.mp4">Download it</a> instead.
+      </video>
+    </div>
+  </div>
+</section>
+
+<section id="screens" class="section">
+  <div class="wrap">
+    <h2 class="section-title">Take a look</h2>
+    <p class="section-lead">Swipe through the app, from the workspace to the inspector.</p>
+  </div>
+  <div class="gallery-wrap">
+    <ul class="gallery" tabindex="0" aria-label="Screenshots">
+      <li><picture><source srcset="media/phone-01-workspace.avif" type="image/avif"><img src="media/phone-01-workspace.jpg" width="720" height="1280" loading="lazy" decoding="async" alt="The workspace: matrices at the top, expressions below with typeset answers."></picture></li>
+      <li><picture><source srcset="media/phone-04-step-by-step.avif" type="image/avif"><img src="media/phone-04-step-by-step.jpg" width="720" height="1280" loading="lazy" decoding="async" alt="Steps for a determinant, with the method to choose and the working shown."></picture></li>
+      <li><picture><source srcset="media/phone-02-textbook-answers.avif" type="image/avif"><img src="media/phone-02-textbook-answers.jpg" width="720" height="1280" loading="lazy" decoding="async" alt="An inverse with exact fractions, in dark mode."></picture></li>
+      <li><picture><source srcset="media/phone-03-inspector.avif" type="image/avif"><img src="media/phone-03-inspector.jpg" width="720" height="1280" loading="lazy" decoding="async" alt="The inspector: a matrix's properties, determinant, trace, rank and eigenvalues."></picture></li>
+      <li><picture><source srcset="media/phone-05-keypad.avif" type="image/avif"><img src="media/phone-05-keypad.jpg" width="720" height="1280" loading="lazy" decoding="async" alt="The keypad with matrix functions such as eig, svd and expm."></picture></li>
+      <li><picture><source srcset="media/phone-06-tablets-foldables.avif" type="image/avif"><img src="media/phone-06-tablets-foldables.jpg" width="720" height="1280" loading="lazy" decoding="async" alt="Matscape on a foldable, unfolded into two panes and in tabletop posture."></picture></li>
+    </ul>
+    <div class="gallery-nav" hidden>
+      <button type="button" data-dir="-1" aria-label="Previous screenshots"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button type="button" data-dir="1" aria-label="Next screenshots"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<section class="section ops">
+  <div class="wrap">
+    <h2 class="section-title">Every operation you'll need</h2>
+    <p class="section-lead">From a first course in linear algebra to research notes, each one explained in the built-in library.</p>
+    <ul class="chips">
+      <li>Addition and multiplication</li><li>Transpose</li><li>Inverse</li><li>Determinant</li><li>Trace</li><li>Rank</li>
+      <li>RREF</li><li>Solve linear systems</li><li>Null space</li><li>Column space</li><li>Pseudo-inverse</li>
+      <li>Minors and cofactors</li><li>Adjugate</li><li>Eigenvalues</li><li>Eigenvectors</li><li>Characteristic polynomial</li>
+      <li>LU decomposition</li><li>QR decomposition</li><li>Cholesky</li><li>SVD</li><li>Norms and condition number</li>
+      <li>Matrix exponential</li><li>Matrix sine and cosine</li><li>Matrix square root</li><li>Powers</li>
+      <li>Dot and cross product</li><li>Kronecker product</li><li>Hadamard product</li><li>Trig in degrees or radians</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section showcase alt">
+  <div class="wrap split reverse">
+    <div>
+      <p class="eyebrow dark">Every screen</p>
+      <h2>Made for big screens<br><i>and foldables.</i></h2>
+      <p>On a tablet the inspector sits beside your work and follows the expression you are on. Unfold a foldable for two panes, prop it in tabletop with the keypad below the fold, or turn your phone on its side.</p>
+    </div>
+    <picture>
+      <source srcset="media/big-screens.avif" type="image/avif">
+      <img src="media/big-screens.jpg" width="1280" height="800" loading="lazy" decoding="async" alt="Matscape unfolded into two panes on a foldable, beside a phone in tabletop posture.">
+    </picture>
+  </div>
+</section>
+
+<section class="section privacy-band">
+  <div class="wrap">
+    <h2 class="section-title">Your work stays <i>yours</i></h2>
+    <ul class="promises">
+      <li><b>No account</b>Open it and start. Nothing to sign up for.</li>
+      <li><b>On your device</b>Every calculation happens on your phone or tablet, even offline.</li>
+      <li><b>No ads, no tracking</b>No analytics, no advertising, nothing sent to us.</li>
+      <li><b>Your own Drive</b>Optional sync uses a private folder in your Google Drive that only Matscape can read.</li>
+    </ul>
+    <p class="center"><a href="privacy.html">Read the privacy policy</a></p>
+  </div>
+</section>
+
+<section id="faq" class="section">
+  <div class="wrap narrow">
+    <h2 class="section-title">Questions</h2>
+    <div class="faq">
+      <details><summary>Does Matscape show the steps?</summary><p>Yes. Tap Steps under any result to see how it was reached, one operation at a time. For many operations you can choose the method, for example cofactor expansion or row reduction for a determinant.</p></details>
+      <details><summary>Are the answers exact?</summary><p>Yes. Matscape keeps fractions, square roots and multiples of π exact where it can, and switches to decimals when you prefer.</p></details>
+      <details><summary>Do I need an account or an internet connection?</summary><p>No. Everything is calculated on your device and the app works offline. Backup and sync to your own Google Drive is optional.</p></details>
+      <details><summary>Can I copy results into LaTeX?</summary><p>Yes. Results and whole step-by-step solutions copy as LaTeX, ready to paste into a paper or notes.</p></details>
+      <details><summary>Does it work on tablets and foldables?</summary><p>Yes. Matscape has a layout for phones held upright or sideways, tablets with the inspector beside your work, and book-style and flip foldables, including tabletop posture.</p></details>
+      <details><summary>Is Matscape on iPhone and iPad?</summary><p>Matscape is coming to the App Store. It is available on Google Play now.</p></details>
+    </div>
+    <p class="center more">More help on the <a href="support.html">support page</a>.</p>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Start with a matrix.<br><i>See where it takes you.</i></h2>
+    <a class="button store" href="https://play.google.com/store/apps/details?id=com.ByteMechanics.matscape">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+      <span><small>Get it on</small>Google Play</span>
+    </a>
+  </div>
+</section>
 </main>
+
 <footer>
   <div class="wrap">
     <span>© 2026 ByteMechanics</span>
     <span><a href="privacy.html">Privacy policy</a> · <a href="support.html">Support</a> · <a href="https://github.com/Thre4dripper/Matscape-AndroidApp">Source</a></span>
   </div>
 </footer>
+<script src="site.js" defer></script>
 </body>
 </html>

@@ -108,10 +108,16 @@ symbol left unconverted).
 
 ## Site
 
-`site/` is the public home page, privacy policy and support page, published
-to GitHub Pages by `.github/workflows/pages.yml`. Google's sign-in consent
-screen and both stores link to it. Plain HTML and CSS, in the app's colours,
-with a Latin-only copy of the brand font.
+`site/` is the public product page, privacy policy and support page,
+published to GitHub Pages by `.github/workflows/pages.yml`. Google's sign-in
+consent screen and both stores link to it. Plain HTML and CSS in the app's
+colours, with a Latin-only copy of the brand font, structured data
+(app, FAQ) and a sitemap for search, and Open Graph tags for link previews.
+The home page carries Google Search Console's verification tag: keep it.
+
+`site/media/` holds what the page shows, made from the design's store
+pictures and Open Design's films: AVIF pictures with JPEG fallbacks and
+H.264 films sized for the web.
 
 ## Design
 

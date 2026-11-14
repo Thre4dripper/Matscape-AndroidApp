@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url>
+    <loc>https://thre4dripper.github.io/Matscape-AndroidApp/</loc>
+    <lastmod>2026-11-15</lastmod>
+    <image:image><image:loc>https://thre4dripper.github.io/Matscape-AndroidApp/media/og.jpg</image:loc></image:image>
+    <image:image><image:loc>https://thre4dripper.github.io/Matscape-AndroidApp/media/phone-01-workspace.jpg</image:loc></image:image>
+    <image:image><image:loc>https://thre4dripper.github.io/Matscape-AndroidApp/media/phone-04-step-by-step.jpg</image:loc></image:image>
+    <image:image><image:loc>https://thre4dripper.github.io/Matscape-AndroidApp/media/phone-03-inspector.jpg</image:loc></image:image>
+    <video:video>
+      <video:thumbnail_loc>https://thre4dripper.github.io/Matscape-AndroidApp/media/promo-poster.jpg</video:thumbnail_loc>
+      <video:title>Matscape in 40 seconds</video:title>
+      <video:description>A matrix calculator with exact answers and the working shown step by step, on phones, tablets and foldables.</video:description>
+      <video:content_loc>https://thre4dripper.github.io/Matscape-AndroidApp/media/promo.mp4</video:content_loc>
+      <video:duration>40</video:duration>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://thre4dripper.github.io/Matscape-AndroidApp/support.html</loc>
+    <lastmod>2026-11-15</lastmod>
+  </url>
+  <url>
+    <loc>https://thre4dripper.github.io/Matscape-AndroidApp/privacy.html</loc>
+    <lastmod>2026-11-15</lastmod>
+  </url>
+</urlset>
