@@ -17,6 +17,16 @@ lives on the `main` branch history.
 - Eigenvalues and eigenvectors, characteristic polynomial
 - LU, QR, Cholesky and SVD decompositions, pseudo-inverse, norms, condition number
 - Matrix functions: `expm`, `sinm`, `cosm`, `sqrtm`
+- Step-by-step solutions for any expression: one step per operation, each
+  opening to show the working, with a choice of method where there is one
+  (cofactor expansion or row reduction; the 2×2 formula, Gauss–Jordan or the
+  adjugate; elimination, Cramer’s rule or the inverse; Gram–Schmidt for QR;
+  AᵀA for the SVD). Working is complete at every size the editor allows:
+  every entry of a product, every minor of an adjugate, a cofactor expansion
+  followed all the way down to 2×2. It is built only when a step is opened,
+  on another isolate behind a loader when it is long, and drawn lazily
+- Copy as plain text or as LaTeX (Settings → Copying): results as `bmatrix`
+  and fractions, a whole solution as an `align*` block
 - Inspector with properties and step-by-step determinant, inverse and RREF
 - An operations library with a page for each operation: what it means, how
   to write it, worked examples and a button to try them
@@ -51,7 +61,24 @@ test/       Engine tests, parity tests against the design prototype, app tests,
 ```
 
 The engine has no Flutter dependency: `lib/engine/engine.dart` is the whole
-public surface (`evaluate`, `describe`, decompositions, step-by-step helpers).
+public surface (`evaluate`, `explain`, `describe`, decompositions).
+
+`explain` (in `lib/engine/steps.dart`) is what the Steps screen shows. It
+evaluates the expression while keeping the value of every part, then walks
+it in the order it is worked out and writes one step per operation. The
+tests in `test/steps_complex_test.dart` type each step back into the
+evaluator and check every line of arithmetic in the working, so a step can
+never show a number the engine would not give.
+
+The one place working stops short is cofactor expansion above 8×8, which
+would need n!/2 two-by-two determinants (1.8 million for a 10×10). There it
+expands one level and row reduction carries the complete working. Matrices
+that large only come from functions such as `kron`; the editor stops at 8×8.
+
+`lib/engine/latex.dart` turns values, expressions and lines of working into
+LaTeX. No LaTeX compiler runs in the tests: `test/latex_test.dart` checks the
+output is well formed (balanced braces and environments, known commands, no
+symbol left unconverted).
 
 ## Developing
 
