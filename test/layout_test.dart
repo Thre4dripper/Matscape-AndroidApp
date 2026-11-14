@@ -48,9 +48,12 @@ Future<AppState> _launch(
   double h, {
   List<DisplayFeature> features = const [],
   bool cover = false,
+  FakeViewPadding padding = FakeViewPadding.zero,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = Size(w, h);
+  tester.view.padding = padding;
+  tester.view.viewPadding = padding;
   tester.view.displayFeatures = features;
   tester.view.display.size = cover ? Size(w, h) : const Size(3000, 3000);
   addTearDown(tester.view.reset);
@@ -84,6 +87,43 @@ void main() {
       expect(_layout(1180, 820), AppLayout.expanded); // iPad 11″
       expect(_layout(1376, 1032), AppLayout.expanded); // iPad 13″
       expect(_layout(1032, 1376), AppLayout.expanded); // iPad 13″, portrait
+    });
+
+    test('an iPhone Duo: phone layouts outside, the sidebar inside', () {
+      // Sizes its simulator reports. iOS gives no fold, so no book layout.
+      expect(_layout(466, 678), AppLayout.compact);
+      expect(_layout(678, 466), AppLayout.landscape);
+      expect(_layout(669, 951), AppLayout.medium);
+      expect(_layout(951, 669), AppLayout.medium);
+    });
+
+    test('a side strip is an inset on one side only', () {
+      const upright = Size(466, 678), sideways = Size(678, 466);
+      final right = SideStrip.of(
+        upright,
+        const EdgeInsets.only(right: 84, bottom: 34),
+      )!;
+      expect((right.onRight, right.width), (true, 84));
+      // Status items sit at the top of the strip.
+      expect(right.top, greaterThan(140));
+      final left = SideStrip.of(
+        sideways,
+        const EdgeInsets.only(left: 84, bottom: 34),
+      )!;
+      expect(left.onRight, isFalse);
+      // A notch phone on its side is inset on both sides.
+      expect(
+        SideStrip.of(
+          const Size(874, 402),
+          const EdgeInsets.symmetric(horizontal: 62),
+        ),
+        isNull,
+      );
+      // An ordinary camera cutout is too narrow to be a strip.
+      expect(
+        SideStrip.of(const Size(915, 412), const EdgeInsets.only(left: 44)),
+        isNull,
+      );
     });
 
     test('a foldable opened flat is a book', () {
@@ -316,6 +356,68 @@ void main() {
       expect(keypad.right, 874);
       expect(keypad.height, 402);
       expect(find.bySemanticsLabel('Hide keypad'), findsNothing);
+      expect(tester.takeException(), isNull);
+      await _settle(tester);
+    });
+  });
+
+  group('a side strip (iPhone Duo, outer screen)', () {
+    const strip = FakeViewPadding(right: 84, bottom: 34);
+
+    testWidgets('upright: the matrices move into the strip', (tester) async {
+      final state = await _launch(tester, 466, 678, padding: strip);
+      // No rail above the expressions; a tile per matrix in the strip.
+      expect(find.text('MATRICES'), findsNothing);
+      final a = tester.getRect(find.bySemanticsLabel(RegExp('^Matrix A,')));
+      expect(a.left, greaterThanOrEqualTo(466 - 84));
+      expect(a.right, lessThanOrEqualTo(466));
+      // Clear of the status items at the top of the strip.
+      expect(a.top, greaterThan(140));
+      // Everything else stays out of the strip.
+      expect(tester.getRect(find.byType(Keypad)).right, 466 - 84);
+
+      // A tile opens the editor, which stays out of the strip too.
+      await tester.tap(find.bySemanticsLabel(RegExp('^Matrix A,')).first);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.text('Done')).right,
+        lessThanOrEqualTo(466 - 84),
+      );
+      await tester.tap(find.text('Done'));
+      await tester.pumpAndSettle();
+
+      // The + tile makes a matrix.
+      final before = state.ws.matrices.length;
+      await tester.tap(find.bySemanticsLabel('New matrix').first);
+      await tester.pumpAndSettle();
+      expect(state.ws.matrices.length, before + 1);
+      expect(tester.takeException(), isNull);
+      await _settle(tester);
+    });
+
+    testWidgets('on its side: strip on the left, screens clear of it', (
+      tester,
+    ) async {
+      await _launch(
+        tester,
+        678,
+        466,
+        padding: const FakeViewPadding(left: 84, bottom: 34),
+      );
+      expect(find.text('MATRICES'), findsNothing);
+      final a = tester.getRect(find.bySemanticsLabel(RegExp('^Matrix A,')));
+      expect(a.right, lessThanOrEqualTo(84));
+      // Below the camera in the corner.
+      expect(a.top, greaterThan(70));
+      expect(tester.getRect(find.byType(Keypad)).right, 678);
+
+      // A pushed screen keeps its back button out from under the camera.
+      await tester.tap(find.bySemanticsLabel('Operations library'));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.bySemanticsLabel('Back')).left,
+        greaterThanOrEqualTo(84),
+      );
       expect(tester.takeException(), isNull);
       await _settle(tester);
     });

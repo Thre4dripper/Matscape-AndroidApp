@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -488,8 +490,12 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     _sync(state);
     _applyLayout(info);
     final size = MediaQuery.sizeOf(context);
+    // On a screen with a side strip the matrices live in the strip.
+    final strip = info.pushesScreens
+        ? SideStrip.of(size, MediaQuery.paddingOf(context))
+        : null;
 
-    final Widget body;
+    Widget body;
     switch (info.layout) {
       case AppLayout.glance:
         body = GlanceView(state: state);
@@ -500,7 +506,13 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
           Column(
             children: [
               _topBar(context, state.ws),
-              Expanded(child: _content(context, state, _Rail.cards)),
+              Expanded(
+                child: _content(
+                  context,
+                  state,
+                  strip == null ? _Rail.cards : _Rail.none,
+                ),
+              ),
               _keypad(context, state, rowHeight: size.height < 600 ? 38 : 44),
             ],
           ),
@@ -516,7 +528,13 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
                 child: Column(
                   children: [
                     _topBar(context, state.ws),
-                    Expanded(child: _content(context, state, _Rail.chips)),
+                    Expanded(
+                      child: _content(
+                        context,
+                        state,
+                        strip == null ? _Rail.chips : _Rail.none,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -630,9 +648,119 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
         );
     }
 
+    if (strip != null) {
+      final rail = _stripRail(state, strip);
+      body = Row(
+        children: [
+          if (!strip.onRight) rail,
+          Expanded(child: body),
+          if (strip.onRight) rail,
+        ],
+      );
+    }
     return Scaffold(
       backgroundColor: pal.bg,
-      body: SafeArea(top: false, bottom: false, child: body),
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        left: strip == null || strip.onRight,
+        right: strip == null || !strip.onRight,
+        child: body,
+      ),
+    );
+  }
+
+  /// The matrices as a column of small tiles in a [SideStrip]: tap one to
+  /// edit it, hold and drag to reorder.
+  Widget _stripRail(AppState state, SideStrip strip) {
+    final pal = context.pal, mats = state.ws.matrices;
+    const tileWidth = 60.0;
+    final side = math.max(0.0, (strip.width - tileWidth) / 2);
+    Widget tile({
+      required String label,
+      required VoidCallback onTap,
+      required List<Widget> children,
+      Color? border,
+    }) => Pressable(
+      onTap: onTap,
+      label: label,
+      scale: .96,
+      builder: (_, _) => Container(
+        height: 54,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: pal.surface,
+          border: Border.all(color: border ?? pal.line),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: children,
+        ),
+      ),
+    );
+    return SizedBox(
+      width: strip.width,
+      child: Padding(
+        padding: EdgeInsets.only(top: strip.top, bottom: strip.bottom),
+        child: CustomScrollView(
+          slivers: [
+            SliverReorderableList(
+              itemCount: mats.length,
+              itemBuilder: (context, i) {
+                final m = mats[i];
+                final ok = state.matResults[m.id]?.ok ?? false;
+                return Padding(
+                  key: ValueKey(m.id),
+                  padding: EdgeInsets.fromLTRB(side, 0, side, 8),
+                  child: ReorderableDelayedDragStartListener(
+                    index: i,
+                    child: tile(
+                      label:
+                          'Matrix ${m.name}, ${m.rows} by ${m.cols}${ok ? '' : ', has an entry to fix'}. Edit',
+                      onTap: () => openEditor(m.id),
+                      border: ok ? null : pal.danger,
+                      children: [
+                        Text(
+                          m.name,
+                          style: mathStyle(
+                            context,
+                            size: Fs.lg,
+                            weight: FontWeight.w600,
+                            italic: true,
+                            height: 1.1,
+                          ),
+                        ),
+                        Text(
+                          '${m.rows}×${m.cols}',
+                          style: TextStyle(
+                            fontSize: Fs.cap,
+                            height: 1.3,
+                            color: pal.ink3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              onReorderItem: state.moveMatrix,
+              proxyDecorator: (child, _, _) =>
+                  Material(type: MaterialType.transparency, child: child),
+            ),
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: side),
+              sliver: SliverToBoxAdapter(
+                child: tile(
+                  label: 'New matrix',
+                  onTap: _newMatrix,
+                  children: [Ico(MIcon.plus, size: 20, color: pal.accent)],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

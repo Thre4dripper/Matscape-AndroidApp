@@ -43,6 +43,44 @@ const double sideWidth = 280;
 /// Space kept clear around a fold, even when the fold itself has no width.
 const double minHinge = 24;
 
+/// A strip down one side of the screen that the system keeps clear for its
+/// camera and status items, as on the outer screen of an iPhone Duo. The
+/// app may draw there, so the matrices go in it instead of leaving it empty.
+///
+/// The system does not say where in the strip its own items sit, so the
+/// clear ends are what the Duo shows: status items at the top when upright,
+/// the camera in the corner when on its side.
+@immutable
+class SideStrip {
+  const SideStrip({
+    required this.onRight,
+    required this.width,
+    required this.top,
+    required this.bottom,
+  });
+
+  final bool onRight;
+  final double width;
+
+  /// Space to leave empty at each end of the strip.
+  final double top, bottom;
+
+  /// The strip for a window of [size] with safe-area [pad], if it has one.
+  /// A notch phone on its side is inset on both sides and has none.
+  static SideStrip? of(Size size, EdgeInsets pad) {
+    final wide = math.max(pad.left, pad.right);
+    if (wide < 72 || math.min(pad.left, pad.right) > 8) return null;
+    final onRight = pad.right > pad.left;
+    final upright = size.height > size.width;
+    return SideStrip(
+      onRight: onRight,
+      width: wide,
+      top: upright ? 164 : (onRight ? 12 : 76),
+      bottom: math.max(pad.bottom + 8, upright || !onRight ? 12 : 84),
+    );
+  }
+}
+
 @immutable
 class LayoutInfo {
   const LayoutInfo(this.layout, {this.fold = Rect.zero});

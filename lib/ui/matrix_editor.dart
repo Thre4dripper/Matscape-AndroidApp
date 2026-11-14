@@ -414,11 +414,11 @@ class _MatrixEditorState extends State<_MatrixEditor> {
         return Align(
           alignment: Alignment.bottomLeft,
           child: Transform.translate(
-            offset: Offset(0, _drag),
+            offset: Offset(pad.left, _drag),
             child: SizedBox(
               width: info.layout == AppLayout.book
-                  ? info.fold.left
-                  : size.width,
+                  ? info.fold.left - pad.left
+                  : size.width - pad.horizontal,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   maxHeight: size.height - pad.top - 8,
