@@ -15,8 +15,10 @@ flutter test
 
 ## Design handoff
 
-The design (an Open Design / Claude Design project) is kept in `design/`.
-The app is the source of truth; the design follows it.
+`design/` is the Open Design project itself (Open Design is compatible with
+Claude Design). Open Design opens it from here and edits it in place, so the
+designer's changes show up in `git status` like any other change. The app is
+the source of truth; the design follows it.
 
 When a change alters what a user sees (a new screen or state, a changed
 layout, a renamed button), do all of this as part of the same change:
@@ -27,12 +29,10 @@ layout, a renamed button), do all of this as part of the same change:
 2. If it is a new screen or state, add a scene for it to
    `tool/screenshots/render_test.dart`.
 3. Run `tool/screenshots.sh`. It renders every scene from the real app into
-   `design/reference/` and sends those pictures and `HANDOFF.md` to the
-   Open Design project.
+   `design/reference/`, where the designer reads them.
 
-After the designer has updated the project, run `tool/design-sync.sh pull`
-to bring the design source back into `design/`, and move the finished
-entries to "Done".
+Open Design writes into `design/` while it works. Don't edit design files
+there during one of its runs, and don't commit them halfway through one.
 
 `design/reference/` and the design's films, music and store pictures are
 not committed: scripts make them again.

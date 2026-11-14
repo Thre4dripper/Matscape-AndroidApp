@@ -82,18 +82,21 @@ symbol left unconverted).
 
 ## Design
 
-The design project (Open Design, which is compatible with Claude Design) is
-in `design/`: the HTML prototype, the layout boards, the brand files and the
-sources of the store pictures and films. Only its source is committed.
+`design/` is the design project (Open Design, which is compatible with
+Claude Design): the HTML prototype, the layout boards, the brand files and
+the sources of the store pictures and films. Open Design opens it straight
+from this folder and edits it in place. Only its source is committed.
+
+To open it in Open Design on a new machine: in Open Design's settings, add
+this repository's folder as a project location and scan. `design/` is the
+only folder in it with a project file, so it is the only one imported.
 
 The app leads and the design follows:
 
 - `design/HANDOFF.md` lists every change to what a user sees that the design
   has not caught up with yet.
 - `tool/screenshots.sh` renders the real app into `design/reference/`, one
-  picture per screen and device, and sends them with the handoff to the
-  Open Design project.
-- `tool/design-sync.sh pull` brings the designer's changes back.
+  picture per screen and device, for the designer to work from.
 
 The prompt for the design tool is always the same: "Read `HANDOFF.md` and
 bring the design up to date, using the pictures in `reference/` as the truth

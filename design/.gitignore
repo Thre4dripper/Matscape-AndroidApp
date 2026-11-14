@@ -1,4 +1,11 @@
 # Made by scripts, not by hand: left out of the repo.
+# Pictures too: they are rendered by scripts or are screenshots shared with
+# the designer. Hand-made artwork lives as SVG (brand/icon/).
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
 *.mp4
 *.wav
 .DS_Store
@@ -7,5 +14,8 @@ store/google-play/
 store/videos/
 motion-source/*/assets/
 brand/icon/export/
+# Open Design's own working folders.
+.file-versions/
+.live-artifacts/
 # Rendered from the app by tool/screenshots.sh.
 reference/
