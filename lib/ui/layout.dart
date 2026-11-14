@@ -71,6 +71,11 @@ class LayoutInfo {
     _ => Offset.zero & size,
   };
 
+  /// Width of the keypad beside the content on a phone held sideways:
+  /// 40% of the usable width [avail], so the content gets the larger share.
+  static double landscapeKeypadWidth(double avail) =>
+      (avail * .4).clamp(280.0, 440.0);
+
   /// Width of the inspector pane in the expanded layout.
   static double detailWidth(double width) => math.max(320, width * .28);
 

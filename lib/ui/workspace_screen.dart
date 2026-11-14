@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -524,7 +522,9 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
               ),
               Container(width: 1, color: pal.line),
               SizedBox(
-                width: math.min(420, size.width * .5),
+                width: LayoutInfo.landscapeKeypadWidth(
+                  size.width - MediaQuery.paddingOf(context).horizontal,
+                ),
                 child: _keypad(
                   context,
                   state,

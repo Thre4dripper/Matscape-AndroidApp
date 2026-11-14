@@ -373,7 +373,9 @@ class _MatrixEditorState extends State<_MatrixEditor> {
                 Expanded(child: Column(children: matrixSide())),
                 Container(width: 1, color: pal.line),
                 SizedBox(
-                  width: math.min(380, size.width * .46),
+                  width: LayoutInfo.landscapeKeypadWidth(
+                    size.width - pad.horizontal,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Column(children: keypadSide()),

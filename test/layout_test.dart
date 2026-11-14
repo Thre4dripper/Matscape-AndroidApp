@@ -310,8 +310,10 @@ void main() {
 
     testWidgets('landscape phone: keypad on the right', (tester) async {
       await _launch(tester, 874, 402);
+      // The content gets 60% of the width, the keypad 40%.
       final keypad = tester.getRect(find.byType(Keypad));
-      expect(keypad.left, greaterThan(874 / 2 - 1));
+      expect(keypad.left, closeTo(874 * .6, 1.5));
+      expect(keypad.right, 874);
       expect(keypad.height, 402);
       expect(find.bySemanticsLabel('Hide keypad'), findsNothing);
       expect(tester.takeException(), isNull);
