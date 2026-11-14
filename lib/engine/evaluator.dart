@@ -6,8 +6,11 @@ library;
 
 import 'dart:math' as math;
 
+import 'format.dart';
 import 'linalg.dart';
 import 'types.dart';
+
+part 'steps.dart';
 
 /// Largest dimension a generated matrix may have, so a typo like
 /// zeros(9999) can't freeze the app.
@@ -310,6 +313,10 @@ class _Ctx {
   final Map<String, Object> vars;
   final bool deg;
   final warnings = <String>[];
+
+  /// When set, the value of every part of the expression is kept here so
+  /// the steps can be written out afterwards (see `explain`).
+  Map<_Node, Object>? vals;
 }
 
 MathError _eyeNeedsSize() =>
@@ -846,6 +853,12 @@ Object _postOp(String op, Object v, _Ctx ctx) {
 }
 
 Object _eval(_Node n, _Ctx ctx) {
+  final v = _evalNode(n, ctx);
+  ctx.vals?[n] = v;
+  return v;
+}
+
+Object _evalNode(_Node n, _Ctx ctx) {
   switch (n.k) {
     case 'num':
       return n.v;
