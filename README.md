@@ -108,12 +108,16 @@ symbol left unconverted).
 
 ## Site
 
-`site/` is the public product page, privacy policy and support page,
-published to GitHub Pages by `.github/workflows/pages.yml`. Google's sign-in
-consent screen and both stores link to it. Plain HTML and CSS in the app's
+`site/` is the public product page, privacy policy and support page, at
+https://matscape.ijlalahmad.dev. It is served as static files by a
+Cloudflare Worker (`wrangler.jsonc`, Worker `matscape-site`), which
+Cloudflare builds and deploys from this repository. Pages are at clean
+addresses (`/privacy`, `/support`). Google's sign-in consent screen and both
+stores link to it. Plain HTML and CSS in the app's
 colours, with a Latin-only copy of the brand font, structured data
 (app, FAQ) and a sitemap for search, and Open Graph tags for link previews.
-The home page carries Google Search Console's verification tag: keep it.
+The domain is verified in Google Search Console; the home page also carries
+a verification tag: keep it.
 
 `site/media/` holds what the page shows, made from the design's store
 pictures and Open Design's films: AVIF pictures with JPEG fallbacks and

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://matscape.ijlalahmad.dev/sitemap.xml

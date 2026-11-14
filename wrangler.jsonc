@@ -1,0 +1,17 @@
+// The product site (site/) on Cloudflare Workers, as static files only.
+// Cloudflare builds and deploys it from this repository; see README "Site".
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "matscape-site",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./site",
+    // /privacy serves privacy.html; /privacy.html redirects to it.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  // One address only, so search engines see a single copy of each page.
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "matscape.ijlalahmad.dev", "custom_domain": true }]
+}
