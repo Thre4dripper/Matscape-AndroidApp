@@ -80,6 +80,25 @@ LaTeX. No LaTeX compiler runs in the tests: `test/latex_test.dart` checks the
 output is well formed (balanced braces and environments, known commands, no
 symbol left unconverted).
 
+## Design
+
+The design project (Open Design, which is compatible with Claude Design) is
+in `design/`: the HTML prototype, the layout boards, the brand files and the
+sources of the store pictures and films. Only its source is committed.
+
+The app leads and the design follows:
+
+- `design/HANDOFF.md` lists every change to what a user sees that the design
+  has not caught up with yet.
+- `tool/screenshots.sh` renders the real app into `design/reference/`, one
+  picture per screen and device, and sends them with the handoff to the
+  Open Design project.
+- `tool/design-sync.sh pull` brings the designer's changes back.
+
+The prompt for the design tool is always the same: "Read `HANDOFF.md` and
+bring the design up to date, using the pictures in `reference/` as the truth
+for how the app looks."
+
 ## Developing
 
 ```bash
