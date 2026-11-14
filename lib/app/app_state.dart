@@ -9,6 +9,7 @@ import '../engine/engine.dart';
 import '../engine/engine.dart' as engine show hasSteps;
 import 'models.dart';
 import 'storage.dart';
+import 'sync_merge.dart';
 
 /// Result of evaluating a user matrix's cells.
 class MatEval {
@@ -62,6 +63,23 @@ class AppState extends ChangeNotifier {
   /// False until the first-launch tutorial has been shown.
   bool tutorialSeen = false;
 
+  /// Deleted workspaces, each with the version that was deleted, so a sync
+  /// doesn't bring them back.
+  Map<String, int> deleted = {};
+
+  /// Workspaces edited since the last full sync. Their [Workspace.base] is
+  /// the version the edits started from; see [_touch].
+  final Set<String> _edited = {};
+
+  /// When history was last cleared; older items from other devices are
+  /// dropped too.
+  int historyClearedAt = 0;
+
+  /// When a setting last changed, so sync knows which device's settings win.
+  int settingsUpdated = 0;
+
+  int get _now => DateTime.now().millisecondsSinceEpoch;
+
   Map<String, MatEval> matResults = {};
   Map<String, EvalResult> lineResults = {};
 
@@ -88,6 +106,16 @@ class AppState extends ChangeNotifier {
         settings.load(j['settings'] as Map<String, dynamic>? ?? const {});
         currentId = j['currentId'] as String? ?? '';
         tutorialSeen = j['tutorialSeen'] as bool? ?? false;
+        deleted = {
+          for (final e in (j['deleted'] as Map? ?? const {}).entries)
+            e.key as String: e.value as int,
+        };
+        historyClearedAt = j['historyClearedAt'] as int? ?? 0;
+        settingsUpdated = j['settingsUpdated'] as int? ?? 0;
+        _edited
+          ..clear()
+          ..addAll([for (final id in j['edited'] as List? ?? const []) '$id']);
+        _adoptSampleIds();
       }
     } catch (_) {
       // Unreadable data: start fresh rather than fail to launch.
@@ -101,6 +129,20 @@ class AppState extends ChangeNotifier {
       currentId = workspaces.first.id;
     }
     _evaluateAll();
+  }
+
+  /// Data saved before samples had fixed ids: an untouched sample gets its
+  /// fixed id and date, so it matches the same sample on other devices.
+  void _adoptSampleIds() {
+    final samples = {for (final s in seedWorkspaces()) s.contentKey: s};
+    for (var i = 0; i < workspaces.length; i++) {
+      final w = workspaces[i];
+      if (w.id.startsWith(samplePrefix)) continue;
+      final s = samples[w.contentKey];
+      if (s == null || workspaces.any((o) => o.id == s.id)) continue;
+      if (currentId == w.id) currentId = s.id;
+      workspaces[i] = s;
+    }
   }
 
   void _persist() {
@@ -119,6 +161,10 @@ class AppState extends ChangeNotifier {
           'settings': settings,
           'currentId': currentId,
           'tutorialSeen': tutorialSeen,
+          'deleted': deleted,
+          'historyClearedAt': historyClearedAt,
+          'settingsUpdated': settingsUpdated,
+          'edited': _edited.toList(),
         }),
       );
     } catch (_) {
@@ -127,10 +173,27 @@ class AppState extends ChangeNotifier {
   }
 
   void _changed({bool touch = true}) {
-    if (touch) ws.updated = DateTime.now().millisecondsSinceEpoch;
+    if (touch) _touch(ws);
     _evaluateAll();
     _persist();
     notifyListeners();
+  }
+
+  /// Stamps an edit. The first edit since the last full sync records the
+  /// version it started from as [Workspace.base]: a version from another
+  /// device that is newer than that was never seen here, so sync keeps it as
+  /// a copy rather than letting this edit overwrite it.
+  void _touch(Workspace w) {
+    if (_edited.add(w.id)) w.base = w.updated;
+    w.updated = _now;
+  }
+
+  /// A full sync merged every device's changes: whatever is edited next
+  /// starts from what is here now.
+  void markSynced() {
+    if (_edited.isEmpty) return;
+    _edited.clear();
+    _persist();
   }
 
   /* ---------- evaluation ---------- */
@@ -369,6 +432,7 @@ class AppState extends ChangeNotifier {
 
   void clearHistory() {
     history = [];
+    historyClearedAt = _now;
     _persist();
     notifyListeners();
   }
@@ -519,6 +583,7 @@ class AppState extends ChangeNotifier {
   void renameWorkspace(String name) {
     final n = name.trim();
     ws.name = n.isEmpty ? 'Untitled workspace' : n;
+    _touch(ws);
     _persist();
     notifyListeners();
   }
@@ -532,7 +597,7 @@ class AppState extends ChangeNotifier {
     final s = settings;
     final w = Workspace(
       name: 'Untitled workspace ${workspaces.length + 1}',
-      updated: DateTime.now().millisecondsSinceEpoch,
+      updated: _now,
       matrices: [
         MatrixModel(
           name: 'A',
@@ -549,25 +614,107 @@ class AppState extends ChangeNotifier {
   /// Deletes a workspace; the last one can't be removed.
   bool deleteWorkspace(String id) {
     if (workspaces.length == 1) return false;
-    workspaces.removeWhere((w) => w.id == id);
+    final gone = workspaces.where((w) => w.id == id).firstOrNull;
+    if (gone == null) return false;
+    workspaces.remove(gone);
+    // The version that was deleted, not the time: changes made on another
+    // device that this one never saw are newer, so they survive the delete.
+    deleted[id] = gone.updated;
     if (currentId == id) currentId = workspaces.first.id;
     _changed(touch: false);
     return true;
   }
 
+  /// Puts back workspaces a sync removed (deleted on another device), dated
+  /// now so the restore reaches the other devices too. [open] reopens the
+  /// one that was open.
+  void restoreWorkspaces(List<Workspace> list, {String? open}) {
+    final now = _now;
+    final have = {for (final w in workspaces) w.id};
+    for (final w in list.reversed) {
+      if (have.contains(w.id)) continue;
+      // A new version of the deleted one, so it outlives the delete.
+      workspaces.insert(0, w.copyWith(updated: now, base: w.updated));
+      _edited.add(w.id);
+    }
+    if (open != null && workspaces.any((w) => w.id == open)) currentId = open;
+    _changed(touch: false);
+  }
+
   /// Puts back the sample workspaces that are no longer in the list
-  /// (matched by name). Returns how many were added.
+  /// (matched by id or name). Returns how many were added.
   int restoreSamples() {
-    final have = {for (final w in workspaces) w.name};
+    final have = {
+      for (final w in workspaces) ...[w.id, w.name],
+    };
+    final now = _now;
     final missing = [
       for (final w in seedWorkspaces())
-        if (!have.contains(w.name)) w,
+        if (!have.contains(w.id) && !have.contains(w.name))
+          // Dated now, so the restore beats the deletion on other devices.
+          w.copyWith(updated: now, base: 0),
     ];
     if (missing.isEmpty) return 0;
+    for (final w in missing) {
+      deleted.remove(w.id);
+    }
     workspaces.addAll(missing);
     _persist();
     notifyListeners();
     return missing.length;
+  }
+
+  /* ---------- sync ---------- */
+
+  /// Everything that syncs, as a document for this device to upload.
+  SyncDoc toSyncDoc({
+    required String device,
+    required String deviceName,
+    required int savedAt,
+  }) => SyncDoc(
+    device: device,
+    deviceName: deviceName,
+    savedAt: savedAt,
+    workspaces: [for (final w in workspaces) w.copyWith()],
+    deleted: Map.of(deleted),
+    history: List.of(history),
+    historyClearedAt: historyClearedAt,
+    settings: settings.toJson(),
+    settingsUpdated: settingsUpdated,
+  );
+
+  /// Takes on a merged document. The open workspace stays open if it still
+  /// exists.
+  void applySyncDoc(SyncDoc doc) {
+    workspaces = [for (final w in doc.workspaces) w.copyWith()];
+    if (workspaces.isEmpty) {
+      // Everything was deleted elsewhere; the app always has one workspace.
+      final s = settings;
+      workspaces = [
+        Workspace(
+          name: 'Untitled workspace',
+          updated: _now,
+          matrices: [
+            MatrixModel(
+              name: 'A',
+              cells: fillCells(s.defRows, s.defCols, s.defIdentity),
+            ),
+          ],
+          lines: [LineModel('')],
+        ),
+      ];
+    }
+    deleted = Map.of(doc.deleted);
+    history = List.of(doc.history);
+    historyClearedAt = doc.historyClearedAt;
+    settings.load(doc.settings);
+    settingsUpdated = doc.settingsUpdated;
+    if (!workspaces.any((w) => w.id == currentId)) {
+      currentId = workspaces.first.id;
+    }
+    _evaluateAll();
+    _persist();
+    notifyListeners();
   }
 
   /* ---------- tutorial ---------- */
@@ -582,6 +729,7 @@ class AppState extends ChangeNotifier {
 
   void updateSettings(void Function(Settings s) change) {
     change(settings);
+    settingsUpdated = _now;
     _changed(touch: false);
   }
 }

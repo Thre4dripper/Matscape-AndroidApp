@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../app/app_state.dart';
+import '../app/sync.dart';
 import '../engine/engine.dart';
 import 'math_view.dart';
 
@@ -16,6 +17,23 @@ class AppScope extends InheritedNotifier<AppState> {
   /// The state, without subscribing to changes (for callbacks).
   static AppState read(BuildContext context) =>
       context.getInheritedWidgetOfExactType<AppScope>()!.notifier!;
+}
+
+/// Makes the Google Drive sync available to the widget tree, where there is
+/// one (not in tests that don't ask for it).
+class SyncScope extends InheritedNotifier<SyncController> {
+  const SyncScope({
+    super.key,
+    required SyncController sync,
+    required super.child,
+  }) : super(notifier: sync);
+
+  static SyncController? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<SyncScope>()?.notifier;
+
+  /// The controller without rebuilding when its status changes.
+  static SyncController? read(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<SyncScope>()?.notifier;
 }
 
 extension AppStateFmt on AppState {

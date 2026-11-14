@@ -32,7 +32,13 @@ lives on the `main` branch history.
   to write it, worked examples and a button to try them
 - Twelve sample workspaces, one per topic, and a tour on first launch
 - Matrices and expressions can be dragged into a different order
-- Everything is calculated on the device; nothing is sent anywhere
+- Everything is calculated on the device. The only thing that ever leaves it
+  is optional backup and sync to the user's own Google Drive
+- Backup & sync (Settings): Google Sign-In with only the `drive.appdata`
+  permission. Each device writes `sync-<device id>.json` to the hidden app
+  folder of the user's Drive and merges the others' files: newest change per
+  workspace wins, an unseen change on two devices keeps both, deletions and
+  history clears carry over. No server of ours is involved
 
 ## One app, every screen
 
@@ -79,6 +85,21 @@ that large only come from functions such as `kron`; the editor stops at 8×8.
 LaTeX. No LaTeX compiler runs in the tests: `test/latex_test.dart` checks the
 output is well formed (balanced braces and environments, known commands, no
 symbol left unconverted).
+
+## Sync
+
+- `lib/app/sync_merge.dart`: the merge, pure Dart; `test/sync_merge_test.dart`
+  pins every rule and that all devices converge in any order.
+- `lib/app/drive_store.dart`: Drive v3 REST on `dart:io`, no Google API
+  package.
+- `lib/app/google_account.dart`: `google_sign_in` 7.x, asking only for
+  `drive.appdata`.
+- `lib/app/sync.dart`: when to sync and the device's own bookkeeping, kept
+  in a folder the platform never backs up so a restored phone doesn't reuse
+  its old phone's id. Other devices' changes come in on opening, on coming
+  back to the app and on Sync now, so nothing changes under the user; this
+  device's edits go out a few seconds after a pause and on leaving. "Live"
+  (per device, off by default) also looks every 30 seconds while open.
 
 ## Design
 

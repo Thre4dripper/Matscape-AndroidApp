@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/services.dart';
@@ -5,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../app/app_state.dart';
 import '../app/models.dart';
+import '../app/sync.dart';
 import '../engine/engine.dart';
 import 'drawer.dart';
 import 'glance.dart';
@@ -78,7 +80,47 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
 
   bool _tourOpen = false;
 
+  SyncController? _syncCtl;
+  StreamSubscription<SyncNotice>? _notices;
+
   AppState get _state => AppScope.read(context);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final sync = SyncScope.read(context);
+    if (sync == _syncCtl) return;
+    _syncCtl = sync;
+    unawaited(_notices?.cancel());
+    _notices = sync?.notices.listen(_onSyncNotice);
+  }
+
+  /// Tells the user what a sync changed that they didn't do on this device.
+  void _onSyncNotice(SyncNotice n) {
+    if (!mounted) return;
+    final state = _state;
+    final gone = n.removed;
+    if (gone.isNotEmpty) {
+      showToast(
+        context,
+        gone.length == 1
+            ? '“${gone.first.name}” was deleted on another device'
+            : '${gone.length} workspaces were deleted on your other devices',
+        action: 'Undo',
+        onAction: () => state.restoreWorkspaces(gone, open: n.openId),
+      );
+    } else if (n.copies.length == 1) {
+      showToast(
+        context,
+        'Changed on two devices: both kept, one as “${n.copies.first}”',
+      );
+    } else if (n.copies.isNotEmpty) {
+      showToast(
+        context,
+        '${n.copies.length} workspaces changed on two devices: both versions kept',
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -105,6 +147,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
 
   @override
   void dispose() {
+    unawaited(_notices?.cancel());
     for (final c in _ctl.values) {
       c.dispose();
     }

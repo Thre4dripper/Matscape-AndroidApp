@@ -202,6 +202,50 @@ Added 14 Nov 2026 · affects: `store/`, `motion-source/`
 - Re-render every store size and all three films once H-001 to H-010 are
   in the prototype.
 
+### H-012 · Backup & sync with Google Drive
+
+Added 15 Nov 2026 · affects: prototype, layout boards,
+store pictures (optional)
+
+A new first group in Settings, **Backup & sync**, holding one card:
+
+- **Off:** a cloud icon, the title "Back up and sync", a short explanation
+  (stored privately in the user's own Google Drive; Matscape has no
+  servers) and a primary button, "Connect Google Drive".
+- **Connected:** the Google account's email as the title, "Synced just now"
+  (or "5 minutes ago") under it, and two buttons side by side: "Sync now"
+  (with a sync icon) and "Disconnect".
+- **Working:** "Waiting for Google…" or "Syncing…", with a small spinner at
+  the right of the title.
+- **Failed:** the line turns to the danger colour: "Couldn't sync: … Your
+  work is safe on this device, and it will try again."
+- **Needs connecting again:** the danger line "Google Drive access has run
+  out…" and a primary "Connect again" button.
+- **Disconnect** asks first, in the app's usual confirm card.
+- **When connected**, under the buttons: a small heading, "Changes from
+  your other devices", one line saying what the choice does, and a
+  two-part switch in the app's segmented style: **On opening** (the
+  default: nothing changes on screen while you work) and **Live** (checks
+  every 30 seconds while the app is open).
+
+**After a sync**, a notice in the usual pill at the top of the screen:
+
+- A workspace deleted on another device: "“Name” was deleted on another
+  device", with an underlined bold **Undo** inside the pill. This pill stays
+  ten seconds instead of two, and Undo brings the workspace back (and
+  reopens it if it was open).
+- Two devices changed one workspace: "Changed on two devices: both kept,
+  one as “Name (from iPad)”".
+
+Also: workspace rows and the delete card now say "1 line" and "1 matrix"
+rather than "1 lines" and "1 matrices".
+
+The tour's last page and Help each gain a sentence about it.
+
+Reference: `iphone/14-settings.png`, `iphone/14b-settings-synced.png`,
+`iphone/14c-deleted-on-another-device.png`, `ipad-mini/03-settings.png`,
+`ipad-mini/04-settings-synced.png`.
+
 ## Done
 
 Nothing yet.

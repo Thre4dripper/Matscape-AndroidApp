@@ -4,6 +4,7 @@
 //
 // Run with tool/screenshots.sh. It is a test only because that is how
 // Flutter draws widgets without a device; it is not part of `flutter test`.
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -13,7 +14,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matscape/app/app_state.dart';
 import 'package:matscape/app/storage.dart';
+import 'package:matscape/app/sync.dart';
+import 'package:matscape/app/sync_merge.dart';
 import 'package:matscape/main.dart';
+
+import '../../test/support/fake_sync.dart';
 
 const _out = 'design/reference';
 
@@ -86,9 +91,23 @@ const tall = Device('iphone-full-page', 402, 3200);
 typedef Act = Future<void> Function(WidgetTester t, AppState s);
 
 class Scene {
-  const Scene(this.name, this.act, {this.tour = false, this.line});
+  const Scene(
+    this.name,
+    this.act, {
+    this.tour = false,
+    this.line,
+    this.synced = false,
+    this.deletedElsewhere = false,
+  });
   final String name;
   final Act act;
+
+  /// Connect Google Drive (a stand-in) before the picture.
+  final bool synced;
+
+  /// Then have another device delete the open workspace, and sync: the
+  /// picture shows the notice with Undo.
+  final bool deletedElsewhere;
 
   /// Start on the first-launch tour instead of the workspace.
   final bool tour;
@@ -156,6 +175,13 @@ final _phoneScenes = <Scene>[
   Scene('12-history', _menu('History')),
   Scene('13-workspaces', _menu('Workspaces')),
   Scene('14-settings', _menu('Settings')),
+  Scene('14b-settings-synced', _menu('Settings'), synced: true),
+  const Scene(
+    '14c-deleted-on-another-device',
+    _hideKeypad,
+    synced: true,
+    deletedElsewhere: true,
+  ),
   Scene('15-help', _menu('Help & tips')),
   const Scene('16-tour-welcome', _none, tour: true),
   Scene('17-tour-steps-and-inspector', (t, s) async {
@@ -195,6 +221,11 @@ final _shots = <(Device, bool, Scene)>[
   (ipadMini, false, const Scene('01-workspace', _none)),
   (ipadMini, false, const Scene('02-steps', _steps)),
   (ipadMini, false, Scene('03-settings', _menu('Settings'))),
+  (
+    ipadMini,
+    false,
+    Scene('04-settings-synced', _menu('Settings'), synced: true),
+  ),
   (ipad11, false, const Scene('01-workspace-inspector-no-matrix', _none)),
   (
     ipad11,
@@ -259,16 +290,56 @@ void main() {
       if (scene.line != null) {
         state.setLineText(state.ws.lines.first.id, scene.line!);
       }
+      final cloud = FakeCloud();
+      final sync = SyncController(
+        state: state,
+        account: FakeAccount(),
+        local: MemoryStorage(),
+        store: (_) => cloud,
+        deviceName: () async => 'iPhone',
+        debounce: const Duration(hours: 1),
+        poll: null,
+        available: true,
+      );
       final key = GlobalKey();
       await tester.pumpWidget(
         RepaintBoundary(
           key: key,
-          child: MatscapeApp(key: UniqueKey(), state: state),
+          child: MatscapeApp(key: UniqueKey(), state: state, sync: sync),
         ),
       );
+      await tester.runAsync(sync.start);
+      if (scene.synced) await tester.runAsync(sync.connect);
       await tester.pumpAndSettle();
       await scene.act(tester, state);
       await tester.pumpAndSettle();
+      if (scene.deletedElsewhere) {
+        final open = state.ws;
+        final mine = state.toSyncDoc(
+          device: 'ipad',
+          deviceName: 'iPad',
+          savedAt: 0,
+        );
+        final theirs = SyncDoc(
+          device: 'ipad',
+          deviceName: 'iPad',
+          savedAt: 0,
+          workspaces: [
+            for (final w in mine.workspaces)
+              if (w.id != open.id) w,
+          ],
+          deleted: {open.id: open.updated},
+          history: mine.history,
+          historyClearedAt: 0,
+          settings: mine.settings,
+          settingsUpdated: mine.settingsUpdated,
+        );
+        await tester.runAsync(
+          () => cloud.upload('sync-ipad.json', jsonEncode(theirs)),
+        );
+        await tester.runAsync(sync.sync);
+        await tester.pumpAndSettle();
+      }
 
       final boundary = tester.renderObject<RenderRepaintBoundary>(
         find.byKey(key),
@@ -284,9 +355,10 @@ void main() {
       file.writeAsBytesSync(bytes!.buffer.asUint8List());
 
       expect(tester.takeException(), isNull);
+      sync.dispose();
       state.flush();
       // Let any toast go before the next picture.
-      await tester.pump(const Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 11));
     });
   }
 }

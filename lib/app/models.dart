@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 final _rng = Random();
@@ -56,12 +57,14 @@ class Workspace {
     required this.updated,
     required this.matrices,
     required this.lines,
+    this.base = 0,
   }) : id = id ?? uid();
 
   factory Workspace.fromJson(Map<String, dynamic> j) => Workspace(
     id: j['id'] as String?,
     name: j['name'] as String,
     updated: j['updated'] as int,
+    base: j['base'] as int? ?? 0,
     matrices: [
       for (final m in j['matrices'] as List)
         MatrixModel.fromJson(m as Map<String, dynamic>),
@@ -77,17 +80,63 @@ class Workspace {
 
   /// Last change, milliseconds since epoch.
   int updated;
+
+  /// The [updated] time of the version this one was edited from. It is set
+  /// by the device that edits, on its first edit since its last full sync,
+  /// and merging never changes it. A version whose [base] is older than
+  /// another version's [updated] never saw that version's edits, which is
+  /// how sync tells a conflict from an ordinary later edit.
+  int base;
   List<MatrixModel> matrices;
   List<LineModel> lines;
+
+  /// A sample as it was shipped, never edited.
+  bool get isPristineSample =>
+      id.startsWith(samplePrefix) && updated <= sampleEpoch;
+
+  /// What the user sees, for telling whether two versions differ. Internal
+  /// ids are left out: the same text on two devices is the same content.
+  String get contentKey => jsonEncode([
+    name,
+    [
+      for (final m in matrices) [m.name, m.cells],
+    ],
+    [for (final l in lines) l.text],
+  ]);
+
+  Workspace copyWith({String? id, String? name, int? updated, int? base}) =>
+      Workspace.fromJson({
+        ...jsonDecode(jsonEncode(this)) as Map<String, dynamic>,
+        'id': ?id,
+        'name': ?name,
+        'updated': ?updated,
+        'base': ?base,
+      });
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
     'updated': updated,
+    'base': base,
     'matrices': matrices,
     'lines': lines,
   };
 }
+
+/// Ids of the shipped samples start with this, so every device has the same
+/// ids for them and sync doesn't duplicate them.
+const samplePrefix = 'sample-';
+
+/// The shipped samples are dated just before this, 1 January 2025, so any
+/// edit a user makes is newer than a pristine copy from another device.
+const sampleEpoch = 1735689600000;
+
+String sampleId(String name) =>
+    samplePrefix +
+    name
+        .toLowerCase()
+        .replaceAll(RegExp('[^a-z0-9]+'), '-')
+        .replaceAll(RegExp(r'^-+|-+$'), '');
 
 class HistoryItem {
   HistoryItem(this.text, this.summary, this.ts);
@@ -144,16 +193,31 @@ class Settings {
 /// topic, in the order someone would learn them. Every operation in the
 /// library appears in at least one of them.
 List<Workspace> seedWorkspaces() {
-  final now = DateTime.now().millisecondsSinceEpoch;
   var n = 0;
-  Workspace ws(String name, List<MatrixModel> matrices, List<String> lines) =>
-      Workspace(
-        name: name,
-        // A second apart, so sorting by date keeps this order.
-        updated: now - 1000 * n++,
-        matrices: matrices,
-        lines: [for (final s in lines) LineModel(s)],
-      );
+  Workspace ws(String name, List<MatrixModel> matrices, List<String> lines) {
+    // A second apart, so sorting by date keeps this order.
+    final t = sampleEpoch - 1000 * n++;
+    return Workspace(
+      id: sampleId(name),
+      name: name,
+      updated: t,
+      base: t,
+      // Fixed ids inside too, so the same sample is identical everywhere.
+      matrices: [
+        for (final (i, m) in matrices.indexed)
+          MatrixModel(
+            id: '${sampleId(name)}-m$i',
+            name: m.name,
+            cells: m.cells,
+          ),
+      ],
+      lines: [
+        for (final (i, s) in lines.indexed)
+          LineModel(s, id: '${sampleId(name)}-l$i'),
+      ],
+    );
+  }
+
   const m = MatrixModel.of;
   return [
     ws(

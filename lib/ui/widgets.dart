@@ -848,22 +848,47 @@ class ErrorNote extends StatelessWidget {
 OverlayEntry? _toastEntry;
 Timer? _toastTimer;
 
-/// Brief pill message at the top of the screen.
-void showToast(BuildContext context, String message) {
+/// Brief pill message at the top of the screen. With [action], the pill
+/// carries a button (such as Undo) and stays up longer.
+void showToast(
+  BuildContext context,
+  String message, {
+  String? action,
+  VoidCallback? onAction,
+}) {
   final overlay = Navigator.of(context, rootNavigator: true).overlay;
   if (overlay == null) return;
   _toastTimer?.cancel();
   _toastEntry?.remove();
-  final entry = OverlayEntry(
+  late final OverlayEntry entry;
+  entry = OverlayEntry(
     builder: (context) {
       final pal = context.pal;
       final area = LayoutInfo.of(context)
           .overlayRect(MediaQuery.sizeOf(context));
+      void act() {
+        _toastTimer?.cancel();
+        entry.remove();
+        if (_toastEntry == entry) _toastEntry = null;
+        onAction?.call();
+      }
+
+      // From the theme: the overlay sits outside any Material, so a bare
+      // style wouldn't get the app's text face.
+      final text = Theme.of(context).textTheme.bodyMedium!.copyWith(
+        color: pal.bg,
+        fontSize: Fs.sm,
+        fontWeight: FontWeight.w500,
+        height: 1.35,
+        decoration: TextDecoration.none,
+      );
+      final label = Text(message, textAlign: TextAlign.center, style: text);
       return Positioned(
         top: MediaQuery.paddingOf(context).top + 8,
         left: area.left + 24,
         width: area.width - 48,
         child: IgnorePointer(
+          ignoring: action == null,
           child: Center(
             child: TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: 1),
@@ -894,17 +919,36 @@ void showToast(BuildContext context, String message) {
                       ),
                     ],
                   ),
-                  child: Text(
-                    message,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: pal.bg,
-                      fontSize: Fs.sm,
-                      fontWeight: FontWeight.w500,
-                      height: 1.35,
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
+                  child: action == null
+                      ? label
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(child: label),
+                            const SizedBox(width: 12),
+                            Semantics(
+                              button: true,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: act,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 6,
+                                  ),
+                                  child: Text(
+                                    action,
+                                    style: text.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: pal.bg,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                 ),
               ),
             ),
@@ -915,7 +959,9 @@ void showToast(BuildContext context, String message) {
   );
   _toastEntry = entry;
   overlay.insert(entry);
-  _toastTimer = Timer(const Duration(milliseconds: 2200), () {
+  // Long enough to read, then reach the button.
+  final shown = action == null ? 2200 : 10000;
+  _toastTimer = Timer(Duration(milliseconds: shown), () {
     entry.remove();
     if (_toastEntry == entry) _toastEntry = null;
   });

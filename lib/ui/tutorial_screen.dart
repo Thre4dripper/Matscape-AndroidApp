@@ -157,6 +157,8 @@ class _TutorialScreenState extends State<TutorialScreen> {
             'again.',
         'Settings has the theme, radians or degrees, exact or decimal '
             'results, and the size of new matrices.',
+        'Settings can also back your work up to your own Google Drive and '
+            'keep it in step on all your devices.',
         'Help & tips has examples to try, and this tour.',
       ],
       _figMenu,

@@ -4,6 +4,7 @@ import '../app/app_state.dart';
 import 'icons.dart';
 import 'library_screen.dart' show FieldLabel, InputBox;
 import 'scope.dart';
+import 'sync_settings.dart';
 import 'theme.dart';
 import 'tutorial_screen.dart';
 import 'widgets.dart';
@@ -127,7 +128,7 @@ class _WorkspacesScreenState extends State<WorkspacesScreen> {
                                     _rowTitle(context, w.name),
                                     _rowSub(
                                       context,
-                                      '${w.matrices.length} matri${w.matrices.length == 1 ? 'x' : 'ces'} · ${w.lines.where((l) => l.text.trim().isNotEmpty).length} lines · ${_shortDate(w.updated)}',
+                                      '${_count(w.matrices.length, 'matrix', 'matrices')} · ${_count(w.lines.where((l) => l.text.trim().isNotEmpty).length, 'line', 'lines')} · ${w.isPristineSample ? 'Sample' : _shortDate(w.updated)}',
                                     ),
                                   ],
                                 ),
@@ -227,7 +228,7 @@ class _WorkspacesScreenState extends State<WorkspacesScreen> {
       context,
       title: 'Delete “${w.name}”?',
       body:
-          'Its ${w.matrices.length} matrices and ${w.lines.length} lines will be removed. This can’t be undone.',
+          'Its ${_count(w.matrices.length, 'matrix', 'matrices')} and ${_count(w.lines.length, 'line', 'lines')} will be removed. This can’t be undone.',
       ok: 'Delete',
     );
     if (!ok || !mounted) return;
@@ -383,10 +384,12 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
 
+    final sync = SyncScope.maybeOf(context);
     return SubScreen(
       title: 'Settings',
       child: SubScroll(
         children: [
+          if (sync != null) group('Backup & sync', [SyncSettings(sync: sync)]),
           group('Appearance', [
             row(
               'Theme',
@@ -539,6 +542,10 @@ class HelpScreen extends StatelessWidget {
           ),
           _paragraph(
             context,
+            'Your work is saved on this device as you go. To keep a copy safe and use it on your other phones and tablets, connect Google Drive under Settings → Backup & sync. It is stored privately in Drive\'s app data, which only Matscape can read. Your edits are sent a few seconds after you pause and when you leave the app. Changes from your other devices come in when you open the app or come back to it, or when you tap Sync now; choose Live to see them while you work. If the same workspace is changed on two devices before they sync, both versions are kept, and a workspace deleted on another device can be brought back with Undo.',
+          ),
+          _paragraph(
+            context,
             'Tap Inspect on any matrix result for its properties, eigenvalues, norms, step-by-step row reduction and decompositions.',
           ),
           _paragraph(
@@ -620,3 +627,6 @@ class HelpScreen extends StatelessWidget {
     );
   }
 }
+
+/// "1 line", "3 lines".
+String _count(int n, String one, String many) => '$n ${n == 1 ? one : many}';
