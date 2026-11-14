@@ -114,6 +114,9 @@ class Settings {
   int defCols = 3;
   bool defIdentity = false;
 
+  /// Copy results and steps as LaTeX instead of plain text.
+  bool copyLatex = false;
+
   void load(Map<String, dynamic> j) {
     theme = j['theme'] as String? ?? theme;
     degrees = j['degrees'] as bool? ?? degrees;
@@ -122,6 +125,7 @@ class Settings {
     defRows = j['defRows'] as int? ?? defRows;
     defCols = j['defCols'] as int? ?? defCols;
     defIdentity = j['defIdentity'] as bool? ?? defIdentity;
+    copyLatex = j['copyLatex'] as bool? ?? copyLatex;
   }
 
   Map<String, dynamic> toJson() => {
@@ -132,6 +136,7 @@ class Settings {
     'defRows': defRows,
     'defCols': defCols,
     'defIdentity': defIdentity,
+    'copyLatex': copyLatex,
   };
 }
 

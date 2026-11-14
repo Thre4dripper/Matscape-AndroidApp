@@ -83,6 +83,7 @@ class SolveStep {
     this.title,
     this.expr,
     this.value, {
+    this.tex = '',
     this.note,
     this.methods = const [],
   });
@@ -92,6 +93,9 @@ class SolveStep {
 
   /// What is being worked out, as text: "A·Bᵀ".
   final String expr;
+
+  /// The same in LaTeX: `A B^{\mathsf{T}}`.
+  final String tex;
 
   /// What it comes to: a `double`, [Mat], [ListVal], [MultiVal], [PolyVal]
   /// or [TextVal].
@@ -103,11 +107,13 @@ class SolveStep {
 }
 
 class Solution {
-  Solution(this.expr, this.value, this.steps, this.assign);
+  Solution(this.expr, this.value, this.steps, this.assign, {this.tex = ''});
 
   /// The whole expression, tidied.
   final String expr;
 
+  /// The whole expression in LaTeX.
+  final String tex;
   final Object value;
   final List<SolveStep> steps;
   final String? assign;
@@ -132,9 +138,19 @@ Solution? explain(
     final root = _Parser(body, ctx.vars).parse();
     final v = _eval(root, ctx);
     if (v is Eye) return null;
-    final ex = _Explainer(ctx, fmt);
+    final ex = _Explainer(
+      ctx,
+      fmt,
+      (x) => texNum(x, exact: exact, precision: precision),
+    );
     ex.walk(root, top: true);
-    return Solution(ex.show(root), _tidy(v), ex.steps, a?.name);
+    return Solution(
+      ex.show(root),
+      _tidy(v),
+      ex.steps,
+      a?.name,
+      tex: ex.tex(root),
+    );
   } on MathError {
     return null;
   } catch (_) {
@@ -173,7 +189,7 @@ bool hasSteps(String text, {Map<String, Object> vars = const {}}) {
     final body = splitAssignment(text)?.body ?? text;
     if (body.trim().isEmpty) return false;
     final root = _Parser(body, vars).parse();
-    return !_Explainer(_Ctx(vars, false), plain)._atom(root);
+    return !_Explainer(_Ctx(vars, false), plain, texNum)._atom(root);
   } catch (_) {
     return false;
   }
@@ -270,9 +286,12 @@ const _fnNote = {
 };
 
 class _Explainer {
-  _Explainer(this.ctx, this.fmt);
+  _Explainer(this.ctx, this.fmt, this.texOf);
   final _Ctx ctx;
   final String Function(double) fmt;
+
+  /// A number in LaTeX, in the user's number format.
+  final String Function(double) texOf;
   final steps = <SolveStep>[];
 
   /// Largest determinant whose cofactor expansion is written out all the
@@ -403,6 +422,121 @@ class _Explainer {
     }
   }
 
+  /* ---------- the expression as LaTeX ---------- */
+
+  static const _texFns = {
+    'det': r'\det',
+    'sin': r'\sin',
+    'cos': r'\cos',
+    'tan': r'\tan',
+    'sec': r'\sec',
+    'csc': r'\csc',
+    'cot': r'\cot',
+    'asin': r'\arcsin',
+    'arcsin': r'\arcsin',
+    'acos': r'\arccos',
+    'arccos': r'\arccos',
+    'atan': r'\arctan',
+    'arctan': r'\arctan',
+    'sinh': r'\sinh',
+    'cosh': r'\cosh',
+    'tanh': r'\tanh',
+    'ln': r'\ln',
+    'log': r'\log',
+    'exp': r'\exp',
+  };
+
+  static const _texNames = {
+    'π': r'\pi',
+    'pi': r'\pi',
+    'α': r'\alpha',
+    'β': r'\beta',
+    'γ': r'\gamma',
+    'δ': r'\delta',
+    'θ': r'\theta',
+    'λ': r'\lambda',
+    'μ': r'\mu',
+    'σ': r'\sigma',
+    'φ': r'\varphi',
+    'ω': r'\omega',
+  };
+
+  String _texIn(_Node x, int min) =>
+      _prec(x) < min ? '\\left( ${tex(x)} \\right)' : tex(x);
+
+  /// The expression as LaTeX: products of names are set side by side,
+  /// arithmetic on numbers as fractions, functions as operators.
+  String tex(_Node x) {
+    switch (x.k) {
+      case 'num':
+        return texOf(x.v);
+      case 'id':
+        return _texNames[x.s] ??
+            (x.s.length > 1 ? '\\mathrm{${x.s.replaceAll('_', r'\_')}}' : x.s);
+      case 'neg':
+        return '-${_texIn(x.a!, 3)}';
+      case 'bin':
+        if (x.s == '/' && _arith(x)) {
+          return '\\frac{${tex(x.a!)}}{${tex(x.b!)}}';
+        }
+        final (left, right) = switch (x.s) {
+          '+' || '-' => (1, 2),
+          '*' => (2, 2),
+          _ => (2, 3),
+        };
+        final l = _texIn(x.a!, left), r = _texIn(x.b!, right);
+        switch (x.s) {
+          case '+':
+            return '$l + $r';
+          case '-':
+            return '$l - $r';
+          case '/':
+            return '$l / $r';
+          case '*':
+            // A dot only where two numbers would otherwise run together.
+            final digit = RegExp(r'^(\d|-|\\frac|\\tfrac)').hasMatch(r);
+            return digit
+                ? '$l \\cdot $r'
+                : (x.a!.k == 'num' ? '$l$r' : '$l $r');
+          default:
+            return '$l \\circ $r';
+        }
+      case 'pow':
+        final e = x.b!, base = _texIn(x.a!, 5);
+        if (e.k == 'id' && e.s == 'T' && !ctx.vars.containsKey('T')) {
+          return '$base^{\\mathsf{T}}';
+        }
+        return '$base^{${tex(e)}}';
+      case 'post':
+        const marks = {
+          'T': r'^{\mathsf{T}}',
+          'inv': '^{-1}',
+          'sq': '^{2}',
+          'cube': '^{3}',
+          'deg': r'^{\circ}',
+          'fact': '!',
+        };
+        return '${_texIn(x.a!, 4)}${marks[x.s]}';
+      case 'lit':
+        return '\\begin{bmatrix} ${x.rows!.map((r) => r.map(tex).join(' & ')).join(r' \\ ')} \\end{bmatrix}';
+      case 'bars':
+        return '\\left| ${tex(x.a!)} \\right|';
+      case 'call':
+        final args = x.args!;
+        if (x.s == 'sqrt' && args.length == 1) return '\\sqrt{${tex(args[0])}}';
+        if (x.s == 'cbrt' && args.length == 1) {
+          return '\\sqrt[3]{${tex(args[0])}}';
+        }
+        if (x.s == 'abs' && args.length == 1) {
+          return '\\left| ${tex(args[0])} \\right|';
+        }
+        final name = _texFns[x.s] ?? '\\operatorname{${x.s}}';
+        return '$name\\left( ${args.map(tex).join(', ')} \\right)';
+      default:
+        return '';
+    }
+  }
+
   /// A name, possibly with a power or transpose mark on it.
   bool _named(_Node x) =>
       x.k == 'id' || ((x.k == 'post' || x.k == 'pow') && x.a!.k == 'id');
@@ -458,7 +592,9 @@ class _Explainer {
     // Plain arithmetic inside a matrix expression is one step, not many.
     final numbers = _arith(x);
     if (numbers && !top && !inNumbers) {
-      steps.add(SolveStep('Work out the number', show(x), _tidy(v)));
+      steps.add(
+        SolveStep('Work out the number', show(x), _tidy(v), tex: tex(x)),
+      );
       return;
     }
     for (final k in _kids(x)) {
@@ -472,7 +608,14 @@ class _Explainer {
   SolveStep? _step(_Node x, Object v) {
     final expr = show(x), out = _tidy(v);
     SolveStep make(String title, {String? note, List<StepMethod>? methods}) =>
-        SolveStep(title, expr, out, note: note, methods: methods ?? const []);
+        SolveStep(
+          title,
+          expr,
+          out,
+          tex: tex(x),
+          note: note,
+          methods: methods ?? const [],
+        );
     switch (x.k) {
       case 'neg':
         return make(

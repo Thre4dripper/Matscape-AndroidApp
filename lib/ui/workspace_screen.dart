@@ -340,9 +340,9 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     _focusLine(state.addLine(afterId: last).id);
   }
 
-  void _copy(String text) {
-    Clipboard.setData(ClipboardData(text: text));
-    showToast(context, 'Copied');
+  void _copy(Object value) {
+    Clipboard.setData(ClipboardData(text: _state.copyText(value)));
+    showToast(context, _state.copiedNote);
   }
 
   /* ---------- WorkspaceHost ---------- */
@@ -1278,7 +1278,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
       MIcon.copy,
       small: true,
       label: 'Copy $what',
-      onTap: () => _copy(state.valueText(v)),
+      onTap: () => _copy(v),
     );
 
     // Shown under every result that takes at least one operation to reach.

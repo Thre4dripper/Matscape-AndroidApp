@@ -543,10 +543,8 @@ class _InspectorScreenState extends State<InspectorScreen> {
                     'Copy',
                     icon: MIcon.copy,
                     onTap: () {
-                      Clipboard.setData(
-                        ClipboardData(text: AppState.matText(a)),
-                      );
-                      showToast(context, 'Copied');
+                      Clipboard.setData(ClipboardData(text: state.copyText(a)));
+                      showToast(context, state.copiedNote);
                     },
                   ),
                   const SizedBox(width: 8),

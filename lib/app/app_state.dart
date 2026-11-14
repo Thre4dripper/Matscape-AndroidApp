@@ -282,6 +282,15 @@ class AppState extends ChangeNotifier {
     return resultSummary(v);
   }
 
+  /// What the copy button puts on the clipboard for [v]: plain text, or
+  /// LaTeX when that is chosen in Settings.
+  String copyText(Object v) => settings.copyLatex
+      ? texValue(v, exact: settings.exact, precision: settings.precision)
+      : valueText(v);
+
+  /// What to tell the user after copying.
+  String get copiedNote => settings.copyLatex ? 'Copied as LaTeX' : 'Copied';
+
   /* ---------- lines ---------- */
 
   LineModel? lineById(String id) {

@@ -7,6 +7,7 @@ library;
 import 'dart:math' as math;
 
 import 'format.dart';
+import 'latex.dart';
 import 'linalg.dart';
 import 'types.dart';
 

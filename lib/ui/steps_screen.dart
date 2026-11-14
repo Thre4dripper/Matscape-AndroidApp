@@ -129,6 +129,60 @@ class _StepsScreenState extends State<StepsScreen> {
     return b.toString().trimRight();
   }
 
+  /// The same as an `align*` block of LaTeX.
+  String _asLatex(AppState state, Solution s) {
+    final set = state.settings;
+    // "expr = value", or "expr: values" where the value names its parts.
+    String equals(String expr, Object v) {
+      final named = v is MultiVal || v is ListVal || v is TextVal;
+      return '$expr ${named ? r':\quad' : '='} ${texValue(v, exact: set.exact, precision: set.precision)}';
+    }
+
+    String bold(String text) =>
+        texProse(text).replaceFirst(r'\text{', r'\textbf{');
+    final lines = <String>[];
+    final assign = s.assign == null ? '' : '${s.assign} = ';
+    if (s.steps.length != 1) lines.add(equals('$assign${s.tex}', s.value));
+    for (var i = 0; i < s.steps.length; i++) {
+      final st = s.steps[i];
+      lines
+        ..add(bold('${i + 1}. ${st.title}'))
+        ..add(equals(st.tex, st.value));
+      if (st.methods.isEmpty || !_open.contains(i)) continue;
+      final mi = _chosen(st, i), work = _work[(i, mi)];
+      if (work == null) continue;
+      if (st.methods.length > 1) lines.add(texProse('${st.methods[mi].name}:'));
+      for (final w in work) {
+        final pad = r'\quad ' * w.indent;
+        String mat() => texMat(
+          w.mat!,
+          exact: set.exact,
+          precision: set.precision,
+          aug: w.aug,
+        );
+        switch (w.kind) {
+          case WorkKind.text:
+            lines.add('$pad${texProse(w.text!)}');
+          case WorkKind.math:
+            lines.add('$pad${texMath(w.text!)}');
+          case WorkKind.matrix:
+            if (w.label != null) lines.add('$pad${texProse(w.label!)}');
+            lines.add('$pad${mat()}');
+          case WorkKind.ops:
+            lines
+              ..add('$pad${w.ops.map(texMath).join(r',\quad ')}')
+              ..add('$pad${mat()}');
+        }
+      }
+    }
+    return [
+      '% $assign${s.expr}',
+      r'\begin{align*}',
+      lines.map((l) => '& $l').join(' \\\\\n'),
+      r'\end{align*}',
+    ].join('\n');
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context), pal = context.pal;
@@ -158,8 +212,13 @@ class _StepsScreenState extends State<StepsScreen> {
         MIcon.copy,
         label: 'Copy the steps',
         onTap: () {
-          Clipboard.setData(ClipboardData(text: _asText(state, sol)));
-          showToast(context, 'Steps copied');
+          final latex = state.settings.copyLatex;
+          Clipboard.setData(
+            ClipboardData(
+              text: latex ? _asLatex(state, sol) : _asText(state, sol),
+            ),
+          );
+          showToast(context, latex ? 'Steps copied as LaTeX' : 'Steps copied');
         },
       ),
       // Slivers, so that working thousands of lines long is only laid out
