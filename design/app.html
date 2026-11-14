@@ -2,7 +2,10 @@
 <!-- Matscape 2 — standalone adaptive app. Fills whatever window or frame it is
      given and picks its layout from the available width. Optional query:
      posture=book|tabletop|glance · st / sb = top / bottom safe area (px) ·
-     hinge = fold gap (px) · bar=ios|android draws a status bar. -->
+     hinge = fold gap (px) · bar=ios|android draws a status bar ·
+     sl / sr = left / right safe area (px, phones on their side) ·
+     strip=left|right = an 84pt system strip down that side (iPhone Duo outer
+     screen) that holds the status items and the matrices. -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -70,11 +73,21 @@
 :root [hidden]:where(:not([hidden="until-found" i])) { display: none; }
 /* /OD-LAYOUT-PRIMITIVES v1 */
 
-    :root { --phone-safe-top: 0px; --phone-safe-bottom: 0px; --hinge: 24px; }
+    :root { --phone-safe-top: 0px; --phone-safe-bottom: 0px; --phone-safe-left: 0px; --phone-safe-right: 0px; --hinge: 24px; }
     html, body { margin: 0; height: 100%; }
     body { overflow: hidden; background: var(--phone-screen-bg, #f6f7f9); }
     .screen-host { position: relative; height: 100vh; height: 100dvh; overflow: hidden; background: var(--phone-screen-bg, #f6f7f9); }
-    .phone-content { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; padding-top: var(--phone-safe-top); padding-bottom: var(--phone-safe-bottom); }
+    .phone-content { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; padding: var(--phone-safe-top) var(--phone-safe-right) var(--phone-safe-bottom) var(--phone-safe-left); }
+    /* status items inside the side strip (iPhone Duo outer screen) */
+    .sstrip {
+      position: absolute; z-index: 15; top: 0; width: 84px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px;
+      padding-bottom: 14px; color: var(--phone-system-fg, #111317); pointer-events: none;
+      font: 600 15px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, "Noto Sans", system-ui, sans-serif;
+    }
+    .sstrip[data-side="left"] { left: 0; } .sstrip[data-side="right"] { right: 0; }
+    .sstrip .icons { display: inline-flex; align-items: center; gap: 5px; }
+    .sstrip svg { display: block; flex: none; fill: currentColor; width: 16px; height: 11px; }
+    .sstrip svg.battery { width: 24px; }
     .sbar {
       position: absolute; z-index: 15; top: 0; left: 0; right: 0; box-sizing: border-box;
       height: var(--phone-safe-top); display: flex; align-items: center; justify-content: space-between; padding: 0 22px;
@@ -104,6 +117,12 @@
         <svg class="battery" viewBox="0 0 27 12"><path fill-rule="evenodd" d="M2.5 1h19A2.5 2.5 0 0 1 24 3.5v5a2.5 2.5 0 0 1-2.5 2.5h-19A2.5 2.5 0 0 1 0 8.5v-5A2.5 2.5 0 0 1 2.5 1Zm0 1A1.5 1.5 0 0 0 1 3.5v5A1.5 1.5 0 0 0 2.5 10h19A1.5 1.5 0 0 0 23 8.5v-5A1.5 1.5 0 0 0 21.5 2h-19Zm.5 1h17.5A1.5 1.5 0 0 1 22 4.5v3A1.5 1.5 0 0 1 20.5 9H3V3Zm22 1.5a1.5 1.5 0 0 1 0 3v-3Z"/></svg>
       </span>
     </div>
+    <div class="sstrip" id="sstrip" hidden aria-hidden="true">
+      <span>9:41</span>
+      <span class="icons">
+        <svg viewBox="0 0 18 12"><path d="M9 11.2 7.2 9.4a2.55 2.55 0 0 1 3.6 0L9 11.2Zm4.1-4.1-1.35 1.35a3.9 3.9 0 0 0-5.5 0L4.9 7.1a5.8 5.8 0 0 1 8.2 0Zm3-3-1.35 1.35a8.15 8.15 0 0 0-11.5 0L1.9 4.1a10.05 10.05 0 0 1 14.2 0Z"/></svg>
+      </span>
+    </div>
   </section>
   <script>
     (function () {
@@ -113,6 +132,15 @@
       root.setProperty('--phone-safe-top', st + 'px');
       root.setProperty('--phone-safe-bottom', num('sb', 0) + 'px');
       root.setProperty('--hinge', num('hinge', 24) + 'px');
+      root.setProperty('--phone-safe-left', num('sl', 0) + 'px');
+      root.setProperty('--phone-safe-right', num('sr', 0) + 'px');
+      var strip = q.get('strip'), ss = document.getElementById('sstrip');
+      if (strip === 'left' || strip === 'right') {
+        ss.hidden = false; ss.setAttribute('data-side', strip);
+        // upright, the status items take the top of the strip; on its side, a shorter band
+        ss.style.height = (window.innerHeight > window.innerWidth ? 164 : 76) + 'px';
+        if (window.innerHeight <= window.innerWidth) { ss.style.paddingBottom = '10px'; ss.style.gap = '6px'; }
+      }
       var bar = q.get('bar'), el = document.getElementById('sbar');
       if (bar && st >= 20) { el.hidden = false; el.setAttribute('data-os', bar); }
     })();

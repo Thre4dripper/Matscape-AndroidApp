@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Matscape · iPhone Duo — Closed · Compact · 5.4″ outer screen</title>
+  <title>Matscape · iPhone Duo — Closed · upright and on its side</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" />
@@ -74,7 +74,7 @@
       --accent: #1f43c9; --accent-ink: #1a39ad; --accent-soft: #e2e8fb; --bezel: #16171a;
       --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Noto Sans", system-ui, sans-serif;
       --font-math: "STIX Two Text", "Cambria Math", "Times New Roman", serif;
-      --w: 375px; --h: 812px; --bz: 9px; --r: 48px;
+      --w: 402px; --h: 874px; --bz: 9px; --r: 48px;
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; }
@@ -99,44 +99,68 @@
     .crease--v { top: 0; bottom: 0; left: 50%; width: 12px; margin-left: -6px; background: linear-gradient(90deg, transparent, rgba(0,0,0,.07) 45%, rgba(255,255,255,.06) 55%, transparent); }
     .crease--h, .crease--h-soft { left: 0; right: 0; top: 50%; height: 12px; margin-top: -6px; background: linear-gradient(180deg, transparent, rgba(0,0,0,.07) 45%, rgba(255,255,255,.06) 55%, transparent); }
     .crease--h-soft { opacity: .5; }
+    .stage { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 40px 56px; padding: 32px 24px 48px; min-height: 0; }
+    .shot { display: grid; justify-items: center; gap: 14px; }
+    .shot > p { margin: 0; font-size: 14px; color: var(--ink-2); text-align: center; max-width: 40ch; }
+    .shot > p b { color: var(--ink); }
+    /* outer screen: the hinge edge is nearly square, the free edge well rounded */
+    .device { padding: var(--bz); border-radius: calc(var(--r1) + var(--bz)) calc(var(--r2) + var(--bz)) calc(var(--r3) + var(--bz)) calc(var(--r4) + var(--bz)); }
+    .screen { width: var(--sw); height: var(--sh); border-radius: var(--r1) var(--r2) var(--r3) var(--r4); }
+    .screen iframe { width: var(--fw); height: var(--fh); }
+    .cam { position: absolute; width: calc(13px * var(--s)); height: calc(13px * var(--s)); border-radius: 50%; background: #0b0c0e; box-shadow: 0 0 0 calc(2px * var(--s)) #1d1f24; pointer-events: none; }
   </style>
 </head>
 <body>
   <header class="bar">
     <div class="od-field">
       <h1>iPhone Duo — Closed</h1>
-      <div class="meta"><span class="tag">Compact · 5.4″ outer screen</span><span>Book-style foldable · sizes approximate</span></div>
-      <p class="desc">Closed, it works like any iPhone.</p>
+      <div class="meta"><span class="tag">Compact · outer screen</span><span>466 × 678 pt upright · 678 × 466 pt on its side</span></div>
+      <p class="desc">iOS keeps an 84 pt strip down one side for the camera, the clock and Wi-Fi. The matrices live in that strip as a column of small tiles, starting below the status items, so the “Matrices” row above the expressions is gone on this screen.</p>
     </div>
     <nav class="nav" aria-label="Layouts">
-      <a href="iphone-compact.html" aria-label="Previous layout: iPhone, portrait">← iPhone · Portrait</a>
+      <a href="phone-landscape.html" aria-label="Previous layout: iPhone, landscape">← iPhone · Landscape</a>
       <a href="../devices.html">All devices</a>
       <a href="iphone-duo-open-book.html" aria-label="Next layout: iPhone Duo, open">iPhone Duo · Open →</a>
     </nav>
   </header>
   <main class="stage">
-    <div class="device">
-      <div class="screen">
-        <iframe src="../app.html?st=54&sb=34&bar=ios" title="Matscape on iPhone Duo, closed — Compact · 5.4″ outer screen layout"></iframe>
-        
-      </div>
-    </div>
+    <figure class="shot" style="margin:0" data-w="466" data-h="678" data-r="14 44 44 14">
+      <div class="device"><div class="screen">
+        <iframe src="../app.html?strip=right&sb=34" title="Matscape on iPhone Duo, closed and upright — matrices in the side strip"></iframe>
+        <span class="cam" aria-hidden="true" style="left: calc((466px - 42px - 15px) * var(--s)); top: calc(18px * var(--s)); width: calc(30px * var(--s)); height: calc(30px * var(--s))"></span>
+      </div></div>
+      <p><b>Upright.</b> The strip is on the right: camera, clock and Wi-Fi at the top, matrix tiles below them, the compact layout beside it.</p>
+    </figure>
+    <figure class="shot" style="margin:0" data-w="678" data-h="466" data-r="44 14 14 44">
+      <div class="device"><div class="screen">
+        <iframe src="../app.html?strip=left&sb=34" title="Matscape on iPhone Duo, closed and on its side — landscape layout with the side strip"></iframe>
+        <span class="cam" aria-hidden="true" style="left: calc((42px - 12px) * var(--s)); top: calc(12px * var(--s)); width: calc(24px * var(--s)); height: calc(24px * var(--s))"></span>
+      </div></div>
+      <p><b>On its side.</b> The strip moves to the left and keeps the tiles; the rest of the screen uses the landscape layout, content 60% and keypad 40%.</p>
+    </figure>
   </main>
   <script>
     (function () {
-      var W = 375, H = 812, BZ = 9, R = 48, root = document.documentElement.style;
+      var BZ = 9;
       function fit() {
-        var bar = document.querySelector('.bar').offsetHeight;
-        var s = Math.min(1, (window.innerWidth - 48 - 2 * BZ) / W, (window.innerHeight - bar - 80 - 2 * BZ) / H);
-        s = Math.max(0.25, s);
-        root.setProperty('--s', s);
-        root.setProperty('--sw', Math.round(W * s) + 'px');
-        root.setProperty('--sh', Math.round(H * s) + 'px');
-        root.setProperty('--rs', Math.round(R * s) + 'px');
+        var bar = document.querySelector('.bar').offsetHeight, shots = document.querySelectorAll('.shot');
+        var avW = window.innerWidth - 48, avH = window.innerHeight - bar - 120;
+        var side = avW >= 1000;
+        // side by side on wide windows, stacked otherwise
+        var s = side ? Math.min(1, (avW - 56 - 4 * BZ) / (466 + 678), avH / 678) : Math.min(1, (avW - 2 * BZ) / 678, avH / 678);
+        s = Math.max(0.3, s);
+        shots.forEach(function (f) {
+          var w = +f.getAttribute('data-w'), h = +f.getAttribute('data-h'), st = f.style;
+          st.setProperty('--s', s); st.setProperty('--bz', BZ + 'px');
+          st.setProperty('--sw', Math.round(w * s) + 'px'); st.setProperty('--sh', Math.round(h * s) + 'px');
+          st.setProperty('--fw', w + 'px'); st.setProperty('--fh', h + 'px');
+          f.getAttribute('data-r').split(' ').forEach(function (r, i) { st.setProperty('--r' + (i + 1), Math.round(r * s) + 'px'); });
+        });
       }
       fit();
       window.addEventListener('resize', fit);
     })();
   </script>
+  <script src="../app/board-theme.js"></script>
 </body>
 </html>

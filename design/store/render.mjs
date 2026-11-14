@@ -12,6 +12,8 @@ const require = createRequire(path.join(process.env.PPTR_DIR, 'noop.js'));
 const puppeteer = require('puppeteer-core');
 
 const NAMES = ['01-workspace', '02-textbook-answers', '03-inspector', '04-step-by-step', '05-keypad', '06-tablets-foldables'];
+// Steps (04) goes second in every set. File names stay as they are, so upload in this order:
+const UPLOAD_ORDER = ['01-workspace', '04-step-by-step', '02-textbook-answers', '03-inspector', '05-keypad', '06-tablets-foldables'];
 const SETS = [
   { set: 'app-iphone', W: 1320, H: 2868, dir: 'app-store/iphone-6.9' },
   { set: 'app-ipad', W: 2064, H: 2752, dir: 'app-store/ipad-13' },
@@ -34,6 +36,7 @@ for (const j of jobs) {
   if (only && !j.out.includes(only)) continue;
   fs.mkdirSync(path.dirname(j.out), { recursive: true });
   const page = await browser.newPage();
+  page.on('pageerror', (e) => console.error('  page error:', e.message));
   await page.setViewport({ width: j.W, height: j.H, deviceScaleFactor: 1 });
   await page.goto(`${base}?set=${j.set}&n=${j.n}`, { waitUntil: 'load', timeout: 60000 });
   await page.waitForFunction('window.__ready === true', { timeout: 60000 });
@@ -50,3 +53,4 @@ for (const j of jobs) {
   console.log('wrote', path.relative(here, j.out), `${j.W}x${j.H}`);
 }
 await browser.close();
+console.log('upload order:', UPLOAD_ORDER.join(' → '));

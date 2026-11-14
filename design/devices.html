@@ -128,6 +128,7 @@
       <p>One adaptive app. The layout follows the space it has and how the device is folded. Every frame below is the live prototype, so you can tap around in any of them.</p>
       <ul class="legend" aria-label="Layouts">
         <li><b>Compact</b><span>Phones and closed foldables. Single column with the keypad at the bottom.</span></li>
+        <li><b>Landscape</b><span>Phones on their side. Content 60% on the left, keypad 40% on the right.</span></li>
         <li><b>Medium</b><span>Small tablets in portrait. Sidebar with navigation and matrices; workspace beside it.</span></li>
         <li><b>Expanded</b><span>Large tablets in landscape. Sidebar, workspace and a permanent inspector.</span></li>
         <li><b>Book</b><span>Foldables opened flat. Two panes split at the fold; nothing sits on the crease.</span></li>
@@ -147,9 +148,11 @@
     var GROUPS = [
       { title: 'iPhone', devices: [
         { name: 'iPhone', note: '6.3″ · 402 × 874 pt', states: [
-          x(IOS, { label: 'Portrait', w: 402, h: 874, layout: 'Compact', desc: 'Single column: matrices, expressions and the keypad.' }) ] },
+          x(IOS, { label: 'Portrait', w: 402, h: 874, layout: 'Compact', desc: 'Single column: matrices, expressions and the keypad.' }),
+          x(IOS, { label: 'Landscape', w: 874, h: 402, st: 0, sb: 21, sl: 62, sr: 62, bar: '', layout: 'Landscape · 60 / 40', desc: 'On its side: matrices and expressions take 60% of the width, the keypad 40%. The matrix editor splits the same way.' }) ] },
         { name: 'iPhone Duo', note: 'Book-style foldable · sizes approximate', states: [
-          x(IOS, { label: 'Closed', w: 375, h: 812, layout: 'Compact · 5.4″ outer screen', desc: 'Closed, it works like any iPhone.' }),
+          x(IOS, { label: 'Closed', w: 466, h: 678, st: 0, sb: 34, bar: '', strip: 'right', r: 36, layout: 'Compact · outer screen · 466 × 678 pt', desc: 'iOS keeps an 84 pt strip down the right side for the camera, clock and Wi-Fi; the matrices live there as a column of tiles.' }),
+          x(IOS, { label: 'Closed, on its side', w: 678, h: 466, st: 0, sb: 34, bar: '', strip: 'left', r: 36, layout: 'Landscape · side strip', desc: 'On its side the strip moves to the left and keeps the tiles; content 60%, keypad 40%.' }),
           x(IOS, { label: 'Open', w: 870, h: 652, st: 28, sb: 20, r: 26, bz: 10, posture: 'book', hinge: 24, crease: 'v', layout: 'Book · 7.6″ inner screen', desc: 'Workspace and keypad on the left, a live inspector on the right that follows the result you tap.' }),
           x(IOS, { label: 'Tabletop', w: 652, h: 870, st: 28, sb: 20, r: 26, bz: 10, posture: 'tabletop', hinge: 24, crease: 'h', layout: 'Tabletop', desc: 'Half-folded on a desk: results above the fold, a full-height keypad below.' }) ] }
       ] },
@@ -184,9 +187,11 @@
       q.push('st=' + st.st, 'sb=' + st.sb);
       if (st.bar) q.push('bar=' + st.bar);
       if (st.hinge) q.push('hinge=' + st.hinge);
+      if (st.sl) q.push('sl=' + st.sl, 'sr=' + st.sr);
+      if (st.strip) q.push('strip=' + st.strip);
       return 'app.html?' + q.join('&');
     }
-    var PAGES = {"iPhone|Portrait": "iphone-compact", "iPhone Duo|Closed": "iphone-duo-closed", "iPhone Duo|Open": "iphone-duo-open-book", "iPhone Duo|Tabletop": "iphone-duo-tabletop", "Android phone|Portrait": "android-phone-compact", "Book foldable|Closed": "android-book-foldable-closed", "Book foldable|Open": "android-book-foldable-open", "Book foldable|Tabletop": "android-book-foldable-tabletop", "Flip foldable|Closed": "android-flip-cover-glance", "Flip foldable|Half open": "android-flip-half-open", "Flip foldable|Open": "android-flip-open", "iPad mini|Portrait": "ipad-mini-medium", "Android tablet|Portrait": "android-tablet-medium", "iPad 11″|Landscape": "ipad-11-expanded", "iPad 13″|Landscape": "ipad-13-expanded"};
+    var PAGES = {"iPhone|Portrait": "iphone-compact", "iPhone|Landscape": "phone-landscape", "iPhone Duo|Closed": "iphone-duo-closed", "iPhone Duo|Closed, on its side": "iphone-duo-closed", "iPhone Duo|Open": "iphone-duo-open-book", "iPhone Duo|Tabletop": "iphone-duo-tabletop", "Android phone|Portrait": "android-phone-compact", "Book foldable|Closed": "android-book-foldable-closed", "Book foldable|Open": "android-book-foldable-open", "Book foldable|Tabletop": "android-book-foldable-tabletop", "Flip foldable|Closed": "android-flip-cover-glance", "Flip foldable|Half open": "android-flip-half-open", "Flip foldable|Open": "android-flip-open", "iPad mini|Portrait": "ipad-mini-medium", "Android tablet|Portrait": "android-tablet-medium", "iPad 11″|Landscape": "ipad-11-expanded", "iPad 13″|Landscape": "ipad-13-expanded"};
     function openHref(st, d) { var p = PAGES[d.name + '|' + st.label]; return p ? 'layouts/' + p + '.html' : 'app.html'; }
     function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
@@ -247,5 +252,6 @@
     window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(function () { cards.forEach(function (c) { apply(c, false); }); }, 120); });
   })();
   </script>
+  <script src="app/board-theme.js"></script>
 </body>
 </html>

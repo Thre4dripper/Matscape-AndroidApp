@@ -43,34 +43,38 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="28" data-width="886" data-height="1920" data-fps="30" data-poster-time="8.2">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="886" data-height="1920" data-fps="30" data-poster-time="10.4">
       <div class="glow g1" id="g1"></div><div class="glow g2" id="g2"></div>
       <div class="glyph q1" id="q1">[</div><div class="glyph q2" id="q2">]</div>
       <div id="caps"></div>
-      <div id="card"><div class="clip" id="k0"><div class="zoom" id="z0"><video id="v0" src="assets/tour.mp4" muted playsinline preload="auto" data-start="0.0" data-duration="4.2" data-media-start="0.6" data-track-index="1"></video></div></div><div class="clip" id="k1"><div class="zoom" id="z1"><video id="v1" src="assets/type.mp4" muted playsinline preload="auto" data-start="3.6" data-duration="6.0" data-media-start="0.6" data-track-index="2"></video></div></div><div class="clip" id="k2"><div class="zoom" id="z2"><video id="v2" src="assets/inspect.mp4" muted playsinline preload="auto" data-start="9.0" data-duration="6.8" data-media-start="0.0" data-track-index="3"></video></div></div><div class="clip" id="k3"><div class="zoom" id="z3"><video id="v3" src="assets/library.mp4" muted playsinline preload="auto" data-start="15.2" data-duration="7.0" data-media-start="0.5" data-track-index="4"></video></div></div><div class="clip" id="k4"><div class="zoom" id="z4"><video id="v4" src="assets/editor.mp4" muted playsinline preload="auto" data-start="21.6" data-duration="6.4" data-media-start="2.0" data-track-index="5"></video></div></div></div>
-      <audio src="assets/music.wav" data-start="0" data-duration="28" data-volume="0.7" preload="auto"></audio>
+      <div id="card"><div class="clip" id="k0"><div class="zoom" id="z0"><video id="v0" src="assets/tour.mp4" muted playsinline preload="auto" data-start="0.0" data-duration="3.5" data-media-start="0.6" data-track-index="1"></video></div></div><div class="clip" id="k1"><div class="zoom" id="z1"><video id="v1" src="assets/type.mp4" muted playsinline preload="auto" data-start="3.0" data-duration="5.5" data-media-start="1.0" data-track-index="2"></video></div></div><div class="clip" id="k2"><div class="zoom" id="z2"><video id="v2" src="assets/steps.mp4" muted playsinline preload="auto" data-start="8.0" data-duration="6.5" data-media-start="0.4" data-track-index="3"></video></div></div><div class="clip" id="k3"><div class="zoom" id="z3"><video id="v3" src="assets/inspect.mp4" muted playsinline preload="auto" data-start="14.0" data-duration="4.6" data-media-start="0.1" data-track-index="4"></video></div></div><div class="clip" id="k4"><div class="zoom" id="z4"><video id="v4" src="assets/library.mp4" muted playsinline preload="auto" data-start="18.1" data-duration="3.4" data-media-start="0.1" data-track-index="5"></video></div></div><div class="clip" id="k5"><div class="zoom" id="z5"><video id="v5" src="assets/library.mp4" muted playsinline preload="auto" data-start="21.0" data-duration="2.6" data-media-start="6.0" data-track-index="6"></video></div></div><div class="clip" id="k6"><div class="zoom" id="z6"><video id="v6" src="assets/editor.mp4" muted playsinline preload="auto" data-start="23.1" data-duration="6.9" data-media-start="1.6" data-track-index="7"></video></div></div></div>
+      <audio src="assets/music.wav" data-start="0" data-duration="30" data-volume="0.7" preload="auto"></audio>
     </div>
     <script>
-      const D = 28;
-      // Clips: vs = start in the film, ms = start inside the recording, dur = time on screen (incl. overlap).
+      const D = 30;
+      // Clips: vs = start in the film, ms = start inside the recording; each runs until the next cut (static <video> tags mirror this).
       // Recordings were captured at 443×960 points (2×); taps are in points, t in recording seconds.
       const CLIPS = [
-        { src: 'tour.mp4',    vs: 0.0,  ms: 0.6, dur: 4.2, taps: [[1.6,222,920],[3.12,326,920]] },
-        { src: 'type.mp4',    vs: 3.6,  ms: 0.6, dur: 6.0, taps: [[1.22,300,362],[1.84,407,905],[2.56,93,688],[3.17,30,734],[3.69,283,780],[5.11,407,905]],
-          zoom: [[3.8, 1.2, '50% 50%', 0.7], [4.75, 1, '50% 50%', 0.4]] },
-        { src: 'inspect.mp4', vs: 9.0,  ms: 0.0, dur: 6.8, taps: [[0.3,183,559]] },
-        { src: 'library.mp4', vs: 15.2, ms: 0.5, dur: 7.0, taps: [[0.82,413,28],[2.14,222,626],[5.64,326,924]] },
-        { src: 'editor.mp4',  vs: 21.6, ms: 2.0, dur: 6.4, taps: [[2.44,87,195],[3.57,221,467],[4.08,430,709],[4.5,142,709],[4.87,306,773],[5.24,222,825],[6.05,392,929],[7.07,399,367]] },
+        { src: 'tour.mp4',    vs: 0.0,  ms: 0.6, taps: [[1.2,222,920],[2.77,326,920]] },
+        { src: 'type.mp4',    vs: 3.0,  ms: 1.0, taps: [[1.27,300,362],[1.94,407,905],[2.61,93,688],[3.29,30,734],[3.86,283,780],[4.55,407,905]],
+          zoom: [[4.05, 1.18, '50% 46%', 0.6], [4.95, 1, '50% 46%', 0.35]] },
+        { src: 'steps.mp4',   vs: 8.0,  ms: 0.4, taps: [[0.82,319,407],[3.7,225,278]],
+          zoom: [[1.5, 1.14, '50% 30%', 0.7], [2.95, 1, '50% 30%', 0.4]] },
+        { src: 'inspect.mp4', vs: 14.0, ms: 0.1, taps: [[0.3,246,648]] },
+        { src: 'library.mp4', vs: 18.1, ms: 0.1, taps: [[0.3,413,28],[1.67,222,626]] },
+        { src: 'library.mp4', vs: 21.0, ms: 6.0, taps: [[6.84,326,924]] },
+        { src: 'editor.mp4',  vs: 23.1, ms: 1.6, taps: [[2.07,221,417],[2.83,430,709],[3.41,142,709],[3.94,306,773],[4.45,222,825],[5.53,392,929],[6.4,399,317]] },
       ];
       const CAPS = [
-        { t: [0.15, 3.7],  k: 'MATRIX CALCULATOR', h: 'Meet Mat<i>scape</i>.' },
-        { t: [3.95, 6.55], k: 'WRITE', h: 'Type it like <i>math.</i>' },
-        { t: [6.7, 9.15],  k: 'EXACT', h: 'Fractions, <i>never rounded.</i>' },
-        { t: [9.45, 12.55], k: 'INSPECT', h: 'Every property, <i>at a glance.</i>' },
-        { t: [12.7, 15.3], k: 'STEP BY STEP', h: 'See how it’s <i>worked out.</i>' },
-        { t: [15.6, 21.65], k: 'LIBRARY', h: 'Every operation, <i>explained.</i>' },
-        { t: [21.95, 25.85], k: 'EDIT', h: 'Trig inside <i>matrices.</i>' },
-        { t: [26.05, D], k: '', h: 'Mat<i>scape</i>', sub: 'Every matrix tool.', end: true },
+        { t: [0.15, 2.9],  k: 'MATRIX CALCULATOR', h: 'Meet Mat<i>scape</i>.' },
+        { t: [3.15, 5.6],  k: 'WRITE', h: 'Type it like <i>math.</i>' },
+        { t: [5.75, 7.95], k: 'EXACT', h: 'Fractions, <i>never rounded.</i>' },
+        { t: [8.2, 11.05], k: 'STEP BY STEP', h: 'Every step, <i>worked out.</i>' },
+        { t: [11.2, 13.85], k: 'STEP BY STEP', h: 'Choose your <i>method.</i>' },
+        { t: [14.2, 17.9], k: 'INSPECT', h: 'Every property, <i>at a glance.</i>' },
+        { t: [18.3, 22.9], k: 'LIBRARY', h: 'Every operation, <i>explained.</i>' },
+        { t: [23.3, 27.8], k: 'EDIT', h: 'Trig inside <i>matrices.</i>' },
+        { t: [28.1, D], k: '', h: 'Mat<i>scape</i>', sub: 'Every matrix tool.', end: true },
       ];
       const PT = 656 / 443; // points → card pixels
 
@@ -100,7 +104,7 @@
       tl.fromTo('#q2', { y: 0 }, { y: 120, duration: D, ease: 'none' }, 0);
       // card entrance + outro settle
       tl.fromTo('#card', { y: 260, scale: .9, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 1.0, ease: 'expo.out' }, 0);
-      tl.to('#card', { y: 120, scale: .9, duration: 1.1, ease: 'power3.inOut' }, 26.0);
+      tl.to('#card', { y: 120, scale: .9, duration: 1.1, ease: 'power3.inOut' }, 28.0);
 
       CLIPS.forEach((c, i) => {
         const id = '#k' + i, cut = c.vs + 0.3;
@@ -114,7 +118,8 @@
         (c.zoom || []).forEach(([t, s, o, d]) => tl.to('#z' + i, { scale: s, transformOrigin: o, duration: d, ease: 'power2.inOut' }, c.vs + t));
         c.taps.forEach((p, j) => {
           const at = c.vs + (p[0] - c.ms);
-          if (at < c.vs - 0.05 || at > c.vs + c.dur) return;
+          const next = i + 1 < CLIPS.length ? CLIPS[i + 1].vs : D;
+          if (at < c.vs - 0.05 || at > next - 0.1) return;
           tl.fromTo(`#r${i}_${j}`, { scale: .3, opacity: .95, immediateRender: false }, { scale: 1.7, opacity: 0, duration: 0.5, ease: 'power2.out', immediateRender: false }, Math.max(0, at - 0.06));
         });
       });

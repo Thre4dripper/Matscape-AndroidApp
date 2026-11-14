@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "layouts/phone-landscape.html",
+  "entry": "layouts/phone-landscape.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-14T17:27:13.403Z",
+  "updatedAt": "2026-11-14T17:27:13.403Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

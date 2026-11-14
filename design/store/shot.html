@@ -1,7 +1,9 @@
 <!doctype html>
 <!-- Matscape 2 — store screenshot compositions (editable source).
      Open with ?set=<set>&n=<1-6> ; sets: app-iphone, app-ipad, play-phone,
-     play-tab7, play-tab10, feature. Every device screen is the live app. -->
+     play-tab7, play-tab10, play-desktop, feature. Every device screen is the live app.
+     n=4 is the Steps screenshot; it is uploaded second in every set
+     (upload order 1, 4, 2, 3, 5, 6 — file names are unchanged). -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -167,6 +169,20 @@
     .pop-dark .callout b { background: #1e2847; color: #a9bcff; }
     .callout sub { font-size: .62em; }
 
+    /* steps screenshot pop-outs */
+    .segpop { display: inline-flex; gap: calc(var(--u) * 6px); padding: calc(var(--u) * 8px); border-radius: calc(var(--u) * 26px); font-size: calc(var(--u) * 30px); font-weight: 650; white-space: nowrap; }
+    .segpop span { padding: calc(var(--u) * 16px) calc(var(--u) * 26px); border-radius: calc(var(--u) * 20px); color: var(--ink-3); }
+    .segpop .on { background: #e7ecfb; color: var(--accent-ink); }
+    .pop-dark .segpop span { color: #959dab; }
+    .pop-dark .segpop .on { background: #1e2847; color: #a9bcff; }
+    .wcard .wl { display: block; padding-left: calc(var(--u) * 22px); border-left: calc(var(--u) * 4px) solid #c3c9d2; font-family: var(--font-math); font-size: calc(var(--u) * 38px); line-height: 1.35; white-space: nowrap; }
+    .pop-dark .wcard .wl { border-left-color: #3b4350; }
+    .wcard .wl sub { font-size: .62em; }
+    .chip.answer { box-shadow: 0 0 0 calc(var(--u) * 3px) var(--accent), 0 calc(var(--u) * 46px) calc(var(--u) * 90px) calc(var(--u) * -26px) rgba(3,6,20,.5); }
+    .pop-dark .chip.answer { box-shadow: 0 0 0 calc(var(--u) * 3px) #8ea8ff, 0 calc(var(--u) * 46px) calc(var(--u) * 90px) calc(var(--u) * -26px) rgba(3,6,20,.5); }
+    .chip .tag { padding: calc(var(--u) * 6px) calc(var(--u) * 14px); border-radius: 999px; background: #e7ecfb; color: var(--accent-ink); font-family: var(--font-ui); font-size: calc(var(--u) * 20px); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .pop-dark .chip .tag { background: #1e2847; color: #a9bcff; }
+
     /* feature graphic */
     .feature .copy { left: 6%; top: 50%; width: 50%; transform: translateY(-50%); }
     .wordmark { font-family: var(--font-math); font-weight: 600; font-size: 92px; line-height: 1; letter-spacing: -.01em; }
@@ -214,7 +230,7 @@
       { bg: 'light', theme: 'dark', app: { active: 1 }, dark: true,
         h: 'Answers that read<br><i>like a textbook.</i>', p: 'Fractions, square roots and π — not long decimals.',
         pops: [
-          { x: 1.14, y: .24, rot: 2, right: true, html: '<div class="card surface"><span class="cap">Line 1</span><div class="row"><span class="lbl">C</span><span class="eq">⁻¹ =</span>' + mx([[fr('2', '3'), fr('1', '6'), '−' + fr('1', '2')], ['0', fr('1', '2'), '−' + fr('1', '2')], ['−' + fr('1', '3'), '−' + fr('1', '3'), '1']], 38) + '</div></div>' },
+          { x: 1.14, y: .24, rot: 2, right: true, html: '<div class="card surface"><span class="cap">Expression 1</span><div class="row"><span class="lbl">C</span><span class="eq">⁻¹ =</span>' + mx([[fr('2', '3'), fr('1', '6'), '−' + fr('1', '2')], ['0', fr('1', '2'), '−' + fr('1', '2')], ['−' + fr('1', '3'), '−' + fr('1', '3'), '1']], 38) + '</div></div>' },
           { x: -.1, y: .47, rot: -4, html: '<div class="chip math surface">' + fr(S3, '2') + '</div>' },
           { x: -.05, y: .6, rot: 3, html: '<div class="chip math surface">' + fr('1', '2') + '</div>' }
         ] },
@@ -226,12 +242,12 @@
           { x: -.1, y: big ? .5 : .56, rot: -2, html: '<div class="chip ok surface">' + CHECK + 'Invertible</div>' },
           { x: 1.1, y: big ? .2 : .24, rot: 3, right: true, html: '<div class="card surface"><span class="cap">Matrix A</span><div class="row"><span class="chip math" style="padding:0">tr = 12</span></div><div class="row"><span class="chip math" style="padding:0">rank 3</span></div></div>' }
         ] },
-      { bg: 'light', theme: 'dark', app: { demo: 'steps', m: 'C', step: 'inverse' }, dark: true,
-        h: 'See <i>every step.</i>', p: 'Row reduction, determinants and inverses, worked line by line.',
+      { bg: 'light', theme: 'dark', app: { demo: 'solve', line: 2, method: '0:0' }, dark: true,
+        h: 'Every step,<br><i>worked out.</i>', p: 'Choose your method. From matrix to answer, line by line.',
         pops: [
-          { x: 1.13, y: land ? .24 : big ? .3 : .32, rot: 2, right: true, html: '<div class="callout surface"><b>1</b>R<sub>1</sub> → R<sub>1</sub> ÷ 2</div>' },
-          { x: 1.07, y: land ? .44 : big ? .39 : .42, rot: -2, right: true, html: '<div class="callout surface"><b>2</b>R<sub>2</sub> → R<sub>2</sub> − R<sub>1</sub></div>' },
-          { x: 1.12, y: land ? .64 : big ? .48 : .52, rot: 1, right: true, html: '<div class="callout surface"><b>2</b>R<sub>3</sub> → R<sub>3</sub> − R<sub>1</sub></div>' }
+          { x: 1.12, y: land ? .2 : big ? .24 : .27, rot: 2, right: true, html: '<div class="segpop surface"><span class="on">Cofactor expansion</span><span>Row reduction</span></div>' },
+          { x: -.1, y: land ? .5 : big ? .46 : .52, rot: -3, html: '<div class="card surface wcard"><span class="cap">Show the working</span><span class="wl"><i>M</i><sub>21</sub> = 1·5 − 2·0 = 5</span><span class="wl"><i>M</i><sub>22</sub> = 4·5 − 2·2 = 16</span></div>' },
+          { x: 1.1, y: land ? .78 : big ? .66 : .74, rot: -2, right: true, html: '<div class="chip math surface answer">det = −1·5 + 3·16 = 43<span class="tag">Answer</span></div>' }
         ] },
       { bg: 'dark', theme: 'light', app: { kp: 'adv', active: 3 },
         h: 'Trig, eigenvalues,<br><i>SVD and more.</i>', p: 'A keypad built for matrices. No system keyboard in the way.',

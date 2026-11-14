@@ -1,6 +1,7 @@
 /* Matscape 2 — math engine (prototype).
    Real-valued matrices, scalar math, trig, decompositions, eigen-analysis
-   and step-by-step row reduction. Complex numbers appear only as outputs
+   step-by-step row reduction, and full step-by-step solutions of whole
+   expressions (explain). Complex numbers appear only as outputs
    (eigenvalues). Exposed as window.MatEngine. */
 (function (global) {
   'use strict';
@@ -755,6 +756,11 @@
   const CONSTS = { 'π': Math.PI, pi: Math.PI, e: Math.E };
 
   function evalNode(n, ctx) {
+    const v = evalNode0(n, ctx);
+    if (ctx.memo) ctx.memo.set(n, v);
+    return v;
+  }
+  function evalNode0(n, ctx) {
     switch (n.k) {
       case 'num': return n.v;
       case 'id': return lookup(n.v, ctx);
@@ -854,10 +860,464 @@
     return r;
   }
 
+  /* ======================================================================
+     Step-by-step solutions — replays an expression one operation at a time
+     and, for each operation, the working a student would write by hand.
+     Mirrors the shipped app's lib/engine/steps.dart.
+     ====================================================================== */
+  const SUBD = '₀₁₂₃₄₅₆₇₈₉', SUPD = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹', '-': '⁻' };
+  const subI = (k) => String(k).split('').map((c) => SUBD[+c]).join('');
+  const ix = (i, j) => (j == null ? subI(i + 1) : subI(i + 1) + subI(j + 1));
+  const supI = (k) => String(k).split('').map((c) => SUPD[c]).join('');
+  const nT = (x) => plain(cleanNum(x));
+  const fT = (x) => (cleanNum(x) < 0 ? `(${nT(x)})` : nT(x));
+  const tidy = (v) => (isMat(v) ? cleanM(v) : isNum(v) ? cleanNum(v) : v);
+
+  const FN_TITLE = {
+    det: 'Determinant', tr: 'Trace', trace: 'Trace', rank: 'Rank', inv: 'Inverse', transpose: 'Transpose',
+    adj: 'Adjugate', adjoint: 'Adjugate', cof: 'Cofactor matrix', cofactors: 'Cofactor matrix', minors: 'Matrix of minors',
+    rref: 'Reduced row echelon form', null: 'Null space', nullspace: 'Null space', colsp: 'Column space', colspace: 'Column space',
+    eig: 'Eigenvalues', eigvals: 'Eigenvalues', eigvec: 'Eigenvectors', eigvecs: 'Eigenvectors', charpoly: 'Characteristic polynomial',
+    lu: 'LU decomposition', qr: 'QR decomposition', chol: 'Cholesky decomposition', cholesky: 'Cholesky decomposition',
+    svd: 'Singular value decomposition', pinv: 'Pseudo-inverse', norm: 'Frobenius norm', norm1: '1-norm', norm2: 'Spectral norm',
+    norminf: '∞-norm', cond: 'Condition number', expm: 'Matrix exponential', sinm: 'Matrix sine', cosm: 'Matrix cosine',
+    sqrtm: 'Matrix square root', dot: 'Dot product', cross: 'Cross product', kron: 'Kronecker product', hadamard: 'Entrywise product',
+    solve: 'Solve the system', aug: 'Join side by side', sub: 'Remove a row and a column', row: 'Take a row', column: 'Take a column',
+    diag: 'Diagonal', zeros: 'Build the matrix', ones: 'Build the matrix', I: 'Identity matrix', eye: 'Identity matrix',
+  };
+  const FN_NOTE = {
+    transpose: 'Rows become columns.',
+    pinv: 'From the SVD: A⁺ = V·Σ⁺·Uᵀ, where Σ⁺ turns each non-zero singular value σ into 1/σ.',
+    norm2: 'The largest singular value.',
+    expm: 'The series I + A + A²/2! + A³/3! + …, summed by scaling the matrix down, using a Padé approximation and squaring back up.',
+    sinm: 'The series A − A³/3! + A⁵/5! − …', cosm: 'The series I − A²/2! + A⁴/4! − …',
+    sqrtm: 'The matrix X with X·X equal to this one, found by iteration.',
+    kron: 'Every entry of the left matrix is replaced by that entry times the right matrix.',
+    hadamard: 'Entries in the same position are multiplied.',
+    aug: 'The second matrix is written to the right of the first.',
+    norm: 'The square root of the sum of every entry squared.',
+    norm1: 'The largest column sum, ignoring signs.', norminf: 'The largest row sum, ignoring signs.',
+    lu: 'A lower-triangular L and an upper-triangular U with PA = LU.', qr: 'An orthogonal Q and an upper-triangular R with A = QR.',
+    chol: 'A lower-triangular L with A = L·Lᵀ.', svd: 'A = U·Σ·Vᵀ, with the singular values down the diagonal of Σ.',
+    eigvec: 'For each eigenvalue λ, the non-zero solutions of (A − λI)v = 0.', charpoly: 'det(λI − A), written as a polynomial in λ.',
+    null: 'Every x with A·x = 0.', colsp: 'Everything the columns can add up to.',
+  };
+  FN_NOTE.cholesky = FN_NOTE.chol; FN_NOTE.eigvecs = FN_NOTE.eigvec; FN_NOTE.nullspace = FN_NOTE.null; FN_NOTE.colspace = FN_NOTE.colsp;
+  const TRIG = new Set(['sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'asin', 'arcsin', 'acos', 'arccos', 'atan', 'arctan']);
+
+  /* ---------- writing an expression back out ---------- */
+  const PREC = (n) => (n.k === 'bin' ? (n.op === '+' || n.op === '-' ? 1 : 2) : n.k === 'neg' ? 3 : n.k === 'pow' || n.k === 'post' ? 4 : 5);
+  const POST_MARK = { T: 'ᵀ', inv: '⁻¹', sq: '²', cube: '³', deg: '°', fact: '!' };
+  function litNum(v) { return String(Number(v.toPrecision(12))); }
+  function show(n, vars) {
+    const inner = (x, lv) => (PREC(x) < lv ? `(${show(x, vars)})` : show(x, vars));
+    switch (n.k) {
+      case 'num': return litNum(n.v);
+      case 'id': return n.v;
+      case 'neg': return '−' + inner(n.a, 3);
+      case 'bin': {
+        if (n.op === '+') return `${inner(n.a, 1)} + ${inner(n.b, 2)}`;
+        if (n.op === '-') return `${inner(n.a, 1)} − ${inner(n.b, 2)}`;
+        if (n.op === '/') return `${inner(n.a, 2)}/${inner(n.b, 3)}`;
+        if (n.op === '∘') return `${inner(n.a, 2)} ∘ ${inner(n.b, 3)}`;
+        const l = inner(n.a, 2), r = inner(n.b, 2);
+        return n.a.k === 'num' && /^[A-Za-zα-ωπ(√[]/.test(r) ? l + r : `${l}·${r}`;
+      }
+      case 'pow': {
+        if (n.b.k === 'id' && n.b.v === 'T' && !(vars && Object.prototype.hasOwnProperty.call(vars, 'T'))) return inner(n.a, 5) + 'ᵀ';
+        const e = n.b.k === 'num' && Number.isInteger(n.b.v) ? n.b.v : n.b.k === 'neg' && n.b.a.k === 'num' && Number.isInteger(n.b.a.v) ? -n.b.a.v : null;
+        if (e != null && Math.abs(e) < 100) return inner(n.a, 5) + supI(e);
+        return `${inner(n.a, 5)}^${inner(n.b, 5)}`;
+      }
+      case 'post': return inner(n.a, 4) + POST_MARK[n.op];
+      case 'lit': return `[${n.rows.map((r) => r.map((e) => show(e, vars)).join(', ')).join('; ')}]`;
+      case 'bars': return `|${show(n.a, vars)}|`;
+      case 'call': {
+        if ((n.f === 'sqrt' || n.f === 'cbrt') && n.args.length === 1) { const a = n.args[0]; return (n.f === 'sqrt' ? '√' : '∛') + (PREC(a) >= 5 && a.k !== 'call' ? show(a, vars) : `(${show(a, vars)})`); }
+        return `${n.f}(${n.args.map((a) => show(a, vars)).join(', ')})`;
+      }
+      default: return '';
+    }
+  }
+  /* LaTeX */
+  function texNum(x, mode = 'exact', precision = 4) {
+    const d = describe(x, mode, precision), s = d.neg ? '-' : '';
+    switch (d.kind) {
+      case 'special': return d.text === '∞' ? '\\infty' : d.text === '−∞' ? '-\\infty' : '\\text{undefined}';
+      case 'int': return s + d.n;
+      case 'frac': return `${s}\\frac{${d.n}}{${d.d}}`;
+      case 'surd': { const top = `${d.n === 1 ? '' : d.n}\\sqrt{${d.k}}`; return s + (d.d === 1 ? top : `\\frac{${top}}{${d.d}}`); }
+      case 'pi': { const top = `${d.n === 1 ? '' : d.n}\\pi`; return s + (d.d === 1 ? top : `\\frac{${top}}{${d.d}}`); }
+      default: return s + (d.text != null ? d.text : `${d.mant} \\times 10^{${d.exp}}`);
+    }
+  }
+  const texMat = (M, mode, p) => `\\begin{bmatrix} ${M.data.map((r) => r.map((x) => texNum(x, mode, p)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
+  const TEX_FN = { det: '\\det', sin: '\\sin', cos: '\\cos', tan: '\\tan', sec: '\\sec', csc: '\\csc', cot: '\\cot', sinh: '\\sinh', cosh: '\\cosh', tanh: '\\tanh', ln: '\\ln', log: '\\log', exp: '\\exp', asin: '\\arcsin', acos: '\\arccos', atan: '\\arctan', arcsin: '\\arcsin', arccos: '\\arccos', arctan: '\\arctan' };
+  const TEX_NAME = { 'π': '\\pi', pi: '\\pi', 'λ': '\\lambda' };
+  function tex(n, vars) {
+    const inner = (x, lv) => (PREC(x) < lv ? `\\left( ${tex(x, vars)} \\right)` : tex(x, vars));
+    switch (n.k) {
+      case 'num': return litNum(n.v);
+      case 'id': return TEX_NAME[n.v] || (n.v.length > 1 ? `\\mathrm{${n.v.replace(/_/g, '\\_')}}` : n.v);
+      case 'neg': return '-' + inner(n.a, 3);
+      case 'bin': {
+        if (n.op === '+') return `${inner(n.a, 1)} + ${inner(n.b, 2)}`;
+        if (n.op === '-') return `${inner(n.a, 1)} - ${inner(n.b, 2)}`;
+        if (n.op === '/') return /^(num|id|neg|bin)$/.test(n.a.k) && /^(num|id|bin)$/.test(n.b.k) && !isMatNode(n.a, vars) && !isMatNode(n.b, vars) ? `\\frac{${tex(n.a, vars)}}{${tex(n.b, vars)}}` : `${inner(n.a, 2)} / ${inner(n.b, 3)}`;
+        if (n.op === '∘') return `${inner(n.a, 2)} \\circ ${inner(n.b, 3)}`;
+        const l = inner(n.a, 2), r = inner(n.b, 2);
+        return /^(\d|-|\\frac)/.test(r) ? `${l} \\cdot ${r}` : `${l} ${r}`;
+      }
+      case 'pow': {
+        if (n.b.k === 'id' && n.b.v === 'T' && !(vars && Object.prototype.hasOwnProperty.call(vars, 'T'))) return `${inner(n.a, 5)}^{\\mathsf{T}}`;
+        return `${inner(n.a, 5)}^{${tex(n.b, vars)}}`;
+      }
+      case 'post': return inner(n.a, 4) + ({ T: '^{\\mathsf{T}}', inv: '^{-1}', sq: '^{2}', cube: '^{3}', deg: '^{\\circ}', fact: '!' })[n.op];
+      case 'lit': return `\\begin{bmatrix} ${n.rows.map((r) => r.map((e) => tex(e, vars)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
+      case 'bars': return `\\left| ${tex(n.a, vars)} \\right|`;
+      case 'call': {
+        const a = n.args;
+        if (n.f === 'sqrt' && a.length === 1) return `\\sqrt{${tex(a[0], vars)}}`;
+        if (n.f === 'cbrt' && a.length === 1) return `\\sqrt[3]{${tex(a[0], vars)}}`;
+        if (n.f === 'abs' && a.length === 1) return `\\left| ${tex(a[0], vars)} \\right|`;
+        return `${TEX_FN[n.f] || `\\operatorname{${n.f}}`}\\left( ${a.map((x) => tex(x, vars)).join(', ')} \\right)`;
+      }
+      default: return '';
+    }
+  }
+  function isMatNode(n, vars) { return n.k === 'id' && vars && isMat(vars[n.v]); }
+  function texValue(v, mode = 'exact', p = 4) {
+    if (isNum(v)) return texNum(v, mode, p);
+    if (isMat(v)) return texMat(v, mode, p);
+    if (v && v.type === 'list') return v.items.map((z, i) => `\\lambda_{${i + 1}} = ${isNum(z) ? texNum(z, mode, p) : `${texNum(z.re, mode, p)} ${z.im < 0 ? '-' : '+'} ${texNum(Math.abs(z.im), mode, p)}i`}`).join(',\; ');
+    if (v && v.type === 'multi') return v.parts.map((pt) => `${pt.label.replace('Σ', '\\Sigma').replace('ᵀ', '^{\\mathsf{T}}')} = ${texMat(pt.value, mode, p)}`).join(',\\quad ');
+    if (v && v.type === 'poly') { const n = v.coeffs.length - 1; return v.coeffs.map((c, k) => { const pw = n - k; if (Math.abs(c) < 1e-11) return ''; const a = Math.abs(c), co = Math.abs(a - 1) < 1e-12 && pw > 0 ? '' : texNum(a, mode, p); return `${c < 0 ? ' - ' : k ? ' + ' : ''}${co}${pw === 0 ? '' : pw === 1 ? '\\lambda' : `\\lambda^{${pw}}`}`; }).join(''); }
+    return `\\text{${(v && v.text) || ''}}`;
+  }
+  function exprTex(text, vars = {}) {
+    try { const a = splitAssignment(text), body = a ? a.body : text; const t = tex(parse(body, FUNCS, vars), vars); return a ? `${a.name} = ${t}` : t; } catch (e) { return text; }
+  }
+
+  /* ---------- the explainer ---------- */
+  const W = {
+    text: (text, indent = 0) => ({ k: 'text', text, indent }),
+    math: (text, indent = 0) => ({ k: 'math', text, indent }),
+    matrix: (mat, label, aug, indent = 0) => ({ k: 'matrix', mat, label, aug, indent }),
+    ops: (ops, mat, aug, indent = 0) => ({ k: 'ops', ops, mat, aug, indent }),
+  };
+  const method = (name, build, weight = 0) => ({ name, weight, _w: null, get work() { if (!this._w) this._w = build(); return this._w; } });
+  const fact = (k) => (k <= 1 ? 1 : k * fact(k - 1));
+  const cube = (m) => m.rows * m.rows * m.cols;
+  const FULL_EXPANSION = 4;
+  const MINOR_LETTERS = ['M', 'N', 'P', 'Q', 'R', 'S', 'T'];
+  const minorMat = (m, r, c) => mat(m.data.filter((_, i) => i !== r).map((row) => row.filter((_, j) => j !== c)));
+  const det2 = (m) => `${fT(m.data[0][0])}·${fT(m.data[1][1])} − ${fT(m.data[0][1])}·${fT(m.data[1][0])}`;
+  function bestRow(m) { let row = 0, best = -1; m.data.forEach((r, i) => { const z = r.filter((x) => x === 0).length; if (z > best) { best = z; row = i; } }); return [row, best]; }
+  function rowsWork(r, intro) {
+    const w = [];
+    if (intro) w.push(W.text(intro));
+    w.push(W.matrix(r.start, 'Start', r.aug));
+    r.steps.forEach((s) => w.push(W.ops(s.ops, s.m, r.aug)));
+    if (!r.steps.length) w.push(W.text('No row operations are needed: it is already reduced.'));
+    if (r.summary) w.push(/=/.test(r.summary) ? W.math(r.summary) : W.text(r.summary));
+    if (r.note) w.push(W.text(r.note));
+    return w;
+  }
+  function expand(m, name, depth, w) {
+    const size = m.rows;
+    if (size === 1) { w.push(W.math(`${name} = ${nT(m.data[0][0])}`, depth)); return m.data[0][0]; }
+    if (size === 2) { const d = m.data[0][0] * m.data[1][1] - m.data[0][1] * m.data[1][0]; w.push(W.math(`${name} = ${det2(m)} = ${nT(d)}`, depth)); return d; }
+    const [row, zeros] = bestRow(m), most = zeros > 0 ? ', which has the most zeros' : '';
+    w.push(W.text(depth === 0
+      ? `Expand along row ${row + 1}${most}: each entry times the determinant of what is left when its row and column are removed, with signs + − + …`
+      : `Expand ${name} along its row ${row + 1}${most}.`, depth));
+    const letter = MINOR_LETTERS[Math.min(depth, MINOR_LETTERS.length - 1)];
+    let terms = '', total = 0;
+    for (let j = 0; j < size; j++) {
+      const e = m.data[row][j]; if (e === 0) continue;
+      const minor = minorMat(m, row, j), mName = `${letter}${ix(row, j)}`;
+      let mv;
+      if (size === 3) mv = expand(minor, mName, depth, w);
+      else { w.push(W.matrix(minor, `${mName}: remove row ${row + 1} and column ${j + 1}`, null, depth)); mv = expand(minor, mName, depth + 1, w); }
+      const plus = (row + j) % 2 === 0;
+      terms += (terms ? (plus ? ' + ' : ' − ') : (plus ? '' : '−')) + `${fT(e)}·${fT(mv)}`;
+      total += (plus ? 1 : -1) * e * mv;
+    }
+    if (!terms) { w.push(W.text(`Row ${row + 1} is all zeros, so ${depth === 0 ? 'the determinant' : name} is 0.`, depth)); return 0; }
+    w.push(W.math(`${name} = ${terms} = ${nT(total)}`, depth));
+    return total;
+  }
+  function cofactorWork(m) {
+    const w = [];
+    if (m.rows > FULL_EXPANSION) {
+      const [row, zeros] = bestRow(m);
+      w.push(W.text(`Expand along row ${row + 1}${zeros > 0 ? ', which has the most zeros' : ''}. Expanding every minor in turn would take ${m.rows}! ÷ 2 two-by-two determinants, far too many to write out, so each minor’s determinant is given here. Row reduction has the complete working at this size.`));
+      let terms = '', total = 0;
+      for (let j = 0; j < m.cols; j++) {
+        const e = m.data[row][j]; if (e === 0) continue;
+        const minor = minorMat(m, row, j), mv = cleanNum(det(minor));
+        w.push(W.matrix(minor, `M${ix(row, j)}: remove row ${row + 1} and column ${j + 1}. Its determinant is ${nT(mv)}.`));
+        const plus = (row + j) % 2 === 0;
+        terms += (terms ? (plus ? ' + ' : ' − ') : (plus ? '' : '−')) + `${fT(e)}·${fT(mv)}`;
+        total += (plus ? 1 : -1) * e * mv;
+      }
+      w.push(terms ? W.math(`det = ${terms} = ${nT(total)}`) : W.text(`Row ${row + 1} is all zeros, so the determinant is 0.`));
+      return w;
+    }
+    expand(m, 'det', 0, w);
+    return w;
+  }
+  function detMethods(m) {
+    const size = m.rows; if (size === 1) return [];
+    const cof = method('Cofactor expansion', () => cofactorWork(m), size <= FULL_EXPANSION ? fact(size) * size : cube(m));
+    const rows = method('Row reduction', () => rowsWork(steps.det(m), 'Reduce to a triangle. The determinant is then the product of the diagonal.'), cube(m));
+    const formula = method('Formula', () => [W.text('For a 2×2 matrix: the product of the main diagonal minus the product of the other diagonal.'), W.math(`det = ${det2(m)} = ${nT(det(m))}`)]);
+    if (size === 2) return [formula, rows];
+    if (size <= 4) return [cof, rows];
+    return [rows, cof];
+  }
+  function minorLines(m, signed) {
+    const size = m.rows, w = [];
+    for (let i = 0; i < size; i++) for (let j = 0; j < size; j++) {
+      const minor = minorMat(m, i, j), neg = signed && (i + j) % 2 === 1, name = `${signed ? 'C' : 'M'}${ix(i, j)}`;
+      if (size === 2) { const e = minor.data[0][0]; w.push(W.math(!signed || !neg ? `${name} = ${nT(e)}` : `${name} = −${fT(e)}${e < 0 ? ` = ${nT(-e)}` : ''}`)); continue; }
+      if (size === 3) { const mv = cleanNum(det(minor)), b = det2(minor); w.push(W.math(`${name} = ${!signed ? b : neg ? `−(${b})` : b} = ${nT(neg ? -mv : mv)}`)); continue; }
+      const mName = `M${ix(i, j)}`;
+      w.push(W.matrix(minor, `${mName}: remove row ${i + 1} and column ${j + 1}`));
+      const mv = cleanNum(size - 1 <= 4 ? expand(minor, mName, 1, w) : det(minor));
+      if (signed) w.push(W.math(`${name} = ${neg ? '−' : ''}${mName} = ${nT(neg ? -mv : mv)}`));
+    }
+    return w;
+  }
+  function inverseMethods(m) {
+    const size = m.rows; if (size === 1) return [];
+    const d = cleanNum(det(m)), out = [];
+    if (size === 2) out.push(method('Formula', () => [
+      W.text('For a 2×2 matrix: swap the diagonal entries, change the sign of the other two, and divide by the determinant.'),
+      W.math(`det = ${det2(m)} = ${nT(d)}`),
+      W.matrix(mat([[m.data[1][1], -m.data[0][1]], [-m.data[1][0], m.data[0][0]]]), 'Swapped and sign-changed'),
+      W.matrix(cleanM(inverse(m)), `Divided by ${nT(d)}`),
+    ]));
+    out.push(method('Gauss–Jordan', () => rowsWork(steps.inverse(m), 'Write the matrix beside I, then row-reduce until the left half is I.'), cube(m) * 2));
+    out.push(method('Adjugate', () => [
+      W.text('The inverse is the adjugate divided by the determinant.'), W.math(`det = ${nT(d)}`), ...minorLines(m, true),
+      W.matrix(cleanM(cofactorM(m)), 'The cofactor matrix'), W.matrix(cleanM(adjugate(m)), 'Its transpose, the adjugate'),
+      W.matrix(cleanM(inverse(m)), `Divided by ${nT(d)}`),
+    ], size * size * (size - 1 <= 4 ? fact(size - 1) : 1)));
+    return out;
+  }
+  function solveMethods(A, b) {
+    if (A.rows !== b.rows) return [];
+    const cols = A.cols, sq = A.rows === cols, d = sq ? cleanNum(det(A)) : 0, unique = sq && Math.abs(d) > tolFor(A, 1e-10);
+    const out = [method('Elimination', () => {
+      const aug = mat(A.data.map((r, i) => [...r, ...b.data[i]])), r = rrefCore(aug, { hand: true, augAt: cols });
+      const w = [W.text('Write A and b side by side, then row-reduce the left half.'), W.matrix(aug, 'Start', cols)];
+      r.steps.forEach((s) => w.push(W.ops(s.ops, s.m, cols)));
+      if (unique && b.cols === 1) for (let i = 0; i < cols; i++) w.push(W.math(`x${ix(i)} = ${nT(r.R.data[i][cols])}`));
+      else w.push(W.text('Each pivot row now gives one unknown in terms of the right-hand side.'));
+      return w;
+    }, cube(A))];
+    if (unique && b.cols === 1) {
+      out.push(method('Cramer’s rule', () => {
+        const w = [W.text('Each unknown is a ratio of determinants: replace one column of A with b, and divide by det(A).'), W.math(`D = det(A) = ${nT(d)}`)];
+        for (let j = 0; j < cols; j++) {
+          const sw = mat(A.data.map((r, i) => r.map((x, k) => (k === j ? b.data[i][0] : x)))), dj = cleanNum(det(sw));
+          w.push(W.matrix(sw, `D${ix(j)}: column ${j + 1} replaced by b. Its determinant is ${nT(dj)}.`));
+          w.push(W.math(`x${ix(j)} = D${ix(j)} ÷ D = ${fT(dj)} ÷ ${fT(d)} = ${nT(dj / d)}`));
+        }
+        return w;
+      }, cube(A) * cols));
+      out.push(method('Inverse', () => [
+        W.text('A is square and invertible, so x = A⁻¹·b: find the inverse, then multiply it by b.'),
+        W.matrix(cleanM(inverse(A)), 'A⁻¹'),
+        W.matrix(cleanM(mulM(inverse(A), b)), 'x = A⁻¹·b'),
+      ], cube(A) * 2));
+    }
+    return out;
+  }
+  function mulWork(l, r) {
+    const w = [W.text('Go along a row of the left matrix and down a column of the right one, multiply in pairs and add.')];
+    for (let i = 0; i < l.rows; i++) for (let j = 0; j < r.cols; j++) {
+      let s = 0; const parts = [];
+      for (let k = 0; k < l.cols; k++) { parts.push(`${fT(l.data[i][k])}·${fT(r.data[k][j])}`); s += l.data[i][k] * r.data[k][j]; }
+      w.push(W.math(`c${ix(i, j)} = ${parts.join(' + ')} = ${nT(s)}`));
+    }
+    return w;
+  }
+  const entries = (v, f) => { const w = []; for (let i = 0; i < v.rows; i++) for (let j = 0; j < v.cols; j++) w.push(W.math(`c${ix(i, j)} = ${f(i, j)} = ${nT(v.data[i][j])}`)); return w; };
+
+  function Explainer(ctx) {
+    const memo = ctx.memo, vars = ctx.vars, steps = [];
+    const val = (n) => memo.get(n);
+    const isAtom = (x) => x.k === 'num' || x.k === 'id' || (x.k === 'lit' && x.rows.every((r) => r.every(arith))) || (x.k === 'neg' && x.a.k === 'num') || (x.k === 'post' && x.op === 'deg' && isAtom(x.a));
+    function arith(x) {
+      switch (x.k) {
+        case 'num': return true;
+        case 'id': return x.v !== 'I' && !isMat(vars[x.v]) && !(vars[x.v] && vars[x.v].type === 'invalid');
+        case 'neg': case 'post': case 'bars': return arith(x.a);
+        case 'bin': case 'pow': return arith(x.a) && arith(x.b);
+        case 'call': return !FN_TITLE[x.f] && x.args.every(arith);
+        default: return false;
+      }
+    }
+    const kids = (x) => {
+      const k = [];
+      if (x.a) k.push(x.a);
+      if (x.b && !(x.k === 'pow' && x.b.k === 'id' && x.b.v === 'T')) k.push(x.b);
+      if (x.args) k.push(...x.args);
+      if (x.rows) x.rows.forEach((r) => r.forEach((e) => { if (!arith(e)) k.push(e); }));
+      return k;
+    };
+    function walk(x, top, inNumbers) {
+      if (isAtom(x)) return;
+      const v = val(x); if (v === undefined) return;
+      const numbers = arith(x);
+      if (numbers && !top && !inNumbers) { steps.push({ title: 'Work out the number', expr: show(x, vars), tex: tex(x, vars), value: tidy(v), methods: [] }); return; }
+      kids(x).forEach((k) => walk(k, false, numbers));
+      if (isEye(v)) return;
+      steps.push(make(x, v));
+    }
+    function make(x, v) {
+      const st = { title: '', expr: show(x, vars), tex: tex(x, vars), value: tidy(v), note: null, methods: [] };
+      const set = (title, note, methods) => Object.assign(st, { title, note: note || null, methods: methods || [] });
+      switch (x.k) {
+        case 'call': {
+          const name = x.f, args = x.args.map(val);
+          if (!FN_TITLE[name]) {
+            const onM = isMat(args[0]);
+            return set(onM ? `Apply ${name} to every entry` : `Work out ${name}`, TRIG.has(name) ? `Angles are in ${ctx.angle === 'deg' ? 'degrees' : 'radians'}.` : null);
+          }
+          const title = FN_TITLE[name], m = args[0];
+          if (name === 'solve' && isMat(args[0]) && isMat(args[1])) return set(title, 'Find x with A·x = b.', solveMethods(args[0], args[1]));
+          if (name === 'dot') {
+            const u = vecOf(args[0], 'dot'), w2 = vecOf(args[1], 'dot');
+            return set(title, 'Multiply matching entries and add them up.', [method('Working', () => [W.math(`${u.map((a, i) => `${fT(a)}·${fT(w2[i])}`).join(' + ')} = ${nT(v)}`)])]);
+          }
+          if (name === 'cross') return set(title, 'A vector at right angles to both.');
+          if (!isMat(m)) return set(title, FN_NOTE[name]);
+          const sq = m.rows === m.cols;
+          switch (name) {
+            case 'det': return set(title, null, sq ? detMethods(m) : []);
+            case 'inv': return set(title, null, sq ? inverseMethods(m) : []);
+            case 'tr': case 'trace': {
+              const d = m.data.map((r, i) => r[i]).slice(0, Math.min(m.rows, m.cols));
+              return set(title, 'The sum of the diagonal entries.', [method('Working', () => [W.math(`tr = ${d.map((x2, i) => (i ? (x2 < 0 ? ` − ${nT(-x2)}` : ` + ${nT(x2)}`) : nT(x2))).join('')} = ${nT(v)}`)])]);
+            }
+            case 'rank': return set(title, 'The number of rows that are not all zero once it is row-reduced.', [method('Row reduction', () => rowsWork(steps0.rref(m)), cube(m))]);
+            case 'rref': return set(title, 'Row operations until every pivot is 1 with zeros above and below it.', [method('Row reduction', () => rowsWork(steps0.rref(m)), cube(m))]);
+            case 'minors': case 'cof': case 'cofactors': case 'adj': case 'adjoint': {
+              if (!sq || m.rows < 2) return set(title);
+              const minors = name === 'minors', adj = name === 'adj' || name === 'adjoint';
+              const note = minors ? 'Each entry is the determinant of what is left when that entry’s row and column are removed.' : adj ? 'The transpose of the cofactor matrix.' : 'Each minor with its sign: + where row + column is even, − where it is odd.';
+              return set(title, note, [method('Working', () => adj ? [...minorLines(m, true), W.matrix(cleanM(cofactorM(m)), 'The cofactor matrix'), W.text('Its transpose is the adjugate.')] : minorLines(m, !minors), m.rows * m.rows * fact(m.rows - 1))]);
+            }
+            case 'eig': case 'eigvals': {
+              if (!sq) return set(title);
+              return set(title, 'The numbers λ with A·v = λv for some non-zero v.', [method('Characteristic equation', () => {
+                const cp = charpoly(m), deg = cp.length - 1;
+                const poly = cp.map((c, k) => { const p = deg - k; if (Math.abs(c) < 1e-11) return ''; const a = Math.abs(c), co = Math.abs(a - 1) < 1e-12 && p > 0 ? '' : nT(a); return `${c < 0 ? (k ? ' − ' : '−') : k ? ' + ' : ''}${co}${p === 0 ? '' : p === 1 ? 'λ' : 'λ' + supI(p)}`; }).join('');
+                return [W.text('The eigenvalues are the roots of det(A − λI) = 0.'), W.math(`p(λ) = ${poly}`), W.text(deg <= 2 ? 'Solve this quadratic for λ.' : 'Its roots are then found numerically.')];
+              })]);
+            }
+            case 'cond': return set(title, 'The largest singular value divided by the smallest. Large values mean small changes in the input can change the answer a lot.', [method('Working', () => { const s = svd(m).sigma, hi = Math.max(...s), lo = Math.min(...s); return [W.math(`σ = ${s.map(nT).join(',  ')}`), ...(lo > 0 ? [W.math(`${nT(hi)} ÷ ${nT(lo)} = ${nT(hi / lo)}`)] : [])]; })]);
+            default: return set(title, FN_NOTE[name]);
+          }
+        }
+        case 'post': {
+          const a = val(x.a);
+          if (x.op === 'T') return set('Transpose', FN_NOTE.transpose);
+          if (x.op === 'inv') return isMat(a) ? set('Inverse', null, a.rows === a.cols ? inverseMethods(a) : []) : set('Take the reciprocal');
+          if (x.op === 'sq' || x.op === 'cube') { const k = x.op === 'sq' ? 2 : 3; return isMat(a) ? set(`Raise to the power ${k}`, `The matrix multiplied by itself ${k} times.`, [method('One multiplication at a time', () => { const w = []; let P = a; for (let i = 1; i < k; i++) { const Q = mulM(P, a); w.push(W.matrix(cleanM(Q), `${i === 1 ? 'A·A' : `A${supI(i)}·A`}`)); P = Q; } return w; }, cube(a) * (k - 1))]) : set(k === 2 ? 'Square it' : 'Cube it'); }
+          if (x.op === 'fact') return set('Factorial');
+          return set('Degrees to radians', 'Multiply by π/180.');
+        }
+        case 'pow': {
+          const a = val(x.a), b = val(x.b);
+          if (isMat(a) && isNum(b)) { const k = Math.round(b); if (k === -1) return set('Inverse', null, inverseMethods(a)); if (k === 0) return set('Raise to the power 0', 'Any square matrix to the power 0 is the identity.'); return set(`Raise to the power ${k}`, k < 0 ? `The inverse multiplied by itself ${-k} times.` : `The matrix multiplied by itself ${k} times.`); }
+          return set('Raise to the power');
+        }
+        case 'neg': return isMat(v) ? set('Change every sign', 'Every entry is multiplied by −1.') : set('Change the sign');
+        case 'bars': { const a = val(x.a); return isMat(a) ? set('Determinant', null, a.rows === a.cols ? detMethods(a) : []) : set('Absolute value'); }
+        case 'lit': return set('Put the results in a matrix', 'Each entry has been worked out in the steps above.');
+        case 'bin': {
+          const l = val(x.a), r = val(x.b), plus = x.op === '+';
+          if (x.op === '+' || x.op === '-') {
+            if (isMat(l) && isMat(r)) return set(plus ? 'Add the matrices' : 'Subtract the matrices', `Entries in the same position are ${plus ? 'added' : 'subtracted'}.`, [method('Entry by entry', () => entries(v, (i, j) => `${nT(l.data[i][j])} ${plus ? '+' : '−'} ${fT(r.data[i][j])}`), v.rows * v.cols)]);
+            if (isEye(l) || isEye(r)) {
+              const k = isEye(l) ? l.s : r.s, what = k === 1 ? 'I' : `${nT(k)}I`, m = isMat(l) ? l : r;
+              return set(plus ? `Add ${what}` : `Subtract ${what}`, `${what} is ${nT(k)} down the diagonal and 0 elsewhere, so only the diagonal entries change.`, [method('Down the diagonal', () => m.data.map((_, i) => W.math(`c${ix(i, i)} = ${isMat(l) ? nT(m.data[i][i]) : nT(k)} ${plus ? '+' : '−'} ${fT(isMat(l) ? k : m.data[i][i])} = ${nT(v.data[i][i])}`)))]);
+            }
+            return set(plus ? 'Add' : 'Subtract');
+          }
+          if (x.op === '*') {
+            if (isMat(l) && isMat(r)) return set('Multiply the matrices', 'Entry (i, j) is row i of the left matrix times column j of the right one.', [method('Entry by entry', () => mulWork(l, r), l.rows * r.cols * l.cols)]);
+            if (isMat(l) || isMat(r)) { const k = isMat(l) ? r : l, kt = isEye(k) ? nT(k.s) : nT(k); return set(`Multiply every entry by ${kt}`, isEye(k) && k.s === 1 ? 'Multiplying by I leaves a matrix unchanged.' : null); }
+            return set('Multiply');
+          }
+          if (x.op === '/') {
+            if (isMat(r)) return set('Divide by a matrix', 'Dividing by a matrix means multiplying by its inverse on the right.', [method('Working', () => [W.matrix(cleanM(inverse(r)), 'The inverse of the divisor'), W.text(isMat(l) ? 'Then multiply the left matrix by this inverse.' : 'Then multiply every entry by the number.')])]);
+            if (isMat(l)) return set(`Divide every entry by ${nT(r)}`);
+            return set('Divide');
+          }
+          return set('Multiply entry by entry', isMat(l) && isMat(r) ? FN_NOTE.hadamard : null);
+        }
+        default: return set('Work it out');
+      }
+    }
+    return { steps, walk, isAtom };
+  }
+  const steps0 = steps;
+
+  /* (k·M)·N reads as k·(M·N): the matrices are multiplied first, then every
+     entry is scaled — the order the app shows. */
+  function reassoc(n, memo) {
+    const c = Object.assign({}, n);
+    if (n.a) c.a = reassoc(n.a, memo);
+    if (n.b) c.b = reassoc(n.b, memo);
+    if (n.args) c.args = n.args.map((x) => reassoc(x, memo));
+    if (n.rows) c.rows = n.rows.map((r) => r.map((x) => reassoc(x, memo)));
+    memo.set(c, memo.get(n));
+    if (c.k === 'bin' && c.op === '*' && c.a.k === 'bin' && c.a.op === '*') {
+      const k = memo.get(c.a.a), M = memo.get(c.a.b), N2 = memo.get(c.b);
+      if (isNum(k) && isMat(M) && isMat(N2) && M.cols === N2.rows) {
+        const right = { k: 'bin', op: '*', a: c.a.b, b: c.b };
+        memo.set(right, mulM(M, N2));
+        const top = { k: 'bin', op: '*', a: c.a.a, b: right };
+        memo.set(top, memo.get(n));
+        return top;
+      }
+    }
+    return c;
+  }
+
+  function explain(text, env = {}) {
+    const ctx = { vars: env.vars || {}, angle: env.angle || 'rad', warnings: [], memo: new Map() };
+    try {
+      const a = splitAssignment(text), body = a ? a.body : text;
+      if (!body.trim()) return null;
+      const tree = parse(body, FUNCS, ctx.vars);
+      const v = evalNode(tree, ctx);
+      if (isEye(v)) return null;
+      const t2 = reassoc(tree, ctx.memo);
+      const ex = Explainer(ctx);
+      ex.walk(t2, true, false);
+      return { expr: show(tree, ctx.vars), tex: tex(tree, ctx.vars), value: tidy(v), steps: ex.steps, assign: a ? a.name : null };
+    } catch (e) { return null; }
+  }
+  function hasSteps(text, env = {}) {
+    try {
+      const a = splitAssignment(text), body = a ? a.body : text;
+      if (!body.trim()) return false;
+      const tree = parse(body, FUNCS, env.vars || {});
+      return !Explainer({ vars: env.vars || {}, memo: new Map() }).isAtom(tree);
+    } catch (e) { return false; }
+  }
+
   global.MatEngine = {
     evaluate, evalScalar, splitAssignment, describe, plain, isMat, isNum,
     mat, zeros, eye, transpose, mulM, det, inverse, rank, traceOf, eigenvalues, charpoly,
     lu, qr, svd, cholesky, frob, norm1, normInf, norm2, cond, properties, steps, isSymmetric,
     FUNCS, RESERVED,
+    explain, hasSteps, texValue, texNum, exprTex,
   };
 })(window);

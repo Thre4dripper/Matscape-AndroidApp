@@ -43,32 +43,35 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="27.9" data-width="1200" data-height="1600" data-fps="30" data-poster-time="7.6">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1200" data-height="1600" data-fps="30" data-poster-time="13.2">
       <div class="glow g1" id="g1"></div><div class="glow g2" id="g2"></div>
       <div class="glyph q1" id="q1">[</div><div class="glyph q2" id="q2">]</div>
       <div id="caps"></div>
-      <div id="card"><div class="clip" id="k0"><div class="zoom" id="z0"><video id="v0" src="assets/type.mp4" muted playsinline preload="auto" data-start="0.0" data-duration="5.95" data-media-start="0.0" data-track-index="1"></video></div></div><div class="clip" id="k1"><div class="zoom" id="z1"><video id="v1" src="assets/steps.mp4" muted playsinline preload="auto" data-start="5.3" data-duration="9.5" data-media-start="0.2" data-track-index="2"></video></div></div><div class="clip" id="k2"><div class="zoom" id="z2"><video id="v2" src="assets/library.mp4" muted playsinline preload="auto" data-start="14.4" data-duration="7.69" data-media-start="0.0" data-track-index="3"></video></div></div><div class="clip" id="k3"><div class="zoom" id="z3"><video id="v3" src="assets/editor.mp4" muted playsinline preload="auto" data-start="21.65" data-duration="6.25" data-media-start="0.0" data-track-index="4"></video></div></div></div>
-      <audio src="assets/music.wav" data-start="0" data-duration="27.9" data-volume="0.7" preload="auto"></audio>
+      <div id="card"><div class="clip" id="k0"><div class="zoom" id="z0"><video id="v0" src="assets/type.mp4" muted playsinline preload="auto" data-start="0.0" data-duration="5.5" data-media-start="0.2" data-track-index="1"></video></div></div><div class="clip" id="k1"><div class="zoom" id="z1"><video id="v1" src="assets/inspect.mp4" muted playsinline preload="auto" data-start="5.0" data-duration="5.1" data-media-start="0.1" data-track-index="2"></video></div></div><div class="clip" id="k2"><div class="zoom" id="z2"><video id="v2" src="assets/steps.mp4" muted playsinline preload="auto" data-start="9.6" data-duration="7.1" data-media-start="0.1" data-track-index="3"></video></div></div><div class="clip" id="k3"><div class="zoom" id="z3"><video id="v3" src="assets/library.mp4" muted playsinline preload="auto" data-start="16.2" data-duration="3.8" data-media-start="0.1" data-track-index="4"></video></div></div><div class="clip" id="k4"><div class="zoom" id="z4"><video id="v4" src="assets/library.mp4" muted playsinline preload="auto" data-start="19.5" data-duration="2.8" data-media-start="7.9" data-track-index="5"></video></div></div><div class="clip" id="k5"><div class="zoom" id="z5"><video id="v5" src="assets/editor.mp4" muted playsinline preload="auto" data-start="21.8" data-duration="8.2" data-media-start="0.2" data-track-index="6"></video></div></div></div>
+      <audio src="assets/music.wav" data-start="0" data-duration="30" data-volume="0.7" preload="auto"></audio>
     </div>
     <script>
-      const D = 27.9;
-      // Clips: vs = start in the film, ms = start inside the recording, dur = time on screen (incl. overlap).
+      const D = 30;
+      // Clips: vs = start in the film, ms = start inside the recording; each runs until the next cut (static <video> tags mirror this).
       // Recordings were captured at 1032×1376 points; taps are in points, t in recording seconds.
       const CLIPS = [
-        { src: 'type.mp4',    vs: 0.0,   ms: 0.0, dur: 5.95, taps: [[0.4,600,140],[1.02,670,1321],[1.74,381,1104],[2.36,318,1150],[2.87,554,1196],[4.5,670,1321]] },
-        { src: 'steps.mp4',   vs: 5.3,   ms: 0.2, dur: 9.5,  taps: [[5.3,967,507]],
-          zoom: [[5.6, 1.28, '86% 40%', 1.0], [8.4, 1, '86% 40%', 0.6]] },
-        { src: 'library.mp4', vs: 14.4,  ms: 0.0, dur: 7.69, taps: [[0.0,139,207],[1.42,872,1137],[5.63,946,1340]] },
-        { src: 'editor.mp4',  vs: 21.65, ms: 0.0, dur: 6.25, taps: [[0.0,75,617],[1.22,516,505],[1.74,678,747],[2.15,378,747],[2.52,624,811],[2.89,516,863],[3.71,733,967],[4.72,752,405]] },
+        { src: 'type.mp4',    vs: 0.0,  ms: 0.2, taps: [[0.5,500,150],[1.18,671,1322],[1.85,381,1105],[2.52,318,1151],[3.09,555,1197],[3.96,671,1322]] },
+        { src: 'inspect.mp4', vs: 5.0,  ms: 0.1, taps: [[0.3,516,440]] },
+        { src: 'steps.mp4',   vs: 9.6,  ms: 0.1, taps: [[0.3,588,194],[2.97,939,278]],
+          zoom: [[0.9, 1.24, '97% 26%', 0.8], [5.7, 1, '97% 26%', 0.6]] },
+        { src: 'library.mp4', vs: 16.2, ms: 0.1, taps: [[0.3,139,207],[1.67,873,674]] },
+        { src: 'library.mp4', vs: 19.5, ms: 7.9, taps: [[8.39,947,1341]] },
+        { src: 'editor.mp4',  vs: 21.8, ms: 0.2, taps: [[0.6,75,475],[1.87,516,481],[2.64,678,773],[3.21,378,773],[3.74,625,837],[4.27,516,889],[5.37,733,993],[6.25,752,381]] },
       ];
       const CAPS = [
-        { t: [0.15, 2.85], k: 'MATRIX CALCULATOR', h: 'Meet Mat<i>scape</i> for iPad.' },
-        { t: [3.0, 5.45],  k: 'LIVE INSPECTOR', h: 'Answers update <i>as you type.</i>' },
-        { t: [5.75, 9.9],  k: 'INSPECT', h: 'Properties, eigenvalues, <i>norms.</i>' },
-        { t: [10.05, 14.25], k: 'STEP BY STEP', h: 'Determinant, inverse, <i>RREF.</i>' },
-        { t: [14.7, 21.5], k: 'LIBRARY', h: 'Every operation, <i>explained.</i>' },
-        { t: [21.95, 25.9], k: 'EDIT', h: 'Trig inside <i>matrices.</i>' },
-        { t: [26.0, D], k: '', h: 'Mat<i>scape</i>', sub: 'Every matrix tool.', end: true },
+        { t: [0.15, 2.6],  k: 'MATRIX CALCULATOR', h: 'Meet Mat<i>scape</i> for iPad.' },
+        { t: [2.75, 4.85], k: 'LIVE INSPECTOR', h: 'Answers update <i>as you type.</i>' },
+        { t: [5.2, 9.35],  k: 'INSPECT', h: 'Properties, eigenvalues, <i>norms.</i>' },
+        { t: [9.8, 12.4],  k: 'STEP BY STEP', h: 'Every step, <i>worked out.</i>' },
+        { t: [12.55, 16.0], k: 'STEP BY STEP', h: 'Choose your <i>method.</i>' },
+        { t: [16.4, 21.6], k: 'LIBRARY', h: 'Every operation, <i>explained.</i>' },
+        { t: [22.0, 27.8], k: 'EDIT', h: 'Trig inside <i>matrices.</i>' },
+        { t: [28.1, D], k: '', h: 'Mat<i>scape</i>', sub: 'Every matrix tool.', end: true },
       ];
       const PT = 936 / 1032; // points → card pixels
 
@@ -98,7 +101,7 @@
       tl.fromTo('#q2', { y: 0 }, { y: 120, duration: D, ease: 'none' }, 0);
       // card entrance + outro settle
       tl.fromTo('#card', { y: 220, scale: .92, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 1.0, ease: 'expo.out' }, 0);
-      tl.to('#card', { y: 90, scale: .9, duration: 1.1, ease: 'power3.inOut' }, 25.95);
+      tl.to('#card', { y: 90, scale: .9, duration: 1.1, ease: 'power3.inOut' }, 28.0);
 
       CLIPS.forEach((c, i) => {
         const id = '#k' + i, cut = c.vs + 0.3;
@@ -112,7 +115,8 @@
         (c.zoom || []).forEach(([t, s, o, d]) => tl.to('#z' + i, { scale: s, transformOrigin: o, duration: d, ease: 'power2.inOut' }, c.vs + t));
         c.taps.forEach((p, j) => {
           const at = c.vs + (p[0] - c.ms);
-          if (at < c.vs - 0.05 || at > c.vs + c.dur) return;
+          const next = i + 1 < CLIPS.length ? CLIPS[i + 1].vs : D;
+          if (at < c.vs - 0.05 || at > next - 0.1) return;
           tl.fromTo(`#r${i}_${j}`, { scale: .3, opacity: .95, immediateRender: false }, { scale: 1.7, opacity: 0, duration: 0.5, ease: 'power2.out', immediateRender: false }, Math.max(0, at - 0.06));
         });
       });
