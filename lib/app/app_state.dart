@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 
 import '../engine/engine.dart';
 import '../engine/engine.dart' as engine show hasSteps;
+import 'matrix_draft.dart';
 import 'models.dart';
 import 'storage.dart';
 import 'sync_merge.dart';
@@ -198,25 +199,31 @@ class AppState extends ChangeNotifier {
 
   /* ---------- evaluation ---------- */
 
+  /// Evaluates [cells] as the matrix [name]: its value, or the first entry
+  /// that doesn't work.
+  static MatEval evalMatrix(Cells cells, String name, {required bool degrees}) {
+    MatEval? bad;
+    final data = [
+      for (var i = 0; i < cells.length; i++)
+        [
+          for (var j = 0; j < cells[i].length; j++)
+            () {
+              final r = evalScalar(cells[i][j], degrees: degrees);
+              if (r.ok) return r.value! as double;
+              bad ??= MatEval.bad(i, j, r.error ?? 'Invalid entry');
+              return double.nan;
+            }(),
+        ],
+    ];
+    return bad ?? MatEval.ok(Mat(data, label: name));
+  }
+
   void _evaluateAll() {
     final w = ws, deg = settings.degrees;
     final vars = <String, Object>{}, mats = <String, MatEval>{};
     final names = {for (final m in w.matrices) m.name};
     for (final m in w.matrices) {
-      MatEval? bad;
-      final data = [
-        for (var i = 0; i < m.rows; i++)
-          [
-            for (var j = 0; j < m.cols; j++)
-              () {
-                final r = evalScalar(m.cells[i][j], degrees: deg);
-                if (r.ok) return r.value! as double;
-                bad ??= MatEval.bad(i, j, r.error ?? 'Invalid entry');
-                return double.nan;
-              }(),
-          ],
-      ];
-      final res = bad ?? MatEval.ok(Mat(data, label: m.name));
+      final res = evalMatrix(m.cells, m.name, degrees: deg);
       mats[m.id] = res;
       vars[m.name] = res.ok ? res.value! : InvalidVal(m.name, '${res.where}.');
     }
@@ -510,48 +517,52 @@ class AppState extends ChangeNotifier {
     return ws.lines.any((l) => re.hasMatch(l.text));
   }
 
-  void setCell(MatrixModel m, int i, int j, String text) {
-    if (m.cells[i][j] == text) return;
-    m.cells[i][j] = text;
+  /// Saves a matrix's entries: what the editor's Done does, as one change.
+  void setMatrixCells(MatrixModel m, Cells cells) {
+    if (sameCells(m.cells, cells)) return;
+    m.cells = copyCells(cells);
     _changed();
   }
 
-  void resizeMatrix(MatrixModel m, {int? rows, int? cols}) {
-    final r = (rows ?? m.rows).clamp(1, maxMatrixSize);
-    final c = (cols ?? m.cols).clamp(1, maxMatrixSize);
+  /// [cells] grown or cut to [rows] × [cols]. New entries are 0, or 1 on the
+  /// diagonal when new matrices start as the identity.
+  Cells resizedCells(Cells cells, {int? rows, int? cols}) {
+    final r0 = cells.length, c0 = cells[0].length;
+    final r = (rows ?? r0).clamp(1, maxMatrixSize);
+    final c = (cols ?? c0).clamp(1, maxMatrixSize);
     final id = settings.defIdentity;
-    m.cells = [
+    return [
       for (var i = 0; i < r; i++)
         [
           for (var j = 0; j < c; j++)
-            i < m.rows && j < m.cols
-                ? m.cells[i][j]
-                : (id && i == j ? '1' : '0'),
+            i < r0 && j < c0 ? cells[i][j] : (id && i == j ? '1' : '0'),
         ],
     ];
-    _changed();
   }
 
-  /// Fills a matrix from a preset. Returns true if the size had to change.
-  bool presetMatrix(MatrixModel m, String preset) {
+  /// [cells] filled from a preset, and whether the size had to change.
+  (Cells, bool) presetCells(Cells cells, String preset) {
     String rnd() => '${_rng.nextInt(19) - 9}'.replaceFirst('-', '−');
-    var r = m.rows, c = m.cols, resized = false;
+    var r = cells.length, c = cells[0].length, resized = false;
     switch (preset) {
       case 'rotation':
         if (!(r == c && (r == 2 || r == 3))) {
           r = c = 2;
           resized = true;
         }
-        m.cells = r == 2
-            ? [
-                ['cos(30°)', '−sin(30°)'],
-                ['sin(30°)', 'cos(30°)'],
-              ]
-            : [
-                ['cos(30°)', '−sin(30°)', '0'],
-                ['sin(30°)', 'cos(30°)', '0'],
-                ['0', '0', '1'],
-              ];
+        return (
+          r == 2
+              ? [
+                  ['cos(30°)', '−sin(30°)'],
+                  ['sin(30°)', 'cos(30°)'],
+                ]
+              : [
+                  ['cos(30°)', '−sin(30°)', '0'],
+                  ['sin(30°)', 'cos(30°)', '0'],
+                  ['0', '0', '1'],
+                ],
+          resized,
+        );
       case 'symmetric':
         final g = fillCells(r, c, false);
         for (var i = 0; i < r; i++) {
@@ -559,23 +570,24 @@ class AppState extends ChangeNotifier {
             g[i][j] = j < i && i < c ? g[j][i] : rnd();
           }
         }
-        m.cells = g;
+        return (g, false);
       default:
-        m.cells = [
-          for (var i = 0; i < r; i++)
-            [
-              for (var j = 0; j < c; j++)
-                switch (preset) {
-                  'identity' => i == j ? '1' : '0',
-                  'random' => rnd(),
-                  'diagonal' => i == j ? '${1 + _rng.nextInt(9)}' : '0',
-                  _ => '0',
-                },
-            ],
-        ];
+        return (
+          [
+            for (var i = 0; i < r; i++)
+              [
+                for (var j = 0; j < c; j++)
+                  switch (preset) {
+                    'identity' => i == j ? '1' : '0',
+                    'random' => rnd(),
+                    'diagonal' => i == j ? '${1 + _rng.nextInt(9)}' : '0',
+                    _ => '0',
+                  },
+              ],
+          ],
+          false,
+        );
     }
-    _changed();
-    return resized;
   }
 
   /* ---------- workspaces ---------- */

@@ -448,10 +448,11 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text('5').last);
         await tester.pump();
-        expect(state.ws.matrices.first.cells[0][0], '5', reason: '$w×$h');
+        expect(state.ws.matrices.first.cells[0][0], '4', reason: '$w×$h');
         expect(tester.takeException(), isNull, reason: '$w×$h');
         await tester.tap(find.text('Done').last);
         await _settle(tester);
+        expect(state.ws.matrices.first.cells[0][0], '5', reason: '$w×$h');
       }
     });
 

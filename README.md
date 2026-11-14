@@ -100,6 +100,11 @@ symbol left unconverted).
   back to the app and on Sync now, so nothing changes under the user; this
   device's edits go out a few seconds after a pause and on leaving. "Live"
   (per device, off by default) also looks every 30 seconds while open.
+- `lib/app/matrix_draft.dart`: the matrix editor's draft, with undo and redo;
+  a matrix changes only when the editor's Done saves it.
+- `lib/app/google_config.dart` and `ios/Runner/Info.plist` hold the Google
+  Cloud client ids. With the ids empty, Settings says sync isn't available in
+  this build.
 
 ## Site
 

@@ -246,6 +246,32 @@ Reference: `iphone/14-settings.png`, `iphone/14b-settings-synced.png`,
 `iphone/14c-deleted-on-another-device.png`, `ipad-mini/03-settings.png`,
 `ipad-mini/04-settings-synced.png`.
 
+### H-013 · Matrix editor saves on Done, with undo and redo
+
+Added 15 Nov 2026 · affects: prototype, layout boards
+
+Changes in the matrix editor are no longer applied as they are typed: they
+wait for **Done**.
+
+- **Top row:** two new icon buttons, **Undo** and **Redo** (curved arrows in
+  the set's stroke style), sit left of Delete, Duplicate and Inspect, with a
+  thin vertical divider between the two groups. All five icons are 32px wide
+  now (were 40) so the row still fits a phone. Undo and Redo are dimmed when
+  there is nothing to undo or redo. Where the row is short of room (phones),
+  the word "Matrix" before the name chip is left out rather than cut off.
+- **Unsaved changes:** a small dot appears before "Done" inside the Done
+  pill, and the hint line under the entry field reads "Not saved yet · Done
+  saves your changes" in the accent ink, after a small accent dot.
+- **Leaving with unsaved changes** (tapping outside, dragging the sheet
+  down, Android's back): a card in the usual confirm style, "Save changes
+  to A?", "You changed this matrix. Changes are kept only when you save
+  them.", with two full-width buttons stacked: **Save changes** (primary)
+  and **Discard changes** (danger). Tapping outside the card keeps editing.
+
+Reference: `iphone/08-matrix-editor.png`,
+`iphone/08b-matrix-editor-unsaved.png`,
+`iphone/08c-matrix-editor-save-changes.png`.
+
 ## Done
 
 Nothing yet.

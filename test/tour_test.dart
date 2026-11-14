@@ -315,13 +315,18 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.getTopLeft(find.text('Done')), done);
       }
-      expect(state.ws.matrices.first.rows, 8);
+      // The editor's draft has eight rows; the matrix itself waits for Done.
+      expect(
+        find.bySemanticsLabel(RegExp('^Row 8, column 1: ')),
+        findsOneWidget,
+      );
+      expect(state.ws.matrices.first.rows, 3);
       for (var i = 0; i < 7; i++) {
         await tester.tap(find.bySemanticsLabel('Decrease rows'));
         await tester.pumpAndSettle();
         expect(tester.getTopLeft(find.text('Done')), done);
       }
-      expect(state.ws.matrices.first.rows, 1);
+      expect(find.bySemanticsLabel(RegExp('^Row 2, column 1: ')), findsNothing);
       expect(tester.getTopLeft(find.text('Next')), enter);
       expect(tester.takeException(), isNull);
       await _settle(tester);

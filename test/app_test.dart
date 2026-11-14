@@ -78,25 +78,117 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
   });
 
-  testWidgets('editing a matrix entry updates lines that use it', (
-    tester,
-  ) async {
+  testWidgets('a matrix edit is saved only by Done', (tester) async {
     final state = await _launch(tester);
     await tester.tap(find.bySemanticsLabel(RegExp('^Matrix A, 3 by 3')));
     await tester.pumpAndSettle();
     expect(find.text('Matrix'), findsWidgets);
 
-    // The first entry is selected; typing replaces it.
+    // The first entry is selected; typing replaces it, in the editor only.
     await _key(tester, '5');
-    expect(state.ws.matrices.first.cells[0][0], '5');
+    expect(state.ws.matrices.first.cells[0][0], '4');
+    expect(
+      find.text('Not saved yet · Done saves your changes'),
+      findsOneWidget,
+    );
     expect(
       state.lineResults[state.ws.lines.first.id]!.value,
-      closeTo(58, 1e-9),
-    ); // det with a11 = 5
+      closeTo(43, 1e-9),
+    );
 
     await tester.tap(find.text('Done'));
     await tester.pumpAndSettle();
-    expect(find.text('58'), findsOneWidget);
+    expect(state.ws.matrices.first.cells[0][0], '5');
+    expect(find.text('58'), findsOneWidget); // det with a11 = 5
+    expect(tester.takeException(), isNull);
+    await tester.pump(const Duration(milliseconds: 300));
+  });
+
+  testWidgets('leaving the editor with changes asks first', (tester) async {
+    final state = await _launch(tester);
+    Future<void> open() async {
+      await tester.tap(find.bySemanticsLabel(RegExp('^Matrix A, 3 by 3')));
+      await tester.pumpAndSettle();
+      await _key(tester, '5');
+      // The system back gesture.
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Save changes to A?'), findsOneWidget);
+    }
+
+    // Discard: nothing changes.
+    await open();
+    await tester.tap(find.text('Discard changes'));
+    await tester.pumpAndSettle();
+    expect(find.text('Save changes to A?'), findsNothing);
+    expect(find.text('Done'), findsNothing);
+    expect(state.ws.matrices.first.cells[0][0], '4');
+
+    // Dismissing the question keeps the editor open with the change.
+    await open();
+    await tester.tapAt(const Offset(8, 8));
+    await tester.pumpAndSettle();
+    expect(find.text('Done'), findsOneWidget);
+    expect(state.ws.matrices.first.cells[0][0], '4');
+
+    // Save: kept.
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+    expect(find.text('Done'), findsNothing);
+    expect(state.ws.matrices.first.cells[0][0], '5');
+
+    // Without changes it just closes.
+    await tester.tap(find.bySemanticsLabel(RegExp('^Matrix A, 3 by 3')));
+    await tester.pumpAndSettle();
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Done'), findsNothing);
+    expect(tester.takeException(), isNull);
+    await tester.pump(const Duration(milliseconds: 300));
+  });
+
+  testWidgets('undo and redo step through the editor session', (tester) async {
+    final state = await _launch(tester);
+    await tester.tap(find.bySemanticsLabel(RegExp('^Matrix A, 3 by 3')));
+    await tester.pumpAndSettle();
+    String cell(int i, int j) {
+      final grid = find.bySemanticsLabel(
+        RegExp('^Row ${i + 1}, column ${j + 1}: '),
+      );
+      return tester.getSemantics(grid).label.split(': ').last.split(',').first;
+    }
+
+    await _key(tester, '5');
+    await _key(tester, '6');
+    await tester.tap(find.bySemanticsLabel('Next entry'));
+    await tester.pumpAndSettle();
+    await _key(tester, '7');
+    expect([cell(0, 0), cell(0, 1)], ['56', '7']);
+
+    // A fill is one step too.
+    await tester.tap(find.text('Fill'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Identity'));
+    await tester.pumpAndSettle();
+    expect([cell(0, 0), cell(0, 1)], ['1', '0']);
+
+    await tester.tap(find.bySemanticsLabel('Undo'));
+    await tester.pumpAndSettle();
+    expect([cell(0, 0), cell(0, 1)], ['56', '7']);
+    await tester.tap(find.bySemanticsLabel('Undo'));
+    await tester.tap(find.bySemanticsLabel('Undo'));
+    await tester.pumpAndSettle();
+    expect([cell(0, 0), cell(0, 1)], ['4', '1']);
+    expect(find.text('Not saved yet · Done saves your changes'), findsNothing);
+
+    await tester.tap(find.bySemanticsLabel('Redo'));
+    await tester.pumpAndSettle();
+    expect(cell(0, 0), '56');
+    await tester.tap(find.text('Done'));
+    await tester.pumpAndSettle();
+    expect(state.ws.matrices.first.cells[0].take(2), ['56', '1']);
     expect(tester.takeException(), isNull);
     await tester.pump(const Duration(milliseconds: 300));
   });

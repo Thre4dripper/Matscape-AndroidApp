@@ -163,6 +163,17 @@ final _phoneScenes = <Scene>[
     '08-matrix-editor',
     (t, s) => _tap(t, find.bySemanticsLabel(RegExp('^Matrix A,')).first),
   ),
+  Scene('08b-matrix-editor-unsaved', (t, s) async {
+    await _tap(t, find.bySemanticsLabel(RegExp('^Matrix A,')).first);
+    await _tap(t, find.text('5').last);
+  }),
+  Scene('08c-matrix-editor-save-changes', (t, s) async {
+    await _tap(t, find.bySemanticsLabel(RegExp('^Matrix A,')).first);
+    await _tap(t, find.text('5').last);
+    // Closing it the way back or a tap outside does.
+    await t.state<NavigatorState>(find.byType(Navigator).first).maybePop();
+    await t.pumpAndSettle();
+  }),
   Scene(
     '09-library',
     (t, s) => _tap(t, find.bySemanticsLabel('Operations library').first),

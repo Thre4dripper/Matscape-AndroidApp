@@ -104,7 +104,10 @@ class IconBtn extends StatelessWidget {
         child: Ico(
           icon,
           size: small ? 18 : 22,
-          color: danger ? pal.danger : (small ? pal.ink3 : pal.ink),
+          // No action: dimmed, like a key that can't be pressed.
+          color: onTap == null
+              ? pal.lineStrong
+              : (danger ? pal.danger : (small ? pal.ink3 : pal.ink)),
         ),
       ),
     );
@@ -975,9 +978,65 @@ Future<bool> confirmDialog(
   required String ok,
   bool danger = true,
 }) async {
+  final result = await _showCard<bool>(
+    context,
+    title: title,
+    body: body,
+    actions: (context) => Row(
+      children: [
+        Btn('Cancel', onTap: () => Navigator.of(context).pop(false)),
+        const SizedBox(width: 8),
+        Btn(
+          ok,
+          kind: danger ? BtnKind.danger : BtnKind.primary,
+          onTap: () => Navigator.of(context).pop(true),
+        ),
+      ],
+    ),
+  );
+  return result ?? false;
+}
+
+/// A card with several answers, one full-width button each, first on top.
+/// Resolves to the chosen value, or null when dismissed.
+Future<T?> choiceDialog<T>(
+  BuildContext context, {
+  required String title,
+  required String body,
+  required List<(T, String, BtnKind)> choices,
+}) => _showCard<T>(
+  context,
+  title: title,
+  body: body,
+  actions: (context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      for (var k = 0; k < choices.length; k++) ...[
+        if (k > 0) const SizedBox(height: 8),
+        // Btn fills the space it is given along a Row.
+        Row(
+          children: [
+            Btn(
+              choices[k].$2,
+              kind: choices[k].$3,
+              onTap: () => Navigator.of(context).pop(choices[k].$1),
+            ),
+          ],
+        ),
+      ],
+    ],
+  ),
+);
+
+Future<R?> _showCard<R>(
+  BuildContext context, {
+  required String title,
+  required String body,
+  required Widget Function(BuildContext context) actions,
+}) {
   final pal = context.pal;
   final area = LayoutInfo.of(context).overlayRect(MediaQuery.sizeOf(context));
-  final result = await showGeneralDialog<bool>(
+  return showGeneralDialog<R>(
     context: context,
     barrierDismissible: true,
     barrierLabel: 'Cancel',
@@ -1031,22 +1090,11 @@ Future<bool> confirmDialog(
                 style: TextStyle(fontSize: Fs.sm, height: 1.5, color: pal.ink2),
               ),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  Btn('Cancel', onTap: () => Navigator.of(context).pop(false)),
-                  const SizedBox(width: 8),
-                  Btn(
-                    ok,
-                    kind: danger ? BtnKind.danger : BtnKind.primary,
-                    onTap: () => Navigator.of(context).pop(true),
-                  ),
-                ],
-              ),
+              actions(context),
             ],
           ),
         ),
       ),
     ),
   );
-  return result ?? false;
 }

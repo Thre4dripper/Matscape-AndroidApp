@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../app/app_state.dart';
+import '../app/matrix_draft.dart';
 import '../app/models.dart';
 import '../engine/engine.dart';
 import 'icons.dart';
@@ -17,6 +18,8 @@ import 'widgets.dart';
 
 /// Opens the matrix editor.
 ///
+/// Changes are made to a draft, with undo and redo, and saved together when
+/// the user presses Done; closing it any other way with changes asks first.
 /// Entries are typed with the editor's own keypad, so the system keyboard
 /// never opens and the matrix stays visible while typing. How it is shown
 /// follows the layout: a bottom sheet on phones, a centred dialog on
@@ -141,6 +144,9 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   double _drag = 0;
   bool _loaded = false;
 
+  /// What the user is changing, saved to the matrix only on Done.
+  late MatrixDraft _draft;
+
   AppState get _state => AppScope.read(context);
   MatrixModel? get _m => _state.matrixById(widget.matrixId);
 
@@ -149,6 +155,12 @@ class _MatrixEditorState extends State<_MatrixEditor> {
     super.didChangeDependencies();
     if (!_loaded) {
       _loaded = true;
+      _draft = MatrixDraft(
+        _m?.cells ??
+            const [
+              ['0'],
+            ],
+      );
       _loadEntry();
     }
   }
@@ -165,9 +177,9 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   void _loadEntry() {
     final m = _m;
     if (m == null) return;
-    _i = math.min(_i, m.rows - 1);
-    _j = math.min(_j, m.cols - 1);
-    _entry.text = m.cells[_i][_j];
+    _i = math.min(_i, _draft.rows - 1);
+    _j = math.min(_j, _draft.cols - 1);
+    _entry.text = _draft.cells[_i][_j];
     edit.selectAll(_entry);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -185,26 +197,69 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   }
 
   void _select(int i, int j) => setState(() {
+    _draft.endTyping();
     _i = i;
     _j = j;
     _loadEntry();
   });
 
-  void _entryChanged() {
+  void _entryChanged() => setState(() => _draft.setCell(_i, _j, _entry.text));
+
+  void _undo() => setState(() {
+    _draft.undo();
+    _loadEntry();
+  });
+
+  void _redo() => setState(() {
+    _draft.redo();
+    _loadEntry();
+  });
+
+  /// Saves the draft and closes.
+  void _done() {
     final m = _m;
-    if (m != null) _state.setCell(m, _i, _j, _entry.text);
+    if (m != null) _state.setMatrixCells(m, _draft.cells);
+    _draft.markSaved();
+    Navigator.of(context).pop();
+  }
+
+  /// Before leaving with unsaved changes: save them, drop them, or stay.
+  /// Returns whether to go on leaving.
+  Future<bool> _settle() async {
+    final m = _m;
+    if (m == null || !_draft.changed) return true;
+    final choice = await choiceDialog<bool>(
+      context,
+      title: 'Save changes to ${m.name}?',
+      body:
+          'You changed this matrix. Changes are kept only when you save them.',
+      choices: const [
+        (true, 'Save changes', BtnKind.primary),
+        (false, 'Discard changes', BtnKind.danger),
+      ],
+    );
+    if (choice == null || !mounted) return false;
+    if (choice) _state.setMatrixCells(m, _draft.cells);
+    _draft.markSaved();
+    return true;
+  }
+
+  /// Closing by the scrim, the grabber or the system back gesture.
+  Future<void> _onPop(bool didPop) async {
+    if (didPop) return;
+    if (await _settle() && mounted) Navigator.of(context).pop();
   }
 
   void _next() {
     final m = _m;
     if (m == null) return;
     var i = _i, j = _j + 1;
-    if (j >= m.cols) {
+    if (j >= _draft.cols) {
       j = 0;
       i++;
     }
-    if (i >= m.rows) {
-      Navigator.of(context).pop();
+    if (i >= _draft.rows) {
+      _done();
     } else {
       _select(i, j);
     }
@@ -219,7 +274,7 @@ class _MatrixEditorState extends State<_MatrixEditor> {
       _next();
     } else if (key == LogicalKeyboardKey.arrowUp && _i > 0) {
       _select(_i - 1, _j);
-    } else if (key == LogicalKeyboardKey.arrowDown && _i < m.rows - 1) {
+    } else if (key == LogicalKeyboardKey.arrowDown && _i < _draft.rows - 1) {
       _select(_i + 1, _j);
     } else {
       return KeyEventResult.ignored;
@@ -233,16 +288,14 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   }
 
   void _resize({int? rows, int? cols}) {
-    final m = _m;
-    if (m == null) return;
-    _state.resizeMatrix(m, rows: rows, cols: cols);
+    _draft.replace(_state.resizedCells(_draft.cells, rows: rows, cols: cols));
     setState(_loadEntry);
   }
 
   void _preset(String p) {
-    final m = _m;
-    if (m == null) return;
-    if (_state.presetMatrix(m, p)) showToast(context, 'Set to a 2×2 rotation');
+    final (cells, resized) = _state.presetCells(_draft.cells, p);
+    _draft.replace(cells);
+    if (resized) showToast(context, 'Set to a 2×2 rotation');
     setState(_loadEntry);
   }
 
@@ -267,7 +320,8 @@ class _MatrixEditorState extends State<_MatrixEditor> {
     );
   }
 
-  void _duplicate() {
+  Future<void> _duplicate() async {
+    if (!await _settle() || !mounted) return;
     final m = _m;
     if (m == null) return;
     final copy = _state.duplicateMatrix(m);
@@ -295,7 +349,8 @@ class _MatrixEditorState extends State<_MatrixEditor> {
     showToast(context, 'Deleted matrix ${m.name}');
   }
 
-  void _inspect() {
+  Future<void> _inspect() async {
+    if (!await _settle() || !mounted) return;
     Navigator.of(context).pop();
     widget.host.openInspector(InspectTarget.matrix(widget.matrixId));
   }
@@ -303,11 +358,22 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   /* ---------- build ---------- */
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PopScope(
+    canPop: !_draft.changed,
+    onPopInvokedWithResult: (didPop, _) => _onPop(didPop),
+    child: _layout(context),
+  );
+
+  Widget _layout(BuildContext context) {
     final state = AppScope.of(context), pal = context.pal;
     final m = state.matrixById(widget.matrixId);
     if (m == null) return const SizedBox.shrink();
-    final res = state.matResults[m.id];
+    // The draft, not the saved matrix: what the editor shows.
+    final res = AppState.evalMatrix(
+      _draft.cells,
+      m.name,
+      degrees: state.settings.degrees,
+    );
     final info = LayoutInfo.of(context);
     final mq = MediaQuery.of(context), size = mq.size, pad = mq.padding;
 
@@ -465,10 +531,13 @@ class _MatrixEditorState extends State<_MatrixEditor> {
     onVerticalDragUpdate: (d) =>
         setState(() => _drag = math.max(0, _drag + d.delta.dy)),
     onVerticalDragEnd: (d) {
-      if (_drag > 90 || (d.primaryVelocity ?? 0) > 700) {
+      final away = _drag > 90 || (d.primaryVelocity ?? 0) > 700;
+      if (away && !_draft.changed) {
         Navigator.of(context).pop();
       } else {
+        // With changes, the sheet comes back up while the user decides.
         setState(() => _drag = 0);
+        if (away) Navigator.of(context).maybePop();
       }
     },
     child: SizedBox(
@@ -494,96 +563,134 @@ class _MatrixEditorState extends State<_MatrixEditor> {
       padding: const EdgeInsets.only(left: 16, right: 12),
       child: Row(
         children: [
-          // Title and name picker share what the action buttons leave over.
+          // Title and name picker share what the action buttons leave over;
+          // the word "Matrix" only shows when it fits whole.
           Expanded(
-            child: Row(
-              children: [
-                Flexible(
-                  child: Text(
-                    'Matrix',
-                    maxLines: 1,
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                    style: mathStyle(
-                      context,
-                      size: Fs.xl,
-                      weight: FontWeight.w600,
-                      height: 1.2,
+            child: LayoutBuilder(
+              builder: (context, c) => Row(
+                children: [
+                  if (c.maxWidth >= 150) ...[
+                    Text(
+                      'Matrix',
+                      maxLines: 1,
+                      softWrap: false,
+                      style: mathStyle(
+                        context,
+                        size: Fs.xl,
+                        weight: FontWeight.w600,
+                        height: 1.2,
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Pressable(
-                  onTap: _rename,
-                  label: 'Matrix name ${m.name}. Change',
-                  builder: (_, down) => Container(
-                    height: 40,
-                    constraints: const BoxConstraints(minWidth: 60),
-                    padding: const EdgeInsets.only(left: 10, right: 6),
-                    decoration: BoxDecoration(
-                      color: down ? pal.surface2 : pal.surface,
-                      border: Border.all(color: pal.lineStrong),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          m.name,
-                          style: mathStyle(
-                            context,
-                            size: Fs.xl,
-                            weight: FontWeight.w600,
-                            italic: true,
-                            height: 1.1,
+                    const SizedBox(width: 8),
+                  ],
+                  Pressable(
+                    onTap: _rename,
+                    label: 'Matrix name ${m.name}. Change',
+                    builder: (_, down) => Container(
+                      height: 40,
+                      constraints: const BoxConstraints(minWidth: 60),
+                      padding: const EdgeInsets.only(left: 10, right: 6),
+                      decoration: BoxDecoration(
+                        color: down ? pal.surface2 : pal.surface,
+                        border: Border.all(color: pal.lineStrong),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            m.name,
+                            style: mathStyle(
+                              context,
+                              size: Fs.xl,
+                              weight: FontWeight.w600,
+                              italic: true,
+                              height: 1.1,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 6),
-                        Ico(MIcon.down, size: 16, color: pal.ink2),
-                      ],
+                          const SizedBox(width: 6),
+                          Ico(MIcon.down, size: 16, color: pal.ink2),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           IconBtn(
+            MIcon.undo,
+            width: 32,
+            label: 'Undo',
+            onTap: _draft.canUndo ? _undo : null,
+          ),
+          IconBtn(
+            MIcon.redo,
+            width: 32,
+            label: 'Redo',
+            onTap: _draft.canRedo ? _redo : null,
+          ),
+          Container(
+            width: 1,
+            height: 20,
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            color: pal.line,
+          ),
+          IconBtn(
             MIcon.trash,
-            width: 40,
+            width: 32,
             danger: true,
             label: 'Delete matrix',
             onTap: _delete,
           ),
           IconBtn(
             MIcon.copy,
-            width: 40,
+            width: 32,
             label: 'Duplicate matrix',
             onTap: _duplicate,
           ),
           IconBtn(
             MIcon.eye,
-            width: 40,
+            width: 32,
             label: 'Inspect matrix',
             onTap: _inspect,
           ),
           const SizedBox(width: 4),
           Pressable(
-            onTap: () => Navigator.of(context).pop(),
+            onTap: _done,
+            label: _draft.changed ? 'Done, save changes' : 'Done',
             builder: (_, down) => Container(
               height: 40,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: down ? pal.accentInk : pal.accent,
                 borderRadius: BorderRadius.circular(999),
               ),
-              child: Text(
-                'Done',
-                style: TextStyle(
-                  color: pal.onAccent,
-                  fontSize: Fs.sm,
-                  fontWeight: FontWeight.w600,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Unsaved changes: a dot before the label.
+                  if (_draft.changed) ...[
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: pal.onAccent,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                  Text(
+                    'Done',
+                    style: TextStyle(
+                      color: pal.onAccent,
+                      fontSize: Fs.sm,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -611,7 +718,7 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   }) {
     final pal = context.pal;
     var detText = '';
-    if (res != null && res.ok && m.rows == m.cols) {
+    if (res != null && res.ok && _draft.rows == _draft.cols) {
       detText = 'det ${state.numText(det(res.value!))}';
     }
     Widget dim(String label, int v, ValueChanged<int> onChanged) => Row(
@@ -641,9 +748,9 @@ class _MatrixEditorState extends State<_MatrixEditor> {
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Row(
         children: [
-          dim('Rows', m.rows, (v) => _resize(rows: v)),
+          dim('Rows', _draft.rows, (v) => _resize(rows: v)),
           SizedBox(width: narrow ? 10 : 16),
-          dim('Cols', m.cols, (v) => _resize(cols: v)),
+          dim('Cols', _draft.cols, (v) => _resize(cols: v)),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -678,10 +785,10 @@ class _MatrixEditorState extends State<_MatrixEditor> {
           final avail = c.maxWidth - 16;
           final cellW = math.max(
             minCell,
-            (avail - (m.cols - 1) * gap) / m.cols,
+            (avail - (_draft.cols - 1) * gap) / _draft.cols,
           );
           Widget cell(int i, int j) {
-            final txt = m.cells[i][j], r = evalScalar(txt, degrees: deg);
+            final txt = _draft.cells[i][j], r = evalScalar(txt, degrees: deg);
             final sel = i == _i && j == _j;
             final st = mathStyle(
               context,
@@ -725,11 +832,11 @@ class _MatrixEditorState extends State<_MatrixEditor> {
               scrollDirection: Axis.horizontal,
               child: Column(
                 children: [
-                  for (var i = 0; i < m.rows; i++) ...[
+                  for (var i = 0; i < _draft.rows; i++) ...[
                     if (i > 0) const SizedBox(height: gap),
                     Row(
                       children: [
-                        for (var j = 0; j < m.cols; j++) ...[
+                        for (var j = 0; j < _draft.cols; j++) ...[
                           if (j > 0) const SizedBox(width: gap),
                           cell(i, j),
                         ],
@@ -747,7 +854,7 @@ class _MatrixEditorState extends State<_MatrixEditor> {
 
   Widget _entryRow(BuildContext context, AppState state, MatrixModel m) {
     final pal = context.pal;
-    final txt = m.cells[_i][_j];
+    final txt = _draft.cells[_i][_j];
     final r = evalScalar(txt, degrees: state.settings.degrees);
     final labelSt = mathStyle(context, size: Fs.lg, color: pal.ink2);
     final showValue = r.ok && !_plainNumber.hasMatch(txt);
@@ -821,10 +928,13 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   }
 
   Widget _message(BuildContext context, AppState state, MatrixModel m) {
-    final pal = context.pal, txt = m.cells[_i][_j];
+    final pal = context.pal, txt = _draft.cells[_i][_j];
     final r = evalScalar(txt, degrees: state.settings.degrees);
     final error = !r.ok && txt.trim().isNotEmpty;
-    final text = r.ok
+    final unsaved = r.ok && _draft.changed;
+    final text = unsaved
+        ? 'Not saved yet · Done saves your changes'
+        : r.ok
         ? 'Tap any entry to edit it · sin(30°), 2√3, 1/3 all work'
         : (error ? r.error! : 'Type a value for this entry');
     return Container(
@@ -838,6 +948,16 @@ class _MatrixEditorState extends State<_MatrixEditor> {
             if (error) ...[
               Ico(MIcon.alert, size: 16, color: pal.danger),
               const SizedBox(width: 6),
+            ] else if (unsaved) ...[
+              Container(
+                width: 7,
+                height: 7,
+                decoration: BoxDecoration(
+                  color: pal.accent,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
             ],
             Expanded(
               child: Text(
@@ -847,7 +967,9 @@ class _MatrixEditorState extends State<_MatrixEditor> {
                 style: TextStyle(
                   fontSize: 13,
                   height: 1.4,
-                  color: error ? pal.danger : pal.ink3,
+                  color: error
+                      ? pal.danger
+                      : (unsaved ? pal.accentInk : pal.ink3),
                 ),
               ),
             ),
@@ -919,7 +1041,7 @@ class _MatrixEditorState extends State<_MatrixEditor> {
   /// The number pad; with [fill] its rows share all the height on offer.
   Widget _pad(BuildContext context, MatrixModel m, {bool fill = false}) {
     final pal = context.pal;
-    final last = _i == m.rows - 1 && _j == m.cols - 1;
+    final last = _i == _draft.rows - 1 && _j == _draft.cols - 1;
     Widget d(String n) => KeyCap(
       onTap: () => _key((c) => edit.insertText(c, n)),
       child: KeyLabel(n, KeyKind.digit, size: 22),
