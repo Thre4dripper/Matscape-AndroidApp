@@ -152,7 +152,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Inspect').first);
     await tester.pumpAndSettle();
-    expect(find.text('Line 2'), findsOneWidget);
+    expect(find.text('Expression 2'), findsOneWidget);
     expect(find.text('PROPERTIES'), findsOneWidget);
     expect(tester.takeException(), isNull);
     expect(state.ws.lines[1].text, 'C⁻¹');

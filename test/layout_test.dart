@@ -2,6 +2,7 @@
 // shows the right panes. Device sizes are the ones on the design's board.
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matscape/app/app_state.dart';
@@ -184,11 +185,17 @@ void main() {
       await _settle(tester);
     });
 
-    testWidgets('expanded: inspector follows the workspace', (tester) async {
+    testWidgets('expanded: inspector follows the active expression', (
+      tester,
+    ) async {
       final state = await _launch(tester, 1180, 820);
       expect(find.byType(SidePane), findsOneWidget);
-      // Line 1 is a number, so the inspector shows the latest matrix result.
-      expect(find.text('Inspector · Line 7'), findsOneWidget);
+      // Expression 1 is det(A), a number: the inspector says so instead of
+      // showing some other expression, and offers the matrix it uses.
+      expect(find.text('Inspector · Expression 1'), findsOneWidget);
+      expect(find.text('No matrix to inspect'), findsOneWidget);
+      expect(find.bySemanticsLabel('Inspect matrix A'), findsOneWidget);
+      expect(find.bySemanticsLabel('Inspect matrix B'), findsNothing);
 
       // A screen opens in the detail pane, beside the workspace.
       await tester.tap(find.text('Operations library'));
@@ -198,9 +205,17 @@ void main() {
 
       await tester.tap(find.bySemanticsLabel('Close panel'));
       await tester.pumpAndSettle();
-      expect(find.text('Inspector · Line 7'), findsOneWidget);
+      expect(find.text('Inspector · Expression 1'), findsOneWidget);
 
-      // With no matrix results it falls back to the first matrix.
+      // A matrix it uses opens on request, and closes back to following.
+      await tester.tap(find.bySemanticsLabel('Inspect matrix A'));
+      await tester.pumpAndSettle();
+      expect(find.text('Matrix A'), findsOneWidget);
+      await tester.tap(find.bySemanticsLabel('Close panel'));
+      await tester.pumpAndSettle();
+      expect(find.text('Inspector · Expression 1'), findsOneWidget);
+
+      // With nothing written it falls back to the first matrix.
       for (final l in state.ws.lines) {
         state.setLineText(l.id, '');
       }
@@ -210,16 +225,30 @@ void main() {
       await _settle(tester);
     });
 
-    testWidgets('expanded and wide: number pad stays beside a second page', (
+    testWidgets('expanded: Inspect makes the expression active', (
       tester,
     ) async {
-      await _launch(tester, 1376, 1032);
-      // The 123 tab is gone because the number pad is always visible.
-      expect(find.text('123'), findsNothing);
-      Finder key(String label) =>
-          find.descendant(of: find.byType(Keypad), matching: find.text(label));
-      expect(key('7'), findsOneWidget);
-      expect(key('det'), findsOneWidget);
+      final state = await _launch(tester, 1180, 820);
+      expect(find.text('Inspector · Expression 1'), findsOneWidget);
+
+      // Expression 2 (C⁻¹) has the first Inspect button.
+      await tester.tap(find.text('Inspect').first);
+      await tester.pumpAndSettle();
+      expect(find.text('Inspector · Expression 2'), findsOneWidget);
+      // Nothing was opened on top: no panel to close, and typing goes to
+      // the inspected expression.
+      expect(find.bySemanticsLabel('Close panel'), findsNothing);
+      await tester.tap(find.text('7').last);
+      await tester.pumpAndSettle();
+      expect(state.ws.lines[1].text, endsWith('7'));
+
+      // On a blank expression it stays with the one above.
+      state.setLineText(state.ws.lines[1].id, 'C⁻¹');
+      state.setLineText(state.ws.lines[2].id, '');
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      expect(find.text('Inspector · Expression 2'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await _settle(tester);
     });

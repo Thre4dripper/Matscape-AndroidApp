@@ -16,8 +16,9 @@ import 'widgets.dart';
 /// step-by-step row reduction and decompositions.
 ///
 /// With [auto] it is the always-on inspector of wide layouts: it follows
-/// whatever the workspace is working on, and [target] may be null when
-/// there is nothing to show yet.
+/// the expression being worked on, and [target] may be null when there is
+/// nothing to show yet. An expression that gives no matrix says so, and
+/// offers the matrices it uses instead.
 class InspectorScreen extends StatefulWidget {
   const InspectorScreen({
     super.key,
@@ -89,12 +90,17 @@ class _InspectorScreenState extends State<InspectorScreen> {
         v = part?.value;
         if (part != null) label = ' · ${part.label}';
       }
-      title = '${prefix}Line ${idx + 1}$label';
-      if (v is Mat) {
-        value = v;
-      } else {
-        error = 'This line no longer gives a matrix.';
+      title = '${prefix}Expression ${idx + 1}$label';
+      if (v is! Mat) {
+        return _noMatrix(
+          state,
+          title,
+          idx < 0 ? null : state.ws.lines[idx],
+          res,
+          v,
+        );
       }
+      value = v;
     }
 
     if (value == null) {
@@ -117,6 +123,97 @@ class _InspectorScreenState extends State<InspectorScreen> {
       child: KeyedSubtree(
         key: ValueKey('${t.matrixId}/${t.lineId}/${t.part}'),
         child: _body(context, state, value, model),
+      ),
+    );
+  }
+
+  /// An expression with no matrix result: says what it gives instead, and
+  /// lists the matrices it uses so they are one tap away.
+  Widget _noMatrix(
+    AppState state,
+    String title,
+    LineModel? line,
+    EvalResult? res,
+    Object? v,
+  ) {
+    final String head, body;
+    if (line == null) {
+      head = 'Nothing to inspect';
+      body = 'This expression no longer exists.';
+    } else if (res == null || res.empty || line.text.trim().isEmpty) {
+      head = 'Nothing to inspect yet';
+      body = 'Finish this expression to see what it gives.';
+    } else if (!res.ok) {
+      head = 'Nothing to inspect yet';
+      body = 'This expression has an error. Once it gives a matrix, its properties and steps appear here.';
+    } else {
+      final what = switch (v) {
+        double() || Complex() => 'a number',
+        ListVal() => 'a list of numbers',
+        PolyVal() => 'a polynomial',
+        _ => 'no matrix',
+      };
+      head = 'No matrix to inspect';
+      body =
+          'This expression gives $what. Properties, eigenvalues and steps are shown for matrix results.';
+    }
+    // Names as the evaluator reads them: a run of capitals is a product
+    // of one-letter matrices (BA is B·A).
+    final names = <String>{};
+    for (final m in RegExp(
+      '[A-Za-z_][A-Za-z0-9_]*',
+    ).allMatches(line?.text ?? '')) {
+      final id = m.group(0)!;
+      names.addAll(RegExp(r'^[A-Z]{2,}$').hasMatch(id) ? id.split('') : [id]);
+    }
+    final used = [
+      for (final m in state.ws.matrices)
+        if (names.contains(m.name) && (state.matResults[m.id]?.ok ?? false)) m,
+    ];
+    final pal = context.pal;
+    return SubScreen(
+      title: title,
+      child: SubScroll(
+        children: [
+          EmptyState(icon: MIcon.eye, title: head, body: body),
+          if (used.isNotEmpty) ...[
+            const GroupTitle('Matrices in this expression'),
+            CardBox(
+              child: DividedColumn(
+                children: [
+                  for (final m in used)
+                    RowTap(
+                      label: 'Inspect matrix ${m.name}',
+                      onTap: () =>
+                          widget.host.openInspector(InspectTarget.matrix(m.id)),
+                      child: Row(
+                        children: [
+                          Text(
+                            m.name,
+                            style: mathStyle(
+                              context,
+                              size: Fs.xl,
+                            ).copyWith(fontStyle: FontStyle.italic),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              '${m.rows}×${m.cols} · inspect',
+                              style: TextStyle(
+                                fontSize: Fs.sm,
+                                color: pal.ink2,
+                              ),
+                            ),
+                          ),
+                          Ico(MIcon.chev, size: 18, color: pal.ink3),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

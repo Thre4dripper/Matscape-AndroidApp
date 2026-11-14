@@ -57,6 +57,11 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
   final _lineKeys = <String, GlobalKey>{};
 
   String? _activeId;
+
+  /// Which part of a multi-part result (L, U, P…) the always-on inspector
+  /// shows, and the expression that choice belongs to.
+  String? _partLine;
+  int _part = 0;
   String _wsId = '';
   String _page = 'num';
   bool _collapsed = false;
@@ -375,7 +380,23 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
       showMatrixEditor(context, matrixId: matrixId, host: this);
 
   @override
-  void openInspector(InspectTarget target) => _open(_Screen('inspect', target));
+  void openInspector(InspectTarget target) {
+    final id = target.lineId;
+    if (id == null) return _open(_Screen('inspect', target));
+    // Inspecting an expression makes it the one being worked on.
+    _partLine = id;
+    _part = target.part;
+    if (_activeId != id) _recordActive();
+    if (_info.hasDetail) {
+      // The inspector beside the workspace follows the active expression,
+      // so there is nothing to open on top of it.
+      setState(() => _pane = null);
+      _focusLine(id);
+    } else {
+      setState(() => _activeId = id);
+      _open(_Screen('inspect', target));
+    }
+  }
 
   @override
   void saveAsMatrix(Mat value) {
@@ -435,17 +456,22 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
 
   void _closePane() => setState(() => _pane = null);
 
-  /// What the always-on inspector shows: the active line if it gives a
-  /// matrix, else the latest line that does, else the first valid matrix.
+  /// What the always-on inspector shows: the active expression, whatever
+  /// it gives. On a blank one it stays with the nearest written expression
+  /// (the one above first), so a result is still there after Enter moves
+  /// on to a new line. With nothing written at all, the first valid matrix.
   InspectTarget? _autoInspect(AppState state) {
-    bool matrixLike(String? id) {
-      final r = id == null ? null : state.lineResults[id];
-      return r != null && r.ok && (r.value is Mat || r.value is MultiVal);
-    }
-
-    if (matrixLike(_activeId)) return InspectTarget.line(_activeId!);
-    for (final l in state.ws.lines.reversed) {
-      if (matrixLike(l.id)) return InspectTarget.line(l.id);
+    final lines = state.ws.lines;
+    bool written(int i) => lines[i].text.trim().isNotEmpty;
+    final at = lines.indexWhere((l) => l.id == _activeId);
+    final order = [
+      for (var i = at; i >= 0; i--) i,
+      for (var i = at + 1; i < lines.length; i++) i,
+    ];
+    for (final i in order) {
+      if (!written(i)) continue;
+      final id = lines[i].id;
+      return InspectTarget.line(id, part: id == _partLine ? _part : 0);
     }
     for (final m in state.ws.matrices) {
       if (state.matResults[m.id]?.ok ?? false) {
@@ -945,7 +971,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
             child: ReorderableDragStartListener(
               index: i,
               child: Semantics(
-                label: 'Line ${i + 1}. Drag to reorder',
+                label: 'Expression ${i + 1}. Drag to reorder',
                 container: true,
                 excludeSemantics: true,
                 child: AnimatedContainer(

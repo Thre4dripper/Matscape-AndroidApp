@@ -179,7 +179,9 @@ void main() {
       // History.
       final view = tester.getRect(find.byType(CustomScrollView).first);
       final last = tester.getRect(
-        find.bySemanticsLabel('Line ${state.ws.lines.length}. Drag to reorder'),
+        find.bySemanticsLabel(
+          'Expression ${state.ws.lines.length}. Drag to reorder',
+        ),
       );
       expect(last.bottom, lessThanOrEqualTo(view.bottom + 1));
       expect(last.top, greaterThanOrEqualTo(view.top - 1));
@@ -199,7 +201,10 @@ void main() {
         const Offset(0, -900),
       );
       await tester.pumpAndSettle();
-      expect(find.bySemanticsLabel('Line 1. Drag to reorder'), findsNothing);
+      expect(
+        find.bySemanticsLabel('Expression 1. Drag to reorder'),
+        findsNothing,
+      );
       await tester.tap(find.bySemanticsLabel('Operations library'));
       await tester.pumpAndSettle();
       final row = find.text('Trace — sum of the diagonal');
@@ -219,7 +224,7 @@ void main() {
       // The list scrolled back so the line that was typed into is visible.
       final view = tester.getRect(find.byType(CustomScrollView).first);
       final line = tester.getRect(
-        find.bySemanticsLabel('Line 1. Drag to reorder'),
+        find.bySemanticsLabel('Expression 1. Drag to reorder'),
       );
       expect(line.top, greaterThanOrEqualTo(view.top - 1));
       expect(line.bottom, lessThanOrEqualTo(view.bottom + 1));
@@ -341,7 +346,7 @@ void main() {
     testWidgets('dragging the numbered strip moves a line', (tester) async {
       final state = await _launch(tester);
       final first = state.ws.lines.first.id;
-      final handle = find.bySemanticsLabel('Line 1. Drag to reorder');
+      final handle = find.bySemanticsLabel('Expression 1. Drag to reorder');
       final g = await tester.startGesture(tester.getCenter(handle));
       await tester.pump(const Duration(milliseconds: 50));
       // Down past line 2, a finger's pace at a time.
