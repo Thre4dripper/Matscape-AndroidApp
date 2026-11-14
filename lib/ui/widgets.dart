@@ -712,8 +712,13 @@ class SubScreen extends StatelessWidget {
         Expanded(child: child),
       ],
     );
+    // Pushed full-screen it keeps clear of a notch or camera at the side;
+    // in a pane the workspace has already done that.
     return scope == null
-        ? Scaffold(backgroundColor: pal.bg, body: body)
+        ? Scaffold(
+            backgroundColor: pal.bg,
+            body: SafeArea(top: false, bottom: false, child: body),
+          )
         : Material(color: pal.bg, child: body);
   }
 }
