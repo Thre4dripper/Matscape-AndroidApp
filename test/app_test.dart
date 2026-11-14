@@ -193,6 +193,49 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
   });
 
+  testWidgets('back closes the menu first, whatever the keypad is doing', (
+    tester,
+  ) async {
+    await _launch(tester);
+    Future<void> back() async {
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> openMenu() async {
+      await tester.tap(find.bySemanticsLabel('Open menu'));
+      await tester.pumpAndSettle();
+      expect(find.text('Help & tips'), findsOneWidget);
+    }
+
+    // Keypad up: the menu closes, the keypad stays.
+    await openMenu();
+    await back();
+    expect(find.text('Help & tips'), findsNothing);
+    expect(find.text('Show keypad'), findsNothing);
+
+    // Keypad down: the menu closes, and the app stays open.
+    await back();
+    expect(find.text('Show keypad'), findsOneWidget);
+    await openMenu();
+    await back();
+    expect(find.text('Help & tips'), findsNothing);
+    expect(find.text('Show keypad'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('back puts the keypad away before leaving the app', (
+    tester,
+  ) async {
+    await _launch(tester);
+    expect(find.text('Show keypad'), findsNothing);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Show keypad'), findsOneWidget);
+    expect(find.text('Rotations & eigenvalues'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('changes are saved and restored on the next launch', (
     tester,
   ) async {

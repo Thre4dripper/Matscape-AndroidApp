@@ -225,6 +225,26 @@ void main() {
       await _settle(tester);
     });
 
+    testWidgets('medium: back closes the open screen, then the keypad', (
+      tester,
+    ) async {
+      await _launch(tester, 744, 1133);
+      await tester.tap(find.text('Settings'));
+      await tester.pumpAndSettle();
+      expect(find.text('Number format'), findsOneWidget);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Number format'), findsNothing);
+      expect(find.text('Show keypad'), findsNothing);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Show keypad'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await _settle(tester);
+    });
+
     testWidgets('expanded: inspector follows the active expression', (
       tester,
     ) async {

@@ -268,6 +268,9 @@ wait for **Done**.
   them.", with two full-width buttons stacked: **Save changes** (primary)
   and **Discard changes** (danger). Tapping outside the card keeps editing.
 
+Also, not visual: on Android, back on the workspace first closes an open
+panel, then puts the keypad away, and only then leaves the app.
+
 Reference: `iphone/08-matrix-editor.png`,
 `iphone/08b-matrix-editor-unsaved.png`,
 `iphone/08c-matrix-editor-save-changes.png`.

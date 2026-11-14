@@ -80,6 +80,13 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
 
   bool _tourOpen = false;
 
+  /// Whether this build shows a keypad that can be put away (set while
+  /// building), so the back gesture can put it away first.
+  bool _keypadCollapsible = false;
+
+  /// Whether the menu drawer is open, so back closes it before anything else.
+  bool _drawerOpen = false;
+
   SyncController? _syncCtl;
   StreamSubscription<SyncNotice>? _notices;
 
@@ -538,6 +545,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     final info = LayoutInfo.of(context);
     _sync(state);
     _applyLayout(info);
+    _keypadCollapsible = false;
     final size = MediaQuery.sizeOf(context);
     // On a screen with a side strip the matrices live in the strip.
     final strip = info.pushesScreens
@@ -707,14 +715,31 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
         ],
       );
     }
-    return Scaffold(
-      backgroundColor: pal.bg,
-      body: SafeArea(
-        top: false,
-        bottom: false,
-        left: strip == null || strip.onRight,
-        right: strip == null || !strip.onRight,
-        child: body,
+    // Android's back closes what is on top first: the menu, then an open
+    // panel, then the keypad, and only then does it leave the app.
+    final keypadUp = _keypadCollapsible && !_collapsed;
+    return PopScope(
+      canPop: !_drawerOpen && _pane == null && !keypadUp,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        if (_drawerOpen) {
+          _scaffold.currentState?.closeDrawer();
+        } else if (_pane != null) {
+          _closePane();
+        } else if (keypadUp) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          setState(() => _collapsed = true);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: pal.bg,
+        body: SafeArea(
+          top: false,
+          bottom: false,
+          left: strip == null || strip.onRight,
+          right: strip == null || !strip.onRight,
+          child: body,
+        ),
       ),
     );
   }
@@ -817,6 +842,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
   /// its scrim stay inside that pane.
   Widget _withDrawer(AppState state, Widget child) => Scaffold(
     key: _scaffold,
+    onDrawerChanged: (open) => setState(() => _drawerOpen = open),
     backgroundColor: context.pal.bg,
     drawerScrimColor: context.pal.scrim,
     drawer: MenuDrawer(
@@ -883,6 +909,27 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     double hPad = 8,
     double rowHeight = 44,
     double topInset = 0,
+  }) {
+    if (!fill) _keypadCollapsible = true;
+    return _keypadWidget(
+      context,
+      state,
+      fill: fill,
+      dual: dual,
+      hPad: hPad,
+      rowHeight: rowHeight,
+      topInset: topInset,
+    );
+  }
+
+  Widget _keypadWidget(
+    BuildContext context,
+    AppState state, {
+    required bool fill,
+    required bool dual,
+    required double hPad,
+    required double rowHeight,
+    required double topInset,
   }) => Keypad(
     page: _page,
     collapsed: _collapsed,
