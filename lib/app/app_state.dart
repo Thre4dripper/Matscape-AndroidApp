@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 
 import '../engine/engine.dart';
+import '../engine/engine.dart' as engine show hasSteps;
 import 'models.dart';
 import 'storage.dart';
 
@@ -23,6 +25,28 @@ class MatEval {
 
 const matrixLetters = 'ABCDEFGHJKLMNOPQRSTUVWXYZ';
 const maxMatrixSize = 8;
+
+/// Top-level so the closure sent to the other isolate carries only these
+/// values, never the app state.
+Future<List<Work>> _workOffThread(
+  String text,
+  int step,
+  int method,
+  Map<String, Object> vars,
+  bool degrees,
+  bool exact,
+  int precision,
+) => Isolate.run(
+  () => workFor(
+    text,
+    step,
+    method,
+    vars: vars,
+    degrees: degrees,
+    exact: exact,
+    precision: precision,
+  ),
+);
 const _historyLimit = 60;
 
 /// All app data plus the evaluated results for the open workspace.
@@ -165,6 +189,50 @@ class AppState extends ChangeNotifier {
     }
     matResults = mats;
     lineResults = out;
+    _vars = vars;
+  }
+
+  /// Every matrix and named value of the workspace, as last evaluated.
+  Map<String, Object> _vars = const {};
+
+  /// Whether a line does anything that can be shown step by step.
+  bool hasSteps(String lineId) {
+    final l = lineById(lineId), r = lineResults[lineId];
+    return l != null &&
+        r != null &&
+        r.ok &&
+        engine.hasSteps(l.text, vars: _vars);
+  }
+
+  /// The working for a line, one operation at a time; null when the line
+  /// has no answer to work towards.
+  Solution? solutionFor(String lineId) {
+    final l = lineById(lineId), r = lineResults[lineId];
+    if (l == null || r == null || !r.ok) return null;
+    return explain(
+      l.text,
+      vars: _vars,
+      degrees: settings.degrees,
+      exact: settings.exact,
+      precision: settings.precision,
+    );
+  }
+
+  /// The working of one method of one step of a line, worked out on
+  /// another isolate so a long one doesn't freeze the screen.
+  Future<List<Work>> workOffThread(String lineId, int step, int method) {
+    final l = lineById(lineId);
+    if (l == null) return Future.value(const []);
+    return _workOffThread(
+      l.text,
+      step,
+      method,
+      // A copy: the workspace may be edited while this runs.
+      Map.of(_vars),
+      settings.degrees,
+      settings.exact,
+      settings.precision,
+    );
   }
 
   /* ---------- formatting that depends on settings ---------- */

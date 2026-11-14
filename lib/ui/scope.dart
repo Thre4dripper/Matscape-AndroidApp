@@ -45,5 +45,8 @@ abstract interface class WorkspaceHost {
 
   void openInspector(InspectTarget target);
 
+  /// Shows line [lineId] worked out step by step.
+  void openSteps(String lineId);
+
   void saveAsMatrix(Mat value);
 }

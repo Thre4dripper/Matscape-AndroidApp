@@ -241,7 +241,7 @@ const ops = [
     notes: [
       'Entries can be expressions: fractions, roots, trig.',
       'One row makes a row vector, [1, 2, 3]. One column is [1; 2; 3].',
-      'Tap “Save as matrix” under a result to keep it as a named matrix.',
+      'Tap “Save” under a matrix result to keep it as a named matrix.',
     ],
     keywords: 'literal inline vector brackets',
     inlineOnly: true,

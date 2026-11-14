@@ -236,6 +236,12 @@ void main() {
       expect(find.text('No matrix to inspect'), findsOneWidget);
       expect(find.bySemanticsLabel('Inspect matrix A'), findsOneWidget);
       expect(find.bySemanticsLabel('Inspect matrix B'), findsNothing);
+      // A number has working even though it has nothing to inspect.
+      await tester.tap(find.text('See the steps'));
+      await tester.pumpAndSettle();
+      expect(find.text('Steps · Expression 1'), findsOneWidget);
+      await tester.tap(find.bySemanticsLabel('Close panel'));
+      await tester.pumpAndSettle();
 
       // A screen opens in the detail pane, beside the workspace.
       await tester.tap(find.text('Operations library'));

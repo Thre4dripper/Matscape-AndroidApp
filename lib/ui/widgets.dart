@@ -118,21 +118,26 @@ class TextBtn extends StatelessWidget {
     required this.onTap,
     this.icon,
     this.compact = false,
+    this.label,
   });
   final String text;
   final MIcon? icon;
   final VoidCallback? onTap;
   final bool compact;
 
+  /// What a screen reader says, when [text] alone is too short to be clear.
+  final String? label;
+
   @override
   Widget build(BuildContext context) {
     final pal = context.pal;
     return Pressable(
       onTap: onTap,
+      label: label,
       builder: (_, down) => AnimatedContainer(
         duration: Motion.fast,
         constraints: BoxConstraints(minHeight: compact ? 36 : 44),
-        padding: EdgeInsets.symmetric(horizontal: compact ? 10 : 12),
+        padding: EdgeInsets.symmetric(horizontal: compact ? 8 : 12),
         decoration: BoxDecoration(
           color: down ? pal.accentSoft : null,
           borderRadius: BorderRadius.circular(12),

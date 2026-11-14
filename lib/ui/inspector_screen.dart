@@ -175,7 +175,19 @@ class _InspectorScreenState extends State<InspectorScreen> {
       title: title,
       child: SubScroll(
         children: [
-          EmptyState(icon: MIcon.eye, title: head, body: body),
+          EmptyState(
+            icon: MIcon.eye,
+            title: head,
+            body: body,
+            // A number has no properties to show, but it does have working.
+            action: line != null && state.hasSteps(line.id)
+                ? TextBtn(
+                    'See the steps',
+                    icon: MIcon.steps,
+                    onTap: () => widget.host.openSteps(line.id),
+                  )
+                : null,
+          ),
           if (used.isNotEmpty) ...[
             const GroupTitle('Matrices in this expression'),
             CardBox(

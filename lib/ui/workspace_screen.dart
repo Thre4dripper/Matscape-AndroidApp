@@ -19,6 +19,7 @@ import 'matrix_editor.dart';
 import 'more_screens.dart';
 import 'scope.dart';
 import 'side_pane.dart';
+import 'steps_screen.dart';
 import 'text_edit.dart' as edit;
 import 'theme.dart';
 import 'tutorial_screen.dart';
@@ -399,6 +400,10 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
   }
 
   @override
+  void openSteps(String lineId) =>
+      _open(_Screen('steps', InspectTarget.line(lineId)));
+
+  @override
   void saveAsMatrix(Mat value) {
     final m = _state.saveValueAsMatrix(value);
     if (m == null) {
@@ -434,6 +439,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
     'library' => LibraryScreen(host: this),
     'settings' => const SettingsScreen(),
     'help' => HelpScreen(host: this),
+    'steps' => StepsScreen(lineId: s.inspect!.lineId!),
     _ => InspectorScreen(target: s.inspect, host: this),
   };
 
@@ -1275,6 +1281,16 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
       onTap: () => _copy(state.valueText(v)),
     );
 
+    // Shown under every result that takes at least one operation to reach.
+    final steps = state.hasSteps(l.id)
+        ? TextBtn(
+            'Steps',
+            icon: MIcon.steps,
+            compact: true,
+            onTap: () => openSteps(l.id),
+          )
+        : null;
+
     final parts = <Widget>[];
     if (v is double) {
       parts.add(
@@ -1284,6 +1300,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
             Expanded(
               child: HScroll(child: NumText(v, fmt, style: st)),
             ),
+            ?steps,
             copyBtn('result'),
           ],
         ),
@@ -1311,14 +1328,17 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
             Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
+                ?steps,
                 TextBtn(
                   'Inspect',
                   icon: MIcon.eye,
                   compact: true,
                   onTap: () => openInspector(InspectTarget.line(l.id)),
                 ),
+                // Short, so the four actions fit on one row of a phone.
                 TextBtn(
-                  'Save as matrix',
+                  'Save',
+                  label: 'Save as matrix',
                   icon: MIcon.save,
                   compact: true,
                   onTap: () => saveAsMatrix(v),
@@ -1357,17 +1377,25 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
                 ],
               ),
             ),
+            ?steps,
             copyBtn('eigenvalues'),
           ],
         ),
       );
     } else if (v is MultiVal) {
       parts.add(
-        _caption(
-          context,
-          v.relation != null
-              ? '${v.relation} · tap a matrix to inspect it'
-              : 'Tap a matrix to inspect it',
+        Row(
+          children: [
+            Expanded(
+              child: _caption(
+                context,
+                v.relation != null
+                    ? '${v.relation} · tap a matrix to inspect it'
+                    : 'Tap a matrix to inspect it',
+              ),
+            ),
+            ?steps,
+          ],
         ),
       );
       parts.add(
@@ -1428,6 +1456,7 @@ class _WorkspaceScreenState extends State<WorkspaceScreen>
                 ),
               ),
             ),
+            ?steps,
           ],
         ),
       );

@@ -38,6 +38,7 @@ enum MIcon {
   info('M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 7.8v.2'),
   grid('M4 4h16v16H4zM4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16'),
   edit('M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4'),
+  steps('M9.5 6h10.5M9.5 12h10.5M9.5 18h10.5M4 6h1.5M4 12h1.5M4 18h1.5'),
 
   /// Six dots: "drag me".
   grip('M9 6v.01M15 6v.01M9 12v.01M15 12v.01M9 18v.01M15 18v.01');

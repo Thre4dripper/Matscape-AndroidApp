@@ -73,6 +73,12 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Help & tips').last);
       await tester.pumpAndSettle();
+      // It sits below the tips, so it may need scrolling to.
+      await tester.scrollUntilVisible(
+        find.text('Take the tour again'),
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
       await tester.tap(find.text('Take the tour again'));
       await tester.pumpAndSettle();
       expect(find.text('Welcome to Matscape'), findsOneWidget);

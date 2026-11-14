@@ -520,6 +520,10 @@ class HelpScreen extends StatelessWidget {
           ),
           _paragraph(
             context,
+            'Tap Steps under a result to see how it was worked out, one operation at a time. Open a step for the working; where there is more than one method (cofactor expansion or row reduction, Gauss–Jordan or the adjugate, elimination or Cramer’s rule) you can switch between them. The copy button at the top copies the whole solution, with the working of every step you have open. Nothing is worked out until you open it, and long working shows a loader while it is built.',
+          ),
+          _paragraph(
+            context,
             'Tap Inspect on any matrix result for its properties, eigenvalues, norms, step-by-step row reduction and decompositions.',
           ),
           _paragraph(

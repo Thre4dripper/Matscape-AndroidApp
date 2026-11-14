@@ -102,22 +102,25 @@ class _TutorialScreenState extends State<TutorialScreen> {
       [
         'Name a result with “=”, for example M = A·B, then use M in any '
             'other line.',
-        'Under a matrix result, Save as matrix keeps it as a new card and '
+        'Under a matrix result, Save keeps it as a new matrix card and '
             'Copy puts it on the clipboard.',
         'Prefer decimals? Change the number format in Settings.',
       ],
       _figExact,
     ),
     _Step(
-      'Look inside any matrix',
-      'Tap Inspect under a matrix result to see everything about it on one '
-          'page.',
+      'See the working, and look inside',
+      'Tap Steps under any result to see how it was reached, one operation '
+          'at a time. Tap Inspect under a matrix result to see everything '
+          'about that matrix on one page.',
       [
         'Properties: square, symmetric, invertible, rank, determinant, '
             'trace.',
         'Eigenvalues, norms and the condition number.',
-        'Row reduction, the determinant and the inverse worked out step by '
-            'step, and the LU, QR, Cholesky and SVD decompositions.',
+        'Steps opens to show the working, often by more than one method: '
+            'cofactors or row reduction, Gauss–Jordan or the adjugate, '
+            'elimination or Cramer’s rule.',
+        'The LU, QR, Cholesky and SVD decompositions.',
       ],
       _figInspect,
     ),
