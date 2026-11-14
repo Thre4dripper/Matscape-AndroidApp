@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "layouts/android-flip-half-open.html",
+  "entry": "layouts/android-flip-half-open.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-13T15:06:39.509Z",
+  "updatedAt": "2026-11-13T15:06:39.509Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

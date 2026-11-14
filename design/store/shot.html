@@ -1,0 +1,408 @@
+<!doctype html>
+<!-- Matscape 2 — store screenshot compositions (editable source).
+     Open with ?set=<set>&n=<1-6> ; sets: app-iphone, app-ipad, play-phone,
+     play-tab7, play-tab10, feature. Every device screen is the live app. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Matscape · store screenshot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap" />
+  <style>
+/* OD-LAYOUT-PRIMITIVES v1 — structure only: display, flex/grid, overflow, wrapping, ratio, geometry.
+   Put this @layer first; product CSS outside the layer wins ordinary layout rules.
+   Native hidden and closed-dialog states take precedence over component display rules. */
+@layer od-layout {
+  [hidden]:not([hidden="until-found" i]) { display: none !important; }
+  dialog:not([open]) { display: none !important; }
+
+  :where(.od-stack,.od-row,.od-row-top,.od-cluster,.od-grid,.od-field,.od-stat,.od-cell,.od-tile) > :where(*) { min-width: 0; }
+
+  /* containers */
+  .od-stack   { display: flex; flex-direction: column; gap: var(--od-gap, 8px); }
+  .od-row     { display: flex; align-items: center; gap: var(--od-gap, 8px); }
+  .od-row-top { display: flex; align-items: flex-start; gap: var(--od-gap, 8px); }
+  .od-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--od-gap, 8px); }
+  .od-fill    { flex: 1 1 0; min-width: 0; }
+  .od-fixed   { flex: none; }
+  .od-grid    { display: grid; gap: var(--od-gap, 12px); grid-template-columns: repeat(var(--od-cols, 3), minmax(0, 1fr)); }
+
+  /* stacked information: each piece is its own line — never sibling inline spans */
+  .od-stat, .od-field, .od-cell { display: grid; gap: var(--od-gap, 2px); }
+  :where(.od-stat,.od-field,.od-cell) > :where(*) { display: block; }
+  .od-tile { display: grid; grid-template-rows: auto 1fr; }
+  :where(.od-tile) > :where(*) { display: block; }
+
+  /* media keeps its intrinsic ratio by default; never a distorted or cropped
+     cover by accident. height:auto lets the ratio win over an <img height="…">
+     attribute. Cropping to a uniform box is an explicit opt-in: set --od-ratio
+     AND add .od-media-cover together (per the core rule, only where a crop is
+     deliberate — tile thumbs, decorative fills — never on full-frame content). */
+  .od-media { display: block; width: 100%; height: auto; aspect-ratio: var(--od-ratio, auto); }
+  .od-media-cover { object-fit: cover; }
+
+  /* functional inline SVG icons opt into bounded geometry; content SVGs keep their own */
+  .od-icon { display: inline-block; inline-size: var(--od-icon-size, 1em); block-size: var(--od-icon-size, 1em); flex: none; }
+
+  /* data text only — authored copy is rewritten to its budget instead */
+  .od-truncate { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .od-clamp-2, .od-clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+  .od-clamp-2 { -webkit-line-clamp: 2; }
+  .od-clamp-3 { -webkit-line-clamp: 3; }
+  .od-lines-2 { min-height: calc(2 * 1.4em); }   /* block-level reservation for a shared baseline */
+  .od-nowrap  { white-space: nowrap; }           /* 数字+单位 · 价格+起 · 日期+星期 */
+  .od-keep    { word-break: keep-all; overflow-wrap: anywhere; } /* CJK labels break at spaces / <wbr> first */
+
+  /* screen skeleton (optional): bars take their own space, the middle scrolls — no padding guessed for chrome */
+  .od-screen { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100%; }
+  .od-scroll { overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+
+  /* horizontal rail: the next item peeks at the edge; trailing room survives overflow */
+  .od-rail { display: flex; gap: var(--od-gap, 8px); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
+             padding-inline: var(--od-rail-pad, 16px); scroll-padding-inline: var(--od-rail-pad, 16px); }
+  .od-rail::-webkit-scrollbar { display: none; }
+  :where(.od-rail) > :where(*) { flex: none; scroll-snap-align: start; }
+  :where(.od-rail) > :where(:last-child) { margin-inline-end: var(--od-rail-pad, 16px); }
+
+  .od-spacer { flex: none; visibility: hidden; pointer-events: none; }
+  .od-touch  { min-width: 44px; min-height: 44px; }
+}
+:root [hidden]:where(:not([hidden="until-found" i])) { display: none; }
+/* /OD-LAYOUT-PRIMITIVES v1 */
+
+    :root {
+      --ink: #12151a; --ink-2: #434a55; --ink-3: #5f6773;
+      --navy: #0f1a4a; --paper: #eef1f6; --accent: #1f43c9; --accent-ink: #1a39ad; --accent-lt: #a9bcff;
+      --ok: #1b6e45; --ok-dark: #7ad3a2;
+      --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, "Noto Sans", system-ui, sans-serif;
+      --font-math: "STIX Two Text", "STIX Two Math", "Cambria Math", "Times New Roman", serif;
+    }
+    html, body { margin: 0; background: #000; }
+    * { box-sizing: border-box; }
+    .canvas { position: relative; width: calc(var(--W) * 1px); height: calc(var(--H) * 1px); overflow: hidden; font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
+    .canvas.dark { background: var(--navy); color: #fff; --acc: var(--accent-lt); --sub: #c7d1f3; --grid: rgba(255,255,255,.045); }
+    .canvas.light { background: var(--paper); color: var(--ink); --acc: var(--accent); --sub: var(--ink-2); --grid: rgba(18,21,26,.05); }
+    /* graph-paper texture: the "math notebook" brand cue */
+    .canvas::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: calc(var(--u) * 56px) calc(var(--u) * 56px);
+    }
+    .copy { position: absolute; z-index: 3; }
+    .copy h1 { margin: 0; font-family: var(--font-math); font-weight: 600; font-size: calc(var(--u) * var(--hs) * 1px); line-height: 1.06; letter-spacing: -.012em; }
+    .copy h1 i { color: var(--acc); }
+    .copy p { margin: calc(var(--u) * 26px) 0 0; font-size: calc(var(--u) * var(--ps) * 1px); line-height: 1.4; color: var(--sub); }
+    .portrait .copy { left: 7%; right: 7%; text-align: center; }
+    .portrait .copy p { margin-left: auto; margin-right: auto; max-width: 32ch; }
+    .landscape .copy { left: 5.5%; width: 30%; top: 50%; transform: translateY(-50%); }
+
+    .dev { position: absolute; z-index: 2; }
+    .device {
+      padding: var(--bz); border-radius: calc(var(--rr) + var(--bz)); background: #101114;
+      box-shadow: inset 0 0 0 calc(var(--u) * 2px) rgba(255,255,255,.13),
+        0 calc(var(--u) * 70px) calc(var(--u) * 140px) calc(var(--u) * -40px) rgba(3,6,20,.55),
+        0 calc(var(--u) * 20px) calc(var(--u) * 40px) calc(var(--u) * -16px) rgba(3,6,20,.35);
+    }
+    .screen { position: relative; overflow: hidden; width: var(--sw); height: var(--sh); border-radius: var(--rr); background: #f6f7f9; }
+    .screen iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: transparent; }
+    .island { position: absolute; z-index: 3; top: calc(var(--k) * 11px); left: 50%; width: calc(var(--k) * 124px); height: calc(var(--k) * 36px); margin-left: calc(var(--k) * -62px); border-radius: 999px; background: #000; }
+    .punch { position: absolute; z-index: 3; top: calc(var(--k) * 13px); left: 50%; width: calc(var(--k) * 14px); height: calc(var(--k) * 14px); margin-left: calc(var(--k) * -7px); border-radius: 50%; background: #05070a; }
+    .crease { position: absolute; z-index: 3; pointer-events: none; }
+    .crease.v { top: 0; bottom: 0; left: 50%; width: calc(var(--k) * 14px); margin-left: calc(var(--k) * -7px); background: linear-gradient(90deg, transparent, rgba(0,0,0,.08) 45%, rgba(255,255,255,.07) 55%, transparent); }
+    .crease.h { left: 0; right: 0; top: 50%; height: calc(var(--k) * 14px); margin-top: calc(var(--k) * -7px); background: linear-gradient(180deg, transparent, rgba(0,0,0,.08) 45%, rgba(255,255,255,.07) 55%, transparent); }
+
+    .device.window { background: #2a2d34; }
+    .titlebar { display: flex; align-items: center; gap: calc(var(--k) * 10px); height: calc(var(--k) * 34px); padding: 0 calc(var(--k) * 14px); border-radius: var(--rr) var(--rr) 0 0; background: #1d2027; color: #c9ced8; font: 600 calc(var(--k) * 13px)/1 var(--font-ui); }
+    .titlebar .ti { width: calc(var(--k) * 16px); height: calc(var(--k) * 16px); border-radius: calc(var(--k) * 4px); background: #1f43c9; flex: none; }
+    .titlebar .sp { flex: 1 1 0; }
+    .titlebar .wc { display: inline-block; width: calc(var(--k) * 12px); height: calc(var(--k) * 12px); margin-left: calc(var(--k) * 14px); border: calc(var(--k) * 1.6px) solid #9aa1ad; border-radius: calc(var(--k) * 2px); }
+    .titlebar .wc.min { height: 0; border-width: calc(var(--k) * 1.6px) 0 0; }
+    .device.window .screen { border-radius: 0 0 var(--rr) var(--rr); }
+    .brandrow { display: flex; align-items: center; gap: 22px; }
+    .brandrow img { width: 104px; height: 104px; border-radius: 24px; box-shadow: 0 16px 32px -12px rgba(0,0,0,.5); }
+
+    /* elements breaking out of the screen */
+    .pop { position: absolute; z-index: 6; transform: translate(calc(var(--tx, 0%) + var(--dx, 0px)), calc(-50% + var(--dy, 0px))) rotate(var(--rot, 0deg)); }
+    .surface { background: #fff; color: var(--ink); box-shadow: 0 0 0 1px rgba(18,21,26,.06), 0 calc(var(--u) * 46px) calc(var(--u) * 90px) calc(var(--u) * -26px) rgba(3,6,20,.5), 0 calc(var(--u) * 12px) calc(var(--u) * 24px) calc(var(--u) * -10px) rgba(3,6,20,.25); }
+    .pop-dark .surface { background: #1b1f27; color: #eceff4; box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 calc(var(--u) * 46px) calc(var(--u) * 90px) calc(var(--u) * -26px) rgba(3,6,20,.5), 0 calc(var(--u) * 12px) calc(var(--u) * 24px) calc(var(--u) * -10px) rgba(3,6,20,.3); }
+    .card { display: grid; gap: calc(var(--u) * 12px); padding: calc(var(--u) * 24px) calc(var(--u) * 32px); border-radius: calc(var(--u) * 26px); }
+    .card > * { display: block; }
+    .card .lbl { font-family: var(--font-math); font-style: italic; font-weight: 600; font-size: calc(var(--u) * 36px); line-height: 1.1; }
+    .card .cap { font-size: calc(var(--u) * 22px); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+    .pop-dark .card .cap { color: #959dab; }
+    .card .row { display: flex; align-items: center; gap: calc(var(--u) * 14px); }
+    .eq { font-family: var(--font-math); font-size: calc(var(--u) * 40px); color: var(--ink-3); }
+    .pop-dark .eq { color: #959dab; }
+    .mx {
+      position: relative; display: inline-grid; grid-template-columns: repeat(var(--cols, 1), auto);
+      column-gap: calc(var(--u) * 30px); row-gap: calc(var(--u) * 8px); align-items: center;
+      padding: calc(var(--u) * 10px) calc(var(--u) * 22px);
+      font-family: var(--font-math); font-size: calc(var(--u) * var(--mfs, 40) * 1px); line-height: 1.25; font-variant-numeric: lining-nums tabular-nums;
+    }
+    .mx::before, .mx::after { content: ""; position: absolute; top: 0; bottom: 0; width: calc(var(--u) * 10px); border: calc(var(--u) * 2.5px) solid currentColor; }
+    .mx::before { left: 0; border-right: 0; border-radius: calc(var(--u) * 5px) 0 0 calc(var(--u) * 5px); }
+    .mx::after { right: 0; border-left: 0; border-radius: 0 calc(var(--u) * 5px) calc(var(--u) * 5px) 0; }
+    .mx > span { justify-self: end; white-space: nowrap; }
+    .frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; font-size: .74em; line-height: 1.15; }
+    .frac > span { display: block; padding: 0 .12em; }
+    .frac > span:first-child { border-bottom: 1px solid currentColor; }
+    .rad { border-top: 1px solid currentColor; padding-left: 1px; }
+    .chip { display: inline-flex; align-items: center; gap: calc(var(--u) * 14px); padding: calc(var(--u) * 18px) calc(var(--u) * 30px); border-radius: 999px; font-size: calc(var(--u) * 32px); font-weight: 650; white-space: nowrap; }
+    .chip svg { width: calc(var(--u) * 34px); height: calc(var(--u) * 34px); flex: none; }
+    .chip.ok svg { color: var(--ok); }
+    .pop-dark .chip.ok svg { color: var(--ok-dark); }
+    .chip.math { font-family: var(--font-math); font-weight: 500; font-size: calc(var(--u) * 46px); padding: calc(var(--u) * 12px) calc(var(--u) * 34px); }
+    .chip.note { font-size: calc(var(--u) * 28px); font-weight: 600; }
+    .key {
+      display: grid; place-items: center; min-width: calc(var(--u) * 136px); height: calc(var(--u) * 116px); padding: 0 calc(var(--u) * 30px);
+      border-radius: calc(var(--u) * 26px); font-weight: 600; font-size: calc(var(--u) * 42px); background: #fff; color: var(--ink);
+      box-shadow: inset 0 calc(var(--u) * -9px) 0 #d6dce6, 0 0 0 1px rgba(18,21,26,.06), 0 calc(var(--u) * 44px) calc(var(--u) * 80px) calc(var(--u) * -24px) rgba(3,6,20,.6);
+    }
+    .key.math { font-family: var(--font-math); font-weight: 500; font-size: calc(var(--u) * 48px); }
+    .key.acc { background: var(--accent); color: #fff; box-shadow: inset 0 calc(var(--u) * -9px) 0 #15309a, 0 calc(var(--u) * 44px) calc(var(--u) * 80px) calc(var(--u) * -24px) rgba(3,6,20,.6); }
+    .callout { display: flex; align-items: center; gap: calc(var(--u) * 16px); padding: calc(var(--u) * 14px) calc(var(--u) * 28px) calc(var(--u) * 14px) calc(var(--u) * 14px); border-radius: calc(var(--u) * 20px); font-family: var(--font-math); font-size: calc(var(--u) * 34px); white-space: nowrap; }
+    .callout b { display: grid; place-items: center; width: calc(var(--u) * 46px); height: calc(var(--u) * 46px); border-radius: 50%; background: #e7ecfb; color: var(--accent-ink); font-family: var(--font-ui); font-size: calc(var(--u) * 26px); }
+    .pop-dark .callout b { background: #1e2847; color: #a9bcff; }
+    .callout sub { font-size: .62em; }
+
+    /* feature graphic */
+    .feature .copy { left: 6%; top: 50%; width: 50%; transform: translateY(-50%); }
+    .wordmark { font-family: var(--font-math); font-weight: 600; font-size: 92px; line-height: 1; letter-spacing: -.01em; }
+    .wordmark i { color: var(--accent-lt); }
+    .feature .copy p { font-size: 30px; margin-top: 18px; color: #e2e8fb; max-width: none; }
+    .feature .copy small { display: block; margin-top: 12px; font-size: 22px; color: #c7d1f3; }
+  </style>
+</head>
+<body>
+  <main class="canvas" id="canvas" aria-label="Store screenshot"></main>
+  <script>
+  (function () {
+    'use strict';
+    var q = new URLSearchParams(location.search);
+    var SET = q.get('set') || 'app-iphone', N = Math.max(1, Math.min(6, +(q.get('n') || 1)));
+    var SETS = {
+      'app-iphone': { W: 1320, H: 2868, os: 'ios', dev: { w: 402, h: 874, st: 54, sb: 34, r: 48, cam: 'island' }, copyTop: .058, region: [.235, .975], maxW: .74, hs: 86, ps: 34 },
+      'play-phone': { W: 1080, H: 1920, os: 'android', dev: { w: 412, h: 915, st: 40, sb: 24, r: 40, cam: 'punch' }, copyTop: .05, region: [.235, .975], maxW: .74, hs: 82, ps: 34 },
+      'app-ipad':   { W: 2064, H: 2752, os: 'ios', dev: { w: 1032, h: 1376, st: 24, sb: 20, r: 22 }, copyTop: .05, region: [.27, .975], maxW: .82, hs: 72, ps: 30 },
+      'play-tab7':  { W: 1200, H: 1920, os: 'android', dev: { w: 600, h: 960, st: 28, sb: 24, r: 24 }, copyTop: .05, region: [.24, .975], maxW: .8, hs: 80, ps: 32 },
+      'play-tab10': { W: 2560, H: 1600, os: 'android', land: true, dev: { w: 1280, h: 800, st: 28, sb: 24, r: 20 }, region: [.1, .9], regionX: [.37, .975], hs: 48, ps: 24 },
+      'play-desktop': { W: 1920, H: 1080, os: 'android', land: true, dev: { w: 1440, h: 900, st: 0, sb: 0, r: 12, bar: '', chrome: 'window' }, region: [.08, .86], regionX: [.37, .965], hs: 50, ps: 24 },
+      'feature':    { W: 1024, H: 500, os: 'android', feature: true }
+    };
+    var FOLD = {
+      ios: [ { w: 870, h: 652, st: 28, sb: 20, r: 26, posture: 'book', hinge: 24, crease: 'v' },
+             { w: 652, h: 870, st: 28, sb: 20, r: 26, posture: 'tabletop', hinge: 24, crease: 'h' } ],
+      android: [ { w: 744, h: 840, st: 32, sb: 24, r: 26, posture: 'book', hinge: 24, crease: 'v' },
+                 { w: 412, h: 915, st: 40, sb: 24, r: 40, posture: 'tabletop', hinge: 24, crease: 'h', cam: 'punch' } ]
+    };
+    var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+    function fr(a, b) { return '<span class="frac"><span>' + a + '</span><span>' + b + '</span></span>'; }
+    function mx(rows, fs) { return '<span class="mx" style="--cols:' + rows[0].length + (fs ? ';--mfs:' + fs : '') + '">' + rows.map(function (r) { return r.map(function (c) { return '<span>' + c + '</span>'; }).join(''); }).join('') + '</span>'; }
+    var S2 = '√<span class="rad">2</span>', S3 = '√<span class="rad">3</span>';
+    var big = SET === 'app-ipad' || SET === 'play-tab10' || SET === 'play-desktop';
+    var land = !!(SETS[SET] && SETS[SET].land);
+    var SCREENS = [
+      { bg: 'dark', theme: 'light', app: { active: 0 },
+        h: 'Every matrix tool.<br><i>One elegant workspace.</i>', p: 'Write an expression, get a typeset answer as you type.',
+        pops: [
+          { x: -.13, y: .16, rot: -4, html: '<div class="card surface"><span class="lbl">A</span>' + mx([['4', '1', '2'], ['1', '3', '0'], ['2', '0', '5']], 34) + '</div>' },
+          { x: 1.12, y: .33, rot: 3, right: true, html: '<div class="card surface"><span class="lbl">R</span>' + mx([[fr(S2, '2'), '−' + fr(S2, '2')], [fr(S2, '2'), fr(S2, '2')]], 34) + '</div>' },
+          { x: -.09, y: .52, rot: -2, html: '<div class="chip math surface">det(<i>A</i>) = 43</div>' }
+        ] },
+      { bg: 'light', theme: 'dark', app: { active: 1 }, dark: true,
+        h: 'Answers that read<br><i>like a textbook.</i>', p: 'Fractions, square roots and π — not long decimals.',
+        pops: [
+          { x: 1.14, y: .24, rot: 2, right: true, html: '<div class="card surface"><span class="cap">Line 1</span><div class="row"><span class="lbl">C</span><span class="eq">⁻¹ =</span>' + mx([[fr('2', '3'), fr('1', '6'), '−' + fr('1', '2')], ['0', fr('1', '2'), '−' + fr('1', '2')], ['−' + fr('1', '3'), '−' + fr('1', '3'), '1']], 38) + '</div></div>' },
+          { x: -.1, y: .47, rot: -4, html: '<div class="chip math surface">' + fr(S3, '2') + '</div>' },
+          { x: -.05, y: .6, rot: 3, html: '<div class="chip math surface">' + fr('1', '2') + '</div>' }
+        ] },
+      { bg: 'dark', theme: 'light', app: { demo: 'inspect', m: 'A' },
+        h: 'Inspect any matrix<br><i>in one tap.</i>', p: 'Properties, eigenvalues, norms and decompositions.',
+        pops: [
+          { x: -.12, y: big ? .34 : .4, rot: -3, html: '<div class="chip ok surface">' + CHECK + 'Symmetric</div>' },
+          { x: -.06, y: big ? .42 : .48, rot: 2, html: '<div class="chip ok surface">' + CHECK + 'Positive definite</div>' },
+          { x: -.1, y: big ? .5 : .56, rot: -2, html: '<div class="chip ok surface">' + CHECK + 'Invertible</div>' },
+          { x: 1.1, y: big ? .2 : .24, rot: 3, right: true, html: '<div class="card surface"><span class="cap">Matrix A</span><div class="row"><span class="chip math" style="padding:0">tr = 12</span></div><div class="row"><span class="chip math" style="padding:0">rank 3</span></div></div>' }
+        ] },
+      { bg: 'light', theme: 'dark', app: { demo: 'steps', m: 'C', step: 'inverse' }, dark: true,
+        h: 'See <i>every step.</i>', p: 'Row reduction, determinants and inverses, worked line by line.',
+        pops: [
+          { x: 1.13, y: land ? .24 : big ? .3 : .32, rot: 2, right: true, html: '<div class="callout surface"><b>1</b>R<sub>1</sub> → R<sub>1</sub> ÷ 2</div>' },
+          { x: 1.07, y: land ? .44 : big ? .39 : .42, rot: -2, right: true, html: '<div class="callout surface"><b>2</b>R<sub>2</sub> → R<sub>2</sub> − R<sub>1</sub></div>' },
+          { x: 1.12, y: land ? .64 : big ? .48 : .52, rot: 1, right: true, html: '<div class="callout surface"><b>2</b>R<sub>3</sub> → R<sub>3</sub> − R<sub>1</sub></div>' }
+        ] },
+      { bg: 'dark', theme: 'light', app: { kp: 'adv', active: 3 },
+        h: 'Trig, eigenvalues,<br><i>SVD and more.</i>', p: 'A keypad built for matrices. No system keyboard in the way.',
+        pops: [
+          { x: -.12, y: .66, rot: -6, html: '<div class="key">eig</div>' },
+          { x: 1.12, y: .7, rot: 5, right: true, html: '<div class="key">svd</div>' },
+          { x: -.08, y: .8, rot: 4, html: '<div class="key">sin</div>' },
+          { x: 1.09, y: .84, rot: -4, right: true, html: '<div class="key acc">expm</div>' },
+          { x: -.14, y: .93, rot: -3, html: '<div class="key math"><span><i>A</i><sup>−1</sup></span></div>' }
+        ] },
+      { bg: 'light', theme: 'dark', devices: true, dark: true,
+        h: big ? 'Built for <i>big screens</i><br>and foldables.' : 'Made for tablets<br><i>and foldables.</i>',
+        p: 'Two panes when you unfold. Keypad below the fold in tabletop.' }
+    ];
+
+    var cfg = SETS[SET], sc = SCREENS[N - 1];
+    var W = cfg.W, H = cfg.H, u = Math.min(W, H) / 1000;
+    var root = document.documentElement.style;
+    root.setProperty('--W', W); root.setProperty('--H', H); root.setProperty('--u', u);
+    var canvas = document.getElementById('canvas');
+    var pending = 0;
+    function done() { if (--pending === 0) finish(); }
+    /* Keep every floating element inside the safe area and clear of the headline,
+       the other device and each other. Runs after fonts and frames are ready. */
+    function layoutPops() {
+      var cr = canvas.getBoundingClientRect(), mX = W * .05, mY = H * .03, gap = Math.min(W, H) * .016;
+      var pops = Array.prototype.slice.call(canvas.querySelectorAll('.pop'));
+      var box = function (el) { var r = el.getBoundingClientRect(); return { x: r.left - cr.left, y: r.top - cr.top, w: r.width, h: r.height }; };
+      var hit = function (a, b) { return a.x < b.x + b.w + gap && b.x < a.x + a.w + gap && a.y < b.y + b.h + gap && b.y < a.y + a.h + gap; };
+      var inside = function (r) { return r.x >= mX - 1 && r.x + r.w <= W - mX + 1 && r.y >= mY - 1 && r.y + r.h <= H - mY + 1; };
+      var move = function (p, dx, dy) { p._dx = (p._dx || 0) + dx; p._dy = (p._dy || 0) + dy; p.style.setProperty('--dx', p._dx + 'px'); p.style.setProperty('--dy', p._dy + 'px'); };
+      var copyEl = canvas.querySelector('.copy');
+      var devs = Array.prototype.slice.call(canvas.querySelectorAll('.dev'));
+      var blockers = function (p) {
+        var list = [];
+        if (copyEl) list.push(box(copyEl));
+        devs.forEach(function (dv) { if (dv !== p.closest('.dev')) list.push(box(dv)); });
+        pops.forEach(function (q) { if (q !== p) list.push(box(q)); });
+        return list;
+      };
+      var clamp = function (p) {
+        var r = box(p), dx = 0, dy = 0;
+        if (r.x < mX) dx = mX - r.x; else if (r.x + r.w > W - mX) dx = W - mX - (r.x + r.w);
+        if (r.y < mY) dy = mY - r.y; else if (r.y + r.h > H - mY) dy = H - mY - (r.y + r.h);
+        if (dx || dy) move(p, dx, dy);
+      };
+      // Resolve one collision: try the four smallest escapes, keep the first that stays
+      // inside the safe area and clear of everything else.
+      var escape = function (p, o) {
+        var r = box(p);
+        var c = [[0, o.y + o.h + gap - r.y], [0, o.y - gap - (r.y + r.h)], [o.x + o.w + gap - r.x, 0], [o.x - gap - (r.x + r.w), 0]];
+        c.sort(function (m, n) { return Math.abs(m[0]) + Math.abs(m[1]) - Math.abs(n[0]) - Math.abs(n[1]); });
+        var others = blockers(p);
+        for (var i = 0; i < c.length; i++) {
+          var t = { x: r.x + c[i][0], y: r.y + c[i][1], w: r.w, h: r.h };
+          if (inside(t) && !others.some(function (q) { return hit(t, q); })) { move(p, c[i][0], c[i][1]); return true; }
+        }
+        for (i = 0; i < c.length; i++) {
+          t = { x: r.x + c[i][0], y: r.y + c[i][1], w: r.w, h: r.h };
+          if (inside(t)) { move(p, c[i][0], c[i][1]); return true; }
+        }
+        return false;
+      };
+      pops.forEach(clamp);
+      for (var pass = 0; pass < 10; pass++) {
+        var moved = false;
+        pops.forEach(function (p) {
+          blockers(p).some(function (o) { if (hit(box(p), o)) { moved = escape(p, o) || moved; return true; } return false; });
+        });
+        pops.forEach(clamp);
+        if (!moved) break;
+      }
+    }
+    function finish() {
+      var go = function () { setTimeout(function () { layoutPops(); requestAnimationFrame(function () { window.__ready = true; }); }, 1600); };
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(go); else go();
+    }
+    function appSrc(d, app, theme) {
+      var p = ['fresh=1', 'seed=showcase', 'shot=1', 'st=' + d.st, 'sb=' + d.sb, 'bar=' + (d.bar !== undefined ? d.bar : cfg.os), 'theme=' + theme];
+      if (d.posture) p.push('posture=' + d.posture, 'hinge=' + d.hinge);
+      Object.keys(app || {}).forEach(function (k) { p.push(k + '=' + encodeURIComponent(app[k])); });
+      return '../app.html?' + p.join('&');
+    }
+    function device(d, k, x, y, app, theme, z) {
+      var bz = Math.round(u * 16), sw = Math.round(d.w * k), sh = Math.round(d.h * k);
+      var wrap = document.createElement('div');
+      wrap.className = 'dev';
+      wrap.style.cssText = 'left:' + x + 'px;top:' + y + 'px;--k:' + k + ';--bz:' + bz + 'px;--rr:' + Math.round(d.r * k) + 'px;--sw:' + sw + 'px;--sh:' + sh + 'px;' + (z ? 'z-index:' + z : '');
+      var cam = d.cam || cfg.dev && cfg.dev.cam && !d.posture ? (d.cam || cfg.dev.cam) : '';
+      var tb = d.chrome === 'window' ? '<div class="titlebar" aria-hidden="true"><span class="ti"></span><span>Matscape</span><span class="sp"></span><span class="wc min"></span><span class="wc"></span><span class="wc"></span></div>' : '';
+      wrap.innerHTML = '<div class="device' + (d.chrome === 'window' ? ' window' : '') + '">' + tb + '<div class="screen"><iframe width="' + d.w + '" height="' + d.h + '" style="width:' + d.w + 'px;height:' + d.h + 'px;transform:scale(' + k + ')" title="Matscape app screen" src="' + appSrc(d, app, theme) + '"></iframe>' +
+        (cam ? '<span class="' + cam + '" aria-hidden="true"></span>' : '') + (d.crease ? '<span class="crease ' + d.crease + '" aria-hidden="true"></span>' : '') + '</div></div>';
+      pending++;
+      wrap.querySelector('iframe').addEventListener('load', done);
+      canvas.appendChild(wrap);
+      var outW = sw + 2 * bz;
+      wrap.style.setProperty('--pu', Math.min(outW / 800, W / 1100, H / 1100));
+      return { el: wrap, w: outW, h: sh + 2 * bz + (d.chrome === 'window' ? Math.round(34 * k) : 0) };
+    }
+    function fit(d, maxW, maxH) { var bz = Math.round(u * 16); return Math.min((maxW - 2 * bz) / d.w, (maxH - 2 * bz) / (d.h + (d.chrome === 'window' ? 34 : 0))); }
+    function addPops(devBox, pops, darkPops) {
+      (pops || []).forEach(function (pp) {
+        var el = document.createElement('div');
+        el.className = 'pop' + (darkPops ? ' pop-dark' : '');
+        el.style.setProperty('--u', pp.u ? String(pp.u) : 'var(--pu)');
+        el.style.left = pp.x * 100 + '%';
+        el.style.top = pp.y * 100 + '%';
+        el.style.setProperty('--rot', (pp.rot || 0) + 'deg');
+        if (pp.right) el.style.setProperty('--tx', '-100%');
+        el.setAttribute('aria-hidden', 'true');
+        el.innerHTML = pp.html;
+        devBox.el.appendChild(el);
+      });
+    }
+
+    canvas.className = 'canvas ' + (cfg.feature ? 'dark feature' : sc.bg + (cfg.land ? ' landscape' : ' portrait'));
+    pending++;
+
+    if (cfg.feature) {
+      canvas.innerHTML = '<div class="copy"><div class="brandrow"><img src="../brand/icon/icon.svg" alt=""><div class="wordmark">Mat<i>scape</i></div></div><p>Every matrix tool. One elegant workspace.</p><small>For phones, tablets and foldables</small></div>';
+      var fd = { w: 412, h: 915, st: 40, sb: 24, r: 40, cam: 'punch' };
+      var fk = 0.7, fb = device(fd, fk, 640, 64, { active: 0 }, 'light');
+      addPops(fb, [{ x: -.18, y: .34, rot: -4, html: '<div class="card surface" style="--u:.62"><span class="lbl">A</span>' + mx([['4', '1', '2'], ['1', '3', '0'], ['2', '0', '5']], 34) + '</div>' }]);
+    } else {
+      var copy = document.createElement('div');
+      copy.className = 'copy';
+      copy.style.setProperty('--hs', cfg.hs); copy.style.setProperty('--ps', cfg.ps);
+      if (!cfg.land) copy.style.top = cfg.copyTop * H + 'px';
+      copy.innerHTML = '<h1>' + sc.h + '</h1><p>' + sc.p + '</p>';
+      canvas.appendChild(copy);
+
+      if (!sc.devices) {
+        var d = cfg.dev, k, x, y, box;
+        if (cfg.land) {
+          var rx0 = cfg.regionX[0] * W, rx1 = cfg.regionX[1] * W, ry0 = cfg.region[0] * H, ry1 = cfg.region[1] * H;
+          k = fit(d, rx1 - rx0, ry1 - ry0);
+          var bw = d.w * k + 2 * Math.round(u * 16), bh = (d.h + (d.chrome === 'window' ? 34 : 0)) * k + 2 * Math.round(u * 16);
+          x = rx0 + (rx1 - rx0 - bw) / 2; y = ry0 + (ry1 - ry0 - bh) / 2;
+        } else {
+          var top = cfg.region[0] * H, bottom = cfg.region[1] * H;
+          k = fit(d, cfg.maxW * W, bottom - top);
+          x = (W - (d.w * k + 2 * Math.round(u * 16))) / 2; y = top;
+        }
+        box = device(d, k, Math.round(x), Math.round(y), sc.app, sc.theme);
+        addPops(box, sc.pops, sc.dark);
+      } else {
+        var pair = FOLD[cfg.os], a = pair[0], b = pair[1];
+        if (cfg.land) {
+          var L0 = cfg.regionX[0] * W, L1 = cfg.regionX[1] * W, T0 = cfg.region[0] * H, T1 = cfg.region[1] * H;
+          var ka = fit(a, (L1 - L0) * .66, (T1 - T0));
+          var ba = device(a, ka, Math.round(L0), Math.round(T0 + ((T1 - T0) - (a.h * ka + 2 * Math.round(u * 16))) / 2), { active: 0 }, 'dark');
+          var kb = fit(b, (L1 - L0) * .42, (T1 - T0) * .9);
+          var bbw = b.w * kb + 2 * Math.round(u * 16), bbh = b.h * kb + 2 * Math.round(u * 16);
+          var bb = device(b, kb, Math.round(L1 - bbw), Math.round(T1 - bbh), { active: 1 }, 'light', 4);
+          addPops(ba, [{ x: .04, y: -.04, rot: -2, u: u * .9, html: '<div class="chip note surface">Unfolded · two panes</div>' }], true);
+          addPops(bb, [{ x: 1.02, y: 1.05, rot: 2, right: true, u: u * .9, html: '<div class="chip note surface">Tabletop · keypad below the fold</div>' }], false);
+        } else {
+          var top2 = cfg.region[0] * H, bottom2 = cfg.region[1] * H, rh = bottom2 - top2;
+          var ka2 = fit(a, W * .86, rh * .6);
+          var aw = a.w * ka2 + 2 * Math.round(u * 16);
+          var ba2 = device(a, ka2, Math.round((W - aw) / 2 - W * .04), Math.round(top2), { active: 0 }, 'dark');
+          var kb2 = fit(b, W * .56, rh * .56);
+          var bw2 = b.w * kb2 + 2 * Math.round(u * 16), bh2 = b.h * kb2 + 2 * Math.round(u * 16);
+          var bb2 = device(b, kb2, Math.round(W * .955 - bw2), Math.round(bottom2 - bh2), { active: 1 }, 'light', 4);
+          addPops(ba2, [{ x: .03, y: 1.07, rot: -2, u: u * .9, html: '<div class="chip note surface">Unfolded · two panes</div>' }], true);
+          addPops(bb2, [{ x: -.06, y: .3, rot: 3, right: true, u: u * .9, html: '<div class="chip note surface">Tabletop · keypad<br>below the fold</div>' }], false);
+        }
+      }
+    }
+    done();
+  })();
+  </script>
+</body>
+</html>

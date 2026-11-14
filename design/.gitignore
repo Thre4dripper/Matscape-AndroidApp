@@ -1,0 +1,11 @@
+# Made by scripts, not by hand: left out of the repo.
+*.mp4
+*.wav
+.DS_Store
+store/app-store/
+store/google-play/
+store/videos/
+motion-source/*/assets/
+brand/icon/export/
+# Rendered from the app by tool/screenshots.sh.
+reference/

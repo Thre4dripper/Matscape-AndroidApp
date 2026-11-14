@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "store/shot.html",
+  "entry": "store/shot.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-13T17:36:12.820Z",
+  "updatedAt": "2026-11-13T17:36:12.820Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

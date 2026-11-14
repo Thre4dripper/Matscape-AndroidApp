@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta name="od-motion-output" content="video">
+    <meta name="od-motion-audio" content="required">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <link rel="alternate" type="video/mp4" href="../../google-play-promo.mp4">
+    <title>Matscape — Google Play promo video (1920×1080)</title>
+    <script src="./gsap.min.js"></script>
+    <style>
+      /* Google Play promo (YouTube). All screen content is a recording of the real Matscape app;
+         the pop-outs are crops of that same footage. */
+      :root { --ink: #1f43c9; --peri: #a9bcff; --navy: #0a1235;
+        --serif: "STIX Two Text", Charter, "Iowan Old Style", Georgia, "Times New Roman", serif;
+        --sans: -apple-system, "SF Pro Text", "Helvetica Neue", Inter, Arial, sans-serif; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--navy); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden;
+        background: radial-gradient(90% 120% at 30% 0%, #1b2f86 0%, #0f1c58 45%, var(--navy) 100%); }
+      .glow { position: absolute; border-radius: 50%; filter: blur(110px); }
+      .g1 { width: 900px; height: 900px; left: -300px; top: 380px; background: #2b55ff; opacity: .24; }
+      .g2 { width: 760px; height: 760px; right: -240px; top: -260px; background: #6f8cff; opacity: .2; }
+      .dots { position: absolute; inset: -60px; opacity: .14;
+        background-image: radial-gradient(rgba(255,255,255,.55) 1.2px, transparent 1.3px); background-size: 46px 46px; }
+      .abs { position: absolute; }
+      /* type */
+      .kick { font-family: var(--sans); font-weight: 700; font-size: 26px; letter-spacing: .26em; color: var(--peri); opacity: 0; }
+      .head { font-family: var(--serif); font-weight: 600; color: #fff; line-height: 1.04; letter-spacing: -.015em; }
+      .head i { color: var(--peri); }
+      .sub { font-family: var(--sans); font-size: 33px; line-height: 1.4; color: #cdd6ff; opacity: 0; }
+      .w { display: inline-block; opacity: 0; }
+      .copy { position: absolute; width: 780px; top: 300px; display: flex; flex-direction: column; gap: 26px; }
+      .copy .head { font-size: 92px; }
+      .copy.L { left: 150px; } .copy.R { left: 1010px; }
+      /* intro / end */
+      #intro, #outro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; }
+      #intro img, #outro img { width: 190px; height: 190px; border-radius: 44px; box-shadow: 0 30px 70px rgba(0,0,30,.55); opacity: 0; }
+      #intro .head, #outro .head { font-size: 168px; }
+      #intro .sub, #outro .sub { font-size: 40px; text-align: center; }
+      /* phone */
+      #stage { position: absolute; inset: 0; perspective: 2200px; }
+      #phone { position: absolute; left: 1079px; top: 77px; width: 442px; height: 926px; border-radius: 66px; padding: 14px;
+        background: linear-gradient(160deg, #2a2f3c, #0c0e13 40%, #1a1d26); opacity: 0;
+        box-shadow: 0 60px 120px rgba(0,0,25,.6), inset 0 0 0 2px rgba(255,255,255,.12); transform-style: preserve-3d; }
+      #scr { position: relative; width: 414px; height: 898px; border-radius: 52px; overflow: hidden; background: #f4f6fa; }
+      .clip { position: absolute; inset: 0; opacity: 0; }
+      .zoom { position: absolute; inset: 0; }
+      video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+      .rip { position: absolute; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%;
+        background: rgba(31,67,201,.22); border: 2.5px solid rgba(31,67,201,.6); opacity: 0; }
+      /* pop-outs: real crops of the footage */
+      .pop { position: absolute; border-radius: 22px; overflow: hidden; background: #fff; opacity: 0;
+        box-shadow: 0 34px 80px rgba(0,0,30,.55), 0 0 0 1.5px rgba(255,255,255,.5); }
+      .pop img { display: block; width: 100%; height: auto; }
+      .chip { border-radius: 16px; }
+      /* devices montage */
+      .dev { position: absolute; background: linear-gradient(160deg, #2a2f3c, #0c0e13 45%, #1a1d26); opacity: 0;
+        box-shadow: 0 50px 110px rgba(0,0,25,.6), inset 0 0 0 2px rgba(255,255,255,.12); }
+      .dev .in { position: relative; width: 100%; height: 100%; overflow: hidden; background: #f4f6fa; }
+      #tablet { left: 440px; top: 300px; width: 1040px; height: 665px; border-radius: 40px; padding: 20px; }
+      #tablet .in { border-radius: 22px; }
+      #land { left: 200px; top: 770px; width: 544px; height: 258px; border-radius: 40px; padding: 12px; }
+      #land .in { border-radius: 30px; background: #0e1015; }
+      #fold { left: 1420px; top: 560px; width: 328px; height: 403px; border-radius: 30px; padding: 14px; }
+      #fold .in { border-radius: 18px; }
+      #fold img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      #devcopy { position: absolute; left: 0; right: 0; top: 80px; text-align: center; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+      #devcopy .head { font-size: 84px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="35" data-width="1920" data-height="1080" data-fps="30" data-poster-time="7.8">
+      <div class="glow g1" id="g1"></div><div class="glow g2" id="g2"></div><div class="dots" id="dots"></div>
+
+      <div id="intro">
+        <img id="iicon" src="assets/icon.png" alt="">
+        <p class="head" id="ihead"><span class="w">Mat<i>scape</i></span></p>
+        <p class="sub" id="isub">The matrix calculator that shows its work.</p>
+      </div>
+
+      <div class="copy L" id="s0"><p class="kick">WRITE</p><p class="head" data-h="Type it like &lt;i&gt;math.&lt;/i&gt;"></p><p class="sub">Matrices on top, expressions below. Exact fractions, surds and π — never rounded.</p></div>
+      <div class="copy R" id="s1"><p class="kick">INSPECT</p><p class="head" data-h="Every property, &lt;i&gt;at a glance.&lt;/i&gt;"></p><p class="sub">Eigenvalues, norms, rank, decompositions — and the working for every step.</p></div>
+      <div class="copy L" id="s2"><p class="kick">LIBRARY</p><p class="head" data-h="Every operation, &lt;i&gt;explained.&lt;/i&gt;"></p><p class="sub">Worked examples for each one. Tap Try it out and it lands in your notes.</p></div>
+      <div class="copy R" id="s3"><p class="kick">EDIT</p><p class="head" data-h="Trig inside &lt;i&gt;matrices.&lt;/i&gt;"></p><p class="sub">An entry can be an expression — sin(π/6), 2√3, 1/3. Everything recalculates live.</p></div>
+
+      <div id="stage">
+        <div id="phone"><div id="scr">
+          <div class="clip" id="k0"><div class="zoom" id="z0"><video id="v0" src="assets/type.mp4" muted playsinline preload="auto" data-start="3.3" data-duration="6.53" data-media-start="0.3" data-track-index="1"></video></div></div>
+          <div class="clip" id="k1"><div class="zoom" id="z1"><video id="v1" src="assets/inspect.mp4" muted playsinline preload="auto" data-start="9.3" data-duration="6.85" data-media-start="0" data-track-index="2"></video></div></div>
+          <div class="clip" id="k2"><div class="zoom" id="z2"><video id="v2" src="assets/library.mp4" muted playsinline preload="auto" data-start="15.7" data-duration="6.85" data-media-start="0.5" data-track-index="3"></video></div></div>
+          <div class="clip" id="k3"><div class="zoom" id="z3"><video id="v3" src="assets/editor.mp4" muted playsinline preload="auto" data-start="21.7" data-duration="6.4" data-media-start="2.0" data-track-index="4"></video></div></div>
+        </div></div>
+      </div>
+
+      <div class="pop" id="pInv" style="left:860px;top:745px;width:372px"><img src="assets/pop-inverse.png" alt=""></div>
+      <div class="pop chip" id="pSym" style="left:110px;top:330px;width:250px"><img src="assets/pop-sym.png" alt=""></div>
+      <div class="pop chip" id="pPos" style="left:150px;top:410px;width:250px"><img src="assets/pop-posdef.png" alt=""></div>
+      <div class="pop" id="pEig" style="left:760px;top:800px;width:470px"><img src="assets/pop-eigen.png" alt=""></div>
+      <div class="pop" id="pGrid" style="left:740px;top:780px;width:450px"><img src="assets/pop-grid.png" alt=""></div>
+
+      <div id="devcopy"><p class="head" data-h="Built for &lt;i&gt;every screen.&lt;/i&gt;"></p><p class="sub">Phones, tablets, foldables and landscape — in light and dark.</p></div>
+      <div class="dev" id="tablet"><div class="in"><video id="v4" src="assets/tab.mp4" muted playsinline preload="auto" data-start="27.6" data-duration="4.7" data-media-start="0.3" data-track-index="5"></video></div></div>
+      <div class="dev" id="fold"><div class="in"><img src="assets/fold.png" alt=""></div></div>
+      <div class="dev" id="land"><div class="in"><video id="v5" src="assets/land.mp4" muted playsinline preload="auto" data-start="28.1" data-duration="3.55" data-media-start="0.3" data-track-index="6"></video></div></div>
+
+      <div id="outro">
+        <img id="oicon" src="assets/icon.png" alt="">
+        <p class="head" id="ohead"><span class="w">Mat<i>scape</i></span></p>
+        <p class="sub" id="osub">Every matrix tool. Exact answers.</p>
+      </div>
+
+      <audio src="assets/music.wav" data-start="0" data-duration="35" data-volume="0.75" preload="auto"></audio>
+    </div>
+    <script>
+      const D = 35;
+      const PT = 414 / 443; // recording points → phone screen pixels
+      // [video id, start in film, start in recording, taps [t, x, y] in recording time/points]
+      const CLIPS = [
+        { vs: 3.3,  ms: 0.3, dur: 6.53, taps: [[1.22,300,362],[1.84,407,905],[2.56,93,688],[3.17,30,734],[3.69,283,780],[5.11,407,905]],
+          zoom: [[3.55, 1.2, '50% 50%', 0.65], [4.6, 1, '50% 50%', 0.35]] },
+        { vs: 9.3,  ms: 0.0, dur: 6.85, taps: [[0.3,183,559]] },
+        { vs: 15.7, ms: 0.5, dur: 6.85, taps: [[0.82,413,28],[2.14,222,626],[5.64,326,924]] },
+        { vs: 21.7, ms: 2.0, dur: 6.4,  taps: [[2.44,87,195],[3.57,221,467],[4.08,430,709],[4.5,142,709],[4.87,306,773],[5.24,222,825],[6.05,392,929],[7.07,399,367]] },
+      ];
+      CLIPS.forEach((c, i) => {
+        const z = document.getElementById('z' + i);
+        c.taps.forEach((p, j) => { const r = document.createElement('span'); r.className = 'rip'; r.id = `r${i}_${j}`;
+          r.style.left = (p[1] * PT) + 'px'; r.style.top = (p[2] * PT) + 'px'; z.appendChild(r); });
+      });
+      const words = (html) => { let it = false; return html.split(' ').map((tok) => {
+        const pre = it ? '<i>' : ''; const opens = (tok.match(/<i>/g) || []).length, closes = (tok.match(/<\/i>/g) || []).length;
+        it = it ? closes <= opens : opens > closes; return `<span class="w">${pre}${tok}${it ? '</i>' : ''}</span>`; }).join(' '); };
+      document.querySelectorAll('[data-h]').forEach((el) => { el.innerHTML = words(el.dataset.h); });
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.to({ t: 0 }, { t: D, duration: D, ease: 'none' }, 0);
+      tl.fromTo('#g1', { x: 0, y: 0 }, { x: 420, y: -200, duration: D, ease: 'sine.inOut' }, 0);
+      tl.fromTo('#g2', { x: 0, y: 0 }, { x: -380, y: 240, duration: D, ease: 'sine.inOut' }, 0);
+      tl.fromTo('#dots', { x: 0, y: 0 }, { x: -46, y: -92, duration: D, ease: 'none' }, 0);
+
+      const wordsIn = (sel, at, st = 0.06) => tl.fromTo(`${sel} .w`, { opacity: 0, y: 46, filter: 'blur(12px)' },
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, ease: 'power3.out', stagger: st, immediateRender: false }, at);
+      const wordsOut = (sel, at) => tl.to(`${sel} .w`, { opacity: 0, y: -26, filter: 'blur(8px)', duration: 0.3, ease: 'power2.in', stagger: 0.025 }, at);
+
+      // 1 · intro
+      tl.fromTo('#iicon', { opacity: 0, scale: .4, rotate: -12 }, { opacity: 1, scale: 1, rotate: 0, duration: 0.9, ease: 'back.out(1.8)' }, 0.15);
+      tl.fromTo('#ihead .w', { opacity: 0, letterSpacing: '.45em', filter: 'blur(14px)' }, { opacity: 1, letterSpacing: '-.015em', filter: 'blur(0px)', duration: 1.1, ease: 'expo.out' }, 0.45);
+      tl.fromTo('#isub', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 1.1);
+      tl.to('#intro', { y: -160, opacity: 0, filter: 'blur(14px)', duration: 0.55, ease: 'power3.in' }, 3.15);
+
+      // phone choreography: right → left → right → left, then away
+      const R = { x: 0, rotateY: -11 }, L = { x: -680, rotateY: 11 };
+      tl.fromTo('#phone', { opacity: 0, x: 420, y: 260, rotateY: -32, rotateX: 10, scale: .86 },
+        { opacity: 1, x: R.x, y: 0, rotateY: R.rotateY, rotateX: 0, scale: 1, duration: 1.0, ease: 'expo.out' }, 3.3);
+      [[9.25, L], [15.65, R], [21.65, L]].forEach(([at, p]) => tl.to('#phone', { ...p, duration: 0.9, ease: 'expo.inOut' }, at));
+      tl.to('#phone', { y: 980, rotateX: 24, scale: .8, opacity: 0, duration: 0.7, ease: 'power3.in' }, 27.35);
+
+      // clips inside the phone: whip between recordings
+      CLIPS.forEach((c, i) => {
+        const id = '#k' + i;
+        if (i === 0) tl.set(id, { opacity: 1 }, 3.3);
+        else tl.fromTo(id, { opacity: 0, xPercent: 40, filter: 'blur(16px)' }, { opacity: 1, xPercent: 0, filter: 'blur(0px)', duration: 0.55, ease: 'expo.out', immediateRender: false }, c.vs + 0.1);
+        if (i < CLIPS.length - 1) tl.to(id, { xPercent: -30, opacity: 0, filter: 'blur(14px)', duration: 0.42, ease: 'power3.in' }, CLIPS[i + 1].vs);
+        (c.zoom || []).forEach(([t, s, o, d]) => tl.to('#z' + i, { scale: s, transformOrigin: o, duration: d, ease: 'power2.inOut' }, c.vs + t));
+        c.taps.forEach((p, j) => {
+          const at = c.vs + (p[0] - c.ms);
+          if (at < c.vs || at > c.vs + c.dur) return;
+          tl.fromTo(`#r${i}_${j}`, { scale: .3, opacity: .95, immediateRender: false }, { scale: 1.7, opacity: 0, duration: 0.5, ease: 'power2.out', immediateRender: false }, Math.max(0, at - 0.06));
+        });
+      });
+
+      // copy blocks
+      [['#s0', 3.75, 9.25], ['#s1', 9.85, 15.65], ['#s2', 16.25, 21.65], ['#s3', 22.25, 27.35]].forEach(([s, a, b]) => {
+        tl.fromTo(`${s} .kick`, { opacity: 0, letterSpacing: '.8em' }, { opacity: 1, letterSpacing: '.26em', duration: 0.7, ease: 'power3.out', immediateRender: false }, a);
+        wordsIn(s, a + 0.1);
+        tl.fromTo(`${s} .sub`, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', immediateRender: false }, a + 0.55);
+        wordsOut(s, b - 0.05);
+        tl.to([`${s} .kick`, `${s} .sub`], { opacity: 0, y: -14, duration: 0.3, ease: 'power2.in' }, b);
+      });
+
+      // pop-outs: lift off the screen and float
+      const pop = (sel, at, from, hold, rot = 0) => {
+        tl.fromTo(sel, { opacity: 0, x: from[0], y: from[1], scale: .55, rotate: 0 },
+          { opacity: 1, x: 0, y: 0, scale: 1, rotate: rot, duration: 0.8, ease: 'back.out(1.5)', immediateRender: false }, at);
+        tl.to(sel, { y: -14, duration: hold - 0.4, ease: 'sine.inOut' }, at + 0.8);
+        tl.to(sel, { opacity: 0, scale: .9, y: -40, filter: 'blur(8px)', duration: 0.35, ease: 'power2.in' }, at + 0.8 + hold - 0.4);
+      };
+      pop('#pInv', 7.05, [300, -120], 2.0, -2);
+      pop('#pSym', 10.9, [380, 160], 4.2, -3);
+      pop('#pPos', 11.15, [360, 80], 3.95, 2);
+      pop('#pEig', 11.6, [-200, -260], 3.5, 1.5);
+      pop('#pGrid', 25.0, [-220, -240], 1.95, -1.5);
+
+      // 6 · every screen
+      tl.fromTo('#devcopy .w', { opacity: 0, y: 46, filter: 'blur(12px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, ease: 'power3.out', stagger: 0.06, immediateRender: false }, 27.85);
+      tl.fromTo('#devcopy .sub', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', immediateRender: false }, 28.3);
+      tl.fromTo('#tablet', { opacity: 0, y: 260, scale: .88, rotateX: 18 }, { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 0.95, ease: 'expo.out', immediateRender: false }, 27.65);
+      tl.fromTo('#land', { opacity: 0, x: -340, rotate: -8 }, { opacity: 1, x: 0, rotate: -3, duration: 0.9, ease: 'expo.out', immediateRender: false }, 28.1);
+      tl.fromTo('#fold', { opacity: 0, x: 340, rotate: 8 }, { opacity: 1, x: 0, rotate: 3, duration: 0.9, ease: 'expo.out', immediateRender: false }, 28.3);
+      tl.to('#tablet', { scale: 1.03, duration: 3.0, ease: 'none' }, 28.6);
+      tl.to(['#devcopy', '#tablet', '#land', '#fold'], { opacity: 0, y: -60, filter: 'blur(12px)', duration: 0.5, ease: 'power3.in', stagger: 0.04 }, 31.6);
+
+      // 7 · end card
+      tl.fromTo('#oicon', { opacity: 0, scale: .4, rotate: 12 }, { opacity: 1, scale: 1, rotate: 0, duration: 0.9, ease: 'back.out(1.8)', immediateRender: false }, 32.1);
+      tl.fromTo('#ohead .w', { opacity: 0, letterSpacing: '.45em', filter: 'blur(14px)' }, { opacity: 1, letterSpacing: '-.015em', filter: 'blur(0px)', duration: 1.0, ease: 'expo.out', immediateRender: false }, 32.35);
+      tl.fromTo('#osub', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', immediateRender: false }, 32.9);
+      window.__timelines['main'] = tl;
+    </script>
+  <script data-od-motion-source-player="11">
+
+window.__odValidateMotionTimeline = function (root, tl) {
+  var mode = document.querySelector('meta[name="od-motion-output"]');
+  if (!mode || mode.content !== 'video') return null;
+  var seconds = Number(root && root.getAttribute('data-duration'));
+  if (!Number.isFinite(seconds) || seconds <= 0) return 'Motion video requires a positive data-duration.';
+  if (!tl || typeof tl.duration !== 'function' || typeof tl.timeScale !== 'function') return 'Motion video requires a registered GSAP timeline.';
+  if (!Number.isFinite(tl.timeScale()) || Math.abs(tl.timeScale() - 1) > 0.000001) return 'Motion video timeScale must be 1. Do not use duration(seconds) to stretch the timeline; author tracks in real seconds.';
+  if (!Number.isFinite(tl.duration()) || Math.abs(tl.duration() - seconds) > 0.001) return 'Motion video timeline duration must equal data-duration. Add a clock tween at time 0 for the full duration; do not change playback speed.';
+  if ((typeof tl.repeat === 'function' && tl.repeat() !== 0) || (typeof tl.delay === 'function' && tl.delay() !== 0)) return 'Motion video master timeline must have no repeat or delay.';
+  return null;
+};
+(function () {
+// A render stall is not a request to seek the soundtrack. Only correct drift
+// after fresh, stable samples; explicit transport actions bypass that filter.
+function createMotionAudioSync(audio) {
+  var sampledAt = null, driftSince = null, previousDrift = 0, correctedAt = -Infinity, align = false;
+  return function (target, moving, force) {
+    var now = performance.now(), gap = sampledAt === null ? Infinity : now - sampledAt;
+    sampledAt = now;
+    if (force) { align = true; driftSince = null; }
+    if (align) {
+      if (audio.readyState > 0) {
+        if (Math.abs(audio.currentTime - target) > .01) audio.currentTime = target;
+        align = false; correctedAt = now;
+      }
+      return;
+    }
+    var drift = target - audio.currentTime;
+    if (!moving || audio.paused || audio.seeking || audio.readyState < 3 || gap > 200 || Math.abs(drift) <= .3 || now - correctedAt < 1500) {
+      driftSince = null; previousDrift = drift; return;
+    }
+    if (driftSince === null || drift * previousDrift <= 0 || Math.abs(drift - previousDrift) > .1) driftSince = now;
+    previousDrift = drift;
+    if (now - driftSince >= 750) {
+      audio.currentTime = target; correctedAt = now; driftSince = null;
+    }
+  };
+}
+  function boot() {
+    if (window.__odMotionRender || window.__odMotionSourcePlayer) return;
+    var root = document.querySelector('[data-composition-id][data-duration][data-width][data-height]');
+    var mode = document.querySelector('meta[name="od-motion-output"]');
+    if (!root || (mode && mode.content === 'interactive')) return;
+    window.__odMotionSourcePlayer = true;
+    var width = Number(root.dataset.width), height = Number(root.dataset.height);
+    if (!(width > 0 && height > 0)) return;
+    var hint = document.createElement('output');
+    hint.setAttribute('data-od-motion-status', ''); hint.setAttribute('role', 'status');
+    hint.style.cssText = 'position:fixed;bottom:12px;right:12px;z-index:2147483647;padding:6px 10px;border-radius:6px;background:#17191d;color:white;font:13px system-ui;display:none';
+    document.body.appendChild(hint);
+    function notice(text) { hint.textContent = text; hint.style.display = text ? 'block' : 'none'; }
+    var hosted = window.__odMotionPreview === true || new URL(location.href).searchParams.get('odMotionPreview') === '1';
+    var thumbnail = window.__odMotionThumbnail === true || new URL(location.href).searchParams.get('odMotionThumbnail') === '1';
+    var instance = Date.now().toString(36) + Math.random().toString(36).slice(2);
+    var hostMuted = false;
+    var active = !hosted, playing = false, wantsPlay = true, pageActive = true, updateTimer = null;
+    var applyPlayback = function () {};
+    function requestActivity() { window.parent.postMessage({type:'od:motion-preview-request', id:instance, width:width, height:height}, '*'); }
+    function onActivity(event) {
+      var data = event.data;
+      if (!hosted || event.source !== window.parent || !data) return;
+      if (data.type === 'od:motion-preview-probe') { requestActivity(); return; }
+      if (data.type !== 'od:motion-preview-activity' || typeof data.active !== 'boolean' || (data.active && data.id !== instance)) return;
+      hostMuted = data.muted === true;
+      active = data.active; applyPlayback();
+    }
+    window.addEventListener('message', onActivity);
+    var tracks = Array.prototype.map.call(document.querySelectorAll('audio[src]'), function (audio) {
+      audio.pause(); audio.autoplay = false;
+      return { audio: audio, start: Number(audio.dataset.start || 0), duration: Number(audio.dataset.duration), volume: Number(audio.dataset.volume || 1), pending: false, blocked: false, sync: createMotionAudioSync(audio) };
+    });
+    var muted = thumbnail;
+    function syncAudio(time, shouldPlay, force) {
+      tracks.forEach(function (track) {
+        var audio = track.audio, local = time - track.start;
+        if (thumbnail || hostMuted) { audio.muted = true; audio.pause(); return; }
+        var trackActive = local >= 0 && local < track.duration;
+        audio.volume = Math.max(0, Math.min(1, track.volume)); audio.muted = muted;
+        if (!trackActive || !shouldPlay) audio.pause();
+        var target = Math.max(0, Math.min(track.duration, local));
+        track.sync(target, trackActive && shouldPlay, force || (trackActive && shouldPlay && audio.paused && !track.pending && !track.blocked));
+        if (trackActive && shouldPlay && audio.paused && !track.pending && !track.blocked) {
+          track.pending = true;
+          var promise = audio.play();
+          if (promise) promise.catch(function (error) {
+            if (error && error.name === 'AbortError') return;
+            track.blocked = true;
+            notice(error && error.name === 'NotAllowedError' ? '点击画面开启声音' : '音频无法播放，请检查素材');
+          }).finally(function () {
+            track.pending = false;
+            if (hostMuted || !active || !pageActive || !playing || !wantsPlay) audio.pause();
+          });
+          else track.pending = false;
+        }
+      });
+    }
+    var fitStyle = document.createElement('style');
+    fitStyle.textContent = 'html,body{width:100% !important;height:100% !important;margin:0 !important;overflow:hidden !important}';
+    document.head.appendChild(fitStyle);
+    // Only opt-in compositions delegate their root layout to the stage. Legacy
+    // sources keep their own centering contract and deferred fit() callbacks.
+    var rootLayout = {position:'absolute', left:'0', top:'0', width:width+'px', height:height+'px', maxWidth:'none', maxHeight:'none', margin:'0', transform:'none'};
+    var stage = document.createElement('div');
+    root.parentNode.insertBefore(stage, root); stage.appendChild(root);
+    function fit() {
+      if (root.dataset.odMotionLayout === 'stage') Object.keys(rootLayout).forEach(function (key) {
+        var property = key.replace(/[A-Z]/g, function (letter) { return '-' + letter.toLowerCase(); });
+        root.style.setProperty(property, rootLayout[key], 'important');
+      });
+      var scale = Math.min(innerWidth / width, Math.max(1, innerHeight) / height);
+      stage.style.cssText = 'position:fixed;width:' + width + 'px;height:' + height + 'px;left:' + ((innerWidth-width*scale)/2) + 'px;top:' + ((innerHeight-height*scale)/2) + 'px;transform-origin:0 0;transform:scale(' + scale + ')';
+    }
+    fit(); window.addEventListener('resize', fit);
+    var started = Date.now();
+    function connect() {
+      if (!stage.isConnected) return;
+      var tl = window.__timelines && window.__timelines[root.dataset.compositionId];
+      if (!tl || typeof tl.seek !== 'function' || typeof tl.play !== 'function' || !(tl.duration() > 0)) {
+        if (Date.now()-started < 15000) { setTimeout(connect, 100); return; }
+        notice('动效未就绪，请检查时间轴或依赖文件');
+        // Late fonts/images may still register the timeline after the notice.
+        // Keep watching while mounted, so a slow load can recover by itself.
+        setTimeout(connect, 1000); return;
+      }
+      notice('');
+      var timingError = window.__odValidateMotionTimeline(root, tl);
+      if (timingError) { tl.pause(); notice(timingError); return; }
+      var duration = tl.duration(), applied = false;
+      applyPlayback = function () {
+        var nextPlaying = active && pageActive && wantsPlay;
+        if (applied && nextPlaying === playing) { syncAudio(tl.time(), playing, false); return; }
+        applied = true;
+        clearTimeout(updateTimer); updateTimer = null;
+        playing = nextPlaying;
+        if (playing) {
+          if (tl.time() >= duration) tl.seek(0, false);
+          tl.play(); syncAudio(tl.time(), true, true); update();
+        } else { tl.pause(); syncAudio(tl.time(), false, false); }
+      };
+      function play() { wantsPlay = true; applyPlayback(); }
+      function pause() { wantsPlay = false; applyPlayback(); }
+      function seek(time) { pause(); tl.seek(Math.max(0, Math.min(duration, Number(time))), false); syncAudio(tl.time(), false, true); }
+      function replay() { seek(0); play(); }
+      window.__odMotionPlayer = {
+        play: play, pause: pause, seek: seek, replay: replay,
+        setMuted: function (value) { muted = thumbnail || !!value; syncAudio(tl.time(), playing, false); },
+        state: function () { return { playing: playing, active: active, time: tl.time(), duration: duration, muted: muted || hostMuted,
+          audio: tracks.map(function (track) { return { paused: track.audio.paused, time: track.audio.currentTime, muted: track.audio.muted, volume: track.audio.volume, blocked: track.blocked }; }) }; }
+      };
+      root.addEventListener('click', function () {
+        var blocked = tracks.some(function (track) { return track.blocked; });
+        if (blocked) { tracks.forEach(function (track) { track.blocked = false; }); notice(''); if (playing) syncAudio(tl.time(), true, true); else play(); }
+        else if (playing) pause(); else play();
+      });
+      tl.seek(0, false); applyPlayback();
+      function update() {
+        if (!stage.isConnected) { active = false; applyPlayback(); return; }
+        if (!active || !pageActive || !playing) return;
+        if (playing && tl.time() >= duration) { tl.seek(0, false); tl.play(); syncAudio(0, true, true); }
+        syncAudio(tl.time(), playing && !tl.paused(), false);
+        updateTimer = setTimeout(update, 33);
+      }
+    }
+    window.addEventListener('pagehide', function () { pageActive = false; applyPlayback(); tracks.forEach(function (track) { track.audio.pause(); }); });
+    window.addEventListener('pageshow', function () {
+      pageActive = true;
+      if (hosted) { active = false; requestActivity(); }
+      applyPlayback();
+    });
+    if (hosted) requestActivity();
+    connect();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, {once:true}); else boot();
+})();
+</script></body>
+</html>

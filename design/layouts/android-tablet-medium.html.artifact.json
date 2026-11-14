@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "layouts/android-tablet-medium.html",
+  "entry": "layouts/android-tablet-medium.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-13T15:06:39.509Z",
+  "updatedAt": "2026-11-13T15:06:39.509Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

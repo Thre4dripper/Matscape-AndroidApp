@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+  <title>Matscape</title>
+  <defs></defs>
+  <g transform="translate(512 512) scale(0.78) translate(-512 -512)">
+    <path d="M338 262H262V762H338" fill="none" stroke="#ffffff" stroke-width="60" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M686 262H762V762H686" fill="none" stroke="#ffffff" stroke-width="60" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="342" y="342" width="150" height="150" rx="30" fill="#ffffff"/>
+    <rect x="532" y="342" width="150" height="150" rx="30" fill="rgba(255,255,255,.26)"/>
+    <rect x="342" y="532" width="150" height="150" rx="30" fill="rgba(255,255,255,.26)"/>
+    <rect x="532" y="532" width="150" height="150" rx="30" fill="#ffffff"/>
+  </g>
+</svg>

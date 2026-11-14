@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "layouts/android-book-foldable-closed.html",
+  "entry": "layouts/android-book-foldable-closed.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-13T15:06:39.508Z",
+  "updatedAt": "2026-11-13T15:06:39.508Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

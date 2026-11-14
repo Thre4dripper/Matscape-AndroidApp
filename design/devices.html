@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Matscape — layouts for every device</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap" />
+  <style>
+/* OD-LAYOUT-PRIMITIVES v1 — structure only: display, flex/grid, overflow, wrapping, ratio, geometry.
+   Put this @layer first; product CSS outside the layer wins ordinary layout rules.
+   Native hidden and closed-dialog states take precedence over component display rules. */
+@layer od-layout {
+  [hidden]:not([hidden="until-found" i]) { display: none !important; }
+  dialog:not([open]) { display: none !important; }
+
+  :where(.od-stack,.od-row,.od-row-top,.od-cluster,.od-grid,.od-field,.od-stat,.od-cell,.od-tile) > :where(*) { min-width: 0; }
+
+  /* containers */
+  .od-stack   { display: flex; flex-direction: column; gap: var(--od-gap, 8px); }
+  .od-row     { display: flex; align-items: center; gap: var(--od-gap, 8px); }
+  .od-row-top { display: flex; align-items: flex-start; gap: var(--od-gap, 8px); }
+  .od-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--od-gap, 8px); }
+  .od-fill    { flex: 1 1 0; min-width: 0; }
+  .od-fixed   { flex: none; }
+  .od-grid    { display: grid; gap: var(--od-gap, 12px); grid-template-columns: repeat(var(--od-cols, 3), minmax(0, 1fr)); }
+
+  /* stacked information: each piece is its own line — never sibling inline spans */
+  .od-stat, .od-field, .od-cell { display: grid; gap: var(--od-gap, 2px); }
+  :where(.od-stat,.od-field,.od-cell) > :where(*) { display: block; }
+  .od-tile { display: grid; grid-template-rows: auto 1fr; }
+  :where(.od-tile) > :where(*) { display: block; }
+
+  /* media keeps its intrinsic ratio by default; never a distorted or cropped
+     cover by accident. height:auto lets the ratio win over an <img height="…">
+     attribute. Cropping to a uniform box is an explicit opt-in: set --od-ratio
+     AND add .od-media-cover together (per the core rule, only where a crop is
+     deliberate — tile thumbs, decorative fills — never on full-frame content). */
+  .od-media { display: block; width: 100%; height: auto; aspect-ratio: var(--od-ratio, auto); }
+  .od-media-cover { object-fit: cover; }
+
+  /* functional inline SVG icons opt into bounded geometry; content SVGs keep their own */
+  .od-icon { display: inline-block; inline-size: var(--od-icon-size, 1em); block-size: var(--od-icon-size, 1em); flex: none; }
+
+  /* data text only — authored copy is rewritten to its budget instead */
+  .od-truncate { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .od-clamp-2, .od-clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+  .od-clamp-2 { -webkit-line-clamp: 2; }
+  .od-clamp-3 { -webkit-line-clamp: 3; }
+  .od-lines-2 { min-height: calc(2 * 1.4em); }   /* block-level reservation for a shared baseline */
+  .od-nowrap  { white-space: nowrap; }           /* 数字+单位 · 价格+起 · 日期+星期 */
+  .od-keep    { word-break: keep-all; overflow-wrap: anywhere; } /* CJK labels break at spaces / <wbr> first */
+
+  /* screen skeleton (optional): bars take their own space, the middle scrolls — no padding guessed for chrome */
+  .od-screen { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100%; }
+  .od-scroll { overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+
+  /* horizontal rail: the next item peeks at the edge; trailing room survives overflow */
+  .od-rail { display: flex; gap: var(--od-gap, 8px); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
+             padding-inline: var(--od-rail-pad, 16px); scroll-padding-inline: var(--od-rail-pad, 16px); }
+  .od-rail::-webkit-scrollbar { display: none; }
+  :where(.od-rail) > :where(*) { flex: none; scroll-snap-align: start; }
+  :where(.od-rail) > :where(:last-child) { margin-inline-end: var(--od-rail-pad, 16px); }
+
+  .od-spacer { flex: none; visibility: hidden; pointer-events: none; }
+  .od-touch  { min-width: 44px; min-height: 44px; }
+}
+:root [hidden]:where(:not([hidden="until-found" i])) { display: none; }
+/* /OD-LAYOUT-PRIMITIVES v1 */
+
+    :root {
+      --stage: #e8ebef; --ink: #12151a; --ink-2: #434a55; --ink-3: #5f6773; --line: #d3d8df; --surface: #ffffff;
+      --accent: #1f43c9; --accent-ink: #1a39ad; --accent-soft: #e2e8fb; --bezel: #16171a;
+      --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Noto Sans", system-ui, sans-serif;
+      --font-math: "STIX Two Text", "STIX Two Math", "Cambria Math", "Times New Roman", serif;
+      --dur: 200ms; --ease-out: cubic-bezier(.2, .8, .2, 1);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body { background: var(--stage); color: var(--ink); font: 16px/1.5 var(--font-ui); -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .board { max-width: 1720px; margin: 0 auto; padding: 48px 32px 96px; }
+    .board-head h1 { margin: 0; font-family: var(--font-math); font-weight: 600; font-size: clamp(32px, 4.4vw, 52px); line-height: 1.1; letter-spacing: -.01em; }
+    .board-head h1 i { color: var(--accent); }
+    .board-head p { margin: 12px 0 0; max-width: 68ch; color: var(--ink-2); }
+    .legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin: 32px 0 0; padding: 0; list-style: none; }
+    .legend li { display: grid; gap: 4px; padding: 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+    .legend li > * { display: block; }
+    .legend b { font-size: 15px; }
+    .legend span { font-size: 14px; color: var(--ink-2); line-height: 1.45; }
+    .group { margin-top: 64px; }
+    .group > h2 { margin: 0 0 24px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+    .cards { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 48px 56px; }
+    .card { display: grid; gap: 14px; width: var(--cw, 280px); }
+    .card-head { display: grid; gap: 2px; }
+    .card-head > * { display: block; margin: 0; }
+    .card-head h3 { font-size: 18px; font-weight: 650; line-height: 1.3; }
+    .card-head .note { font-size: 13px; color: var(--ink-3); }
+    .seg { display: inline-flex; justify-self: start; gap: 2px; padding: 3px; border-radius: 12px; background: #dde1e7; }
+    .seg button { min-height: 36px; padding: 0 14px; border: 0; border-radius: 9px; background: transparent; font: 600 13px/1 var(--font-ui); color: var(--ink-2); cursor: pointer; transition: background var(--dur) var(--ease-out); }
+    .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.14); }
+    @media (hover: hover) { .seg button:not([aria-pressed="true"]):hover { background: rgba(255,255,255,.55); color: var(--ink); } }
+    .device {
+      justify-self: start; padding: var(--bz, 8px); border-radius: calc(var(--rs) + var(--bz, 8px)); background: var(--bezel);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.1), 0 28px 48px -20px rgba(10,12,16,.45), 0 8px 18px -10px rgba(10,12,16,.3);
+    }
+    .device-screen { position: relative; overflow: hidden; border-radius: var(--rs); background: #f6f7f9; width: var(--sw); height: var(--sh); }
+    .device-screen iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #f6f7f9; }
+    .crease { position: absolute; pointer-events: none; }
+    .crease--v { top: 0; bottom: 0; left: 50%; width: 12px; margin-left: -6px; background: linear-gradient(90deg, transparent, rgba(0,0,0,.07) 45%, rgba(255,255,255,.06) 55%, transparent); }
+    .crease--h, .crease--h-soft { left: 0; right: 0; top: 50%; height: 12px; margin-top: -6px; background: linear-gradient(180deg, transparent, rgba(0,0,0,.07) 45%, rgba(255,255,255,.06) 55%, transparent); }
+    .crease--h-soft { opacity: .5; }
+    .caption { display: grid; gap: 6px; }
+    .caption > * { display: block; margin: 0; }
+    .tag { justify-self: start; padding: 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); font-size: 13px; font-weight: 650; }
+    .caption p { font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+    .caption a { font-size: 13px; font-weight: 600; justify-self: start; }
+    .foot { margin-top: 72px; font-size: 14px; color: var(--ink-3); max-width: 80ch; }
+    @media (prefers-reduced-motion: reduce) { * { transition-duration: 1ms !important; } }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="board-head">
+      <h1>Mat<i>scape</i> on every screen</h1>
+      <p>One adaptive app. The layout follows the space it has and how the device is folded. Every frame below is the live prototype, so you can tap around in any of them.</p>
+      <ul class="legend" aria-label="Layouts">
+        <li><b>Compact</b><span>Phones and closed foldables. Single column with the keypad at the bottom.</span></li>
+        <li><b>Medium</b><span>Small tablets in portrait. Sidebar with navigation and matrices; workspace beside it.</span></li>
+        <li><b>Expanded</b><span>Large tablets in landscape. Sidebar, workspace and a permanent inspector.</span></li>
+        <li><b>Book</b><span>Foldables opened flat. Two panes split at the fold; nothing sits on the crease.</span></li>
+        <li><b>Tabletop</b><span>Half-folded on a desk. Results above the fold, keypad below.</span></li>
+        <li><b>Glance</b><span>Small cover screens. Read-only view of the latest results.</span></li>
+      </ul>
+    </header>
+    <div id="groups"></div>
+    <p class="foot">Each layout also has its own page in the <code>layouts</code> folder, starting with <a href="layouts/iphone-compact.html">iPhone · compact</a>. Sizes for iPhone Duo and the Android foldables are approximate, in points / dp. On real devices the fold position comes from the system; here you switch it with the buttons above each foldable. The phone-only prototypes are still available in an <a href="index.html">iPhone frame</a> and an <a href="android.html">Android frame</a>.</p>
+  </main>
+  <script>
+  (function () {
+    'use strict';
+    var IOS = { st: 54, sb: 34, bar: 'ios', r: 48, bz: 9 };
+    var AND = { st: 40, sb: 24, bar: 'android', r: 40, bz: 9 };
+    function x(base, extra) { var o = {}, k; for (k in base) o[k] = base[k]; for (k in extra) o[k] = extra[k]; return o; }
+    var GROUPS = [
+      { title: 'iPhone', devices: [
+        { name: 'iPhone', note: '6.3″ · 402 × 874 pt', states: [
+          x(IOS, { label: 'Portrait', w: 402, h: 874, layout: 'Compact', desc: 'Single column: matrices, expressions and the keypad.' }) ] },
+        { name: 'iPhone Duo', note: 'Book-style foldable · sizes approximate', states: [
+          x(IOS, { label: 'Closed', w: 375, h: 812, layout: 'Compact · 5.4″ outer screen', desc: 'Closed, it works like any iPhone.' }),
+          x(IOS, { label: 'Open', w: 870, h: 652, st: 28, sb: 20, r: 26, bz: 10, posture: 'book', hinge: 24, crease: 'v', layout: 'Book · 7.6″ inner screen', desc: 'Workspace and keypad on the left, a live inspector on the right that follows the result you tap.' }),
+          x(IOS, { label: 'Tabletop', w: 652, h: 870, st: 28, sb: 20, r: 26, bz: 10, posture: 'tabletop', hinge: 24, crease: 'h', layout: 'Tabletop', desc: 'Half-folded on a desk: results above the fold, a full-height keypad below.' }) ] }
+      ] },
+      { title: 'Android phones & foldables', devices: [
+        { name: 'Android phone', note: '6.3″ · 412 × 915 dp', states: [
+          x(AND, { label: 'Portrait', w: 412, h: 915, layout: 'Compact', desc: 'The same single column as on iPhone.' }) ] },
+        { name: 'Book foldable', note: 'Android · sizes approximate', states: [
+          x(AND, { label: 'Closed', w: 368, h: 850, st: 36, r: 36, layout: 'Compact · narrow cover screen', desc: 'A tall, narrow cover screen still gets the full single-column app.' }),
+          x(AND, { label: 'Open', w: 744, h: 840, st: 32, r: 26, bz: 10, posture: 'book', hinge: 24, crease: 'v', layout: 'Book', desc: 'Two panes split at the hinge: workspace on one side, inspector on the other.' }),
+          x(AND, { label: 'Tabletop', w: 840, h: 744, st: 32, r: 26, bz: 10, posture: 'tabletop', hinge: 24, crease: 'h', layout: 'Tabletop', desc: 'Results above the fold and a large keypad below it.' }) ] },
+        { name: 'Flip foldable', note: 'Android · sizes approximate', states: [
+          x(AND, { label: 'Closed', w: 300, h: 340, st: 0, sb: 0, bar: '', r: 40, posture: 'glance', layout: 'Glance · cover screen', desc: 'Read-only: the latest results, with a hint to open the phone to edit.' }),
+          x(AND, { label: 'Half open', w: 412, h: 915, posture: 'tabletop', hinge: 24, crease: 'h', layout: 'Tabletop', desc: 'Stood on a desk: results on the top half, keypad on the bottom half.' }),
+          x(AND, { label: 'Open', w: 412, h: 915, crease: 'h-soft', layout: 'Compact', desc: 'Opened flat, it is a normal phone.' }) ] }
+      ] },
+      { title: 'Tablets', devices: [
+        { name: 'iPad mini', note: 'Portrait · 744 × 1133 pt', states: [
+          x(IOS, { label: 'Portrait', w: 744, h: 1133, st: 24, sb: 20, r: 22, bz: 14, layout: 'Medium', desc: 'Sidebar with navigation and the matrix library; expressions and keypad beside it. The matrix editor opens as a dialog.' }) ] },
+        { name: 'Android tablet', note: 'Portrait · 800 × 1280 dp', states: [
+          x(AND, { label: 'Portrait', w: 800, h: 1280, st: 28, r: 20, bz: 14, layout: 'Medium', desc: 'Same sidebar layout as iPad mini.' }) ] },
+        { name: 'iPad 11″', note: 'Landscape · ≈ 1180 × 820 pt', states: [
+          x(IOS, { label: 'Landscape', w: 1180, h: 820, st: 24, sb: 20, r: 22, bz: 14, layout: 'Expanded', desc: 'Three panes: sidebar, workspace, and a permanent inspector that follows the active result.' }) ] },
+        { name: 'iPad 13″', note: 'Landscape · 1376 × 1032 pt', states: [
+          x(IOS, { label: 'Landscape', w: 1376, h: 1032, st: 24, sb: 20, r: 22, bz: 14, layout: 'Expanded · two keypad pages', desc: 'The number pad and a function page sit side by side, so you switch tabs less.' }) ] }
+      ] }
+    ];
+
+    function scale() { return Math.max(0.3, Math.min(0.7, (window.innerWidth - 64) / 1376)); }
+    function src(st) {
+      var q = [];
+      if (st.posture) q.push('posture=' + st.posture);
+      q.push('st=' + st.st, 'sb=' + st.sb);
+      if (st.bar) q.push('bar=' + st.bar);
+      if (st.hinge) q.push('hinge=' + st.hinge);
+      return 'app.html?' + q.join('&');
+    }
+    var PAGES = {"iPhone|Portrait": "iphone-compact", "iPhone Duo|Closed": "iphone-duo-closed", "iPhone Duo|Open": "iphone-duo-open-book", "iPhone Duo|Tabletop": "iphone-duo-tabletop", "Android phone|Portrait": "android-phone-compact", "Book foldable|Closed": "android-book-foldable-closed", "Book foldable|Open": "android-book-foldable-open", "Book foldable|Tabletop": "android-book-foldable-tabletop", "Flip foldable|Closed": "android-flip-cover-glance", "Flip foldable|Half open": "android-flip-half-open", "Flip foldable|Open": "android-flip-open", "iPad mini|Portrait": "ipad-mini-medium", "Android tablet|Portrait": "android-tablet-medium", "iPad 11″|Landscape": "ipad-11-expanded", "iPad 13″|Landscape": "ipad-13-expanded"};
+    function openHref(st, d) { var p = PAGES[d.name + '|' + st.label]; return p ? 'layouts/' + p + '.html' : 'app.html'; }
+    function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+    var groupsEl = document.getElementById('groups'), cards = [];
+    GROUPS.forEach(function (g, gi) {
+      var sec = document.createElement('section');
+      sec.className = 'group';
+      sec.setAttribute('aria-labelledby', 'g' + gi);
+      sec.innerHTML = '<h2 id="g' + gi + '">' + esc(g.title) + '</h2><div class="cards"></div>';
+      groupsEl.appendChild(sec);
+      var wrap = sec.querySelector('.cards');
+      g.devices.forEach(function (d) {
+        var card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML =
+          '<header class="card-head"><h3>' + esc(d.name) + '</h3><p class="note">' + esc(d.note) + '</p></header>' +
+          (d.states.length > 1 ? '<div class="seg" role="group" aria-label="' + esc(d.name) + ' posture">' + d.states.map(function (s, i) {
+            return '<button type="button" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + esc(s.label) + '</button>';
+          }).join('') + '</div>' : '') +
+          '<div class="device"><div class="device-screen"><iframe loading="lazy"></iframe><span class="crease" aria-hidden="true"></span></div></div>' +
+          '<div class="caption"><span class="tag"></span><p></p><a>Open this layout on its own page</a></div>';
+        wrap.appendChild(card);
+        var entry = { d: d, card: card, i: 0 };
+        cards.push(entry);
+        card.addEventListener('click', function (e) {
+          var b = e.target.closest('.seg button'); if (!b) return;
+          entry.i = +b.getAttribute('data-i');
+          card.querySelectorAll('.seg button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+          apply(entry, true);
+        });
+        apply(entry, true);
+      });
+    });
+
+    function apply(entry, reload) {
+      var st = entry.d.states[entry.i], s = scale(), card = entry.card;
+      var sw = Math.round(st.w * s), sh = Math.round(st.h * s);
+      var dev = card.querySelector('.device'), scr = card.querySelector('.device-screen'), fr = card.querySelector('iframe');
+      dev.style.setProperty('--bz', (st.bz || 9) + 'px');
+      scr.style.setProperty('--rs', Math.round(st.r * s) + 'px');
+      dev.style.setProperty('--rs', Math.round(st.r * s) + 'px');
+      scr.style.setProperty('--sw', sw + 'px');
+      scr.style.setProperty('--sh', sh + 'px');
+      card.style.setProperty('--cw', Math.max(sw + 2 * (st.bz || 9), 260) + 'px');
+      fr.width = st.w; fr.height = st.h;
+      fr.style.width = st.w + 'px'; fr.style.height = st.h + 'px';
+      fr.style.transform = 'scale(' + s + ')';
+      fr.title = 'Matscape on ' + entry.d.name + (entry.d.states.length > 1 ? ', ' + st.label.toLowerCase() : '') + ' — ' + st.layout + ' layout';
+      var cr = card.querySelector('.crease');
+      cr.className = 'crease' + (st.crease ? ' crease--' + st.crease : '');
+      cr.hidden = !st.crease;
+      card.querySelector('.tag').textContent = st.layout;
+      card.querySelector('.caption p').textContent = st.desc;
+      card.querySelector('.caption a').href = openHref(st, entry.d);
+      if (reload) { var next = src(st); if (fr.getAttribute('src') !== next) fr.setAttribute('src', next); }
+    }
+    var t = 0;
+    window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(function () { cards.forEach(function (c) { apply(c, false); }); }, 120); });
+  })();
+  </script>
+</body>
+</html>

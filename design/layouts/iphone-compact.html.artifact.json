@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "layouts/iphone-compact.html",
+  "entry": "layouts/iphone-compact.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-13T15:06:39.507Z",
+  "updatedAt": "2026-11-13T15:06:39.507Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

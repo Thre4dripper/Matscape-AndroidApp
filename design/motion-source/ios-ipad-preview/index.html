@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta name="od-motion-output" content="video">
+    <meta name="od-motion-audio" content="required">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1200, height=1600" />
+    <link rel="alternate" type="video/mp4" href="../../app-store-ipad-preview.mp4">
+    <title>Matscape — App Store preview, iPad (1200×1600)</title>
+    <script src="./gsap.min.js"></script>
+    <style>
+      /* App Store app preview. Every pixel inside the screen card is a screen recording of the real
+         Matscape app (Flutter build). Around it: captions only — no device frame, no badges. */
+      :root { --ink: #1f43c9; --peri: #a9bcff; --navy: #0a1235;
+        --serif: "STIX Two Text", Charter, "Iowan Old Style", Georgia, "Times New Roman", serif;
+        --sans: -apple-system, "SF Pro Text", "Helvetica Neue", Inter, Arial, sans-serif; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1200px; height: 1600px; overflow: hidden; background: var(--navy); }
+      #root { position: relative; width: 1200px; height: 1600px; overflow: hidden;
+        background: radial-gradient(120% 70% at 50% 0%, #1b2f86 0%, #0f1c58 42%, var(--navy) 100%); }
+      .glow { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .55; }
+      .g1 { width: 760px; height: 760px; left: -260px; top: 820px; background: #2b55ff; opacity: .28; }
+      .g2 { width: 520px; height: 520px; right: -200px; top: 120px; background: #6f8cff; opacity: .22; }
+      .glyph { position: absolute; font-family: var(--serif); color: #fff; opacity: .045; line-height: 1; }
+      .q1 { font-size: 900px; left: -170px; top: 520px; } .q2 { font-size: 900px; right: -190px; top: 520px; }
+      /* captions */
+      .cap { position: absolute; left: 80px; right: 80px; top: 50px; height: 230px; text-align: center;
+        display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 18px; }
+      .kick { font-family: var(--sans); font-weight: 700; font-size: 25px; letter-spacing: .24em; color: var(--peri); opacity: 0; }
+      .head { font-family: var(--serif); font-weight: 600; font-size: 64px; line-height: 1.06; color: #fff; letter-spacing: -.012em; }
+      .head i { color: var(--peri); }
+      .w { display: inline-block; opacity: 0; will-change: transform, opacity, filter; }
+      .end .head { font-size: 104px; }
+      .end .sub { font-family: var(--sans); font-size: 34px; color: #dfe5ff; opacity: 0; }
+      /* the screen card */
+      #card { position: absolute; left: 132px; top: 300px; width: 936px; height: 1248px; border-radius: 34px;
+        overflow: hidden; background: #f4f6fa; box-shadow: 0 40px 90px rgba(0,0,20,.55), 0 0 0 1.5px rgba(255,255,255,.14); }
+      .clip { position: absolute; inset: 0; opacity: 0; }
+      .zoom { position: absolute; inset: 0; }
+      video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+      .rip { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
+        background: rgba(31,67,201,.22); border: 3px solid rgba(31,67,201,.6); opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="27.9" data-width="1200" data-height="1600" data-fps="30" data-poster-time="7.6">
+      <div class="glow g1" id="g1"></div><div class="glow g2" id="g2"></div>
+      <div class="glyph q1" id="q1">[</div><div class="glyph q2" id="q2">]</div>
+      <div id="caps"></div>
+      <div id="card"><div class="clip" id="k0"><div class="zoom" id="z0"><video id="v0" src="assets/type.mp4" muted playsinline preload="auto" data-start="0.0" data-duration="5.95" data-media-start="0.0" data-track-index="1"></video></div></div><div class="clip" id="k1"><div class="zoom" id="z1"><video id="v1" src="assets/steps.mp4" muted playsinline preload="auto" data-start="5.3" data-duration="9.5" data-media-start="0.2" data-track-index="2"></video></div></div><div class="clip" id="k2"><div class="zoom" id="z2"><video id="v2" src="assets/library.mp4" muted playsinline preload="auto" data-start="14.4" data-duration="7.69" data-media-start="0.0" data-track-index="3"></video></div></div><div class="clip" id="k3"><div class="zoom" id="z3"><video id="v3" src="assets/editor.mp4" muted playsinline preload="auto" data-start="21.65" data-duration="6.25" data-media-start="0.0" data-track-index="4"></video></div></div></div>
+      <audio src="assets/music.wav" data-start="0" data-duration="27.9" data-volume="0.7" preload="auto"></audio>
+    </div>
+    <script>
+      const D = 27.9;
+      // Clips: vs = start in the film, ms = start inside the recording, dur = time on screen (incl. overlap).
+      // Recordings were captured at 1032×1376 points; taps are in points, t in recording seconds.
+      const CLIPS = [
+        { src: 'type.mp4',    vs: 0.0,   ms: 0.0, dur: 5.95, taps: [[0.4,600,140],[1.02,670,1321],[1.74,381,1104],[2.36,318,1150],[2.87,554,1196],[4.5,670,1321]] },
+        { src: 'steps.mp4',   vs: 5.3,   ms: 0.2, dur: 9.5,  taps: [[5.3,967,507]],
+          zoom: [[5.6, 1.28, '86% 40%', 1.0], [8.4, 1, '86% 40%', 0.6]] },
+        { src: 'library.mp4', vs: 14.4,  ms: 0.0, dur: 7.69, taps: [[0.0,139,207],[1.42,872,1137],[5.63,946,1340]] },
+        { src: 'editor.mp4',  vs: 21.65, ms: 0.0, dur: 6.25, taps: [[0.0,75,617],[1.22,516,505],[1.74,678,747],[2.15,378,747],[2.52,624,811],[2.89,516,863],[3.71,733,967],[4.72,752,405]] },
+      ];
+      const CAPS = [
+        { t: [0.15, 2.85], k: 'MATRIX CALCULATOR', h: 'Meet Mat<i>scape</i> for iPad.' },
+        { t: [3.0, 5.45],  k: 'LIVE INSPECTOR', h: 'Answers update <i>as you type.</i>' },
+        { t: [5.75, 9.9],  k: 'INSPECT', h: 'Properties, eigenvalues, <i>norms.</i>' },
+        { t: [10.05, 14.25], k: 'STEP BY STEP', h: 'Determinant, inverse, <i>RREF.</i>' },
+        { t: [14.7, 21.5], k: 'LIBRARY', h: 'Every operation, <i>explained.</i>' },
+        { t: [21.95, 25.9], k: 'EDIT', h: 'Trig inside <i>matrices.</i>' },
+        { t: [26.0, D], k: '', h: 'Mat<i>scape</i>', sub: 'Every matrix tool.', end: true },
+      ];
+      const PT = 936 / 1032; // points → card pixels
+
+            CLIPS.forEach((c, i) => {
+        const z = document.getElementById('z' + i);
+        c.taps.forEach((p, j) => { const r = document.createElement('span'); r.className = 'rip'; r.id = `r${i}_${j}`;
+          r.style.left = (p[1] * PT) + 'px'; r.style.top = (p[2] * PT) + 'px'; z.appendChild(r); });
+      });
+      const caps = document.getElementById('caps');
+      // Split a caption into word spans; italics may start or end inside a word ("Mat<i>scape</i>").
+      const words = (html) => { let it = false; return html.split(' ').map((tok) => {
+        const pre = it ? '<i>' : ''; const opens = (tok.match(/<i>/g) || []).length, closes = (tok.match(/<\/i>/g) || []).length;
+        it = it ? closes <= opens : opens > closes; return `<span class="w">${pre}${tok}${it ? '</i>' : ''}</span>`; }).join(' '); };
+      CAPS.forEach((c, i) => {
+        const d = document.createElement('div'); d.className = 'cap' + (c.end ? ' end' : ''); d.id = 'c' + i;
+        d.innerHTML = (c.k ? `<p class="kick">${c.k}</p>` : '') + `<p class="head">${words(c.h)}</p>` + (c.sub ? `<p class="sub">${c.sub}</p>` : '');
+        caps.appendChild(d);
+      });
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.to({ t: 0 }, { t: D, duration: D, ease: 'none' }, 0);
+      // ambient drift
+      tl.fromTo('#g1', { x: 0, y: 0 }, { x: 160, y: -260, duration: D, ease: 'sine.inOut' }, 0);
+      tl.fromTo('#g2', { x: 0, y: 0 }, { x: -120, y: 220, duration: D, ease: 'sine.inOut' }, 0);
+      tl.fromTo('#q1', { y: 0 }, { y: -120, duration: D, ease: 'none' }, 0);
+      tl.fromTo('#q2', { y: 0 }, { y: 120, duration: D, ease: 'none' }, 0);
+      // card entrance + outro settle
+      tl.fromTo('#card', { y: 220, scale: .92, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 1.0, ease: 'expo.out' }, 0);
+      tl.to('#card', { y: 90, scale: .9, duration: 1.1, ease: 'power3.inOut' }, 25.95);
+
+      CLIPS.forEach((c, i) => {
+        const id = '#k' + i, cut = c.vs + 0.3;
+        if (i === 0) tl.set(id, { opacity: 1 }, 0);
+        else tl.fromTo(id, { opacity: 0, xPercent: 34, scale: 1.04, filter: 'blur(16px)' },
+          { opacity: 1, xPercent: 0, scale: 1, filter: 'blur(0px)', duration: 0.55, ease: 'expo.out', immediateRender: false }, cut - 0.22);
+        if (i < CLIPS.length - 1) {
+          const out = CLIPS[i + 1].vs + 0.3;
+          tl.to(id, { xPercent: -26, scale: .95, opacity: 0, filter: 'blur(14px)', duration: 0.42, ease: 'power3.in' }, out - 0.3);
+        }
+        (c.zoom || []).forEach(([t, s, o, d]) => tl.to('#z' + i, { scale: s, transformOrigin: o, duration: d, ease: 'power2.inOut' }, c.vs + t));
+        c.taps.forEach((p, j) => {
+          const at = c.vs + (p[0] - c.ms);
+          if (at < c.vs - 0.05 || at > c.vs + c.dur) return;
+          tl.fromTo(`#r${i}_${j}`, { scale: .3, opacity: .95, immediateRender: false }, { scale: 1.7, opacity: 0, duration: 0.5, ease: 'power2.out', immediateRender: false }, Math.max(0, at - 0.06));
+        });
+      });
+
+      CAPS.forEach((c, i) => {
+        const id = '#c' + i, [a, b] = c.t;
+        tl.fromTo(`${id} .kick`, { opacity: 0, letterSpacing: '.7em' }, { opacity: 1, letterSpacing: '.24em', duration: 0.6, ease: 'power3.out', immediateRender: false }, a);
+        tl.fromTo(`${id} .w`, { opacity: 0, y: 38, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.55, ease: 'power3.out', stagger: 0.06, immediateRender: false }, a + 0.08);
+        if (c.sub) tl.fromTo(`${id} .sub`, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', immediateRender: false }, a + 0.45);
+        if (b < D) {
+          tl.to(`${id} .w`, { opacity: 0, y: -22, filter: 'blur(8px)', duration: 0.28, ease: 'power2.in', stagger: 0.025 }, b - 0.34);
+          tl.to(`${id} .kick`, { opacity: 0, duration: 0.25, ease: 'power1.in' }, b - 0.3);
+        }
+      });
+      window.__timelines['main'] = tl;
+    </script>
+  <script data-od-motion-source-player="11">
+
+window.__odValidateMotionTimeline = function (root, tl) {
+  var mode = document.querySelector('meta[name="od-motion-output"]');
+  if (!mode || mode.content !== 'video') return null;
+  var seconds = Number(root && root.getAttribute('data-duration'));
+  if (!Number.isFinite(seconds) || seconds <= 0) return 'Motion video requires a positive data-duration.';
+  if (!tl || typeof tl.duration !== 'function' || typeof tl.timeScale !== 'function') return 'Motion video requires a registered GSAP timeline.';
+  if (!Number.isFinite(tl.timeScale()) || Math.abs(tl.timeScale() - 1) > 0.000001) return 'Motion video timeScale must be 1. Do not use duration(seconds) to stretch the timeline; author tracks in real seconds.';
+  if (!Number.isFinite(tl.duration()) || Math.abs(tl.duration() - seconds) > 0.001) return 'Motion video timeline duration must equal data-duration. Add a clock tween at time 0 for the full duration; do not change playback speed.';
+  if ((typeof tl.repeat === 'function' && tl.repeat() !== 0) || (typeof tl.delay === 'function' && tl.delay() !== 0)) return 'Motion video master timeline must have no repeat or delay.';
+  return null;
+};
+(function () {
+// A render stall is not a request to seek the soundtrack. Only correct drift
+// after fresh, stable samples; explicit transport actions bypass that filter.
+function createMotionAudioSync(audio) {
+  var sampledAt = null, driftSince = null, previousDrift = 0, correctedAt = -Infinity, align = false;
+  return function (target, moving, force) {
+    var now = performance.now(), gap = sampledAt === null ? Infinity : now - sampledAt;
+    sampledAt = now;
+    if (force) { align = true; driftSince = null; }
+    if (align) {
+      if (audio.readyState > 0) {
+        if (Math.abs(audio.currentTime - target) > .01) audio.currentTime = target;
+        align = false; correctedAt = now;
+      }
+      return;
+    }
+    var drift = target - audio.currentTime;
+    if (!moving || audio.paused || audio.seeking || audio.readyState < 3 || gap > 200 || Math.abs(drift) <= .3 || now - correctedAt < 1500) {
+      driftSince = null; previousDrift = drift; return;
+    }
+    if (driftSince === null || drift * previousDrift <= 0 || Math.abs(drift - previousDrift) > .1) driftSince = now;
+    previousDrift = drift;
+    if (now - driftSince >= 750) {
+      audio.currentTime = target; correctedAt = now; driftSince = null;
+    }
+  };
+}
+  function boot() {
+    if (window.__odMotionRender || window.__odMotionSourcePlayer) return;
+    var root = document.querySelector('[data-composition-id][data-duration][data-width][data-height]');
+    var mode = document.querySelector('meta[name="od-motion-output"]');
+    if (!root || (mode && mode.content === 'interactive')) return;
+    window.__odMotionSourcePlayer = true;
+    var width = Number(root.dataset.width), height = Number(root.dataset.height);
+    if (!(width > 0 && height > 0)) return;
+    var hint = document.createElement('output');
+    hint.setAttribute('data-od-motion-status', ''); hint.setAttribute('role', 'status');
+    hint.style.cssText = 'position:fixed;bottom:12px;right:12px;z-index:2147483647;padding:6px 10px;border-radius:6px;background:#17191d;color:white;font:13px system-ui;display:none';
+    document.body.appendChild(hint);
+    function notice(text) { hint.textContent = text; hint.style.display = text ? 'block' : 'none'; }
+    var hosted = window.__odMotionPreview === true || new URL(location.href).searchParams.get('odMotionPreview') === '1';
+    var thumbnail = window.__odMotionThumbnail === true || new URL(location.href).searchParams.get('odMotionThumbnail') === '1';
+    var instance = Date.now().toString(36) + Math.random().toString(36).slice(2);
+    var hostMuted = false;
+    var active = !hosted, playing = false, wantsPlay = true, pageActive = true, updateTimer = null;
+    var applyPlayback = function () {};
+    function requestActivity() { window.parent.postMessage({type:'od:motion-preview-request', id:instance, width:width, height:height}, '*'); }
+    function onActivity(event) {
+      var data = event.data;
+      if (!hosted || event.source !== window.parent || !data) return;
+      if (data.type === 'od:motion-preview-probe') { requestActivity(); return; }
+      if (data.type !== 'od:motion-preview-activity' || typeof data.active !== 'boolean' || (data.active && data.id !== instance)) return;
+      hostMuted = data.muted === true;
+      active = data.active; applyPlayback();
+    }
+    window.addEventListener('message', onActivity);
+    var tracks = Array.prototype.map.call(document.querySelectorAll('audio[src]'), function (audio) {
+      audio.pause(); audio.autoplay = false;
+      return { audio: audio, start: Number(audio.dataset.start || 0), duration: Number(audio.dataset.duration), volume: Number(audio.dataset.volume || 1), pending: false, blocked: false, sync: createMotionAudioSync(audio) };
+    });
+    var muted = thumbnail;
+    function syncAudio(time, shouldPlay, force) {
+      tracks.forEach(function (track) {
+        var audio = track.audio, local = time - track.start;
+        if (thumbnail || hostMuted) { audio.muted = true; audio.pause(); return; }
+        var trackActive = local >= 0 && local < track.duration;
+        audio.volume = Math.max(0, Math.min(1, track.volume)); audio.muted = muted;
+        if (!trackActive || !shouldPlay) audio.pause();
+        var target = Math.max(0, Math.min(track.duration, local));
+        track.sync(target, trackActive && shouldPlay, force || (trackActive && shouldPlay && audio.paused && !track.pending && !track.blocked));
+        if (trackActive && shouldPlay && audio.paused && !track.pending && !track.blocked) {
+          track.pending = true;
+          var promise = audio.play();
+          if (promise) promise.catch(function (error) {
+            if (error && error.name === 'AbortError') return;
+            track.blocked = true;
+            notice(error && error.name === 'NotAllowedError' ? '点击画面开启声音' : '音频无法播放，请检查素材');
+          }).finally(function () {
+            track.pending = false;
+            if (hostMuted || !active || !pageActive || !playing || !wantsPlay) audio.pause();
+          });
+          else track.pending = false;
+        }
+      });
+    }
+    var fitStyle = document.createElement('style');
+    fitStyle.textContent = 'html,body{width:100% !important;height:100% !important;margin:0 !important;overflow:hidden !important}';
+    document.head.appendChild(fitStyle);
+    // Only opt-in compositions delegate their root layout to the stage. Legacy
+    // sources keep their own centering contract and deferred fit() callbacks.
+    var rootLayout = {position:'absolute', left:'0', top:'0', width:width+'px', height:height+'px', maxWidth:'none', maxHeight:'none', margin:'0', transform:'none'};
+    var stage = document.createElement('div');
+    root.parentNode.insertBefore(stage, root); stage.appendChild(root);
+    function fit() {
+      if (root.dataset.odMotionLayout === 'stage') Object.keys(rootLayout).forEach(function (key) {
+        var property = key.replace(/[A-Z]/g, function (letter) { return '-' + letter.toLowerCase(); });
+        root.style.setProperty(property, rootLayout[key], 'important');
+      });
+      var scale = Math.min(innerWidth / width, Math.max(1, innerHeight) / height);
+      stage.style.cssText = 'position:fixed;width:' + width + 'px;height:' + height + 'px;left:' + ((innerWidth-width*scale)/2) + 'px;top:' + ((innerHeight-height*scale)/2) + 'px;transform-origin:0 0;transform:scale(' + scale + ')';
+    }
+    fit(); window.addEventListener('resize', fit);
+    var started = Date.now();
+    function connect() {
+      if (!stage.isConnected) return;
+      var tl = window.__timelines && window.__timelines[root.dataset.compositionId];
+      if (!tl || typeof tl.seek !== 'function' || typeof tl.play !== 'function' || !(tl.duration() > 0)) {
+        if (Date.now()-started < 15000) { setTimeout(connect, 100); return; }
+        notice('动效未就绪，请检查时间轴或依赖文件');
+        // Late fonts/images may still register the timeline after the notice.
+        // Keep watching while mounted, so a slow load can recover by itself.
+        setTimeout(connect, 1000); return;
+      }
+      notice('');
+      var timingError = window.__odValidateMotionTimeline(root, tl);
+      if (timingError) { tl.pause(); notice(timingError); return; }
+      var duration = tl.duration(), applied = false;
+      applyPlayback = function () {
+        var nextPlaying = active && pageActive && wantsPlay;
+        if (applied && nextPlaying === playing) { syncAudio(tl.time(), playing, false); return; }
+        applied = true;
+        clearTimeout(updateTimer); updateTimer = null;
+        playing = nextPlaying;
+        if (playing) {
+          if (tl.time() >= duration) tl.seek(0, false);
+          tl.play(); syncAudio(tl.time(), true, true); update();
+        } else { tl.pause(); syncAudio(tl.time(), false, false); }
+      };
+      function play() { wantsPlay = true; applyPlayback(); }
+      function pause() { wantsPlay = false; applyPlayback(); }
+      function seek(time) { pause(); tl.seek(Math.max(0, Math.min(duration, Number(time))), false); syncAudio(tl.time(), false, true); }
+      function replay() { seek(0); play(); }
+      window.__odMotionPlayer = {
+        play: play, pause: pause, seek: seek, replay: replay,
+        setMuted: function (value) { muted = thumbnail || !!value; syncAudio(tl.time(), playing, false); },
+        state: function () { return { playing: playing, active: active, time: tl.time(), duration: duration, muted: muted || hostMuted,
+          audio: tracks.map(function (track) { return { paused: track.audio.paused, time: track.audio.currentTime, muted: track.audio.muted, volume: track.audio.volume, blocked: track.blocked }; }) }; }
+      };
+      root.addEventListener('click', function () {
+        var blocked = tracks.some(function (track) { return track.blocked; });
+        if (blocked) { tracks.forEach(function (track) { track.blocked = false; }); notice(''); if (playing) syncAudio(tl.time(), true, true); else play(); }
+        else if (playing) pause(); else play();
+      });
+      tl.seek(0, false); applyPlayback();
+      function update() {
+        if (!stage.isConnected) { active = false; applyPlayback(); return; }
+        if (!active || !pageActive || !playing) return;
+        if (playing && tl.time() >= duration) { tl.seek(0, false); tl.play(); syncAudio(0, true, true); }
+        syncAudio(tl.time(), playing && !tl.paused(), false);
+        updateTimer = setTimeout(update, 33);
+      }
+    }
+    window.addEventListener('pagehide', function () { pageActive = false; applyPlayback(); tracks.forEach(function (track) { track.audio.pause(); }); });
+    window.addEventListener('pageshow', function () {
+      pageActive = true;
+      if (hosted) { active = false; requestActivity(); }
+      applyPlayback();
+    });
+    if (hosted) requestActivity();
+    connect();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, {once:true}); else boot();
+})();
+</script></body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "layouts/iphone-duo-closed.html",
+  "entry": "layouts/iphone-duo-closed.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-13T15:06:39.508Z",
+  "updatedAt": "2026-11-13T15:06:39.508Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

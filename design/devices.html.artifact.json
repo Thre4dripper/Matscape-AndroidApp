@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "devices.html",
+  "entry": "devices.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-13T15:05:20.653Z",
+  "updatedAt": "2026-11-13T15:05:20.653Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

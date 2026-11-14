@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "android.html",
+  "entry": "android.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-13T09:25:03.020Z",
+  "updatedAt": "2026-11-13T09:25:03.020Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

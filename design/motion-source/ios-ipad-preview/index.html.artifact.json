@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "motion-source/ios-ipad-preview/index.html",
+  "entry": "motion-source/ios-ipad-preview/index.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-11-13T21:15:57.929Z",
+  "updatedAt": "2026-11-13T21:15:57.929Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}
